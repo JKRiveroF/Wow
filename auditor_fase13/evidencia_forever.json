@@ -1,0 +1,31 @@
+{
+  "misiones": {
+    "1878": {
+      "estado": "forever",
+      "fuente": "https://worldofwarcraft.blizzard.com/en-us/news/24315281/wow-forever-hotfixes-november-16-2026",
+      "fecha_consulta": "2026-11-25",
+      "xp": 0,
+      "repetible": true,
+      "evidencia": {
+        "xp": {
+          "estado": "forever",
+          "fuente": "https://worldofwarcraft.blizzard.com/en-us/news/24315281/wow-forever-hotfixes-november-16-2026"
+        }
+      }
+    },
+    "3520": {
+      "estado": "forever",
+      "fuente": "https://worldofwarcraft.blizzard.com/en-us/news/24315281/wow-forever-hotfixes-november-16-2026",
+      "fecha_consulta": "2026-11-25",
+      "posiciones_descartadas": {
+        "C": [{"m": 1444, "x": 44.7, "y": 37.6}]
+      },
+      "evidencia": {
+        "posiciones_descartadas": {
+          "estado": "forever",
+          "fuente": "https://worldofwarcraft.blizzard.com/en-us/news/24315281/wow-forever-hotfixes-november-16-2026"
+        }
+      }
+    }
+  }
+}

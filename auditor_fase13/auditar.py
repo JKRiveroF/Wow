@@ -6,6 +6,7 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
+from catalogo import load_catalog
 from estructura import audit_structure
 from lua_routes import load_routes
 
@@ -112,6 +113,7 @@ def main():
     parser.add_argument("--addon", type=Path, default=HERE.parent / "GuiaAventurero")
     parser.add_argument("--salida", type=Path, default=HERE / "salida")
     parser.add_argument("--catalogo", type=Path, help="Catálogo JSON opcional de evidencia por campo.")
+    parser.add_argument("--trazas-questie", type=Path, help="Directorio local con las trazas de QuestieDB 1.1.6.")
     parser.add_argument("--bloque", action="append", type=int, choices=BLOCKS,
                         help="Bloque que ejecutar. Repetible. Por defecto ejecuta todos.")
     args = parser.parse_args()
@@ -121,9 +123,7 @@ def main():
     blocks = set(args.bloque or BLOCKS)
     try:
         version = report_version(addon)
-        catalog = json.loads(args.catalogo.read_text(encoding="utf-8-sig")) if args.catalogo else {}
-        if not isinstance(catalog, dict):
-            parser.error("El catálogo debe ser un objeto JSON.")
+        catalog = load_catalog(args.catalogo, args.trazas_questie)
         routes, findings = audit(addon, blocks, catalog)
         write_reports(output, version, blocks, routes, findings)
     except (OSError, ValueError) as error:

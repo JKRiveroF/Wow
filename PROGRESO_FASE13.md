@@ -30,13 +30,13 @@ El auditor externo compiló los 144 ficheros Lua del TOC con Lupa 2.8 (Lua 5.1) 
 | Área | Peso | Comprobaciones completas | Anterior | Actual |
 | --- | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 0 % | 100 % |
-| Misiones | 25 % | 0/188 | 0 % | 0 % |
+| Misiones | 25 % | 47/188 | 0 % | 25 % |
 | Cartografía | 20 % | 0/141 | 0 % | 0 % |
 | Experiencia | 15 % | 0/141 | 0 % | 0 % |
 | Viajes | 15 % | 0/141 | 0 % | 0 % |
-| Clase, raza y facción | 10 % | 0/141 | 0 % | 0 % |
+| Clase, raza y facción | 10 % | 47/141 | 0 % | 33,33 % |
 | Regresión y preparación | 5 % | 0/4 | 0 % | 0 % |
-| **Global ponderado** | **100 %** | | **0 %** | **10 %** |
+| **Global ponderado** | **100 %** | | **10 %** | **19,58 %** |
 
 Las 95 comprobaciones estructurales son una compilación global, 47 verificaciones del contrato de ruta y 47 validaciones del motor por ruta con todas sus combinaciones declaradas.
 
@@ -46,57 +46,62 @@ Las 95 comprobaciones estructurales son una compilación global, 47 verificacion
 
 - Errores detectados, corregidos y pendientes en la auditoría estructural: 0, 0 y 0.
 - Primera comprobación en cliente pendiente: arranque, selección, carga de destinos, compatibilidad con Questie, traducciones y continuidad de datos guardados.
-- Último cierre en Git: `Audita la estructura de las 47 rutas de leveo` en `fase-13-auditoria-leveo`.
-- Siguiente tarea: ejecutar las comprobaciones de misiones y la cobertura por fuente, y registrar las discrepancias antes de corregirlas.
+
+## Misiones y perfiles · avance local
+
+- Revisados los 103.896 destinos de misión de las 47 rutas, con 2.462 IDs distintos. Las secuencias A/C/T, las variantes raciales y los títulos A/T en las tablas ES/EN del addon se comprobaron sin errores locales. Los 240 títulos EN comparables con trazas coincidieron.
+- Las 47 rutas conservan comprobaciones externas pendientes de misiones y de perfil. Las trazas separan existencia, título y XP base por cada campo. No cubren todos los nombres ES, dependencias, exclusiones, requisitos, objetivos especiales ni desbloqueos.
+- Referencia del cierre estructural publicado, `a7ed567`. Último corte de misiones y perfiles en Git, `Contrasta las misiones y perfiles de las rutas`.
+- Siguiente tarea: corregir la posición obsoleta de la misión 3520 y volver a pasar la auditoría de mapas.
 
 ## Avance individual
 
 | ID | Bloques auditados localmente | Validación en Forever |
 | --- | ---: | --- |
-| `gnomo_mago` | 1/6 | Pendiente |
-| `enano_chaman` | 1/6 | Pendiente |
-| `enano_gnomo_guerrero` | 1/6 | Pendiente |
-| `enano_paladin` | 1/6 | Pendiente |
-| `enano_gnomo_sacerdote` | 1/6 | Pendiente |
-| `enano_cazador` | 1/6 | Pendiente |
-| `enano_gnomo_picaro` | 1/6 | Pendiente |
-| `gnomo_brujo` | 1/6 | Pendiente |
-| `humano_guerrero` | 1/6 | Pendiente |
-| `humano_paladin` | 1/6 | Pendiente |
-| `humano_picaro` | 1/6 | Pendiente |
-| `humano_brujo` | 1/6 | Pendiente |
-| `humano_mago` | 1/6 | Pendiente |
-| `humano_sacerdote` | 1/6 | Pendiente |
-| `humano_cazador` | 1/6 | Pendiente |
-| `elfo_cazador` | 1/6 | Pendiente |
-| `elfo_druida` | 1/6 | Pendiente |
-| `elfo_guerrero` | 1/6 | Pendiente |
-| `elfo_picaro` | 1/6 | Pendiente |
-| `elfo_sacerdote` | 1/6 | Pendiente |
-| `orco_trol_guerrero` | 1/6 | Pendiente |
-| `orco_trol_cazador` | 1/6 | Pendiente |
-| `orco_trol_picaro` | 1/6 | Pendiente |
-| `orco_trol_chaman` | 1/6 | Pendiente |
-| `orco_trol_brujo` | 1/6 | Pendiente |
-| `orco_trol_mago` | 1/6 | Pendiente |
-| `trol_sacerdote` | 1/6 | Pendiente |
-| `tauren_guerrero` | 1/6 | Pendiente |
-| `tauren_cazador` | 1/6 | Pendiente |
-| `tauren_chaman` | 1/6 | Pendiente |
-| `tauren_druida` | 1/6 | Pendiente |
-| `nomuerto_guerrero` | 1/6 | Pendiente |
-| `nomuerto_picaro` | 1/6 | Pendiente |
-| `nomuerto_mago` | 1/6 | Pendiente |
-| `nomuerto_sacerdote` | 1/6 | Pendiente |
-| `nomuerto_brujo` | 1/6 | Pendiente |
-| `nomuerto_paladin` | 1/6 | Pendiente |
-| `skyborne_guerrero` | 1/6 | Pendiente |
-| `skyborne_cazador` | 1/6 | Pendiente |
-| `skyborne_picaro` | 1/6 | Pendiente |
-| `skyborne_chaman` | 1/6 | Pendiente |
-| `skyborne_druida` | 1/6 | Pendiente |
-| `skyborne_a_guerrero` | 1/6 | Pendiente |
-| `skyborne_a_cazador` | 1/6 | Pendiente |
-| `skyborne_a_picaro` | 1/6 | Pendiente |
-| `skyborne_a_mago` | 1/6 | Pendiente |
-| `skyborne_a_druida` | 1/6 | Pendiente |
+| `gnomo_mago` | 3/6 | Pendiente |
+| `enano_chaman` | 3/6 | Pendiente |
+| `enano_gnomo_guerrero` | 3/6 | Pendiente |
+| `enano_paladin` | 3/6 | Pendiente |
+| `enano_gnomo_sacerdote` | 3/6 | Pendiente |
+| `enano_cazador` | 3/6 | Pendiente |
+| `enano_gnomo_picaro` | 3/6 | Pendiente |
+| `gnomo_brujo` | 3/6 | Pendiente |
+| `humano_guerrero` | 3/6 | Pendiente |
+| `humano_paladin` | 3/6 | Pendiente |
+| `humano_picaro` | 3/6 | Pendiente |
+| `humano_brujo` | 3/6 | Pendiente |
+| `humano_mago` | 3/6 | Pendiente |
+| `humano_sacerdote` | 3/6 | Pendiente |
+| `humano_cazador` | 3/6 | Pendiente |
+| `elfo_cazador` | 3/6 | Pendiente |
+| `elfo_druida` | 3/6 | Pendiente |
+| `elfo_guerrero` | 3/6 | Pendiente |
+| `elfo_picaro` | 3/6 | Pendiente |
+| `elfo_sacerdote` | 3/6 | Pendiente |
+| `orco_trol_guerrero` | 3/6 | Pendiente |
+| `orco_trol_cazador` | 3/6 | Pendiente |
+| `orco_trol_picaro` | 3/6 | Pendiente |
+| `orco_trol_chaman` | 3/6 | Pendiente |
+| `orco_trol_brujo` | 3/6 | Pendiente |
+| `orco_trol_mago` | 3/6 | Pendiente |
+| `trol_sacerdote` | 3/6 | Pendiente |
+| `tauren_guerrero` | 3/6 | Pendiente |
+| `tauren_cazador` | 3/6 | Pendiente |
+| `tauren_chaman` | 3/6 | Pendiente |
+| `tauren_druida` | 3/6 | Pendiente |
+| `nomuerto_guerrero` | 3/6 | Pendiente |
+| `nomuerto_picaro` | 3/6 | Pendiente |
+| `nomuerto_mago` | 3/6 | Pendiente |
+| `nomuerto_sacerdote` | 3/6 | Pendiente |
+| `nomuerto_brujo` | 3/6 | Pendiente |
+| `nomuerto_paladin` | 3/6 | Pendiente |
+| `skyborne_guerrero` | 3/6 | Pendiente |
+| `skyborne_cazador` | 3/6 | Pendiente |
+| `skyborne_picaro` | 3/6 | Pendiente |
+| `skyborne_chaman` | 3/6 | Pendiente |
+| `skyborne_druida` | 3/6 | Pendiente |
+| `skyborne_a_guerrero` | 3/6 | Pendiente |
+| `skyborne_a_cazador` | 3/6 | Pendiente |
+| `skyborne_a_picaro` | 3/6 | Pendiente |
+| `skyborne_a_mago` | 3/6 | Pendiente |
+| `skyborne_a_druida` | 3/6 | Pendiente |
