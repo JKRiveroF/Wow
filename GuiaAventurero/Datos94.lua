@@ -398,9 +398,9 @@ GL.D94 = {
     DRUID = { { id = 16720, n = "Capucha Corazón salvaje", ing = "Wildheart Cowl", fuente = "Scholomance (Maestro oscuro Gandling)" }, { id = 18510, n = "Pellejo de las fieras", ing = "Hide of the Wild", fuente = "Peletería" }, { id = 15063, n = "Guanteletes de demosaurio", ing = "Devilsaur Gauntlets", fuente = "Peletería" }, { id = 12930, n = "Junco maderahelecho", ing = "Briarwood Reed", fuente = "Cumbre de Roca Negra (Jed Observarrunas)" }, { id = 13385, n = "Escrito sobre Conocimiento", ing = "Tome of Knowledge", fuente = "Stratholme (Archivista Galford)" } },
   },
   vuelos = {
-    { npc = 352, n = "Dungar Tragolargo", ing = "Dungar Longdrink", lado = "A", m = 1453, x = 66.3, y = 62.1, z = "Ciudad de Ventormenta" },
+    { npc = 352, n = "Dungar Tragolargo", ing = "Dungar Longdrink", lado = "A", m = 1453, x = 71.3, y = 72.2, z = "Ciudad de Ventormenta" },
     { npc = 523, n = "Thor", ing = "Thor", lado = "A", m = 1436, x = 56.5, y = 52.6, z = "Páramos de Poniente" },
-    { npc = 931, n = "Ariena Tempespluma", ing = "Ariena Stormfeather", lado = "A", m = 1433, x = 30.6, y = 59.4, z = "Montañas Crestagrana" },
+    { npc = 931, n = "Ariena Tempespluma", ing = "Ariena Stormfeather", lado = "A", m = 1433, x = 25.5, y = 59.4, z = "Montañas Crestagrana" },
     { npc = 1387, n = "Thysta", ing = "Thysta", lado = "H", m = 1434, x = 32.5, y = 29.4, z = "Vega de Tuercespina" },
     { npc = 1571, n = "Shellei Brondir", ing = "Shellei Brondir", lado = "A", m = 1437, x = 9.5, y = 59.7, z = "Los Humedales" },
     { npc = 1572, n = "Thorgrum Borrelson", ing = "Thorgrum Borrelson", lado = "A", m = 1432, x = 33.9, y = 51.0, z = "Loch Modan" },
