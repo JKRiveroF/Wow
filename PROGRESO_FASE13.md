@@ -33,10 +33,10 @@ El auditor externo compiló los 144 ficheros Lua del TOC con Lupa 2.8 (Lua 5.1) 
 | Misiones | 25 % | 47/188 | 25 % | 25 % |
 | Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % |
-| Viajes | 15 % | 47/141 | 0 % | 33,33 % |
-| Clase, raza y facción | 10 % | 47/141 | 33,33 % | 33,33 % |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % |
+| Clase, raza y facción | 10 % | 57/141 | 33,33 % | 40,43 % |
 | Regresión y preparación | 5 % | 0/4 | 0 % | 0 % |
-| **Global ponderado** | **100 %** | | **31,25 %** | **36,25 %** |
+| **Global ponderado** | **100 %** | | **36,25 %** | **36,96 %** |
 
 Las 95 comprobaciones estructurales son una compilación global, 47 verificaciones del contrato de ruta y 47 validaciones del motor por ruta con todas sus combinaciones declaradas.
 
@@ -75,7 +75,14 @@ Las 95 comprobaciones estructurales son una compilación global, 47 verificacion
 - Corregido el avance de los pasos de vuelo cuando el guardado está en un idioma distinto al cliente. Se conservan las claves guardadas y el estado de los vuelos desconocidos. La simulación cubrió los 28 nombres de las 567 comprobaciones de vuelo.
 - El bloque de viajes volvió a ejecutarse con 0 errores y 0 avisos. Se añadió evidencia de nombres para Forjaz, El Cruce y Entrañas.
 - Último corte de experiencia publicado, `ad6022b`. Último corte de viajes en Git, `Reconoce puntos de vuelo guardados en ambos idiomas`.
-- Siguiente tarea: contrastar la matriz de perfiles con la de Blizzard y corregir las descripciones raciales comprobadas.
+
+## Clase, raza y facción · avance local
+
+- La matriz oficial de Blizzard contiene las 56 combinaciones seleccionables del addon. Se contrastaron los arranques de diez rutas Skyborne y sus 60 hitos de misión por clase y facción. Las restricciones completas del resto de zonas iniciales y los desbloqueos dentro de Forever siguen pendientes.
+- Corregidas cinco descripciones de Skysight y precisadas cinco de Read Leyline. Los diez textos se verificaron en español e inglés. La duración exacta de Skysight queda pendiente por discrepancia entre las fuentes.
+- Actualizada la entrega de Camping 101: Herbalism (97968) a Halassa Fernbreeze en Shen'dar. Se conservaron la recogida, los requisitos y el resto de misiones opcionales.
+- Último corte de viajes publicado, `d831b04`. Último corte de perfiles en Git, `Verifica perfiles y ajusta las rutas Skyborne`.
+- Siguiente tarea: ejecutar la regresión global y registrar los escenarios que requieren Forever.
 
 ## Avance individual
 

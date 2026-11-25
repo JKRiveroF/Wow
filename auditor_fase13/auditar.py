@@ -48,7 +48,7 @@ def audit(addon, blocks, catalog):
                if finding["gravedad"] == "error" and finding.get("archivo")}
     eligible = [route for route in routes if route["_archivo"] not in invalid]
     if 2 in blocks or 6 in blocks:
-        from mission_rules import audit_missions, audit_specializations, load_mission_localization
+        from mission_rules import audit_missions, audit_profile_matrix, audit_specializations, load_mission_localization
 
         catalog = {**catalog, "_localizacion_addon": load_mission_localization(addon)}
         for route in eligible:
@@ -56,6 +56,8 @@ def audit(addon, blocks, catalog):
                 findings.extend(audit_missions(route, catalog))
             if 6 in blocks:
                 findings.extend(audit_specializations(route, catalog))
+        if 6 in blocks:
+            findings.extend(audit_profile_matrix(routes, catalog))
     if blocks.intersection({3, 4, 5}):
         from world_rules import audit_world
 

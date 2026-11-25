@@ -409,6 +409,36 @@ def audit_specializations(route: dict, catalog: dict) -> list[dict]:
     return issues
 
 
+def audit_profile_matrix(routes: list[dict], catalog: dict) -> list[dict]:
+    """Compara las selecciones declaradas con las combinaciones jugables en Forever."""
+    matrix = catalog.get("perfiles", {})
+    source = _confirmed(matrix, "facciones")
+    if not source:
+        return [_issue({}, 6, "pendiente", "PERFIL_MATRIZ_SIN_FUENTE",
+                       "Falta una matriz de combinaciones jugables con evidencia de Forever.")]
+    expected = {(faction, race, class_token)
+                for faction, races in matrix["facciones"].items()
+                for race, classes in races.items()
+                for class_token in classes}
+    observed = set()
+    issues = []
+    for route in routes:
+        faction, class_token = route.get("_faccion"), route.get("clase")
+        for race in _list(route.get("razas")):
+            profile = (faction, race, class_token)
+            observed.add(profile)
+            if profile not in expected:
+                issues.append(_issue(route, 6, "error", "PERFIL_NO_JUGABLE_EN_FOREVER", (
+                    f"La combinación {faction}, {race}, {class_token} no figura en la matriz oficial."
+                ), "Cabecera de la ruta", source))
+
+    for faction, race, class_token in sorted(expected - observed):
+        issues.append(_issue({}, 6, "error", "PERFIL_SIN_RUTA", (
+            f"No hay ruta para {faction}, {race}, {class_token}, combinación jugable en Forever."
+        ), source=source))
+    return issues
+
+
 def load_mission_localization(addon: Path) -> dict:
     """Lee las tablas EN del TOC con la precedencia que aplica Idioma.lua."""
     from lupa.lua51 import LuaRuntime

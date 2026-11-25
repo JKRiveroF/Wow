@@ -2,7 +2,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from mission_rules import audit_missions, audit_specializations, load_mission_localization
+from mission_rules import (audit_missions, audit_profile_matrix, audit_specializations,
+                           load_mission_localization)
 
 
 def waypoint(q, a, **fields):
@@ -73,6 +74,16 @@ class MissionRulesTest(unittest.TestCase):
         catalog = {"misiones": {"19": documented(clases=["WARRIOR"])}}
         self.assertEqual(findings(audit_specializations(candidate, catalog)),
                          ["PERFIL_FILTRO_RACIAL_INALCANZABLE", "PERFIL_REQUISITO_DE_MISION"])
+
+    def test_official_matrix_discriminates_skyborne_by_faction(self):
+        alliance = {**route(races=["Skyborne"]), "id": "skyborne_a_mago"}
+        horde = {**alliance, "id": "skyborne_mago", "_faccion": "Horde"}
+        catalog = {"perfiles": documented(facciones={
+            "Alliance": {"Skyborne": ["MAGE"]}, "Horde": {"Skyborne": ["SHAMAN"]},
+        })}
+        self.assertEqual(findings(audit_profile_matrix([alliance, horde], catalog)),
+                         ["PERFIL_NO_JUGABLE_EN_FOREVER", "PERFIL_SIN_RUTA"])
+        self.assertEqual(audit_profile_matrix([alliance, {**horde, "clase": "SHAMAN"}], catalog), [])
 
     def test_toc_localization_load_uses_addon_precedence(self):
         with TemporaryDirectory() as directory:
