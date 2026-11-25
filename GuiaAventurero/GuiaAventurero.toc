@@ -1,0 +1,161 @@
+## Interface: 16001
+## Title: Adventurer's Guide |cff69ccf0(1-60)|r
+## Title-esES: Guía del Aventurero |cff69ccf0(1-60)|r
+## Title-esMX: Guía del Aventurero |cff69ccf0(1-60)|r
+## Notes: Adventurer's Guide for WoW Forever, in English and Spanish: leveling routes 1-60 for 47 class and race routes with an arrow and map marks, talents that place themselves, dungeons and raids with bosses and loot, gold (savings, farming and professions, also Cooking and Fishing), fishing mode, flight paths and group help. Created by JKRiveroF. /ga
+## Notes-esES: Guía del Aventurero para WoW Forever, en español e inglés: rutas de leveo 1-60 para 47 combinaciones de clase y raza con flecha y marcas en el mapa, talentos que se ponen solos, mazmorras y bandas con jefes y botín, oro (ahorro, farmeo y profesiones, también Cocina y Pesca), modo pesca, vuelos y ayuda en grupo. Creado por JKRiveroF. /ga
+## Notes-esMX: Guía del Aventurero para WoW Forever, en español e inglés: rutas de leveo 1-60 para 47 combinaciones de clase y raza con flecha y marcas en el mapa, talentos que se ponen solos, mazmorras y bandas con jefes y botín, oro (ahorro, farmeo y profesiones, también Cocina y Pesca), modo pesca, vuelos y ayuda en grupo. Creado por JKRiveroF. /ga
+## Author: JKRiveroF
+## Version: 9.7.9
+## Category: Quests
+## X-License: GPL-3.0
+## IconTexture: Interface\Icons\INV_Misc_Map_01
+## AddonCompartmentFunc: GuiaAventurero_Compartimento
+## SavedVariables: GuiaAventureroCuenta, GuiaAventureroRespaldo
+## SavedVariablesPerCharacter: GuiaAventureroDB
+Idioma.lua
+Idioma\enUS_Interfaz.lua
+Idioma\enUS_Datos.lua
+Idioma\enUS_94.lua
+Idioma\enUS_941.lua
+Idioma\enUS_Rutas.lua
+Idioma\enUS_Refuerzos97.lua
+Idioma\enUS_973.lua
+Idioma\enUS_AuditoriaProf973.lua
+Idioma\enUS_974.lua
+Idioma\enUS_975_revision.lua
+Idioma\enUS_975_profesiones.lua
+Idioma\enUS_976.lua
+Idioma\enUS_976_mapa.lua
+Idioma\enUS_9771.lua
+Rutas\GnomoMago.lua
+Rutas\EnanoChaman.lua
+Rutas\EnanoGnomoGuerrero.lua
+Rutas\EnanoPaladin.lua
+Rutas\EnanoGnomoSacerdote.lua
+Rutas\EnanoCazador.lua
+Rutas\EnanoGnomoPicaro.lua
+Rutas\GnomoBrujo.lua
+Rutas\HumanoGuerrero.lua
+Rutas\HumanoPaladin.lua
+Rutas\HumanoPicaro.lua
+Rutas\HumanoBrujo.lua
+Rutas\HumanoMago.lua
+Rutas\HumanoSacerdote.lua
+Rutas\HumanoCazador.lua
+Rutas\ElfoCazador.lua
+Rutas\ElfoDruida.lua
+Rutas\ElfoGuerrero.lua
+Rutas\ElfoPicaro.lua
+Rutas\ElfoSacerdote.lua
+Rutas\OrcoTrolGuerrero.lua
+Rutas\OrcoTrolCazador.lua
+Rutas\OrcoTrolPicaro.lua
+Rutas\OrcoTrolChaman.lua
+Rutas\OrcoTrolBrujo.lua
+Rutas\OrcoTrolMago.lua
+Rutas\TrolSacerdote.lua
+Rutas\TaurenGuerrero.lua
+Rutas\TaurenCazador.lua
+Rutas\TaurenChaman.lua
+Rutas\TaurenDruida.lua
+Rutas\NoMuertoGuerrero.lua
+Rutas\NoMuertoPicaro.lua
+Rutas\NoMuertoMago.lua
+Rutas\NoMuertoSacerdote.lua
+Rutas\NoMuertoBrujo.lua
+Rutas\NoMuertoPaladin.lua
+Rutas\SkyborneGuerrero.lua
+Rutas\SkyborneCazador.lua
+Rutas\SkybornePicaro.lua
+Rutas\SkyborneChaman.lua
+Rutas\SkyborneDruida.lua
+Rutas\SkyborneAGuerrero.lua
+Rutas\SkyborneACazador.lua
+Rutas\SkyborneAPicaro.lua
+Rutas\SkyborneAMago.lua
+Rutas\SkyborneADruida.lua
+Encadenadas.lua
+GuiaAventurero.lua
+Opciones.lua
+Exploracion.lua
+Equipo.lua
+RecompensasRuta.lua
+DatosWowhead.lua
+PlanProfesiones975.lua
+Botin.lua
+Reputacion.lua
+Mazmorras.lua
+OpcionalesKalimdor.lua
+OpcionalesReinos.lua
+OpcionalesOtras.lua
+Opcionales.lua
+Continentes.lua
+Biblioteca.lua
+Mejoras.lua
+Experiencia.lua
+Cuenta.lua
+Pantalla.lua
+Traspaso.lua
+Bestias.lua
+Mascotas.lua
+Coleccion.lua
+Misiones.lua
+Instructor.lua
+Talentos.lua
+Hechizos.lua
+Recetas.lua
+Mapa.lua
+Graficos.lua
+Adornos.lua
+Detalles.lua
+Claridad.lua
+Novedades.lua
+InfoContextual.lua
+Interfaz.lua
+Guia9.lua
+GuiaClara.lua
+Pestanas96.lua
+Secciones9.lua
+Mazmorras9.lua
+Hoy9.lua
+Barra9.lua
+Informe.lua
+Asistente97.lua
+Herramientas97.lua
+Auditoria973.lua
+Recalcular.lua
+Zonas.lua
+Llegada.lua
+Farmeo.lua
+Recoleccion.lua
+Pesca.lua
+Secundarias.lua
+RangosBarras.lua
+Editor.lua
+Respaldo.lua
+Reserva.lua
+Vista.lua
+ObjetoMision.lua
+AyudaComandos.lua
+Tiempos.lua
+Objetivo.lua
+Resumen.lua
+Clasico.lua
+SeccionMapa.lua
+Lista94.lua
+Datos94.lua
+DatosBandas94.lua
+Especializacion.lua
+MisionesClase.lua
+Bandas.lua
+Vuelos94.lua
+CazadorBrujo94.lua
+Oro.lua
+Grupo94.lua
+
+Revision975.lua
+Revision976.lua
+
+Revision976B.lua
+Revision976C.lua

@@ -1,0 +1,33 @@
+-- Idioma/enUS_9771.lua (9.7.7.1): textos en inglés de la especialización que sale de tu árbol de talentos.
+local _, GL = ...
+if type(GL) ~= "table" or type(GL.AnadirIngles) ~= "function" then return end
+GL.AnadirIngles({
+  ["ocultar"] = "Hide",
+  ["ver"] = "Show",
+  ["Principiante"] = "Beginner",
+  ["Veterano"] = "Veteran",
+  ["Perfil normal"] = "Normal profile",
+  ["con"] = "with",
+  ["armadura"] = "armor",
+  ["golpe"] = "hit",
+  ["defensa"] = "defense",
+  ["esquivar"] = "dodge",
+  [" y "] = " and ",
+  ["Pociones de tu nivel en bolsas: "] = "Level-appropriate potions in bags: ",
+  [" · revisa las de salud y, si usas maná, las de maná."] = " · check health potions and, if you use mana, mana potions.",
+  ["misiones conocidas completadas"] = "known quests completed",
+  [" para revisar"] = " to check",
+  ["Próximamente: "] = "Coming soon: ",
+  ["tus talentos están en "] = "your talents are in ",
+  [": la guía sigue ahora esa especialización. La cambias con el botón Especialización."] = ": the guide now follows that specialization. Change it with the Specialization button.",
+  ["Cuenta: reino «"] = "Account: realm «",
+  ["», clave «"] = "», key «",
+  ["», personajes guardados: "] = "», saved characters: ",
+  ["Metas no disponibles"] = "Savings goals unavailable",
+  ["Presupuesto para compras automáticas: "] = "Automatic purchase budget: ",
+  ["Reserva objetivo: "] = "Target reserve: ",
+  ["Reserva automática de oro inactiva"] = "Automatic gold reserve inactive",
+  ["Las compras manuales pueden utilizar todo tu oro."] = "Manual purchases can use all your gold.",
+  ["lista"] = "ready",
+  [" · a "] = " · ",
+})

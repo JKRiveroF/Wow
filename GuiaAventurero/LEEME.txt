@@ -1,0 +1,677 @@
+9.7.9 — Fase 12: auditoría de todo lo de la 9.7.7 y arreglos; revisión local cerrada, falta probarla en WoW Forever.
+9.7.9 — Phase 12: audit and fixes of everything in 9.7.7; local review closed, WoW Forever testing pending.
+
+9.7.7.6: asistente del personaje (hechizos, talentos, equipo, bolsas, oro), buscador sin tildes y con filtros, convivencia con Questie, rendimiento, traducciones y estabilidad.
+9.7.7.5: viajes más fiables: vuelos descubiertos, posada recomendada, piedra de hogar, aviso de qué barco o zepelín coger y Cerca de ti con instructor de clase y objetivos de la zona.
+9.7.7.4: mapas de Sima Ígnea y Bancal del Creador; 196 de 264 jefes marcados en el mapa y, para los demás, dónde están al pasar el ratón.
+
+9.7.7.3: en la ventana compacta, la misión de la línea del objetivo ya no sale repetida arriba. Cuenta › Personajes vuelve a guardar los personajes aunque el juego no dé el nombre del reino.
+
+9.7.7.2: la guía lee tus talentos de verdad: las ramas de arriba enseñan tus puntos y, si los tienes casi todos en otra rama que la del plan (por ejemplo Furia en vez de Armas), pasa sola a esa especialización y lo dice en el chat. Profesiones revisadas: Encantamiento, Herrería, Ingeniería, Peletería, Cocina, Herboristería, Desuello y Pesca.
+
+9.7.7.1: revisión de jefes, botín y consejos de las mazmorras de nivel bajo y medio (con aviso en las de nivel alto y en Bandas), equipo según la especialización y planes de Sastrería revisados. Consulta NOVEDADES.txt.
+
+9.7.7 — Compilación de desarrollo, fase 1 sin cerrar. Consultar NOVEDADES.txt (informe histórico no incluido). No publicar como estable.
+
+9.7.6 revisión de datos: el botón Buscar y el buscador usan el mismo panel; pestaña Catálogo para jefes, objetos y recetas. /ga contexto muestra también rangos de profesión, reparación y equipo. Consulta NOVEDADES.txt.
+
+9.7.6 revisión adicional: /ga centro, /ga profesionesjuntas, /ga compararplanes, /ga recetasconocidas, /ga preciosubasta ID (resultados visibles, si es compatible), /ga visitas, /ga contexto, /ga preparar Dalaran. Consulta NOVEDADES.txt antes de probar.
+
+9.7.6: mapa en el modo mazmorra y modo banda; /ga centro (lista de herramientas en la ventana de informes), /ga jefes nombre, /ga viajelocal, /ga resumenpersonaje, /ga precio ID PRECIO (cobre/unit), /ga questie on|off.
+No automatic auction scans. No keyboard bindings. See NOVEDADES.txt; historical report not bundled.
+
+NOTA DE VERSIÓN 9.7.4: consulta NOVEDADES.txt para limitaciones de prueba y datos sin certificar. Sin atajos de teclado.
+
+IMPORTANTE — VERSIÓN 9.7.9 DE PRUEBA
+Esta compilación NO está verificada dentro del juego. Lee NOVEDADES.txt para
+ver qué datos NO están confirmados, especialmente las rutas 1–60, el botín
+y las profesiones. Conserva tus SavedVariables antes de probarla.
+No incluye atajos de teclado.
+
+INSTALACIÓN DE PRUEBA
+- Cierra World of Warcraft.
+- Haz copia de seguridad de la carpeta GuiaAventurero de la versión anterior y de los archivos
+  GuiaAventurero*.lua y sus copias .bak en todas las carpetas SavedVariables
+  de WTF (cuenta y personaje).
+- Extrae el ZIP en Interface/AddOns, de forma que quede
+  Interface/AddOns/GuiaAventurero/GuiaAventurero.toc.
+- No mezcles archivos de versiones anteriores con los de la 9.7.9.
+- Entra con un personaje de pruebas y abre la guía con /ga.
+- Si aparecen fallos, restaura tanto el addon anterior como sus variables.
+
+GUÍA DEL AVENTURERO 1-60  (WoW Forever, en español o en inglés)
+Creado por JKRiveroF
+
+Versión 9.7.9 de prueba: sin atajos de teclado por decisión del autor.
+Puedes navegar con los botones Atrás, Mi nivel y Saltar paso y consultar
+un paso bloqueado con «¿Atascado? Comprobar paso».
+«Solo ruta» no propone opcionales y puede requerir matar enemigos para subir.
+Gnomo mago: Memorándum tras Los enanos modistos; Mercenarios
+advierte del grupo y hay mejoras de textos de mago.
+Esta copia NO está aún validada en el juego.
+Las rutas llevan misiones extra (marca REFUERZO_97 en Rutas/*.lua) para llegar al 60 solo con
+misiones, usando otras zonas de tu nivel cuando una se queda sin misiones; las mazmorras se recomiendan en Consejos › Equipo, pero son opcionales.
+
+Los primeros 5 minutos
+  1. Copia la carpeta GuiaAventurero del zip en Interface\AddOns y entra con
+     tu personaje. Si tenías una versión anterior, borra la carpeta GuiaLeveo
+     (y GuiaLeveo_Kalimdor y GuiaLeveo_Reinos si siguen ahí).
+  2. La guía elige sola la ruta de tu clase y raza y te pone en la sección
+     de tu nivel. Si no, escribe /ga nivel.
+  3. Sigue la flecha: lleva al destino del paso. Al hacer las misiones el
+     paso avanza solo (si no, > o /ga sig).
+  4. Lo más usado: /ga (ventana), nivel, vista (mirar otra sección
+     sin moverte), informe (para avisar de un fallo) y opciones.
+  5. ¿Te pierdes? /ga ayuda enseña los comandos por temas.
+
+Rutas incluidas: gnomo mago, enano chamán, guerrero enano o gnomo, enano
+paladín, sacerdote enano o gnomo, cazador enano, pícaro enano o gnomo, brujo
+gnomo, guerrero humano, paladín humano, pícaro humano, brujo humano, mago
+humano, sacerdote humano, cazador humano, cazador elfo de la noche, druida
+elfo de la noche (tanque), guerrero elfo de la noche, pícaro elfo de la
+noche y sacerdote elfo de la noche. De la Horda: guerrero, cazador,
+pícaro, chamán, mago y brujo orco o trol, sacerdote trol, y guerrero,
+cazador, chamán y druida tauren (tanque), y guerrero, pícaro, mago,
+sacerdote, brujo y paladín no-muerto, y guerrero, cazador, pícaro,
+chamán y druida Skyborne. Y de la Alianza, guerrero, cazador,
+pícaro, mago y druida Skyborne.
+La guía elige sola la de tu personaje
+(ver "Rutas", al final).
+
+Instalación
+  1. En la aplicación de Battle.net elige WoW Forever, pulsa la rueda junto
+     a "Jugar" y luego "Mostrar en el explorador".
+  2. En esa carpeta del juego entra en Interface\AddOns (si no existe, créala).
+  3. Copia ahí la carpeta "GuiaAventurero" (debe llamarse exactamente así,
+     con los archivos GuiaAventurero.toc y GuiaAventurero.lua dentro, no en
+     una subcarpeta).
+  4. Si tenías una versión anterior a la 9.5, borra la carpeta "GuiaLeveo"
+     (y "GuiaLeveo_Kalimdor" y "GuiaLeveo_Reinos" si siguen ahí). Para no
+     perder tu progreso, mira "Venir de GuiaLeveo" aquí abajo.
+  5. Si tenías la versión antigua "GuiaGnomoMago", bórrala.
+  6. Entra al juego y activa "Guía del Aventurero" en el botón "AddOns" de la pantalla
+     de personajes.
+
+Venir de GuiaLeveo (versiones anteriores a la 9.5)
+  Desde la 9.5 la carpeta se llama GuiaAventurero. El juego guarda el
+  progreso con el nombre de la carpeta, así que para conservarlo, con el
+  juego cerrado, cambia el nombre de estos archivos de GuiaLeveo.lua a
+  GuiaAventurero.lua (y GuiaLeveo.lua.bak a GuiaAventurero.lua.bak):
+  - WTF\Account\<tu cuenta>\SavedVariables\GuiaLeveo.lua
+    (ajustes de la cuenta y copia de seguridad)
+  - WTF\Account\<tu cuenta>\<reino>\<personaje>\SavedVariables\GuiaLeveo.lua
+    (progreso de cada personaje; uno por personaje)
+  Al entrar, la guía pasa sola lo guardado al nombre nuevo. Si no lo
+  haces, la guía empieza de cero: elige tu ruta y te pone en la sección
+  de tu nivel igual que la primera vez.
+  Es para el cliente de WoW Forever (interfaz 16001). No funciona en la 1.12.
+
+Uso
+  Casi todo se hace con los botones de la ventana y con Ajustes. Desde la
+  9.7.6 los comandos que hacían lo mismo que un botón o una casilla ya no
+  existen; si escribes uno, la guía te dice dónde está ahora.
+  /ga                   mostrar u ocultar la ventana
+  /ga nivel             saltar a la sección de tu nivel
+  /ga sig | ant         paso siguiente o anterior
+  /ga vista [n]         vista previa de una sección sin mover tu progreso
+  /ga preparar [mazmorra] qué te conviene hacer antes de dejar la zona
+  /ga ignorados         vuelven a contar los objetivos ignorados
+  /ga llegada           horas que te faltan para el 60 a tu ritmo
+  /ga resumen [n]       resumen de la última sección acabada, o de la n
+  /ga rutas | ruta <id> lista las rutas o elige otra (con /reload)
+  /ga idioma es | en | auto  idioma de la guía (con /reload)
+  /ga rangos            cambiar en tus barras los rangos viejos por el más
+                        alto que conoces (también te lo ofrece al aprenderlo)
+  /ga recoleccion [parar] ruta de recolección de tu profesión
+  /ga centro            herramientas de la 9.7.6 con su comando: jefes,
+                        resumenpersonaje, contexto, viajelocal, visitas,
+                        profesionesjuntas, compararplanes, recetasconocidas,
+                        precio, preciosubasta, rendimiento y questie on|off
+  /ga tutorial          volver a ver las pantallas del primer uso
+  /ga reset             recolocar las ventanas y devolver el tamaño inicial
+  /ga restaurar [si | cuenta | copia] copia de seguridad de lo guardado
+                        antes de la última versión nueva
+  /ga perfil principiante | normal | veterano  ajustes de partida
+  /ga ayuda [tema]      comandos por temas: ruta, personaje, profesiones,
+                        ventana, datos y diagnóstico
+  Para avisar de un fallo:
+  /ga informe           todo lo que hace falta, en un texto para copiar
+                        ("informe borrar" quita los errores)
+  /ga depurar           informe de diagnóstico (con "errores", activa o quita
+                        los avisos de error en el chat)
+  /ga atascado [nota]   apuntar el paso actual si no avanza solo; "atascado
+                        ver" los enseña y "atascado borrar" los quita
+  /ga comprobar         comprueba el paso actual
+  /ga memoria           cuánto ocupa el addon y qué secciones están cargadas
+
+Ventana
+  Arriba: el icono de la ruta, tu nivel, los botones de la flecha (muestra u
+  oculta la flecha), del modo compacto (la nota) y de las opciones (la rueda
+  dentada), y las pestañas Guía, Personaje (Talentos, Hechizos y Equipo;
+  las estadísticas por nivel están en Cuenta › Hoy),
+  Profesiones y Exploración (zona, coordenadas, misiones de la guía en la
+  zona que llevas hechas y destino de la flecha). Las opciones se abren con
+  la rueda, con tres botones: Ajustes, Automatismos (lo que la guía hace
+  sola, apagado en los personajes nuevos) y Novedades. Si haces la ventana
+  estrecha, las pestañas quitan el icono para que quepa el nombre.
+  En el lateral derecho, fuera de la ventana, hay dos botones: Guía (todo
+  lo anterior) y debajo Reputación (6.6): la lista de tus facciones con su
+  barra y su rango, y al pulsar una, su ficha (cómo subirla, intendente y
+  recompensas; las que no están comprobadas en WoW Forever lo dicen).
+  Debajo, Mazmorras (6.7): las mazmorras por nivel; al pulsar una se
+  despliegan su entrada, sus misiones de la Alianza y los botones Marcar
+  entrada y Llevarme.
+  Y Biblioteca (6.8): zonas, facciones, mazmorras, razas y clases, y
+  profesiones, con buscador y fichas enlazadas a lo relacionado.
+  Desde la 7.0: retrato del PNJ en la caja del paso (clic: lo selecciona
+  si está cerca), celebración al subir de nivel con los hechizos nuevos y
+  su precio, destinos en el minimapa y bienvenida al conectar. 7.1: tema
+  Pergamino y flecha verde, amarilla o roja según la distancia, con el
+  rumbo. 7.2: las misiones del paso van solas al seguimiento de misiones
+  y hay sonidos opcionales. Todo se apaga en Opciones > Ajustes.
+  7.3: el tutorial (seis pantallas desde la 9.6) sale al conectar con todos los
+  personajes; su botón Desactivar tutorial lleva a la opción de Ajustes que
+  lo quita para toda la cuenta.
+  7.4: los avisos van debajo de los objetivos; experiencia descansada,
+  avisos de reactivos y posada, y botón Nota en cada paso. Botón Cuenta
+  (debajo de Biblioteca): tus personajes con nivel, zona, oro y mochila, y
+  el oro total de la cuenta. Lo que aún no está completo lo indica con
+  «Próxima actualización».
+  7.5.1-7.5.9: ahorro para el nivel 40 (equitación, montura y doble
+  especialización) en Avisos; buscador, banco y profesiones en Cuenta;
+  copiar ajustes de otro personaje; resumen de la sesión y Compartir en el
+  chat en Estadísticas; tiempo estimado de la sección en la barra de la
+  ruta; piedra de hogar y posada recomendada, con Llevarme, en Exploración.
+  7.5.10-7.5.13: barra en pantalla debajo de la flecha con los buffs que te
+  faltan (en grupo, cuántos lo tienen) y el estado de tu mascota o demonio;
+  Todas las zonas en Exploración; y Exportar/Importar en Ajustes para
+  llevarte el progreso a otro ordenador.
+  7.5.14-7.5.15: arreglo del Sacrificio demoníaco; reparar solo en el
+  vendedor; qué tirar con las bolsas llenas y objetos de misión sobrantes.
+  7.5.16: jefes y botín en Mazmorras, raros, vendedores, bolsas y
+  entrenadores de armas en la Biblioteca, y botón Colección (monturas,
+  mascotas y juguetes). Faltan los datos: «Próxima actualización».
+  7.6: datos de Wowhead (mazmorras, jefes y botín, raros, vendedores,
+  bolsas, entrenadores, zonas, razas y profesiones 1-300), mapa de la
+  mazmorra, opcionales cerca con estilo de ruta, Cerca de ti, ÉLITE y
+  GRUPO en los objetivos y mejor pieza a tu nivel. Sin comprobar en Forever.
+  7.6.1: repaso de la interfaz para que nada sobresalga del marco.
+  7.6.2: Cuenta ya no pierde los datos al salir; profesiones de los
+  otros personajes en la Biblioteca.
+  7.6.4: títulos de la Guía en su sitio y retrato sin PNJ equivocado.
+  7.6.5: mapas de 18 mazmorras incluidos en el addon (carpeta Mapas).
+  7.6.6: jefes colocados en los mapas, 6 mapas de mazmorras nuevas y
+  buffs en pantalla más fiables.
+  7.7: misiones repasadas con QuestieDB (Forever); 1.306 opcionales nuevas
+  y datos de la biblioteca y mazmorras comprobados.
+  7.8: todo rellenado: botín, Pesca, mascotas y juguetes, reputación y
+  razas; ya no queda ninguna «Próxima actualización».
+  7.9: misiones de Hyjal, Clarofluvial y Shen'dralas; jefes en español;
+  flecha en todos los pasos; precios de monturas y armas.
+  7.9.1: arreglada la pestaña Personaje > Equipo.
+  7.9.2: barra para bajar en Guía y Equipo si la ventana es pequeña;
+  buffs en pantalla y ficha de Colección arreglados.
+  7.9.3: el ahorro para el nivel 40 sale desde el nivel 1.
+  7.9.4: sin códigos raros en el tooltip de los objetos.
+  7.9.5: sin códigos de estadísticas en Equipo.
+  7.9.6: arreglados los iconos de buffs que te faltan.
+  7.9.7: arreglados Llevarme, Añadir y No de las opcionales.
+  8.1: primera ruta de la Horda, guerrero orco o trol 1-60.
+  8.2: cazador, pícaro, chamán, mago y brujo orco o trol, y sacerdote trol.
+  8.3: guerrero, cazador, chamán y druida tauren.
+  8.4: guerrero, pícaro, mago, sacerdote y brujo no-muerto.
+  8.5: paladín no-muerto; mazmorras, reputación, posadas, vuelos,
+  colección, opcionales y biblioteca con los datos de la Horda.
+  8.6: guerrero, cazador, pícaro, chamán y druida Skyborne de la Horda.
+  8.7: Skyborne de la Alianza; nombres oficiales; tarjeta de mazmorra;
+  profesiones de la Horda en la Biblioteca.
+  8.8: mejoras gráficas: tema Clase, barra por pasos, objetivos con
+  barra, anillo y estilos de flecha, ruta en el mapa, marco clásico,
+  tarjeta de sección, fuente del paso y ventana que se atenúa.
+  8.9: retrato, barra de XP y mapa de la zona en la cabecera, avisos en
+  las pestañas, ayudas con estilo, hitos de nivel, flecha que crece,
+  aviso de cueva o altura y confeti al subir de nivel.
+  8.9.1: temas Hielo, Fuego, Sombra y Naturaleza; recompensas en el
+  paso; +XP y aviso de objetivo en pantalla; brillos, fundido de
+  pestañas, separadores y modo compacto con el estilo nuevo.
+  7.9.8: buffs también en combate; marco de la flecha completo.
+  Guía:        (9.6) zona y niveles (< > cambian de sección) y barra con los
+               pasos de la ruta que ya tienes hechos. Debajo, cada misión del
+               paso en una tarjeta con tres pasos: Coger (a quién y dónde),
+               Hacer (dónde y lo que llevas de cada objetivo) y Entregar (a
+               quién y dónde). El paso al que va la flecha sale en morado y los
+               hechos en gris; pulsa uno y la flecha va allí. Lo que no es una
+               misión (entrenar, volar, hogar) es una tarjeta con un paso «Ir».
+               El texto largo del paso sale al pasar el ratón por la tarjeta.
+               «Otras misiones cerca» despliega las opcionales cercanas. Abajo,
+               la línea «Luego» y los botones Atrás, Mi nivel y Saltar paso.
+               En el tutorial eliges «Automático» (la guía avanza y pone los
+               talentos sola) o «Lo hago yo» (tú avanzas y los pones); viene
+               «Lo hago yo» y se cambia en Ajustes › Automatismos.
+               Con «Guía clara», Hechizos, Talentos, Exploración y Mazmorras
+               también enseñan arriba lo que toca ahora (Para aprender ya,
+               Ahora, Dónde estás, Para tu nivel ahora) y pliegan lo demás en
+               un desplegable.
+               Con «Guía clara» quitado (Ajustes › Avanzado › Paso) vuelve la
+               Guía de antes:
+               el paso actual con su estado (En curso,
+               Hecho o Sin misiones) y la lista de destinos del paso con su
+               icono: ! recoger, estrella objetivo, ? entregar y una marca
+               de visto los hechos. A la derecha de cada destino ves cómo vas
+               en su misión (por ejemplo 3/4, o "lista" si ya puedes
+               entregarla); al pasar el ratón salen los objetivos. Los
+               destinos van en grupos (Siguiente, Cerca de ti a menos de
+               200 m y Completado); pulsa uno para Seguir (la flecha va
+               ahí), Posponer o Ignorar (/ga ignorados lo deshace).
+               Shift+clic en uno con misión la enlaza en el chat (7.2).
+               Seguir algo de otro paso es un desvío: barra azul con
+               Volver a mi paso. Si estás en otra zona que la de tu paso,
+               un aviso te ofrece retomar en el paso pendiente más cercano. Debajo, consejos de
+               hechizos, equipo y profesión de la zona. En Hechizos sale
+               primero lo que puedes aprender ya en el instructor, por orden
+               de prioridad y con lo que cuesta, y el nivel del siguiente
+               entrenamiento.
+  Talentos:    puntos que llevas en cada rama y qué talento poner en cada
+               nivel, con su icono y los puntos encima (el de tu nivel en
+               verde, los pasados en gris). El botón "Poner talentos" gasta
+               los puntos libres siguiendo el plan.
+  Profesiones: las de tu ruta paso a paso (mago, sacerdote y brujo:
+               Sastrería, Encantamiento y Primeros auxilios; chamán,
+               guerrero, paladín y cazador: Minería, Desuello y Primeros
+               auxilios; pícaro: esas tres, Venenos y Forzar
+               cerraduras), con el icono de lo que fabricas o recoges,
+               una barra con tu nivel y el tope de tu rango, y el
+               paso que te toca resaltado ("< estás aquí"). En las de
+               fabricar, cada paso dice los materiales que llevas en bolsas
+               y banco y los que hacen falta ("Tienes: 20/15 Descarga de
+               paño de lana"), contando un punto de profesión por objeto
+               fabricado. Con cinco profesiones, los botones llevan un
+               nombre corto y quitan el icono para que quepan.
+  Hechizos:    todos los hechizos de tu clase (ver más abajo).
+  Los iconos son los del propio juego; si alguno no existiera en tu cliente
+  saldría un interrogante. Abajo a la derecha están la versión y el autor.
+
+Tamaño
+  Arrastra la esquina de abajo a la derecha para hacer la ventana más grande
+  o más pequeña (de 360x460 a 900x1100). Las listas muestran más o menos
+  filas según el alto. El tamaño se guarda por personaje y /ga reset
+  lo devuelve al inicial.
+
+Avance automático
+  El addon mira en el juego qué misiones de la guía tienes aceptadas, con los
+  objetivos listos o ya entregadas:
+  - Si todas las misiones del paso están hechas, pasa solo al siguiente paso.
+  - Dentro de un paso, la flecha salta al primer destino que te falta
+    (recoger, objetivo o entregar) y los destinos hechos salen en gris con
+    una marca de visto.
+  - Los pasos sin misiones se marcan solos cuando se cumple lo que piden:
+    aprender las profesiones, aprender el hechizo del paso de instructor,
+    llegar a la zona, conocer la ruta de vuelo (el addon la ve al abrir el
+    mapa de vuelo) o llegar al nivel 60. También se saltan cuando ya has
+    hecho las misiones del paso que viene después.
+  - Al entrar con un personaje que ya ha avanzado, la guía salta los pasos
+    hechos. "Mi nivel" va a la sección de tu nivel y hace lo mismo.
+  - Si vuelves a mano a un paso ya hecho, la guía no te mueve de ahí hasta que
+    cambies de paso.
+  Se quita y se pone en Ajustes.
+
+Flecha
+  Apunta al PNJ o a la zona del objetivo del paso y gira según hacia dónde
+  miras. Se puede arrastrar. Si el destino está en otra zona del mismo
+  continente sigue apuntando y te dice la zona; si está en otro continente
+  te dice a cuál ir. En cuevas y mazmorras el juego no da posición y la
+  flecha se oculta. Al llegar a un PNJ del paso que no es de misión
+  (instructor, maestro de vuelo, vendedor), la flecha pasa sola al siguiente
+  destino del paso.
+
+Misiones automáticas
+  Al hablar con un PNJ, el addon acepta las misiones de la guía y entrega las
+  que ya tienes listas. Solo toca misiones que están en la ruta: las demás
+  las aceptas tú. Si mantienes pulsada la tecla Mayús al hablar con el PNJ,
+  no hace nada. Se quita en las opciones.
+
+Recompensa
+  Cuando una misión te deja elegir recompensa, el addon marca una y te la
+  dice en el chat: la que más mejora tu equipo según tu ruta, comparado con
+  lo que llevas puesto (mago: Intelecto, Espíritu, Aguante y poder con
+  hechizos; chamán: Fuerza, Agilidad, Aguante, Intelecto, poder de ataque y
+  el daño del arma de dos manos, con malla desde el 40; guerrero: Fuerza,
+  Agilidad, Aguante, crítico, golpe y el daño del arma de dos manos, con
+  placas desde el 40; paladín: Fuerza, Aguante, crítico, golpe, algo de
+  Intelecto y de poder con hechizos y el daño del arma de dos manos, con
+  placas desde el 40; sacerdote: Espíritu, Intelecto, Aguante, poder con
+  hechizos y el daño de la varita; cazador: Agilidad, Aguante, Intelecto,
+  poder de ataque, crítico, golpe y sobre todo el daño del arma a distancia,
+  con malla desde el 40; pícaro: Agilidad, golpe, crítico, Fuerza, Aguante,
+  poder de ataque y el daño de sus dos armas; brujo: Aguante, Intelecto,
+  Espíritu, poder con hechizos, golpe y crítico con hechizos y el daño de la
+  varita) y, si ninguna lo mejora, la que más vale en el vendedor. El
+  chamán, el guerrero, el paladín y el cazador llevan arma de dos manos, así
+  que no te recomienda escudos ni objetos de la mano izquierda, y al paladín
+  tampoco dagas, bastones ni armas a distancia, que no puede usar. Al mago,
+  al sacerdote y al brujo solo les recomienda tela; al sacerdote, además,
+  solo mazas de una mano, bastones, dagas y varitas, y al brujo, espadas de
+  una mano, bastones, dagas y varitas. Al cazador enano, de armas, solo
+  hachas y armas de fuego, las que ya sabe usar (las hachas de dos manos se
+  aprenden en Forjaz); al humano y al elfo de la noche, arcos, dagas y
+  bastones. El pícaro lleva un arma en cada mano: un arma de una
+  mano se compara con la peor de las dos que llevas, y no te recomienda
+  armas de dos manos, escudos ni objetos de la mano izquierda que no son
+  armas. Al pícaro, cuero y tela; de armas, dagas, espadas, mazas, hachas de
+  una mano y armas de puño, y arcos, armas de fuego, ballestas y
+  arrojadizas, cuyo daño pesa poco.
+  La elección la haces tú.
+
+Instructor
+  - La ruta tiene pasos para ir al instructor de clase en los niveles que
+    toca, con su nombre y su sitio. El paso se marca solo cuando aprendes el
+    hechizo importante de ese nivel.
+  - Al subir de nivel, el chat dice qué hechizos nuevos tienes en el
+    instructor, lo importante primero.
+  - Al hablar con el instructor sale un panel al lado de su ventana con lo
+    que puedes aprender: "Compra" (numerado por prioridad: el 1 primero),
+    "Opcional" o "Sáltalo", con una nota de por qué, y lo que cuesta lo
+    recomendado.
+  - La guía aprende sola lo marcado con "Compra", en ese orden. Si no te
+    llega el dinero para uno, se para ahí para no gastarlo en algo menos
+    importante. Si mantienes Mayús al hablar con el instructor no compra
+    nada, y el botón "Aprender lo recomendado" del panel lo hace a mano.
+    Se quita en las opciones.
+  - Algunos consejos valen hasta un nivel: el chamán compra los rangos de
+    Arma Muerdepiedras hasta el 30 y después se los salta, porque la cambia
+    por Arma Viento Furioso.
+  - El chamán enano no tiene instructor en Kalimdor: la ruta te dice cuándo
+    volver a Forjaz (o al Pico Nidal) con la piedra de hogar o con Regreso
+    astral.
+  - El guerrero sí: el Capitán Sempremimbre, en Theramore. Algunos hechizos
+    del guerrero piden una actitud que se aprende con una misión de clase:
+    Revancha, Bloquear con escudo, Desarmar y Muro de escudo piden la
+    Actitud defensiva (al 10: Vejrek si eres enano o gnomo, Bartleby si
+    eres humano), e Ira rabiosa, Torbellino, Zurrar y Temeridad, la Actitud
+    rabiosa (La Reyerta, al 30). Hasta que la tengas, el aviso al subir de
+    nivel no te los pide.
+  - El paladín también tiene instructor en Theramore (el hermano Karman),
+    pero no en el Pico Nidal: al 46 la ruta te manda a Forjaz. Los rangos de
+    Sello de orden solo se compran cuando tienes el talento (la guía lo
+    coge al 32). Redención llega con la misión de clase del 12 (El Libro de
+    la Divinidad; el humano la empieza al 18 con Brandur, en Forjaz, la
+    sigue en Ventormenta y en Elwynn y la acaba al 22) y el caballo de
+    guerra con la del 40 (Libro de la nobleza, en la Catedral de
+    Ventormenta).
+  - El sacerdote solo tiene instructores en Kalimdor en Darnassus: la ruta
+    te lleva a entrenar a Forjaz o a Ventormenta. Los rangos de Tortura
+    mental solo se compran cuando tienes el talento (la guía lo coge al
+    20), y los de los hechizos de raza (Oración desesperada y Castigo del
+    enano, Plan de contingencia del gnomo) cuando has hecho su misión de
+    raza. A la otra raza no le salen ni en el aviso, ni en el instructor,
+    ni en la pestaña Hechizos.
+  - El cazador entrena con su instructor de cazador y, al lado, con el
+    instructor de mascotas, que vende lo que tu mascota aprende contigo
+    (Gran aguante, Armadura natural, Gruñido y las resistencias). En las
+    zonas de Kalimdor de la ruta no hay instructor de cazador hasta
+    Frondavil: la ruta te lleva a entrenar a Forjaz o a Ventormenta (al
+    elfo de la noche, desde la Costa Oscura y al 40, a Darnassus), y al 48
+    al Pico Nidal. Aliviar mascota solo se compra cuando tienes
+    Domesticar bestia (las misiones de domar del 10).
+  - En el instructor de mascotas la guía hace lo mismo que en el de clase:
+    el panel, el aviso al subir de nivel ("Gran aguante (rango 2, en el
+    instructor de mascotas)") y la compra de lo recomendado. Eso no va a
+    tu libro de hechizos, así que la guía apunta lo que aprendes: al
+    aprenderlo y cada vez que abres Adiestramiento de bestias. Si lo
+    aprendiste antes de instalar la versión 4.4, abre Adiestramiento de
+    bestias una vez. En esa ventana la guía no compra ni enseña nada a tu
+    mascota: solo mira lo que sabes.
+  - El pícaro tampoco tiene instructor en Kalimdor fuera de Darnassus: la
+    ruta te lleva a entrenar a Forjaz o a Ventormenta. Venenos y el Veneno
+    instantáneo llegan con su misión de clase (La torre de Klaven, al
+    20-24), y los demás venenos piden un nivel de Venenos además del nivel
+    de personaje: el aviso al subir de nivel lo dice ("Veneno instantáneo
+    (rango 2, con Venenos 120)") y la guía no te los pide antes de que
+    llegues. Los venenos que sabes no salen en el libro de hechizos, pero
+    la guía los reconoce igual. Puñalada solo se compra hasta el 11,
+    mientras llevas la daga del principio.
+  - El brujo no tiene instructor en Kalimdor: la ruta te lleva a entrenar
+    a Forjaz o a Ventormenta. En Forever la Perdición de agonía y la del
+    Apocalipsis son perdiciones, no maldiciones: llevas una perdición y una
+    maldición tuyas en cada enemigo. Por eso la Maldición de debilidad solo
+    se compra hasta el 19: desde el 20 la guía te pide la Maldición de los
+    elementos. Tus demonios y el malignoecus se aprenden con misiones, no
+    en el instructor (la pestaña Hechizos dice con cuál), y los rangos de
+    Succionar vida se compran en cuanto tienes el talento.
+
+Instructor de profesión
+  Al hablar con el instructor de una profesión que ya tienes, la guía
+  aprende sola, en este orden:
+  - El rango nuevo (oficial, experto, artesano) en cuanto lo puedes
+    aprender: sin él no pasas del tope de tu rango.
+  - Las recetas que usan los pasos de la pestaña Profesiones que aún te
+    quedan, la del paso más cercano primero, y las de los materiales que
+    piden esos pasos (por ejemplo, la madeja de paño de lana para el
+    manteo de lana).
+  No aprende recetas de pasos que ya has pasado ni las que la guía no usa.
+  Si no te llega el dinero para todo, aprende lo que puedas pagar, en
+  orden y con el rango siempre primero. Sale un panel junto al
+  instructor con lo que hace falta, para qué sirve y lo que cuesta, y el
+  botón "Aprender lo de la guía" para hacerlo a mano. Con Mayús al hablar
+  con el instructor no aprende nada. El rango de aprendiz (empezar una
+  profesión) y las recetas de vendedores o que caen de enemigos son cosa
+  tuya: la pestaña Profesiones dice dónde están.
+  Se quita en las opciones.
+
+Hechizos
+  La pestaña Hechizos tiene todos los hechizos de tu clase, del nivel 1 al 60:
+  - El nivel de cada rango y lo que cuesta en el instructor, en colores:
+    verde lo que ya tienes, amarillo lo que puedes aprender ya, gris lo que
+    viene más adelante y rojo los rangos de un talento que no tienes o de
+    un hechizo que pide algo que aún no tienes (la lista dice qué es, por
+    ejemplo "Necesita Actitud rabiosa", y con qué misión se aprende). Los
+    venenos del pícaro dicen el nivel de Venenos que piden y salen en rojo
+    hasta que llegas; arriba, "Sube Venenos para aprender" dice cuáles
+    esperan solo a eso y cuánto tienes.
+  - Lo que hace: pasa el ratón por el icono y sale la ventana del hechizo
+    del juego, con su descripción.
+  - De dónde sale si no lo vende el instructor: un talento (y a qué nivel lo
+    coge la guía), una misión, si lo tienes desde el principio o, para el
+    cazador, que se compra en el instructor de mascotas.
+  - El consejo de la guía: Compra, Opcional o Sáltalo.
+  Arriba se filtra por especialización (mago: Todas, General, Arcano, Fuego
+  y Escarcha; chamán: Todas, General, Elemental, Mejora y Restauración;
+  guerrero: Todas, General, Armas, Furia y Protección; paladín: Todas,
+  General, Sagrado, Protección y Reprensión; sacerdote: Todas, General,
+  Disciplina, Sagrado y Sombra; cazador: Todas, General, Bestias, Puntería
+  y Supervivencia; pícaro: Todas, General, Asesinato, Combate y Sutileza;
+  brujo: Todas, General, Aflicción, Demonología y Destrucción) y se ve lo
+  que cuesta lo que puedes aprender ya y lo que te falta hasta el 60, todo
+  junto y solo lo recomendado. "Solo lo disponible" deja solo lo que puedes
+  aprender ahora.
+
+Talentos automáticos
+  Al subir de nivel, la guía gasta el punto nuevo en el talento que toca
+  según el plan de la pestaña Talentos, en el mismo orden. Nunca quita
+  puntos: si repartiste otros, sigue con lo que falte del plan.
+  - En combate espera a que salgas.
+  - Si el juego no aplica los talentos (por ejemplo, porque te mueves), lo
+    intenta otra vez; si sigue sin poder, te lo dice en el chat.
+  - Busca cada talento por su nombre en español o en inglés y, si no lo
+    encuentra, por su icono. Si un talento del plan no aparece en tu árbol,
+    se para y te avisa para que lo pongas a mano.
+  - Si tienes cambios sin aplicar en la ventana de talentos del juego, no
+    toca nada.
+  Se quita en las opciones. El botón "Poner
+  talentos" lo hace cuando quieras.
+
+Mapa
+  - El addon pone el punto de ruta del propio juego en el destino de la
+    flecha: lo ves en el mapa del mundo, en el minimapa y en pantalla con la
+    distancia. Si pones tú otro punto, lo respeta hasta que cambie el destino.
+  - En el mapa del mundo salen los destinos del paso con su icono y su
+    número. Los que están en el mismo sitio van juntos en un icono. Al pulsar
+    uno, la flecha apunta ahí (otro clic pasa al siguiente de ese sitio).
+
+Modo compacto
+  Una ventana pequeña con el paso actual y el destino de la flecha, con < >
+  para cambiar de paso y "Abrir" para volver a la ventana grande. Se abre con
+  el botón de la nota. En modo compacto,
+  /ga muestra u oculta la ventana pequeña.
+
+Opciones
+  Botón de la rueda dentada o clic derecho en el botón
+  del minimapa o, en el menú del juego, Opciones > AddOns > Guía del Aventurero:
+  - Tamaño de la ventana, opacidad del fondo y tamaño de la flecha.
+  - Bloquear ventanas y flecha para que no se muevan al arrastrarlas.
+  - Activar o quitar cada función: flecha, avance automático, misiones
+    automáticas, recompensa, ayuda en los instructores, aprender solo en el
+    instructor de clase, aprender solas las recetas de profesión, talentos
+    automáticos, punto de ruta, destinos en el mapa, botón del minimapa y
+    modo compacto.
+  - Si la ventana es pequeña, las opciones bajan con la rueda del ratón.
+  - Botón "Novedades" con lo nuevo de cada versión.
+
+Botón del minimapa
+  Clic: mostrar u ocultar la guía. Clic derecho: opciones. Arrástralo para
+  moverlo alrededor del minimapa. La guía también sale en el menú de addons
+  del minimapa.
+
+Novedades
+  En NOVEDADES.txt tienes lo nuevo de cada versión, y en el juego con
+  el botón Novedades de las opciones. Cuando el addon
+  se actualiza, te avisa en el chat al entrar.
+
+El progreso y las opciones se guardan por personaje.
+
+Datos
+  Misiones, PNJ, enemigos y coordenadas comprobados con la base de datos de
+  WoW Forever (noviembre de 2026). Los talentos usan los árboles nuevos de
+  Forever, y los niveles y precios del instructor son los de Forever. Las
+  rutas usan las misiones clásicas y algunas nuevas de Forever: las de tótem
+  del chamán enano, "Asegurar la montaña" en Kharanos, las de raza del
+  sacerdote gnomo, la primera de Ravenholdt del pícaro y las del bosque de
+  Elwynn de las rutas humanas (por ejemplo "Roedores bribones" o "Río
+  abajo"). Las misiones y PNJ nuevos de Forever no tienen nombre en español
+  en los datos: la guía les da uno (por ejemplo "La llamada de la tierra",
+  "Destello desconcertante", "Sabotaje a la Hermandad" o la suma sacerdotisa
+  Mims), así que en el juego pueden llamarse algo distinto.
+  Lo mismo pasa con los talentos nuevos de Forever (por ejemplo Emoción de
+  sangre o Maestro de armas del guerrero, Árbitro sagrado y Campeón de la
+  Luz del paladín, Inspiración oscura y Disciplinas gemelas del
+  sacerdote, Golpes eficientes y Destello de acero del pícaro, o Energías
+  demoníacas, Drenajes mejorados, Pandemia y Malevolencia del brujo): el
+  plan lleva entre paréntesis el nombre en inglés y, si no coincide
+  ninguno, el addon los busca por su icono. Los del cazador ya usan los
+  nombres en español que publicó Blizzard (por ejemplo Aspectos letales o
+  Afinar la puntería).
+
+Rutas
+  Rutas incluidas:
+    gnomo_mago             Gnomo mago (Rutas\GnomoMago.lua)
+    enano_chaman           Enano chamán (Rutas\EnanoChaman.lua)
+    enano_gnomo_guerrero   Enano o gnomo guerrero (Rutas\EnanoGnomoGuerrero.lua)
+    enano_paladin          Enano paladín (Rutas\EnanoPaladin.lua)
+    enano_gnomo_sacerdote  Enano o gnomo sacerdote (Rutas\EnanoGnomoSacerdote.lua)
+    enano_cazador          Enano cazador (Rutas\EnanoCazador.lua)
+    enano_gnomo_picaro     Enano o gnomo pícaro (Rutas\EnanoGnomoPicaro.lua)
+    gnomo_brujo            Gnomo brujo (Rutas\GnomoBrujo.lua)
+    humano_guerrero        Humano guerrero (Rutas\HumanoGuerrero.lua)
+    humano_paladin         Humano paladín (Rutas\HumanoPaladin.lua)
+    humano_picaro          Humano pícaro (Rutas\HumanoPicaro.lua)
+    humano_brujo           Humano brujo (Rutas\HumanoBrujo.lua)
+    humano_mago            Humano mago (Rutas\HumanoMago.lua)
+    humano_sacerdote       Humano sacerdote (Rutas\HumanoSacerdote.lua)
+    humano_cazador         Humano cazador (Rutas\HumanoCazador.lua)
+    elfo_cazador           Elfo de la noche cazador (Rutas\ElfoCazador.lua)
+    elfo_druida            Elfo de la noche druida (Rutas\ElfoDruida.lua)
+    elfo_guerrero          Elfo de la noche guerrero (Rutas\ElfoGuerrero.lua)
+    elfo_picaro            Elfo de la noche pícaro (Rutas\ElfoPicaro.lua)
+    elfo_sacerdote         Elfo de la noche sacerdote (Rutas\ElfoSacerdote.lua)
+  El addon elige solo la ruta que encaja con la clase y raza del personaje;
+  si no hay ninguna de tu raza, usa la de tu clase. El progreso se guarda
+  por personaje.
+  /ga rutas                 lista las rutas instaladas
+  /ga ruta <id>             fuerza una ruta (después escribe /reload); por
+                            ejemplo /ga ruta enano_chaman
+  Para añadir otra clase o raza: copia una ruta de la carpeta Rutas con otro
+  nombre, cambia id, nombre, clase, razas y el contenido, y añade su línea
+  en GuiaAventurero.toc, antes de GuiaAventurero.lua.
+  Desde la 5.8, cada ruta deja en la cabecera (local R = { ... }) solo id,
+  nombre, clase, razas e instructor, y todo lo demás (R.secciones y el
+  resto) va dentro de R.cargar = function(R) ... end. La guía solo llama a
+  R.cargar de la ruta elegida y suelta las demás. Una ruta escrita a la
+  antigua, con todo fuera de R.cargar, también funciona.
+  Desde la 5.9, un paso de profesión puede llevar iconoObjeto = <id del
+  objeto>: si el juego da el icono de ese objeto, sale ese en vez del de
+  la profesión.
+  Una ruta puede servir para varias razas (razas = { "Dwarf", "Gnome" }).
+  Un destino con raza = "Dwarf" (el token de UnitRace en inglés) solo sale
+  a esa raza: al cargar la ruta se quitan los de las otras razas. Lo mismo
+  con los hechizos de R.entrenamiento y R.hechizosExtra que llevan raza
+  (los de raza del sacerdote). En R.entrenamiento, ant es el rango anterior
+  del mismo hechizo (0 si es el primero) y req lo que pide el instructor:
+  el rango anterior, el talento o una actitud. Sin ant, el rango anterior
+  es el requisito que también está en la lista; ant = 0 separa un hechizo
+  que pide otro distinto (Rezo de espíritu pide Espíritu divino, y las
+  piedras de salud, de alma y de hechizo del brujo piden Drenar alma).
+  R.equivalentes dice qué hechizos cambian de número en el juego (el Sello
+  de rectitud del paladín pasa a ser otro al aprender Sentencia): si
+  conoces cualquiera de la lista, la guía da el hechizo por conocido.
+  R.donde dice dónde se compran los hechizos que no vende tu instructor de
+  clase (los del instructor de mascotas del cazador), con todos sus rangos:
+  la guía lo dice en el aviso y en la pestaña Hechizos, y apunta los que
+  aprendes, porque no van al libro de hechizos.
+  En R.entrenamiento, hab = { habilidad, nivel } es el nivel de una
+  habilidad que pide el hechizo (los venenos del pícaro piden Venenos, la
+  habilidad 40; 1 = basta con tenerla), y R.habilidades da el nombre de
+  cada habilidad tal como sale en el juego.
+  En R.equipo.pesos, DPS es lo que pesa el daño del arma cuerpo a cuerpo,
+  VARITA el de la varita y DISTANCIA el de los arcos, las armas de fuego,
+  las ballestas y las arrojadizas; sin VARITA o DISTANCIA, ese daño cuenta
+  como DPS. R.equipo.dosManos = true es una ruta con arma de dos manos y
+  R.equipo.dobleArma = true, una con un arma en cada mano.
+  Una profesión de R.profesiones puede llevar corto, el nombre de su botón
+  cuando el entero no cabe (Cerraduras por Forzar cerraduras).
+
+
+MEJORAS DE USABILIDAD 9.7 (en desarrollo, no verificadas en cliente)
+  - Sin atajos de teclado: eliminado Bindings.xml y etiquetas asociadas.
+  - Tres perfiles opcionales por personaje: /ga perfil principiante, normal o veterano.
+    El perfil veterano habilita automatismos solo por solicitud expresa y nunca
+    activa la venta de objetos grises por defecto.
+  - Botón «¿Atascado? Comprobar paso» en Guía clara, también /ga comprobar.
+    Presenta las misiones de ese paso y su estado sin alterar el diario.
+  - /ga compatibilidad detecta Questie cargado y avisa sobre posibles marcas
+    duplicadas. No cambia ajustes de Questie. /ga questie on|off controla
+    la convivencia: si está activa y Questie está cargado o su estado es
+    desconocido, se suspenden las marcas propias y automatismos de misión.
+  - Traducciones nuevas en inglés.
+  - Referencia histórica: pruebas simuladas de rutas y cadenas (los scripts
+    históricos no se incluyen en este paquete). No equivalen a pruebas en Forever.
+
+PENDIENTE
+  - Suministros para El Cruce, Sopa de fangorroca con tropezones y 10 misiones
+    de clase: Questie pide una misión antes y Wowhead dice que no; mirarlo en el juego.
+  - Verificar en cliente las recomendaciones de equipo, compras de materiales,
+    desplazamientos y progreso real de leveo. La fase 12 no modifica rutas ni PX.
+  - Validar fuentes de QuestieDB Forever, Wowhead y cambios exclusivos del servidor.
+
+
+9.7 - Herramientas adicionales (en pruebas): /ga materiales (recuento estimado de materiales), /ga preparar [mazmorra] (lista de preparación), /ga buscar [texto] (buscador rápido), /ga rendimiento (memoria Lua aproximada). No se añaden atajos de teclado. Estas herramientas no sustituyen la prueba de datos y misiones en WoW Forever.
+
+
+VERSIÓN 9.7.3 (prueba): /ga auditoriaruta consulta la coherencia básica de la ruta activa.
+Llegar al 60 es un cálculo con la experiencia de Questie Forever: falta comprobarlo en el juego.
+
+
+REVISIÓN 9.7.5 (herramientas de comprobación, sin atajos)
+  /ga viajes                Diagnóstico no destructivo de cambios de mapa
+  /ga revisarprofesiones    Cobertura 1-300 y datos de materiales por profesión
+  /ga marcaspropias ocultar Oculta las marcas del addon (útil con Questie)
+  /ga marcaspropias mostrar Recupera las marcas propias
+  /ga rendimiento           Memoria y CPU, solo si el cliente permite perfilarla
+Las auditorías no garantizan disponibilidad de misiones ni recetas ni botín.
+Consulta NOVEDADES.txt (informe histórico no incluido).
+
+VALIDACIÓN LOCAL DE LA FASE 12 / PHASE 12 LOCAL VALIDATION
+- Regresión local: 144 archivos Lua compilados con Lua 5.4 y 14 scripts de pruebas funcionales simuladas ejecutados sobre el paquete acumulado.
+- Local regression: 144 Lua files compiled with Lua 5.4 and 14 simulated functional test scripts run against the cumulative package.
+- Pendiente en WoW Forever: instalación limpia y actualización, recarga y persistencia, interfaz ES/EN, instancias y jefes reales, botín y equipo, profesiones, mapas y transportes, grupo, convivencia con Questie y medición de CPU/memoria.
+- Pending in WoW Forever: clean install and upgrade, reload and persistence, ES/EN UI, actual instances and bosses, loot and equipment, professions, maps and transport, group, Questie coexistence and CPU/memory measurement.
+- Las pruebas simuladas no certifican el funcionamiento real del cliente. / Simulated tests do not certify actual client behavior.

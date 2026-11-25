@@ -1,0 +1,3422 @@
+Versión 9.7.9 — Fase 12: auditoría y arreglos de la 9.7.7 (de prueba: falta probarla en el juego)
+  ES: Reconocimiento de instancias y jefes, requisitos de bandas, botín y equipo revisados. Inventario desconocido diferenciado de cero, reservas y compras de profesiones reforzadas. Navegación, minimapa, vuelos y transportes revisados. Buscador, perfiles, talentos, traducciones y convivencia con Questie reforzados. Actualizaciones selectivas y consultas redundantes reducidas.
+  EN: Reviewed instance and boss recognition, raid requirements, loot and gear. Unknown inventory distinguished from zero, improved profession reserves and shopping. Reviewed navigation, minimap, flights and transport. Improved search, profiles, talents, translations and Questie coexistence. Selective updates and fewer redundant queries.
+  ES: Pendiente validación en Forever, incluidos rendimiento real y datos exclusivos no confirmados. No publicar como estable todavía.
+  EN: Forever validation remains pending, including actual performance and unconfirmed exclusive data. Do not publish as stable yet.
+
+Versión 9.7.7.6 (de prueba: falta probarla en el juego)
+  Asistente del personaje, buscador, convivencia con Questie,
+  rendimiento, traducciones y estabilidad.
+
+  Estabilidad (fase 11)
+  - Migración, arranque, diagnósticos y consultas entre módulos reforzados.
+  - Compras diferidas y talentos protegidos frente a cambios de sesión.
+  - Recompensas de nivel superior marcadas como futuras.
+  - Regresión local completada; pendiente validación dentro de Forever.
+
+  Traducciones (fase 10)
+  - Formatos numéricos, interfaz, atributos y avisos revisados.
+  - Referencias de jefes y alias de recetas conservados al cambiar de idioma.
+  - Pendiente validar textos dinámicos y nombres exclusivos de Forever.
+
+  Rendimiento (fase 9)
+  - Menos refrescos y tablas temporales en mapas, exploración y cachés.
+  - Buscador y Grupo: creación diferida de controles.
+  - Índice de búsqueda optimizado y brillo suspendido en combate.
+  - Pendiente medir CPU, memoria y FPS en Forever.
+
+  Questie (fase 8)
+  - Detección del estado efectivo y protección de marcadores externos.
+  - Suspensión del seguimiento y automatismos de misión durante la convivencia.
+  - Restauración y sincronización al cargar Questie.
+  - Pendiente validar en Forever.
+
+  Buscador (fase 7)
+  - Búsqueda sin tildes, relevancia y filtros del catálogo por tipo.
+  - Acceso directo a bandas y jefes de mazmorra.
+  - Filas, paginación y controles adaptados al tamaño del buscador.
+  - Pendiente validar visualmente en Forever.
+
+  Asistente del personaje (fase 6)
+  - Hechizos, talentos y equipo: requisitos y recomendaciones revisados.
+  - Inventario: espacio general, mejoras de bolsas y protección de objetos de misión.
+  - Oro: reserva y previsión de entrenamiento.
+  - Antes de salir: pociones utilizables y recomendaciones de mazmorras.
+  - Pendiente validar en Forever.
+
+  Falta probar en el juego
+  - Hechizos, talentos, equipo inmediato y futuro, bolsas, reserva de
+    oro, pociones y mazmorras recomendadas.
+  - El buscador con tildes, filtros y tamaños; Questie cargado y sin
+    cargar; memoria, CPU y FPS; los textos en inglés; el arranque y
+    los cambios de personaje.
+
+Versión 9.7.7.5 (de prueba: falta probarla en el juego)
+  Viajes: vuelos, posada, piedra de hogar, transportes y Cerca de ti
+  más fiables.
+
+  Viajes
+  - Un punto de vuelo solo cuenta como descubierto cuando el juego lo
+    da como conocido; si dos maestros coinciden en el mismo sitio, no
+    se marca ninguno.
+  - La posada recomendada respeta la tuya si ya estás vinculado en una
+    de la zona; si no, la más cercana a los pasos que vienen.
+  - La piedra de hogar dice si no la llevas o si no se sabe su estado.
+  - Al ir a otro continente o a una zona con transporte directo, el
+    aviso dice qué barco, zepelín, tranvía o nave celeste coger, de
+    dónde sale y adónde llega, según tu facción.
+
+  Cerca de ti
+  - Solo vendedores, raros y bolsas de tu facción; no salen las bolsas
+    de misiones ya hechas.
+  - Añade el instructor de clase si tienes hechizos recomendados sin
+    aprender, y los objetivos de misión del diario en esta zona.
+  - Si hay varias cosas en el mismo sitio, delante sale el número entre
+    corchetes.
+
+  Falta probar en el juego
+  - Que los vuelos descubiertos y la posada recomendada son los de
+    verdad, que la piedra de hogar dice bien su estado y que el aviso
+    de transporte sale con el barco o zepelín correcto en cada facción.
+  - Que Cerca de ti enseña el instructor de clase y los objetivos de la
+    zona, sin repetidos.
+
+Versión 9.7.7.4 (de prueba: falta probarla en el juego)
+  Mapas de mazmorras: dos mapas nuevos, más jefes marcados y dónde está
+  cada uno.
+
+  Mapas de mazmorras
+  - 26 mazmorras con mapa y 61 plantas; nuevos los de Sima Ígnea y
+    Bancal del Creador.
+  - 196 de 264 jefes con marca en el mapa. Los demás dicen dónde están
+    (sala, sector o cómo se activan) al pasar el ratón, en la lista o en
+    el mapa. King Op, Bastión Faucenegra y Prisión de Alcaz quedan para
+    más adelante.
+
+  Falta probar en el juego
+  - Los mapas de Sima Ígnea y Bancal del Creador, las plantas, el
+    resaltado de jefes y que con Questie no desaparecen marcas.
+
+Versión 9.7.7.3 (de prueba: falta probarla en el juego)
+  Arreglos de la ventana compacta y de los personajes de Cuenta.
+
+  Ventana compacta
+  - Arreglado: la misión de la línea del objetivo salía también arriba,
+    en la lista de misiones del paso. Ahora sale una sola vez, abajo,
+    con su progreso.
+
+  Cuenta
+  - Arreglado: en Personajes no salía ningún personaje, ni el que
+    tienes conectado, si el juego no da el nombre del reino. Ahora se
+    guarda igual y, si el reino llega después, no sale repetido.
+  - Con la lista vacía ya no se monta la cabecera de columnas encima
+    del aviso.
+  - /ga informe dice también el reino, la clave del personaje y
+    cuántos hay guardados.
+
+  Falta probar en el juego
+  - Que en la ventana compacta ninguna misión sale dos veces.
+  - Que en Cuenta › Personajes sale el personaje conectado y, al
+    entrar con otro, los dos.
+
+Versión 9.7.7.2 (de prueba: falta probarla en el juego)
+  La guía reconoce la rama en la que tienes tus talentos y revisión de
+  las profesiones.
+
+  Talentos
+  - Las ramas de arriba de la pestaña Talentos enseñan los puntos que
+    tienes de verdad en cada una, no los del plan.
+  - Si tienes casi todos tus puntos en otra rama que la del plan (por
+    ejemplo Furia con el plan de Armas), la guía pasa sola a esa
+    especialización, te pide el siguiente talento de esa rama y lo dice
+    en el chat.
+  - Si después eliges otra a mano con el botón Especialización, la guía
+    la respeta.
+
+  Profesiones
+  - Encantamiento, Herrería, Ingeniería, Peletería y Cocina: rangos de
+    recetas, instructores, vendedores y planes alternativos revisados con
+    fuentes de Forever. Las cantidades siguen siendo estimaciones.
+  - Herboristería y Desuello: tramos más cortos según tu habilidad, con
+    qué recoger y dónde, e instructores por facción. Los circuitos
+    siguen siendo orientativos.
+  - Pesca: cañas, comida, campamentos, el concurso de Tuercespina y los
+    peces que te faltan para Cocina y Alquimia.
+
+  Falta probar en el juego
+  - Que las ramas de arriba enseñan los mismos puntos que la ventana de
+    talentos del juego y que la guía pasa a Furia con un guerrero que
+    tiene los puntos en Furia.
+  - Los planes de profesiones revisados y los consejos de
+    Herboristería, Desuello y Pesca.
+
+Versión 9.7.7.1 (de prueba: falta probarla en el juego)
+  Revisión de jefes y botín de las mazmorras, equipo según tu
+  especialización y planes de Sastrería revisados.
+
+  Mazmorras
+  - Sima Ígnea, Salón de los Feudales y Cavernas de los Lamentos: 17 PNJ
+    con ID y consejos; botín contrastado con tasas observadas.
+  - Minas de la Muerte, Colmillo Oscuro y Ventormenta: 24 encuentros y
+    93 asociaciones contrastadas; fuentes separadas para Sneed y Fenrus.
+  - Brazanegra, Excavación, Dalaran, Gnomeregan y Horado Rajacieno: 33
+    registros y 123 asociaciones; añadidos Lorgus Jett y recompensas que
+    faltaban.
+  - Monasterio Escarlata: 11 jefes, 43 asociaciones y accesos por ala.
+  - Scholomance y Stratholme: misiones comunes y de cada facción, con
+    sus prerrequisitos de referencia.
+  - En las fichas de nivel alto y en Bandas: «El contenido de nivel alto
+    aún sin confirmar se añadirá en próximas versiones».
+
+  Equipo
+  - Pesos según tu especialización (sanador, lanzador, tanque o físico),
+    orientativos: no son simulaciones de Forever.
+  - Un arma a dos manos se compara con las dos piezas que sustituye.
+  - Primero las mejoras que puedes ponerte ya; las de más nivel dicen el
+    nivel requerido.
+  - Aviso «Requisitos especiales sin confirmar» cuando la guía no puede
+    confirmar facción, clase o reputación; no se da como mejora.
+
+  Sastrería
+  - Tres planes nuevos con seda alternativa (Capucha de seda azur y Toga
+    de zahorí inferior), si tienes esas recetas aprendidas.
+  - Rangos de recetas, instructores por facción, vendedores de patrones
+    y requisitos contrastados. Las cantidades siguen siendo estimaciones.
+
+  Falta probar en el juego
+  - Lo que quedó de la 9.7.6: que el mapa del panel se ve bien y se
+    mueve con él, que el resaltado de los jefes se ve claro y que el
+    modo banda reconoce el nombre de cada banda.
+  - Que los iconos de la ventana compacta salen bien alineados con el
+    texto de cada misión y cambian a interrogante al completar los
+    objetivos.
+  - El buscador y la convivencia con Questie, en WoW Forever.
+  - El botín y los consejos nuevos de las mazmorras, el aviso de
+    requisitos especiales del equipo y los planes de Sastrería.
+9.7.7 — FASE 5 / PHASE 5 — candidato para pruebas
+ES: registro de vuelos, recomendaciones de maestros de vuelo y posadas, piedra de hogar, transportes por facción, actividades e instructores cercanos. Distancias orientativas, rutas intactas. Pendiente validación en Forever.
+EN: flight discovery, flight master and inn suggestions, hearthstone, faction transport, nearby activities and class trainers. Approximate distances, routes unchanged. In-game validation pending.
+
+9.7.7 — FASE 4 / PHASE 4 — candidato para pruebas
+ES: 26 mazmorras, 61 plantas, 196/264 encuentros con marcador. 67 tienen referencia de ubicación; King Op queda aplazado; posiciones sin confirmar en próximas versiones. Bastión Faucenegra y Prisión de Alcaz aplazadas. Pendiente validación en Forever.
+EN: 26 dungeons, 61 floors, 196/264 encounters with markers. 67 have location references; King Op is deferred; unverified locations for future releases. Blackmaw Hold and Alcaz Prison deferred. In-game validation pending.
+
+9.7.7 — Desuello revisión 4 / Skinning revision 4
+ES: ocho tramos sincronizados, zonas y criaturas contrastadas con WoW-Professions Forever; circuitos originales orientativos.
+EN: eight synchronized brackets, zone and creature recommendations checked against WoW-Professions Forever; existing circuits remain approximate.
+
+9.7.7 — Herboristería revisión 7 / Herbalism revision 7
+ES: consejos ajustados a habilidad, aviso duplicado retirado, 227 archivos Lua analizados, 600 casos habilidad/facción y 4 de instructores superados en entorno simulado. Coordenadas y nombres oficiales no certificados individualmente; sin prueba en cliente.
+EN: skill-aware tips, duplicate warning removed, 227 Lua files parsed, 600 skill/faction and 4 trainer cases passed in a simulated environment. Individual coordinates and official names not certified; no in-client test.
+
+9.7.7 — Herboristería revisión 5 / Herbalism revision 5
+ES: semillas, cultivo, origen de planos y restricciones de hibridación; nombres de categorías orientativos. Circuitos sin certificación de nodos; sin prueba en cliente.
+EN: seed growing, blueprint sources and hybridization restrictions. Circuits not certified against node locations; no in-client test.
+
+9.7.7 — Herboristería (revisión parcial) / Herbalism (partial review)
+ES: 19 tramos sincronizados entre biblioteca y circuitos, con requisitos mínimos contrastados; traducción inglesa. Circuitos existentes conservados; sin validación en cliente ni integración nueva con Alquimia.
+EN: 19 synchronized library and gathering brackets with checked minimum skills; English translations. Existing circuits retained; no client test or new Alchemy integration.
+
+9.7.7 — FASE 1, BLOQUE 4 / PHASE 1, BLOCK 4
+Monasterio Escarlata: 11 jefes, 43 asociaciones contrastadas, rangos y accesos por ala. / Scarlet Monastery: 11 bosses, 43 sourced associations, wing levels and access.
+Fase 1 abierta / Phase 1 open.
+
+9.7.7 — FASE 1, BLOQUE 3 / PHASE 1, BLOCK 3
+ES: Brazanegra, Excavación, Dalaran, Gnomeregan y Horado Rajacieno: 33 registros y 123 asociaciones de botín contrastadas. Lorgus Jett, botín omitido y acceso de Gnomeregan revisados. Horror de las Tierras Altas: objetivo exterior de misión, no jefe de instancia. Fase 1 abierta.
+EN: Blackfathom Deeps, Excavation Site, Dalaran, Gnomeregan and Razorfen Kraul: 33 records and 123 sourced loot associations. Lorgus Jett, missing loot and Gnomeregan access reviewed. Highland Horror is an outdoor quest target, not an instance boss. Phase 1 remains open.
+
+9.7.7 — FASE 1, BLOQUE 2 / PHASE 1, BLOCK 2
+ES: Minas de la Muerte, Castillo de Colmillo Oscuro y Mazmorras de Ventormenta: 24 encuentros revisados y 93 asociaciones de botín con tasas observadas. Se separan las fuentes de Sneed y su trituradora y de Fenrus y sus abisarios. Se incluye el encuentro de las cuadras. Nivel recomendado de Ventormenta 24–30. Fase 1 abierta.
+EN: Deadmines, Shadowfang Keep and Stockade: 24 encounters reviewed and 93 loot associations with observed rates. Separate sources for Sneed and his shredder, Fenrus and his voidwalkers. Stable encounter added. Stockade suggested range 24–30. Phase 1 remains open.
+
+9.7.7 — ALCANCE DE FASE 1 / PHASE 1 SCOPE
+ES: El contenido de nivel alto aún sin confirmar se añadirá en próximas versiones. Aviso en las fichas existentes de mazmorras con rango hasta 60 y en las dos pestañas de Bandas. Se conservan los datos disponibles; los heredados de Classic no se certifican como Forever. La fase 1 sigue abierta para el contenido verificable.
+EN: Unconfirmed high-level content will be added in future versions. Notice in existing dungeon details for ranges reaching level 60 and both Raid tabs. Available data retained; inherited Classic data not certified as Forever. Phase 1 remains open for verifiable content.
+
+9.7.7 — FASE 1 EN CURSO / PHASE 1 IN PROGRESS
+ES: Revisión de 17 jefes de Sima Ígnea, Salón de los Feudales y Cavernas de los Lamentos. IDs, tasas observadas y consejos ES/EN. Se conserva la asociación no confirmada de Verdan (935), señalada como pendiente; las tasas no garantizan un drop. No se ha cerrado la fase 1 ni iniciado profesiones. Sin ventanas, atajos, cambios de rutas ni PX. Véase DOCUMENTACION-977-FASE1/INFORME.md.
+EN: Review of 17 bosses in Ragefire Chasm, Hall of Thanes and Wailing Caverns. IDs, observed rates and ES/EN tactics. Verdan item 935 retained as pending; rates do not guarantee drops. Phase 1 remains open; professions not started. No new windows, bindings, routes or XP changes. See DOCUMENTACION-977-FASE1/INFORME.md.
+
+9.7.6 — PRUEBAS DE INTERFAZ Y BUSCADOR / SEARCH UI TESTS
+ES: Paginación de resultados, pestañas en dos filas en ventanas estrechas, búsqueda sin tildes y por ID de misión/PNJ cuando el dato existe, invalidación del catálogo al cargar continentes, filtro de facción para misiones opcionales. Acceso a ficha de mazmorra aunque se estuviera en Bandas; selección de profesión aprendida y consulta informativa de misiones opcionales. No se certifica disponibilidad de misiones. Catálogo limitado a 100 coincidencias por búsqueda; incluye datos cargados. Pruebas con API simulada, pendientes geometría visual y comportamiento real en WoW Forever. Sin cambios de rutas, PX, mapas ni atajos. Véase DOCUMENTACION-PUBLICACION-P6/INFORME.md.
+EN: Paginated results, two tab rows for narrow windows, accent-insensitive and quest/NPC ID search where available, catalog invalidation on continent load, faction-filtered optional quests. Dungeon details open even from Raids; learned profession selection and optional quest reference. Quest availability is not certified. Catalog limited to 100 matches per search, using loaded data. Simulated API tests; actual layout and live Forever behavior pending. Routes, XP and maps unchanged; no key bindings. See DOCUMENTACION-PUBLICACION-P6/INFORME.md.
+
+9.7.6 — REVISIÓN DE DATOS Y USABILIDAD (24/11/2026) — PRUEBA
+ES: 16 fichas de Ciudad Sumergida y Ruinas de Lordaeron, 58 asociaciones de botín con tasas observadas; se añaden dos raros y se filtra el Capitán de Lordaeron por Horda. Primeros auxilios: cantidades revisadas según Wowhead Forever y recordatorio de Artesano antes de superar 225. Buscar integra Catálogo (jefes, objetos, recetas, materiales, profesiones, misiones disponibles en las tablas), con índice bajo demanda y pausa breve al escribir; nombres de objetos sujetos a caché del cliente. Contexto: avisos de rango, reparación y equipo. Questie: solo se libera una marca propia identificable; no se alteran sus opciones. Pendiente: contraste integral de todos los jefes, botines y 16 planes; rediseño completo, rendimiento medido y pruebas con Questie en Forever. Las 47 rutas permanecen intactas, sin recalcular PX ni añadir atajos. DOCUMENTACION-976-CIERRE/INFORME.md.
+EN: 16 Sunken City and Lordaeron Ruins boss entries, 58 loot associations with observed rates; two rare encounters added, Lordaeron Captain filtered for Horde. First Aid quantities revised against Wowhead Forever and Artisan reminder before exceeding 225. Search includes a shared Catalog with an on-demand index and typing debounce; item names depend on the client cache. Context adds profession rank, repair and gear suggestions. Questie: release only an identifiable own waypoint; no changes to Questie settings. Pending: full external validation of all bosses, loot and 16 plans; full UI redesign, measured performance and live Questie/Forever testing. All 47 routes unchanged; no XP recalculation or keyboard bindings. See DOCUMENTACION-976-CIERRE/INFORME.md.
+
+9.7.6 — REVISIÓN ADICIONAL DE PRUEBA (24/11/2026)
+ES: Ciudad de Dalaran: acceso por facción y nivel orientativo 28–35; 8 jefes con identificadores, consejos y porcentajes observados de botín principal. Nuevas consultas de compra conjunta, comparación de planes, recetas confirmadas, precios visibles de subasta (solo lectura si el cliente admite la API antigua), contexto y agrupación de visitas consecutivas. Convivencia opcional con Questie: se suspende también la creación del punto de ruta y el texto de distancia. Refresco del texto limitado a 5 consultas por segundo. Sin atajos ni cambios de experiencia o rutas. Los 59 dibujos originales NO se sustituyen: geometría, plantas faltantes, conexiones y posiciones exactas todavía no verificadas. Las profesiones y el botín restante tampoco están certificados. No se ha probado en el cliente Forever ni medido su rendimiento real. Véase DOCUMENTACION-REVISION-FINAL/INFORME.md.
+EN: City of Dalaran: faction access and suggested 28–35 range; 8 bosses with NPC IDs, tactics and observed main-loot rates. Combined shopping, plan comparison, confirmed recipes, visible auction prices (read-only legacy API when available), context and consecutive visit grouping. Optional Questie coexistence also suspends waypoint creation and distance text updates. Distance updates capped at five per second. No key bindings, XP or leveling-route changes. All 59 original drawings are unchanged: geometry, missing floors, connections and exact positions remain unverified. Professions and remaining loot are not certified. No in-client Forever testing or actual performance measurements. See DOCUMENTACION-REVISION-FINAL/INFORME.md.
+
+REVISIÓN CARTOGRÁFICA 9.7.6 / CARTOGRAPHY REVIEW
+ES: selector Cliente/Dibujo cuando hay texturas disponibles; los 59 dibujos se conservan intactos. Corregida la zona interactiva de Kalendris para que coincida con la calavera dibujada. Los mapas siguen siendo orientativos, no certificados. Atal'Hakkar no representa todas las plantas clásicas. Véase DOCUMENTACION-CARTOGRAFIA/INFORME.md.
+EN: Client/Artwork selector when map textures are available; all 59 drawings are unchanged. Fixed Kalendris clickable area to match the painted skull. Artwork is illustrative, not certified. Sunken Temple lacks Classic floors. See DOCUMENTACION-CARTOGRAFIA/INFORME.md.
+
+VERSIÓN 9.7.6 — PRUEBA / TEST BUILD
+
+ES: mapa en el modo mazmorra (jefes resaltados en mapa y lista), modo banda y un icono por misión en la ventana compacta; planes alternativos de profesiones, compra estimada y precios manuales; lista de herramientas /ga centro, buscador, consulta de jefes y viajes locales, convivencia opcional con Questie. Corregido botín y nivel recomendado de Excavación. Circuitos de torio: pequeño 245, rico 275.
+PENDIENTE: no se han reordenado las 47 rutas ni recalculado PX. No está certificado el 1–60, ni la disponibilidad de todas las recetas, ni el coste óptimo, ni todas las estrategias, accesos y porcentajes de botín de Forever. Las pruebas aisladas no sustituyen el cliente; no hay medición real de CPU/RAM. Sin atajos. Véase DOCUMENTACION-976/INFORME.md.
+
+EN: map in dungeon mode (bosses highlighted on map and list), raid mode and one icon per quest in the compact window; alternative profession plans, estimated shopping and manually entered prices; /ga centro tool list, search, boss and local travel queries, optional Questie coexistence. Corrected Excavation loot and recommended level; small thorium at 245, rich at 275.
+PENDING: the 47 routes and XP are unchanged. Leveling, all recipes, optimum cost, all boss tactics, access and loot rates are not certified. Isolated tests do not replace in-game tests; CPU/RAM not measured in client. No keyboard bindings. See DOCUMENTACION-976/INFORME.md.
+
+GUÍA DEL AVENTURERO: NOVEDADES DE CADA VERSIÓN
+Creado por JKRiveroF
+
+De la versión más nueva a la más antigua. En el juego también lo ves con
+/ga novedades o con el botón Novedades de las opciones.
+
+Versión 9.7.6 (de prueba: falta probarla en el juego)
+  Mapa en el modo mazmorra, modo banda, un icono por misión en la
+  ventana compacta y revisión de profesiones, botín, buscador y
+  convivencia opcional con Questie.
+
+  Modo mazmorra
+  - Al entrar en una mazmorra, su mapa sale en el panel, debajo de las
+    misiones, con los jefes. «Ampliar» lo pone más grande a la derecha
+    del panel y «Reducir» lo devuelve; la X lo cierra y el botón Mapa lo
+    vuelve a abrir.
+  - Mapa y lista de jefes van juntos: al pasar el ratón por un jefe en
+    uno, se resalta en el otro; con clic sale su botín y queda marcado
+    en los dos. Con el mapa pequeño y con el ampliado.
+  - También en las bandas: al entrar sale el panel con sus jefes y su
+    botín, y el mapa si el juego lo da.
+  - Se puede apagar en Opciones › General › Mapa en el modo mazmorra.
+  - Arreglado: con la guía en inglés no salían los dibujos de las
+    mazmorras.
+
+  Ventana compacta
+  - Cada misión de la ventana compacta lleva su icono, como la línea del
+    objetivo: estrella amarilla si te faltan objetivos e interrogante
+    amarillo si ya puedes entregarla. Así todas las líneas siguen el
+    mismo criterio.
+
+  Ventanas
+  - La guía no abre ventanas nuevas: /ga centro enseña sus
+    herramientas, cada una con su comando, en la ventana de informes
+    de siempre.
+  - La ventana del botín y la de exportar o importar ajustes se cierran
+    con Esc; la de exportar o importar también se mueve.
+
+  Herramientas
+  - Fuera unos cuarenta comandos que ya tenían su botón o su casilla,
+    o que repetían otro (por ejemplo /ga opciones, /ga compacto, /ga
+    marca, /ga costeprofesion o /ga viajes). Si escribes uno, la guía
+    te dice dónde está ahora; /ga ayuda enseña solo los que quedan.
+  - Nuevo /ga centro: lista de herramientas (búsqueda, personaje,
+    viajes y costes orientativos) con su comando.
+  - Excavación: corregidas las fuentes de botín y añadidos consejos de
+    combate.
+  - Questie: modo convivencia opcional; suspende las marcas propias del
+    mapa y la aceptación y entrega automáticas de esta guía mientras
+    Questie esté cargado.
+  - Las rutas no se han modificado ni recalculado. Pendiente validar en
+    el juego los costes, mapas, accesos, botín restante y rendimiento.
+
+  Mapas
+  - Arreglado: en diez mapas de mazmorra faltaba la parte de arriba
+    del dibujo (Minas de la Muerte 2, Gnomeregan 1, La Masacre, Ciudad
+    de Dalaran, Salón de los Feudales, Stratholme, Zul'Farrak y otros
+    tres). Los jefes y la entrada siguen en su sitio.
+  - Botón Cliente/Dibujo en el mapa: enseña el mapa del propio juego
+    cuando lo tiene y vuelve al dibujo de la guía. Magister Kalendris
+    ya se puede pulsar sobre su calavera.
+
+  Falta probar en el juego
+  - Que el mapa del panel se ve bien y se mueve con él, que el
+    resaltado de los jefes se ve claro y que el modo banda reconoce el
+    nombre de cada banda.
+  - Que los iconos salen bien alineados con el texto de cada misión y
+    cambian a interrogante al completar los objetivos.
+
+Versión 9.7.5 — revisión técnica de viajes, profesiones y Questie (prueba)
+  - Nuevo /ga viajes: cuenta cambios de mapa y regresos de la ruta activa para
+    localizar recorridos mejorables. No reordena cadenas ni misiones.
+  - Nuevo /ga revisarprofesiones: detecta huecos de habilidad y entradas sin
+    receta/materiales completos. La cobertura 1–300 no equivale a certificación.
+  - Si usas Questie, /ga marcaspropias ocultar oculta únicamente las marcas
+    propias de este addon; /ga marcaspropias mostrar las restaura. Sin atajos.
+  - /ga rendimiento intenta mostrar tiempo de CPU acumulado solo si el
+    perfilado de addons ya está habilitado en el cliente.
+  - Auditorías reproducibles incluidas en DOCUMENTACION-REVISION-975.
+  - NO CONFIRMADO: rutas 1–60, cantidades de materiales 1–300, requisitos
+    de recetas, viajes realmente ahorrables, botín y porcentajes de Forever,
+    compatibilidad Questie y rendimiento real en el juego.
+
+Versión 9.7.5 (de prueba: falta probarla en el juego)
+  Ventana compacta con las misiones del paso, recetas que comprar y que no,
+  pestañas que caben y muchos arreglos pequeños.
+
+  Profesiones
+  - En el instructor de profesión, el panel de recetas dice también qué
+    no hace falta comprar (lo que la guía no usa para subir) y qué
+    recetas usará más adelante y con cuánta habilidad.
+  - Si la guía no tiene plan para esa profesión con tu personaje, lo
+    dice en vez de poner que ya lo tienes todo.
+  - Instructor de clase: lo que la guía no usa sale como «Opcional», y
+    si no hay nada que comprar te dice a qué nivel volver y para qué. Lo
+    mismo en la pestaña Hechizos.
+
+  Buscador
+  - Las cinco pestañas del buscador (Todo, Misiones, PNJ, Mazmorras y
+    Ajustes) caben en el panel: «Ajustes» ya no sale cortada.
+  - Texto de ayuda de la caja más corto, para que no se corte.
+
+  Pestañas
+  - Las pestañas de Oro (Ahorro, Farmear y Profesiones), Bandas
+    («Equipo antes de banda»), Mazmorras y Vuelos miden lo que su texto
+    y, si no caben juntas, se reparten el ancho de la ventana.
+  - Las vistas de Cuenta (Hoy, Personajes y Buscar objeto) se colocan
+    bien nada más abrirla, no solo al cambiar el tamaño.
+  - Hechizos: el botón «Llevarme al instructor» es más ancho y el texto
+    ya no se corta.
+  - Hechizos: los filtros por especialización miden su texto
+    («Protección», «Restauración»...) y ya no salen cortados.
+
+  Ventana compacta
+  - Debajo del paso sale una línea por cada misión del paso que llevas
+    en el diario, y cuánto llevas de cada objetivo (por ejemplo, Veneno
+    de escórpidos salados 1/6) o «lista para entregar». Hasta cinco.
+
+  Cuenta
+  - Arreglado: el mismo personaje podía salir dos veces en Personajes
+    (uno guardado por una versión anterior, con otro nivel y otra zona).
+    Ahora se juntan solos al conectar con él.
+  - Clic derecho en un personaje: lo quita de la lista (si ya no existe).
+    Al pasar el ratón sale su zona entera, el reino y cuándo se vio.
+
+  Otros arreglos
+  - Los avisos de arriba en el centro saltan de línea en vez de cortarse.
+  - Equipo: el texto «Nada mejor que lo tuyo» es más corto y ya no se
+    corta.
+  - En inglés, las misiones con comillas en el nombre (por ejemplo,
+    Wanted: "Hogger") salían en español o con barras: arreglado.
+  - Botón «Usar» junto a la flecha: ya no saca un objeto de misión que no
+    es del paso (salía la ampolla de Gnogaine en Las Mil Agujas). Ahora
+    solo el que el juego da para la misión del paso o el que el paso
+    nombra.
+  - Si lo guardado de una versión anterior tenía un dato con otra forma
+    (paso, sección, posiciones, estadísticas, personajes de la
+    cuenta...), la ventana podía no abrirse. Ahora se corrige solo al
+    conectar.
+  - Arreglado: /ga informe no abría el informe para avisar de un fallo.
+    Sus cabeceras ya dicen Guía del Aventurero en vez del nombre antiguo.
+  - En inglés, algunos mensajes del chat salían a medias en español
+    (activado/desactivado, los nombres de ruta de /ga rutas, el talento
+    que acabas de recibir, «a 88 m»): arreglado.
+  - Con la ventana estrecha, el título de Mazmorras se cortaba: ahora es
+    solo «Mazmorras por nivel».
+
+
+Versión 9.7.4 (de prueba: falta probarla en el juego)
+  Talentos según lo que tienes puesto, rangos nuevos en las barras y
+  total de cada objeto en su información.
+
+  Talentos
+  - La pestaña Talentos mira lo que tienes puesto en tu árbol: si pusiste
+    un talento antes de tiempo o en otro orden, ya no te lo pide y el
+    siguiente es el primero del plan que aún te falta.
+  - En el plan completo, lo que ya tienes sale en gris y lo que toca,
+    resaltado, aunque no coincida con tu nivel.
+  - La pestaña se actualiza sola al cambiar los talentos, también desde
+    la ventana del juego.
+
+  Barras
+  - Arreglado: al aprender un rango nuevo no salía el aviso para
+    cambiarlo en las barras. Ahora usa los rangos de la ruta (no depende
+    de que el juego dé el «Rango N» ni encuentre el hechizo por su
+    nombre) y también se entera por el cambio del libro de hechizos.
+  - Los rangos viejos que ya tenías en las barras al conectar no se
+    preguntan; con /ga rangos se buscan todos.
+
+  Mazmorras
+  - Arreglado el error ADDON_ACTION_FORBIDDEN (RegisterEvent) al entrar:
+    el modo mazmorra ya no escucha el registro de combate, que Forever no
+    deja usar. Los jefes muertos se marcan al acabar el encuentro o
+    cuando tu objetivo muere.
+
+  Objetos
+  - En la información de un objeto (Guía del Aventurero · Información)
+    sale cuántos tienes en total, con lo de las bolsas y lo del banco.
+  - Si tus otros personajes también lo tienen, sale cuántos tiene cada
+    uno (lo último que vio la guía).
+
+Versión 9.7.3 (de prueba: falta probarla en el juego)
+  Menos viajes en las misiones extra y nuevo /ga auditoriaruta.
+
+  Rutas
+  - Nuevo /ga auditoriaruta: cuenta recogidas, entregas y misiones extra
+    de la ruta activa y avisa de las que son de nivel superior al tramo.
+    No cambia la ruta ni los ajustes.
+  - Menos viajes: antes del nivel 16 ninguna misión extra te manda a otro
+    continente, y después solo si en el tuyo no quedan (de 10.095 a 4.462).
+  - Las misiones extra de cada sección van agrupadas por zona, siempre
+    después de sus misiones previas.
+  - Al final de la ruta sobra experiencia: alrededor de un 10 % de un
+    nivel por encima del 60.
+  - Las 47 rutas tienen entre 649 y 825 misiones extra (34.418 en total).
+  - Con la guía en inglés faltaban unos nombres de misión; ya salen todos.
+
+  Herramientas
+  - /ga materiales enseña también tus circuitos de recolección (si tienes
+    Minería, Herboristería o Desuello); sigue el circuito con
+    /ga recoleccion.
+  - /ga comprobar recuerda, en las misiones extra, que el nivel que pone
+    la ruta es orientativo.
+  - /ga rendimiento enseña la memoria del addon si el juego lo permite.
+
+  Pendiente
+  - Llegar al 60 es un cálculo con la experiencia de cada misión de
+    Questie Forever y los enemigos de sus objetivos: falta comprobarlo en
+    el juego.
+  - Hay misiones extra de nivel algo más alto que el tramo (hasta 3 por
+    encima de tu nivel): se cogen cuando tu nivel llega.
+  - Profesiones 1-300 y botín de jefes: falta contrastarlos con Forever.
+  - Sin atajos de teclado.
+
+Versión 9.7.2 (de prueba: falta probarla en el juego)
+  Las 47 rutas llegan al nivel 60 solo con misiones.
+
+  Rutas
+  - Cada ruta tiene ahora entre 635 y 809 misiones extra (34.547 en
+    total) en lugar de las 200-360 de la 9.7. Con ellas y con los bichos
+    que piden sus objetivos, el cálculo dice que todas las razas y clases
+    llegan al 60. Se ha calculado con margen: es mejor que te sobren
+    misiones a que te falten.
+  - Cuando una zona se queda sin misiones, la ruta te lleva a otra zona
+    de tu nivel para terminar ese tramo. Sale como «Misión extra en otra
+    zona de tu nivel».
+  - Zonas nuevas para las misiones extra: La Garganta de Fuego, Las
+    Estepas Ardientes, Las Tierras Devastadas, Silithus y el Paso de la
+    Muerte.
+  - También entran misiones que empiezan en un objeto (un cartel, un
+    cofre) y las que se entregan en otra zona o en una capital.
+  - Las misiones previas de una cadena se ponen antes, aunque estén en
+    otra zona.
+  - Las mazmorras siguen siendo opcionales: dan mucha experiencia, pero
+    tú decides.
+
+  Pendiente
+  - Los nombres en español salen de Questie Forever; alguno puede variar
+    un poco del juego (por ejemplo, «La limpieza del campamento kóbold»).
+  - Hay que comprobar en el juego que se llega al 60 con la ruta.
+
+Versión 9.7 (de prueba: falta probarla en el juego)
+  Los arreglos de los informes de jugador novato y veterano de la 9.6.
+
+  Guía
+  - El estilo «Rápida» se llama ahora «Solo ruta» y avisa de que habrá
+    que matar enemigos si falta experiencia.
+  - Si vuelves a un paso anterior, te avisa de que Mi nivel te lleva al tuyo.
+  - Perfiles opcionales para este personaje: /ga perfil principiante,
+    normal o veterano. Nunca encienden la venta de objetos grises.
+  - /ga comprobar enseña las misiones del paso y cómo van en tu registro.
+  - /ga compatibilidad te dice si llevas Questie, por si salen marcas dobles.
+    No cambia nada de Questie.
+  - /ga materiales, /ga preparar [mazmorra], /ga buscar [texto] y
+    /ga rendimiento: consultas que no cambian nada.
+
+  Rutas
+  - Gnomo mago: el Memorándum con inscripciones se coge después de
+    entregar Los enanos modistos.
+  - Horda (22 rutas): Mensaje al Poblado Viento Libre antes de Apaciguar
+    al centauro.
+  - Magos: Ventisca y Escudo de maná nuevos al 44, como dice la tabla
+    de entrenamiento (antes ponía 48).
+  - Varita mística superior: ya no se recomienda en 46-50 (12 rutas).
+  - Mercenarios: aviso de que los ogros son élite y conviene ir en
+    grupo (19 rutas).
+  - Las 47 rutas tienen misiones extra para no quedarte corto de nivel:
+    entre 200 y 360 por ruta (13.681 en total). Son misiones reales de
+    Questie Forever o del catálogo del addon, de tu facción, raza y clase,
+    con sus misiones previas antes y sin élites. Salen como «Misión extra
+    para no quedarte corto de nivel» o «en otra zona de tu nivel».
+  - Con las misiones y los bichos que piden se calcula que llegas al
+    44-46. Lo que falta hasta el 60 sale de los bichos que matas por el
+    camino o de las mazmorras.
+  - Consejos › Equipo: las mazmorras de tu nivel dan mucha experiencia,
+    por sus enemigos y por sus misiones. Se recomiendan, pero tú decides.
+
+  Pendiente
+  - Suministros para El Cruce y Sopa de fangorroca con tropezones:
+    Questie pide una misión antes y Wowhead dice que no hace falta. Hay
+    que mirarlo en el juego antes de cambiar las rutas.
+  - Otras 10 misiones de clase con la misma duda (están en la prueba
+    de cadenas como pendientes).
+  - Sin atajos de teclado.
+
+Versión 9.6
+  La pestaña Guía, más clara: cada misión en una tarjeta con lo que
+  hay que coger, hacer y entregar, y las opcionales en un desplegable.
+
+  Guía
+  - Cada misión del paso sale en una tarjeta con tres pasos: Coger (a
+    quién y dónde), Hacer (dónde, con lo que llevas de cada objetivo
+    según tu registro de misiones) y Entregar (a quién y dónde).
+  - El paso al que apunta la flecha va en morado y los hechos, en gris
+    con una marca. Pulsa un paso y la flecha te lleva allí.
+  - Lo que no es una misión (entrenar, volar, piedra de hogar) sale
+    como una tarjeta con un solo paso «Ir».
+  - Sin el icono del PNJ: su nombre ya sale en Coger y Entregar. El
+    texto largo del paso sale al pasar el ratón por la tarjeta.
+  - Arriba sigue todo igual: barra de experiencia, niveles, sección y
+    pasos hechos de la ruta. Abajo, una sola línea «Luego» con lo que
+    viene después y los botones Atrás y Saltar paso.
+  - Las opcionales cercanas van en el desplegable «Otras misiones
+    cerca», cerrado de serie. Al abrirlo salen con su nivel, la
+    distancia y quién las da; un clic y la flecha va allí, y con clic
+    derecho no vuelven a salir.
+  - Si prefieres la Guía de antes, quita «Guía clara» en Ajustes ›
+    Avanzado › Paso.
+
+  Pestañas más claras
+  - Con «Guía clara» puesto, Hechizos, Talentos, Exploración y Mazmorras
+    enseñan arriba lo que toca ahora y pliegan lo demás, como la Guía.
+  - Hechizos: arriba «Para aprender ya», con lo que puedes comprar en el
+    instructor, y el botón «Llevarme al instructor» (el de tu clase en
+    la ruta, el más cercano a tu paso). Lo demás va en «Más adelante y
+    aprendidos».
+  - Talentos: una tarjeta «Ahora» con el talento que toca, los puntos
+    libres y el botón Poner. Sin puntos libres, te dice cuál llega en el
+    nivel siguiente. El plan entero va en un desplegable.
+  - Automatismos (con o sin Guía clara): arriba, la misma elección del
+    tutorial, Automático o Lo hago yo, con lo que hace cada una. Si
+    mezclas casillas sale «A tu medida».
+  - Exploración: tres tarjetas, dónde estás (misiones de la guía por
+    hacer y hechas), tu piedra de hogar y el vuelo más cercano que te
+    falta. Las misiones de la zona, los vuelos y Tu viaje van en un
+    desplegable.
+  - Mazmorras: arriba «Para tu nivel ahora», la mazmorra de tu facción
+    que más te conviene, con sus misiones, Llevarme y Ver ficha. La
+    lista entera va en un desplegable.
+
+  Para empezar
+  - El tutorial tiene una pantalla nueva para elegir cómo quieres jugar.
+    «Automático»: la guía pasa sola los pasos hechos, la flecha salta al
+    siguiente destino y los talentos se ponen solos. «Lo hago yo»:
+    pulsas «Saltar paso», eliges adónde va la flecha y pones los
+    talentos tú. La pantalla explica qué da cada una.
+  - Viene marcado «Lo hago yo», como hasta ahora. Se cambia cuando
+    quieras en Ajustes › Automatismos.
+  - En la tarjeta, «Hacer» dice qué hay que hacer con una frase del paso
+    (por ejemplo, «mata 8 lobos al norte del pueblo»). Si el paso no lo
+    dice, pone «Completa los objetivos» y debajo lo que llevas.
+  - Abajo, entre Atrás y Saltar paso, vuelve el botón «Mi nivel»: te
+    lleva al paso que te toca por tu nivel.
+  - Si estás en otro continente y tu paso no está allí, la Guía te lo
+    dice y te explica cómo volver (barco, zepelín o piedra de hogar).
+
+  Arreglos
+  - La entrada de la Ciudad de Dalaran se marca en las Montañas de
+    Alterac, como dice su ficha (antes salía en el Bosque de
+    Argénteos).
+  - Si volvías a un paso ya hecho con Saltar paso, la guía se quedaba
+    quieta y dejaba de avanzar sola hasta que pulsabas otra vez. Ya
+    sigue avanzando.
+  - Profesiones ya no pone «Pasos 1-0 de 0» cuando una profesión no
+    tiene pasos.
+  - Talentos: más seguro al poner los talentos de elección.
+
+Versión 9.5
+  Marcador en pantalla como en retail, con la distancia en metros, modo
+  pesca con un botón, Profesiones con las que has aprendido y nombres
+  que no se pisan en Tu viaje.
+
+  Flecha
+  - Nuevo ajuste «Marcador en pantalla (como en retail)»: un rombo sobre
+    el mundo que apunta al destino de la flecha. Viene encendido y se
+    quita en Ajustes › Básico o en Avanzado › Flecha.
+  - La distancia del rombo sale en metros: «450 m», «1.8 km».
+
+  Pesca
+  - Modo pesca: si llevas caña, sale un botón en pantalla. Un clic te
+    pone la caña, guarda tus armas, baja la música, el ambiente y los
+    diálogos, sube los efectos y lanza. Otro clic cuando pica saca el pez.
+  - 5 s después de guardar el pez, o en cuanto se acaban los 20 s sin
+    pez, vuelven tus armas y tus volúmenes. Si lanzas antes, sigues con
+    la caña.
+  - El botón brilla al pasar el ratón por un banco de peces. Mayús +
+    arrastrar para moverlo; se quita en Ajustes › Avanzado › General.
+
+  Hechizos
+  - Al aprender un rango nuevo de un hechizo que tienes en las barras,
+    sale un aviso con los botones que siguen en el rango viejo:
+    «Sustituir» los cambia por el nuevo con un clic, «Ahora no» no
+    vuelve a preguntar por ese rango y «Siempre solo» lo hace sin
+    preguntar desde entonces.
+  - Si lo aprendes en combate, el aviso espera a que acabe. /ga rangos
+    busca en las barras cuando quieras; se ajusta en Ajustes › General.
+
+  Mapas de mazmorras
+  - Vuelven los mapas de mazmorras, todos redibujados con el mismo
+    estilo: 59 plantas de 24 mazmorras, cuadrados y con el nombre de la
+    mazmorra arriba.
+  - Cada mapa lleva la entrada y una calavera en cada jefe. Pasa el
+    ratón por una calavera y su botín sale debajo del mapa.
+  - Nuevos: las alcantarillas de Dalaran, el Bastión Krol'dok y la
+    Ciudad Sumergida (estos dos sin jefes marcados: aún no se sabe
+    dónde están).
+
+  Profesiones
+  - La pestaña Profesiones enseña las que ha aprendido tu personaje, no
+    las que recomienda la ruta, cada una con su guía para subirla de 1 a
+    300. Si aprendes u olvidas una, la pestaña cambia sola.
+  - Van en dos filas, como en el juego: Principales y Secundarias
+    (Primeros auxilios, Cocina y Pesca).
+  - Si aún no tienes ninguna, te dice que puedes aprender dos
+    principales, cuáles recomienda la guía para tu clase y que las tres
+    secundarias se pueden aprender todas.
+  - Cocina y Pesca tienen guía: qué cocinar o dónde pescar en cada
+    tramo, dónde se compra cada receta, los instructores de tu facción y
+    cuántos materiales llevas.
+
+  Mascotas
+  - Cazador: 24 bestias propias de WoW Forever en la Isla Zephras, con su
+    nivel, su velocidad de ataque y dónde salen.
+  - Dos familias nuevas de Forever: Zorro (Danza del embaucador) y Ave
+    rapaz (¡Mío!). El Oso aprende Vapulear y el Cangrejo, Pellizco.
+  - Casi todas van con su nombre en inglés y están sin comprobar en el
+    juego.
+
+  Arreglos
+  - Guerrero: las entregas de Cicloniano y Esencia del exilio (arma
+    torbellino) ya tienen su destino y el paso avanza solo al
+    entregarlas.
+  - La descripción del addon ya no dice que las mazmorras tienen mapa
+    (están apagados mientras se rehacen).
+  - El botón Buscar de la barra lateral lleva una lupa: antes tenía el
+    mismo catalejo que Exploración.
+  - Talentos: los puntos de cada talento (3/3) se leen mejor sobre el
+    icono, en amarillo si está completo y en verde si le faltan; los
+    puntos de cada rama ya no se cortan.
+
+  Exploración
+  - En «Tu viaje», los nombres de las zonas ya no se pisan: cada uno
+    busca un hueco alrededor de su punto. Si no cabe, sale al pasar el
+    ratón.
+
+  Nombre y comandos
+  - La carpeta del addon pasa a llamarse GuiaAventurero: borra la
+    carpeta GuiaLeveo. Para no perder tu progreso, con el juego cerrado
+    cambia el nombre de los archivos GuiaLeveo.lua de WTF (los de
+    SavedVariables de tu cuenta y de cada personaje) a
+    GuiaAventurero.lua; la guía pasa sola lo guardado. El LEEME dice
+    dónde están.
+  - Los comandos son ahora /ga: /ga abre la guía, /ga ayuda enseña
+    todos. /guialeveo y /gleveo siguen valiendo.
+  - El addon lleva licencia GPL-3.0.
+
+Versión 9.4.2
+  Más sencilla: la Guía solo con la ruta, Ajustes Básico, avisos que
+  llevan a arreglarlo, pestañas en las mazmorras y flechas en el equipo.
+
+  Más sencilla
+  - La pestaña Guía enseña solo la ruta, sus misiones y las opcionales.
+    Sin minimapa, sin el paso ya hecho y sin tarjetas de avisos, grupo
+    ni ahorro. «Llegada al 60» sale solo al llegar al 60.
+  - Ajustes: nueva pestaña Básico con los 11 ajustes que más se usan.
+    Los demás están en Avanzado.
+  - «Antes de salir» y los avisos de comida, bolsas y equipo salen
+    flotando en el centro de la pantalla. Un clic te lleva a arreglarlo:
+    el posadero, las bolsas, la pestaña Equipo o dónde comprar
+    munición.
+  - Talentos y Profesiones se mueven con la rueda del ratón, como el
+    resto de listas. La nota de cada talento ocupa una línea; entera, al
+    pasar el ratón.
+  - Equipo sin el bloque Dinero (está en Oro) y con más objetos en
+    «Mejor a tu nivel». Exploración sin «Destino de la flecha». Hechizos
+    enseña solo el rango siguiente; todos los rangos, al pasar el ratón
+    por el icono.
+  - /ga ayuda enseña los comandos útiles; todos, con /ga
+    ayuda todo.
+
+  Mazmorras
+  - Cada mazmorra tiene dos pestañas: Misiones y Jefes y botín. Si ya
+    tienes todas sus misiones, se abre en Jefes.
+  - La lista ya no salta de página con la rueda y se ve hasta abajo.
+  - Los mapas de mazmorras y bandas están apagados mientras se rehacen.
+    En Bandas, el botón Botín enseña lo que sueltan sus jefes.
+
+  Equipo
+  - Flechas verdes y rojas en el botín y en los tooltips de los objetos,
+    también en las bolsas. El veredicto dice cuánto mejor o peor es en
+    %.
+
+  Arreglos
+  - Talentos daba un error si elegías una especialización distinta de la
+    de la guía.
+  - Las ranuras vacías de Equipo salen con su icono.
+  - La Sima Ígnea ya no dice que es nueva de Forever.
+  - El mago con comida y bebida conjuradas ya no recibe el aviso de
+    comprarlas.
+  - El botón Personaje enseña el icono de tu clase, no el de tu
+    especialización.
+  - Sacerdote y Paladín Sagrado ponen sus 51 puntos de talento.
+  - Los símbolos que el juego no dibuja salen como iconos.
+  - En cada idioma, los talentos salen solo con su nombre en ese idioma.
+
+Versión 9.4.1
+  Mapas de mazmorra dibujados por la guía, más misiones de clase y
+  arreglos en inglés.
+
+  Mapas
+  - Los mapas de mazmorra que trae la guía son ahora dibujos propios:
+    las salas con colores y bordes nuevos, sin las imágenes de otras
+    webs.
+  - Los jefes se marcan encima como antes. El Bancal del Creador, la
+    Ciudad Sumergida, el Bastión Krol'dok y la planta clásica de
+    Atal'Hakkar ya no tienen dibujo: salen con su lista de jefes.
+  - Mapa grande: los jefes van debajo del dibujo y el botín del jefe
+    elegido, a su derecha, dentro de la misma ventana.
+
+  Clase
+  - Sacerdote: las prendas del nivel 5 y los hechizos de raza de los
+    niveles 10 y 20 (Oración desesperada, Custodia de miedo, La Gracia
+    de Elune, Peste devoradora...).
+  - Mago: las togas de los niveles 15 y 26, la Varita Furia de hielo
+    (30) y Poder celestial (35).
+  - Chamán de la Alianza: los cuatro tótems.
+  - Rhok'delar: las cinco misiones con la flecha hasta los Ancestros de
+    Frondavil.
+
+  Inglés
+  - Los nombres de 25 misiones salían mal en inglés (por ejemplo,
+    «Protección» en lugar de Report to Thomas).
+  - Los materiales de profesión salen en inglés.
+  - Traducidos el título de Novedades y la siguiente sección de la
+    posada.
+
+Versión 9.4
+  Nuevo nombre, Guía del Aventurero: mazmorras y bandas, oro,
+  especialización a elegir, misiones de clase, vuelos por descubrir y
+  más ayuda en grupo.
+
+  Nombre
+  - La guía se llama ahora Guía del Aventurero (en inglés,
+    Adventurer's Guide), porque ya no es solo para levear.
+  - Se sigue abriendo con /ga y conserva tus ajustes y tu
+    progreso.
+
+  Especialización
+  - Al tener tu primer talento (nivel 10) la guía te pregunta qué
+    especialización quieres y te recomienda la que sube más rápido.
+  - La de la guía sigue el plan de talentos de la ruta. Con las otras,
+    la guía pone sola los talentos clave que encuentra en tu árbol y
+    te dice los que tienes que poner a mano.
+  - Se cambia con /ga especializacion o en Personaje › Clase.
+
+  Mazmorras y bandas
+  - El botón Mazmorras se llama ahora Mazmorras y bandas y tiene dos
+    pestañas, una para cada cosa.
+  - Bandas: cada banda con su entrada (Llevarme), los pasos para poder
+    entrar de tu facción con el estado de cada misión y el equipo
+    antes de banda de tu clase con dónde sale.
+  - Mapa grande en el centro de la pantalla con los jefes de la
+    mazmorra o la banda: al pulsar un jefe ves su botín.
+
+  Oro
+  - Botón Oro en la barra lateral con tres pestañas.
+  - Ahorro (la principal): tu oro, el de la cuenta, lo ganado hoy y lo
+    que te falta para la equitación y la montura.
+  - Farmear: sitios para sacar oro según tu nivel, con Llevarme.
+  - Profesiones: qué vender con cada profesión según tu habilidad, las
+    tuyas primero.
+
+  Clase
+  - Pestaña Personaje › Clase: las misiones de clase importantes como
+    rutas cortas (forma de oso, tótems, demonios y monturas del brujo,
+    Destrero del paladín, Rhok'delar, actitudes del guerrero,
+    venenos...), cada una con Llevarme.
+  - Cazador: pestaña Rangos en Mascotas, con cada habilidad de
+    mascota, sus rangos y una bestia cercana que la enseña.
+  - Avisos nuevos: mascota descontenta y, para el brujo, sin piedra de
+    salud teniendo fragmentos de sobra.
+
+  Vuelos
+  - Por descubrir: los puntos de vuelo de tu facción que aún no
+    tienes, por continente y por cercanía, con Llevarme. Está en
+    Exploración › Puntos de vuelo y en /ga vuelos.
+
+  Grupo
+  - «Ir» en cada compañero: la flecha te lleva a donde está.
+  - «Compartir misiones»: comparte con el grupo las misiones que algún
+    compañero con la guía no lleva.
+
+Versión 9.3.5
+  La guía, en inglés: ventana, opciones, rutas, misiones y datos, con
+  la opción de idioma en Ajustes.
+
+  Idioma
+  - Toda la guía se puede usar en inglés: ventana, opciones, avisos,
+    pestañas y los textos de las 47 rutas.
+  - Misiones, PNJ, objetos y zonas salen con sus nombres oficiales en
+    inglés.
+  - En Ajustes › General hay una opción de idioma: Automático (el del
+    cliente), Español o English. El cambio vale del todo al recargar
+    (/reload).
+  - /ga idioma es, en o auto cambia el idioma desde el chat.
+
+  Ruta
+  - Las palabras clave del paso (acepta, mata, entrega...) también se
+    resaltan con la guía en inglés.
+
+  Novedades
+  - Esta pantalla sale en inglés desde esta versión; lo de las
+    versiones anteriores sigue en español.
+
+Versión 9.3
+  Botón Mascotas para cazadores y brujos: familias y bestias que se
+  pueden domesticar, tus mascotas, establos, demonios e instructores.
+
+  Cazador
+  - Botón Mascotas en la barra lateral. Solo lo ven los cazadores y
+    los brujos.
+  - Familias: las 17 familias con su icono, habilidades y dieta, y 484
+    bestias que se pueden domesticar con su nivel, zona y sitio, con
+    Llevarme. Las raras llevan el dragón plateado en la esquina, como en
+    el juego.
+  - Dentro de cada familia, tic verde si ya la tienes (activa o en el
+    establo) y X roja si no. La seleccionada, con el color del tema.
+  - Mis mascotas: la que llevas y lo que sabe. Establos: Guardadas (las
+    del establo, se apuntan al abrirlo) y Maestros (maestros de establos
+    e instructores de mascotas de tu facción, los de tu zona primero,
+    con Llevarme).
+
+  Brujo
+  - Demonios: Diablillo, Abisario, Súcubo, Manáfago, Infernal y Guardia
+    apocalíptico, con su papel, sus habilidades y dónde empieza la
+    misión según tu raza.
+  - Mis demonios: el que llevas y los que ya sabes invocar, y tus
+    fragmentos de alma. Instructores: los de demonios de tu facción, con
+    Llevarme.
+
+Versión 9.2.1
+  Arreglo del mapa: las líneas de una zona ya no salen en las demás.
+
+  Arreglos
+  - Mapa del mundo: las líneas de «Sección entera» de un mapa seguían
+    saliendo al cambiar a otro mapa. Ahora cada mapa enseña solo las
+    suyas, y se vuelven a dibujar aunque falle algún icono de destino.
+
+Versión 9.2
+  Resumen al acabar cada sección, la sección entera en el mapa, iconos y
+  tiempos reales por paso, aviso grande de objetivo y estilo Clásico
+  Blizzard.
+
+  Ruta
+  - Al acabar una sección, un resumen: tiempo, niveles, XP, misiones,
+    muertes, oro, cómo vas frente a la media de la cuenta, el paso que
+    más te costó y lo que viene. /ga resumen lo vuelve a enseñar.
+  - Cada paso lleva un icono según lo que hay que hacer: aceptar, matar o
+    recoger, entregar, vuelo, instructor, piedra de hogar o ir a un sitio.
+  - La Horda nunca coge una ruta de la Alianza: si no hay ruta de tu clase
+    y raza, se usa otra de tu clase y de tu facción.
+  - Pícaros: el paso de Forzar cerraduras 70-80 avanza solo al llegar a 80.
+  - Horda: Clarofluvial (nivel 36-44) sale ya en las opcionales de la
+    Horda, con 104 misiones (24 de las dos facciones y 80 solo de la Horda,
+    de Wowhead). Nombres en inglés donde Wowhead aún no los tiene en
+    español.
+  - Druida tauren: los pasos del colgante de Forma acuática avanzan solos
+    al tener las piezas.
+  - Arreglos en las rutas de la Horda: El vínculo de los brujos orco, trol
+    y no-muerto se hace en el círculo de Orgrimmar (antes apuntaba a
+    Ventormenta); la lección de divinidad del paladín no-muerto, en
+    Entrañas (antes en Elwynn); y el druida tauren y el elfo tenían
+    cambiada la misión de Claro de la Luna (Una lección que aprender).
+
+  Tus tiempos
+  - Lo que tarda cada paso sale de lo que tardas tú; si no, de la media de
+    la cuenta corregida por tu ritmo, o de lo que tardas en pasos
+    parecidos.
+  - Lo usan la línea de pasos, la vista previa, lo que queda de sección y
+    la llegada al 60, que ahora dice lo fiable que es, los pasos donde más
+    tardas y tus minutos por sección.
+
+  Mapa
+  - La sección entera en el mapa del mundo: los pasos numerados y unidos,
+    verde lo hecho, tu color el actual y gris lo que falta. Casilla
+    «Sección entera» en el propio mapa.
+  - «Me falta XP»: 12 sitios corregidos (campamento movido o niveles
+    ajustados a los enemigos que hay de verdad).
+  - Recolección: 17 paradas de los circuitos que no tenían filones ni
+    hierbas cerca, movidas al sitio con más.
+
+  Arreglos
+  - Mapa del mundo: las líneas de colores de «Sección entera» salían
+    corridas, fuera de su sitio; ahora unen los círculos de cada paso.
+  - Al instalar el addon con un personaje ya avanzado, la guía da por
+    hechas las misiones de las que ya hiciste la versión alternativa o
+    una parte posterior de la cadena (por ejemplo la misión de Redención
+    del paladín humano), también las de clase.
+  - Cuenta: vuelve el selector Hoy / Personajes / Buscar objeto, que no
+    se veía (solo salía Hoy). Tus personajes estaban guardados; solo
+    faltaba el botón para verlos.
+
+  Datos
+  - Botín de los jefes nuevos (Bancal del Creador, Prisión de Alcaz,
+    Bastión Faucenegra) y de Bazzalan, con el % de caída.
+  - Personaje › Equipo › Mejor a tu nivel: además del botín de las
+    mazmorras, las recompensas de las próximas misiones de tu ruta (hasta
+    2 niveles por encima) que mejoran lo que llevas.
+  - Biblioteca › Bolsas: 9 misiones más (4 de la Horda) y cada facción
+    ve solo las suyas.
+  - Mazmorras: todas las misiones tienen ya su id y 13 su nombre en
+    español.
+  - Reputación: intendentes del Alba y de Meilosh con Llevarme; la
+    Hermandad de la Caballería (Clarofluvial, solo Alianza) con su nombre
+    en español.
+  - Sastrería 205-234: cuántas Madejas (11) y Cinturones (21) de paño
+    rúnico hacer, con sus materiales.
+  - Unos 40 nombres de personajes que seguían en inglés (jefes, dónde
+    se recoge una misión, vendedores de monturas) ya salen en español.
+
+  Avisos
+  - Al completar un objetivo, aviso grande en el centro con sonido; si ya
+    no queda nada, dice dónde entregar. Ajustes › Avisos: Grande, Pequeño
+    o No.
+
+  Un solo addon
+  - Vuelve a ser una sola carpeta, GuiaLeveo. Al entrar, igual que elige
+    tu ruta, la guía mira en qué continente estás y solo prepara las
+    opcionales de ahí y de tu facción; las del otro continente se preparan
+    solas al llegar, sin /reload. Si tenías la 9.1, borra GuiaLeveo_Kalimdor
+    y GuiaLeveo_Reinos.
+
+  Aspecto
+  - Selector de estilo en Ajustes › Aspecto: Moderno (el de siempre, antes
+    «estilo C») o Clásico Blizzard (borde dorado, cabecera y botones
+    rojos, como las ventanas del juego).
+
+Versión 9.1
+  La guía te recoloca sola, zonas de misión en el mapa, llegada al 60,
+  recolección, editor de rutas, informe de fallos y un addon más ligero.
+
+  Ruta
+  - Se recalcula sola si te saltas pasos (ya hiciste 3 o más de los
+    siguientes), si mueres 3 veces en 10 minutos en un paso o si vas 2
+    niveles por encima de la sección. Siempre con Deshacer. Ajustes ›
+    Paso › Recalcular la ruta: Sola, Preguntar o No.
+  - < y > de la Guía abren una vista previa de la sección (zonas, pasos,
+    tiempo, vuelos y mazmorras) sin mover tu progreso. Con Mayús cambian
+    de sección como antes. También /ga vista.
+  - Editor de rutas (/ga editor o Ajustes › Datos): haz tu ruta o
+    copia la sección en la que estás, ordena pasos, añade destinos con su
+    misión y compártela con un código de texto.
+
+  Mapa
+  - Zona de misión sombreada en el mapa del mundo y en el minimapa para
+    cada objetivo del paso.
+  - Botón junto a la flecha para usar el objeto de misión cuando estás
+    cerca del objetivo.
+
+  Tu ritmo
+  - Llegada al 60: horas de juego que te faltan con tu ritmo real y en
+    qué nivel y sección acabarás hoy si juegas 30 min, 1, 2, 3 o 4 h.
+  - «Me falta XP»: si te faltan niveles para la sección, sitios con
+    enemigos de tu nivel cerca, con Llevarme.
+  - Al 60, «Y ahora qué»: profesiones por subir, reputaciones sin exaltar
+    y mazmorras de nivel 60.
+
+  Profesiones
+  - Ruta de recolección por zona según tu nivel de Minería, Herboristería
+    o Desuello. Solo sale si tienes alguna, y solo la tuya. La flecha te
+    lleva por la vuelta.
+
+  Oro
+  - Ajustes › Avisos › Reservar oro para el 40: las compras automáticas
+    en los instructores no gastan lo del ahorro (equitación, montura y
+    doble especialización).
+
+  Datos y fallos
+  - /ga informe: versión, personaje, paso, errores, pasos atascados
+    y el diagnóstico, en un texto para copiar y pegar.
+  - Copia de seguridad de lo guardado al instalar una versión nueva.
+    /ga restaurar (o Ajustes › Datos) la recupera.
+  - /ga ayuda por temas: ruta, personaje, profesiones, ventana,
+    datos y diagnóstico.
+
+  Más ligero
+  - Las misiones opcionales van en dos carpetas nuevas, GuiaLeveo_Kalimdor
+    y GuiaLeveo_Reinos, que se cargan solas al llegar a cada continente, y
+    solo con lo de tu facción: unos 4 MB menos de memoria.
+  - La bienvenida al conectar se quita con «No volver a mostrar» en la
+    propia ventana o en Ajustes › General (para toda la cuenta).
+
+Versión 9.0
+  Interfaz nueva (estilo moderno): barra lateral, barra de XP siempre a la
+  vista, línea de pasos, modo mazmorra, Cuenta › Hoy y mucho más.
+
+  Ventana nueva
+  - Barra lateral de iconos en lugar de las pestañas de arriba y los
+    botones de fuera de la ventana. Subpestañas en un selector.
+  - Acento morado de serie (dorado, clase, verde... en Ajustes › Aspecto).
+  - Tres tamaños: completa, compacta y franja.
+  - Se pega a los bordes de la pantalla y bajo el minimapa.
+  - Transparencia de toda la ventana; opaca al pasar el ratón.
+
+  Barra de experiencia
+  - Siempre arriba: XP, lo que falta, misiones completadas sin entregar
+    (naranja) y descansada (azul). En combate se queda en pantalla.
+
+  Guía
+  - Línea de tiempo con el paso anterior y los siguientes, su XP, su
+    tiempo y la recompensa al pasar el ratón.
+  - Minimapa en la caja del paso.
+  - Avisos en píldoras; los urgentes también fuera de la ventana.
+  - «Antes de salir»: comida, bebida, reactivos y munición.
+
+  Secciones
+  - Equipo con muñeco, tarjeta del tramo de tu profesión, mapa de tu
+    viaje, modo mazmorra automático y objetos útiles por jefe.
+  - Cuenta: Hoy, Personajes y Buscar objeto. Icono Grupo en grupo.
+
+  Más
+  - Buscador, contadores en los iconos, interruptores, modo daltónico,
+    tutorial nuevo, secciones que se cargan al abrirlas y
+    /ga memoria.
+  - Sastrería: madejas en lugar de descargas de paño.
+
+  Más ordenado
+  - Ajustes: lo básico primero y «Ver más ajustes» para el resto.
+    Pestaña nueva Datos (precios del ahorro, copiar y pasar datos,
+    tutorial). «Cambiar precios» en la tarjeta del ahorro lleva ahí.
+  - Selectores de tamaño y de animaciones en vez de varias casillas.
+  - Consejos de la sección en un solo bloque plegable.
+  - Estadísticas por nivel en Cuenta › Hoy › Por nivel.
+  - Una sola ventana al conectar. Aviso de comida solo al quedarte sin.
+  - Fuera lo repetido: chip de descansada, opacidad del fondo, avisos
+    plegables, mapa de fondo y casillas de Exploración.
+
+Versión 8.9.5
+  La Guía se lee más clara: línea «Ahora», avisos plegables, colores y
+  modo lectura.
+
+  Caja del paso
+  - Arriba, una línea «Ahora» con lo que toca hacer y a cuántos metros.
+  - En el texto, los PNJ salen en verde, los lugares en azul y las
+    acciones (cruza, activa, habla...) en dorado.
+  - Botón Leer: modo lectura con solo el paso y la letra más grande.
+
+  Objetivos
+  - Cada objetivo de Siguiente lleva su casilla y los metros hasta él:
+    verde cerca, amarillo a media distancia, blanco lejos.
+
+  Avisos
+  - Se juntan en una barra «AVISOS (n)» que se abre con un clic; los
+    urgentes se cuentan en rojo.
+  - Cada aviso con su color e icono: rojo urgente, amarillo útil y gris
+    informativo.
+  - Las misiones opcionales y la mazmorra ya no cortan el texto: pasan a
+    dos líneas. Llevarme, Añadir, Ver y No son botones con icono.
+
+  Cabecera y contraste
+  - Niveles, sección, ritmo y descansada en etiquetas separadas.
+  - El texto gris es más claro.
+  - Se apagan en Ajustes > Paso (los avisos plegables, en Avisos y
+    ayudas).
+
+  Ajustes por pestañas
+  - Las opciones de Ajustes van en seis pestañas según para qué sirven:
+    General, Aspecto, Paso, Flecha y mapa, Avisos y ayudas y Efectos.
+
+Versión 8.9.4
+  La barra de ruta se lee limpia.
+
+  Barra de ruta
+  - Los números de los hitos de nivel ya no se montan sobre el texto
+    (quedan solo las marcas, más suaves) y el brillo pasa por debajo del
+    texto en vez de taparlo.
+
+Versión 8.9.3
+  Los iconos de buffs ya no salen en combate si los llevas puestos.
+
+  Buffs en pantalla
+  - En combate el juego no deja leer tus buffs: la guía ahora mantiene lo
+    que vio antes de entrar en combate en vez de sacar los iconos como si
+    te faltaran.
+
+Versión 8.9.2
+  El número de la pestaña Personaje se quita al abrirla.
+
+  Pestañas
+  - El aviso de Personaje (hechizos por aprender y puntos de talento
+    libres) se quita al abrir Personaje y solo vuelve si hay algo nuevo.
+    Se apaga en Ajustes > Aspecto > Avisos en las pestañas.
+
+Versión 8.9.1
+  Cuatro temas nuevos, recompensas en el paso, «+XP» y aviso de objetivo
+  en pantalla, brillos, fundido de pestañas, separadores y compacto con el
+  estilo nuevo.
+
+  Temas
+  - Cuatro temas nuevos, con su fondo y su borde: Hielo, Fuego, Sombra y
+    Naturaleza (los temas van ahora en dos filas).
+  - El color del tema se funde en la cabecera, detrás del título.
+
+  Guía
+  - Los títulos (SIGUIENTE, AVISOS...) llevan una raya a cada lado.
+  - Los objetos del texto del paso salen con el color de su calidad
+    (verde, azul o morado) si el juego ya los conoce.
+  - Al ir a entregar una misión, la caja del paso muestra los iconos de
+    sus recompensas; la recomendada para tu equipo lleva una marca verde.
+  - La pantalla nueva aparece con un fundido corto al cambiar de pestaña.
+  - Un brillo suave recorre la barra de ruta cada pocos segundos.
+
+  En pantalla
+  - «+XP» que sube desde la ventana al entregar una misión.
+  - Al completar un objetivo, aviso en el centro: «Pañuelo de seda roja
+    10/10 ✔».
+
+  Flecha
+  - Brilla cuando miras justo hacia el destino.
+
+  Modo compacto
+  - Retrato, borde del tema, barrita del destino y marco clásico (si lo
+    eliges), como la ventana grande.
+
+  Ajustes
+  - Todo en Opciones > Ajustes > Aspecto, cada cosa por separado, y se
+    copia entre personajes.
+
+Versión 8.9
+  Más mejoras gráficas: retrato, barra de XP y mapa de la zona en la
+  cabecera, avisos en las pestañas, ayudas con estilo, hitos de nivel,
+  flecha que crece, aviso de cueva y confeti.
+
+  Cabecera
+  - Tu retrato en vez del icono de la ruta.
+  - Barra fina de XP bajo la cabecera; en azul, lo que te queda de
+    descansada.
+  - De fondo, el mapa de la zona donde estás, muy tenue y centrado donde
+    estás (se mueve contigo).
+
+  Ventana
+  - Número en la pestaña Personaje con los hechizos recomendados que
+    puedes aprender y los puntos de talento libres.
+  - Las ayudas de la guía (al pasar el ratón) con el fondo oscuro y el
+    borde del tema.
+  - Marcas en la barra de ruta donde empiezan los niveles 10, 20, 30, 40 y
+    50.
+
+  Flecha
+  - Crece hasta un 30 % en los últimos 60 m.
+  - Cerca de un destino en cueva, mina, cripta o torre avisa «bajo tierra»
+    o «en lo alto». El juego no da la altura: se saca del texto del paso.
+
+  Celebración
+  - Confeti al subir de nivel.
+
+  Ajustes
+  - Todo en Opciones > Ajustes > Aspecto, cada cosa por separado, y se
+    copia entre personajes.
+
+Versión 8.8
+  Mejoras gráficas: tema Clase, barra por pasos, objetivos con barra,
+  anillo y estilos de flecha, ruta en el mapa y más.
+
+  Ventana
+  - Tema nuevo Clase: el acento y tu nombre salen con el color de tu
+    clase.
+  - Escudo de tu facción (Alianza u Horda), muy tenue, en el fondo de la
+    ventana.
+  - Marco Clásico: el borde del juego alrededor de la ventana y de la
+    flecha (Ajustes > Marco de las ventanas).
+  - Atenuar fuera de uso: en combate o tras unos segundos sin el ratón
+    encima, la ventana se vuelve casi transparente (apagado de serie).
+  - Fuente del texto del paso: la del juego, Friz, Arial, Morpheus o
+    Skurri, y contorno opcional.
+
+  Guía
+  - Barra por pasos debajo de la barra de ruta: un tramo por paso de la
+    sección, azul los hechos y del color del tema el actual.
+  - Cada objetivo con su barrita de progreso (6/10), que se pone verde y
+    brilla al completarlo.
+  - Los destinos sin misión llevan el icono de lo que haces allí: vuelo,
+    posada, instructor o vendedor.
+  - Al cambiar de paso, la caja nueva entra deslizándose desde la derecha.
+  - Al acabar una sección, una tarjeta tipo logro arriba de la pantalla
+    con su tiempo, sus misiones y la siguiente.
+
+  Flecha
+  - Anillo de cercanía: un aro que se llena según te acercas y da un pulso
+    al llegar.
+  - Estilos: Clásica, Brújula (con N, E, S y O que giran contigo) o Mínima
+    (solo la flecha y los metros).
+
+  Mapa
+  - En el mapa del mundo, una línea de puntos une en orden los destinos
+    que te quedan del paso.
+
+  Ajustes
+  - Todo está en Opciones > Ajustes > Aspecto y se apaga por separado. Se
+    copia entre personajes con Copiar.
+
+Versión 8.7
+  Skyborne de la Alianza, mazmorras dentro de la ruta y profesiones de la
+  Horda.
+
+  Rutas nuevas
+  - Guerrero, cazador, pícaro, mago y druida Skyborne de la Alianza, del 1
+    al 60: la Isla Zephras con sus instructores y misiones de clase, la
+    llegada por Dalaran a Ventormenta y desde allí las mismas zonas que el
+    humano o el elfo de la noche de su clase.
+  - Al 12 entrenas en Ventormenta (el druida, con Alfina y Sheldras y su
+    viaje al Claro de la Luna).
+
+  Nombres
+  - Las misiones salen con su nombre oficial en español del propio juego
+    cuando el cliente lo tiene; si no, con el de la guía.
+
+  Opcionales
+  - Ya no te ofrece misiones de clase que ya has hecho con otra versión (la
+    Actitud defensiva, los tótems, la mascota o la forma de oso).
+
+  Mazmorras
+  - Nueva tarjeta en la Guía: cuando llegas al nivel de una mazmorra con
+    misiones de tu facción te la sugiere, con Llevarme, Ver y No.
+
+  Profesiones de la Horda
+  - La guía de profesiones de la Biblioteca muestra los instructores y
+    vendedores de la Horda (Orgrimmar, Cima del Trueno, Entrañas) a los
+    personajes de la Horda.
+
+Versión 8.6
+  La raza nueva de Forever en la Horda: guerrero, cazador, pícaro, chamán y
+  druida Skyborne.
+
+  Rutas nuevas
+  - Guerrero, cazador, pícaro, chamán y druida Skyborne de la Horda, del 1
+    al 60: la Isla Zephras (Arboleda Thendal, Shen'dar, Valanaar y las
+    Tierras Bajas de Gustberry, el Bosque Shadowgale y el Santuario de
+    Akir), la nave celeste a Mulgore y Cima del Trueno, y desde Los Baldíos
+    las mismas zonas que el tauren de su clase (el pícaro, las del orco o
+    trol).
+  - Cada una con sus instructores de la isla y sus misiones de clase: el
+    Baluarte Skybreaker del guerrero, la mascota de Quel'ana del cazador,
+    los tótems de tierra y de fuego del chamán y el oso de Urs'endris y el
+    gato del viento del druida. En Orgrimmar entregas la misión de Thrall.
+
+  Raza
+  - La guía reconoce al Skyborne por su número de raza y solo le da las
+    rutas de su facción. Las misiones de la isla salen con nombre traducido
+    por la guía (la base de datos aún no los trae en español).
+
+  Opcionales
+  - Ya no salen opcionales de otra clase ni de otra raza (antes no se
+    miraban bien la clase y la raza del personaje). Las de la Isla Zephras
+    y las de los Skyborne cuentan para la Horda.
+
+  Exploración y Biblioteca
+  - Posadas de Shen'dar y Valanaar. El Skyborne en la Biblioteca, con sus
+    clases por facción y Skysight, la habilidad de la Horda.
+
+Versión 8.5
+  Paladín no-muerto, y mazmorras, reputación, posadas, vuelos, colección,
+  opcionales y biblioteca con los datos de la Horda.
+
+  Ruta nueva
+  - Paladín no-muerto, nuevo en Forever, del 1 al 60: Camposanto, Rémol y
+    el Bastión Bandarion, con la cadena de Redención, y desde Los Baldíos
+    las mismas zonas que el guerrero, entrenando en Cima del Trueno o en
+    Entrañas.
+
+  Mazmorras
+  - Con un personaje de la Horda salen las misiones de la Horda de cada
+    mazmorra (QuestieDB y Warcraft Tavern) y la Sima Ígnea, con sus jefes
+    y su botín.
+
+  Reputación y Colección
+  - Fichas de Orgrimmar, Trols Lanza Negra, Cima del Trueno y Entrañas,
+    con su vendedor de monturas.
+  - Lobos, raptores, kodos y caballos esqueléticos, normales y épicos, y
+    las mascotas de las capitales de la Horda. Cada facción solo ve lo
+    suyo.
+
+  Exploración
+  - Posadas, maestros de vuelo y maestros de armas de la Horda; ya no
+    salen los de la Alianza.
+
+  Opcionales
+  - 308 misiones de las otras rutas de la Horda y 1.805 de QuestieDB que
+    no salen en ninguna ruta de la Horda.
+
+  Biblioteca
+  - Durotar, Mulgore, Claros de Tirisfal y Bosque de Argénteos; orco,
+    no-muerto, tauren y trol con sus raciales; misiones de la Horda en las
+    mazmorras.
+
+Versión 8.4
+  Cinco rutas nuevas para el no-muerto: guerrero, pícaro, mago,
+  sacerdote y brujo.
+
+  Rutas nuevas
+  - Guerrero, pícaro, mago, sacerdote y brujo no-muerto, del 1 al 60:
+    empiezan en Camposanto, siguen por Rémol, los Molinos de Agamand y el
+    norte del Bosque de Argénteos, y en zepelín a Orgrimmar van por las
+    mismas zonas que las rutas orco y trol.
+  - Cada una con sus instructores de Tirisfal y Entrañas y sus misiones
+    de clase: las reliquias Agamand del guerrero, los Mortacechadores del
+    pícaro, la Hacienda Balnir del mago, Toque de debilidad del sacerdote
+    y el diablillo y el abisario del brujo.
+  - Las de tela (mago, sacerdote y brujo) llevan sastrería, encantamiento
+    y primeros auxilios; el guerrero y el pícaro, minería y desuello.
+
+  Arreglos
+  - Las rutas de mago y de sacerdote ya no llaman «la prueba del
+    guerrero» a la sección del sur de Los Baldíos.
+
+Versión 8.3
+  Cuatro rutas nuevas para el tauren: guerrero, cazador, chamán y druida
+  (tanque).
+
+  Rutas nuevas
+  - Guerrero, cazador, chamán y druida tauren, del 1 al 60: empiezan en
+    el Campamento Narache, siguen por Mulgore y Cima del Trueno y luego
+    van por las mismas zonas que las rutas orco y trol.
+  - Cada una con sus instructores de Mulgore y Cima del Trueno y sus
+    misiones de clase: la mascota del cazador, los tótems de tierra y de
+    fuego del chamán y las formas de oso, acuática y felina del druida,
+    con sus viajes al Claro de la Luna.
+  - El druida lleva desuello y peletería para hacerse su armadura de
+    cuero; las demás, minería y desuello. Todas con los instructores de
+    Mulgore.
+
+Versión 8.2
+  Seis rutas nuevas de la Horda: cazador, pícaro, chamán, mago y brujo
+  orco o trol, y sacerdote trol.
+
+  Rutas nuevas
+  - Cazador, pícaro, chamán, mago y brujo orco o trol, y sacerdote trol,
+    del 1 al 60, por las mismas zonas que el guerrero.
+  - Cada una con sus instructores (Valle de los Retos, Sen'jin, Cerrotajo,
+    Orgrimmar, Entrañas y el Rocal) y sus misiones de clase: la mascota
+    del cazador, los venenos y las ganzúas del pícaro, los tótems del
+    chamán, los demonios del brujo y las misiones de raza del sacerdote
+    trol.
+  - Las de tela (mago, brujo y sacerdote) llevan sastrería, encantamiento
+    y primeros auxilios; las demás, minería y desuello.
+
+  Rutas de la Horda
+  - La ruta ya no te manda volar a un vuelo que aún no tienes: vas a pie o
+    en zepelín la primera vez y activas el vuelo al llegar.
+
+Versión 8.1
+  Primera ruta de la Horda: guerrero orco o trol, del 1 al 60.
+
+  Ruta nueva
+  - Guerrero orco o trol: Valle de los Retos, Durotar, Baldíos, Sierra
+    Espolón, Vallefresno, Mil Agujas, Desolace, Marjal, Tanaris, Feralas,
+    Un'Goro y más, hasta el 60.
+  - Misiones de clase de guerrero de la Horda (10, 20 y 30),
+    instructores de Orgrimmar y Entrañas, y minería, desuello y primeros
+    auxilios en Durotar.
+
+  Aún de la Alianza
+  - Mazmorras, reputación, posadas, vuelos, opcionales y la biblioteca
+    siguen con los datos de la Alianza. Llegarán para la Horda más
+    adelante.
+
+Versión 7.9.8
+  Buffs en pantalla también en combate y sin quedarse pegados al ratón;
+  el marco de la flecha completo.
+
+  Buffs en pantalla
+  - Siguen en combate. Cada icono solo se quita cuando ese buff está
+    puesto.
+  - Se arrastran con el botón izquierdo y se quedan donde los sueltas
+    (antes seguían al ratón).
+
+  Flecha
+  - Al marco ya no le falta la raya de arriba: se coloca en píxeles
+    enteros de la pantalla, también al moverla o cambiar su tamaño.
+
+Versión 7.9.7
+  Arreglados los botones que no hacían nada: Llevarme, Añadir y No de las
+  opcionales, y otros.
+
+  Botones
+  - Llevarme, Añadir, Ver y No de «Opcionales cerca» ya funcionan.
+  - También Ver en Equipo > Mejor a tu nivel, Seguir en la preparación
+    antes de dejar una zona y las plantas del mapa de mazmorra.
+
+Versión 7.9.6
+  Arreglados los iconos de buffs que te faltan.
+
+  Buffs en pantalla
+  - Ya salen. La guía pedía al juego un aviso (al aprender un hechizo)
+    que este cliente ya no tiene, y eso cortaba la carga de los buffs sin
+    decir nada.
+  - Ningún aviso que el juego no tenga puede cortar ya la carga de una
+    parte de la guía: se apunta en el informe de /ga depurar, en
+    «Fallos al cargar».
+
+Versión 7.9.5
+  Equipo ya no muestra códigos como ITEM_MOD_CRIT_RATING_SHORT.
+
+  Equipo
+  - Lo que busca la guía y el comparador de los tooltips dicen golpe,
+    crítico, poder de ataque, maná cada 5 s... en español aunque el juego
+    no traiga el nombre.
+  - Si algún día sale una estadística sin nombre, no se muestra en vez de
+    salir el código.
+
+Versión 7.9.4
+  Quitado el texto raro del tooltip de los objetos.
+
+  Tooltips
+  - La ranura del objeto sale en español (Cabeza, Pecho...) en vez de un
+    código como INVTYPE_NON_EQUIP_IGNORE, y en lo que no se equipa no sale.
+  - Ya no se repite el precio de venta, que el juego ya lo pone.
+
+Versión 7.9.3
+  El ahorro para el nivel 40 sale desde el nivel 1.
+
+  Ahorro
+  - La tarjeta de ahorro sale en Guía > Avisos desde el principio, no
+    desde el nivel 30.
+  - Precios de Forever: Equitación 100 o con la primera montura incluida,
+    así que la montura ya no se cuenta aparte.
+
+Versión 7.9.2
+  Si la ventana es pequeña, Guía y Equipo se bajan con la rueda del
+  ratón.
+
+  Ventana
+  - Cuando no cabe todo, sale una barra fina a la derecha: bajas con la
+    rueda del ratón o arrastrándola. Si cabe, no sale.
+  - Guía: los consejos de la zona (Hechizos, Equipo, Profesión) ya no se
+    cortan con la ventana pequeña.
+  - Equipo: todo va seguido de arriba abajo y los textos ya no se pisan.
+
+  Colección
+  - La ficha crece con su texto: Llevarme ya no tapa la reputación ni el
+    nivel.
+  - Los nombres que salían como «?» se piden al servidor y aparecen al
+    momento siguiente.
+
+  Buffs en pantalla
+  - Ya salen los iconos de los buffs que te faltan: el juego solo da por
+    sabido el rango más alto de cada hechizo y la guía buscaba el rango 1.
+    Ahora mira todos los rangos.
+  - El informe de /ga depurar dice qué buffs ve la guía y si la
+    barra está visible.
+
+Versión 7.9.1
+  Arreglada la pestaña Personaje > Equipo, que salía vacía y saltaba a
+  Talentos.
+
+  Equipo
+  - La pestaña Equipo vuelve a salir. En este cliente el tooltip de
+    objetos no se engancha como antes y eso impedía cargar la pestaña.
+  - Si una pestaña no se puede crear, el chat lo dice en vez de llevarte
+    a Talentos sin avisar, y el informe de /ga depurar dice cuál
+    y por qué.
+
+Versión 7.9
+  Misiones de Hyjal, Clarofluvial y Shen'dralas, jefes en español,
+  flecha en todos los pasos y precios de monturas y armas.
+
+  Opcionales
+  - Misiones de las zonas nuevas de Forever como opcionales: Monte Hyjal
+    (119), Clarofluvial (96) y Shen'dralas (26). Los nombres que
+    QuestieDB no trae en español salen en inglés.
+  - Cada opcional comprobada con las trazas de Forever (misiones que ya
+    ha completado alguien): 1.210 de 1.545 vistas en Forever.
+
+  Mazmorras
+  - 41 jefes traducidos al español (Don Mamporro, Capitán Verdetez,
+    Embajador Latifuego...).
+  - En el mapa salen también los rivales del Anillo de la Ley y los
+    raros del Claustro del Cementerio. Los jefes que el dibujo no marca
+    salen nombrados en la leyenda.
+
+  Rutas
+  - Los 27 pasos opcionales que no tenían destino ya llevan flecha: Arma
+    torbellino, Ravenholdt, mascotas del brujo y En defensa de las
+    tierras del rey.
+
+  Biblioteca
+  - Coordenadas y Llevarme para 58 raros más.
+  - Precios: Equitación 40 (100 o con la primera montura, 20 o cada
+    color más), Equitación 60 (1000 o) y monturas épicas (200 o); armas
+    en el instructor, 10 plata cada una.
+
+Versión 7.8
+  Rellenado todo lo que faltaba: botín de jefes y raros, plan de Pesca,
+  mascotas y juguetes, fichas de reputación y razas. Ya no sale
+  «Próxima actualización».
+
+  Botín
+  - Botín de 100 jefes de mazmorra que no lo tenían (QuestieDB y listas
+    del clásico) y de 46 raros más.
+  - Las mazmorras nuevas de Forever que aún no están abiertas (Bancal
+    del Creador, Prisión de Alcaz y Bastión Faucenegra) traen sus jefes,
+    pero su botín no lo ha publicado nadie: se dice así.
+
+  Mazmorras
+  - Jefes de Prisión de Alcaz y los 11 de Bancal del Creador. Vista
+    aérea de Bancal del Creador.
+  - Quién da cada misión de mazmorra que no lo decía.
+
+  Profesiones
+  - Plan de Pesca 1-300 con instructores y coordenadas.
+  - Tramos 225-300 de Herboristería, Minería y Desuello, y el instructor
+    de Primeros auxilios en Theramore.
+
+  Colección
+  - 23 mascotas y 5 juguetes con dónde se consiguen, precio y
+    coordenadas.
+
+  Biblioteca
+  - Raciales de todas las razas. Fichas de reputación con su intendente
+    comprobado y Llevarme. Monte Hyjal: nivel 56-60.
+  - Posada de Villa del Lago y Woo Ping en su sitio de Forever. Las
+    opcionales ya no dicen «sin comprobar».
+
+Versión 7.7
+  1.306 misiones de la Alianza que no estaban en tu ruta, como
+  opcionales, y todo lo marcado «sin comprobar» repasado.
+
+  Misiones
+  - Repasadas las misiones de las 20 rutas con la base de datos de
+    Forever de QuestieDB: todas existen, son de la Alianza y el PNJ está
+    donde dice la ruta.
+  - Las misiones de la Alianza que no salían en ninguna ruta (1.306)
+    aparecen como opcionales cuando estás cerca y son de tu nivel, solo
+    si tu raza y clase pueden cogerlas y ya hiciste la misión previa.
+    Las que Forever no ha tocado dicen «sin comprobar en Forever».
+  - 44 nombres de PNJ de las rutas que seguían en inglés, en español.
+
+  Mazmorras
+  - Misiones comprobadas: nombres en español, quitadas 9 que eran de la
+    Horda y añadidas 68 que faltaban.
+
+  Biblioteca
+  - Raros y élites: nombre en español (se busca también en inglés) y
+    coordenadas para «Llevarme» en 221 más.
+  - Bolsas: quién la da y dónde. Entrenadores, vendedores y monturas:
+    sitio comprobado.
+  - Posadas de la piedra de hogar comprobadas, menos Villa del Lago.
+
+Versión 7.6.6
+  Mazmorras: jefes colocados en el mapa y mapas de 6 mazmorras nuevas.
+  Buffs en pantalla más fiables.
+
+  Mazmorras
+  - En el mapa, cada jefe sale en su sitio: pasa el ratón para ver su
+    nombre y haz clic para ver su botín. A qué jefe corresponde cada
+    marca está sin comprobar en Forever.
+  - Mapas nuevos de Warcraft Tavern: Salón de los Feudales, Ruinas de
+    Lordaeron, Excavación, Ciudad de Dalaran, La Ciudad Sumergida y
+    Bastión Krol'dok.
+  - El Templo de Atal'Hakkar tiene además el mapa clásico con todas las
+    plantas.
+  - Siguen sin mapa: Prisión de Alcaz, Bastión Faucenegra y Bancal del
+    Creador.
+
+  Buffs en pantalla
+  - Los iconos de los buffs que te faltan ya no dependen solo del libro
+    de hechizos, y si algo falla se dice una vez en el chat.
+
+Versión 7.6.5
+  Mazmorras: el botón Mapa ya enseña el mapa de 18 mazmorras, incluido
+  en el addon.
+
+  Mazmorras
+  - Si tu juego no trae el mapa de la mazmorra, sale el de Wowhead en
+    español, con sus plantas y los jefes marcados con calaveras.
+  - Son los mapas de la versión moderna del juego: pueden variar algo
+    en Forever.
+  - Las mazmorras nuevas de Forever todavía no tienen mapa.
+
+Versión 7.6.4
+  Guía: los títulos «Siguiente» y «Avisos» ya no se montan, y el
+  retrato no enseña un PNJ equivocado.
+
+  Guía
+  - Los títulos «Siguiente», «Cerca de ti» y «Avisos» salían más arriba
+    de su sitio y pisaban el paso y los botones.
+  - El retrato enseña el icono de la acción; el modelo 3D sale solo
+    cuando tienes seleccionado a ese PNJ.
+
+Versión 7.6.3
+  Personaje > Equipo vuelve a salir aunque una parte falle.
+
+  Personaje > Equipo
+  - La pantalla se pinta por partes: si una falla, las demás salen igual
+    y el error se dice una vez en el chat.
+
+  Ventana
+  - Si una pantalla da error, las pestañas ya no se quedan marcando
+    otra.
+
+Versión 7.6.2
+  Cuenta: ya no se pierden los datos de tus otros personajes, y sus
+  profesiones salen en la Biblioteca.
+
+  Cuenta
+  - Arreglado: al salir del juego se guardaban el oro y la mochila
+    vacíos y se perdía lo de ese personaje. Conecta una vez con cada
+    uno para recuperarlo.
+  - Las profesiones ya no salen repetidas.
+
+  Biblioteca
+  - En Profesiones salen también tus otros personajes que la tienen,
+    con su nivel. Si tú no la tienes, los tramos se marcan para el que
+    la tenga más alta.
+
+Versión 7.6.1
+  Repaso de la interfaz: nada sobresale del marco.
+
+  Ventana
+  - La línea de tu personaje va debajo de los botones de la cabecera y
+    se corta si no cabe.
+  - Las subpestañas de Personaje y de Opciones se reparten el ancho,
+    como las pestañas.
+  - Los botones del lateral son más anchos: se lee el nombre entero.
+  - Cada pantalla recorta lo que no quepa, así que nada se sale del
+    marco aunque hagas la ventana pequeña.
+
+  Pantallas
+  - Biblioteca: las categorías van en 3 filas de 3 y se ajustan al
+    ancho.
+  - Exploración y Mazmorras: los títulos ya no pisan los botones y los
+    tres botones de la mazmorra caben.
+  - Títulos y notas largas de Cuenta, Colección, Reputación, Equipo y
+    Estadísticas: en una línea, dentro del marco.
+
+Versión 7.6
+  Datos de Wowhead, mapa de mazmorra, misiones opcionales, profesiones
+  1-300 y mejor equipo a tu nivel.
+
+  Mazmorras
+  - 27 mazmorras con niveles, entradas y misiones de la Alianza; jefes y
+    botín en 26.
+  - Botón Mapa: el mapa de la mazmorra que trae el juego, con sus
+    plantas y los jefes numerados en su sala. Clic en un número: su
+    botín.
+
+  Guía
+  - Tarjeta de opcionales cerca: misiones de otras rutas de la Alianza
+    que no están en la tuya, con Añadir o No. Las rutas no cambian.
+  - ÉLITE y GRUPO N en los objetivos, cuando el juego lo dice. Si vas
+    solo, Ignorar lo salta.
+
+  Opciones > Ajustes
+  - Estilo de ruta: Rápida (sin opcionales), Normal (te ofrece las
+    cercanas), Completa (todas las de la zona) o Con mazmorras (además,
+    las misiones de mazmorra de tu nivel).
+
+  Exploración
+  - Botón Cerca de ti: entrenadores de armas, vendedores, raros,
+    misiones de bolsa y posadas por distancia, con Seguir.
+
+  Biblioteca
+  - Profesiones 1-300: tramos de cada profesión, el tuyo resaltado y lo
+    que te falta contando bolsas y banco. También zonas, razas y clases,
+    raros, vendedores, bolsas y entrenadores de armas con datos.
+
+  Personaje > Equipo
+  - Mejor a tu nivel: las 3 piezas del botín de las mazmorras de tu
+    nivel que más mejoran lo tuyo, con Ver.
+
+  Sin comprobar
+  - Los datos salen de Wowhead (Forever) y aún no están comprobados en
+    el juego.
+
+Versión 7.5.16
+  Jefes y botín, Colección y categorías nuevas, preparados para cuando
+  estén los datos.
+
+  Mazmorras
+  - Debajo de las misiones, los jefes. Clic en uno: su botín, con «Todo
+    el botín» y «Útil para ti» (lo que puedes llevar y «▲ mejor» si
+    mejora lo tuyo).
+
+  Biblioteca
+  - Categorías nuevas: raros y élites (con su botín), vendedores con
+    objetos buenos o limitados, misiones que dan bolsas y entrenadores
+    de armas. Todas con Llevarme.
+
+  Colección
+  - Botón nuevo en el lateral: monturas, mascotas y juguetes con el
+    icono del juego, en color si lo tienes y en gris si no. Clic: dónde
+    se consigue, precio, reputación, coordenadas y Llevarme.
+
+  Próxima actualización
+  - Todo esto está vacío hasta que se rellenen los datos de Wowhead.
+    Mientras, sale «Próxima actualización».
+
+Versión 7.5.15
+  Reparar solo, qué tirar con las bolsas llenas y objetos de misión
+  sobrantes.
+
+  Vendedor
+  - Al abrir un vendedor que repara, arregla todo tu equipo con tu oro y
+    te dice lo que ha costado. Si no te llega, te dice cuánto cuesta.
+    Shift al abrirlo: no repara. Se quita en Opciones > Ajustes.
+
+  Avisos
+  - Con 2 huecos o menos, el aviso de las bolsas te sugiere qué vender o
+    tirar: grises, objetos de misión que ya no usas y lo que menos vale.
+    Nunca tira nada.
+  - Nuevo aviso con los objetos de misión que no pide ninguna misión de
+    tu diario. Pasa el ratón por el aviso para ver la lista completa.
+
+Versión 7.5.14
+  Arreglo del brujo con Sacrificio demoníaco.
+
+  Barra en pantalla
+  - Con el Sacrificio demoníaco puesto ya no avisa de que no tienes
+    demonio.
+
+Versión 7.5.13
+  Copiar el progreso entre ordenadores.
+
+  Opciones > Ajustes
+  - Exportar: un código de texto con tu ruta, paso, notas, pospuestos e
+    ignorados, puntos de vuelo y ajustes. Importar: lo pegas en el otro
+    ordenador y confirmas.
+
+Versión 7.5.12
+  Progreso por zonas.
+
+  Exploración
+  - Botón Todas las zonas: las zonas de tu ruta en orden con el porcentaje
+    de misiones de la guía hechas. Clic en una: sus misiones, con Seguir e
+    Ir a su paso.
+
+Versión 7.5.11
+  Mascota y demonio en pantalla.
+
+  Barra en pantalla
+  - Cazador: sin llamar sale el icono de Llamar mascota; con ella fuera,
+    su cara de humor (alegre, contenta, hambrienta) o la calavera si está
+    muerta. Brujo: sin demonio sale el icono de Invocar diablillo.
+
+Versión 7.5.10
+  Buffs en pantalla.
+
+  Barra en pantalla
+  - Debajo de la flecha, los buffs de tu clase que te faltan con 0/1; en
+    grupo o banda, los que das a otros dicen cuántos lo tienen (pasa el
+    ratón para ver quién no). Cada icono se quita al ponértelo. Solo fuera
+    de combate; se mueve arrastrando y se apaga en Ajustes.
+  - Pícaro: aviso de arma sin veneno desde el nivel 20.
+
+Versión 7.5.9
+  Compartir en el chat.
+
+  Personaje > Estadísticas
+  - Botón Compartir en el chat (y /ga compartir): tu nivel, tiempo
+    y ritmo en el chat de grupo, o de hermandad si no estás en grupo.
+
+Versión 7.5.8
+  Piedra de hogar.
+
+  Exploración
+  - Dónde tienes la piedra de hogar, si está lista y la posada que te
+    conviene para la sección siguiente, con sus coordenadas y el botón
+    Llevarme a la posada.
+  - En Avisos: cuando la piedra vuelve a estar lista.
+  - Las posadas que no salen en las rutas están sin comprobar en Forever y
+    lo dicen (Próxima actualización).
+
+Versión 7.5.7
+  Tiempo estimado por sección.
+
+  Pestaña Guía
+  - En la barra de la ruta: los pasos que te quedan en la sección y el
+    tiempo aproximado, según lo que tardas de media por paso.
+
+Versión 7.5.6
+  Resumen de la sesión.
+
+  Personaje > Estadísticas
+  - Esta sesión: tiempo, experiencia, oro y misiones. Y un resumen de la
+    sesión anterior.
+
+Versión 7.5.5
+  Profesiones de la cuenta.
+
+  Cuenta
+  - Al desplegar un personaje salen sus profesiones con su nivel.
+
+Versión 7.5.4
+  Copiar ajustes de otro personaje.
+
+  Opciones > Ajustes
+  - Copia tema, tamaños, opacidad y casillas de otro personaje de la
+    cuenta. No toca automatismos ni el progreso.
+
+Versión 7.5.3
+  Banco en Cuenta.
+
+  Cuenta
+  - El banco se guarda al abrirlo; al desplegar un personaje eliges
+    Mochila o Banco.
+
+Versión 7.5.2
+  Buscador en Cuenta.
+
+  Cuenta
+  - Escribe un objeto y te dice qué personaje lo tiene, dónde (mochila o
+    banco) y cuántos.
+
+Versión 7.5.1
+  Ahorro para el nivel 40.
+
+  Pestaña Guía
+  - Desde el nivel 30, en Avisos: el oro para equitación, montura y doble
+    especialización (10 o). Equitación y montura con los precios del
+    clásico, editables en Ajustes. Paladín y brujo sin montura (la da su
+    misión). Lo que ya tienes no sale.
+  - Arreglado: los avisos de reactivos de la 7.4 no salían.
+
+Versión 7.4
+  Avisos debajo de los objetivos, experiencia descansada, reactivos, notas
+  y botón Cuenta.
+
+  Pestaña Guía
+  - Primero el paso y sus objetivos; los avisos (equipo, bolsas, comida,
+    reactivos, posada y grupo) van debajo.
+  - Experiencia descansada en la línea de niveles.
+  - Aviso de reactivos de tu clase y de munición del cazador cuando quedan
+    pocos, y aviso de posada para desconectar con descanso.
+  - Botón Nota en la caja del paso: escribe tu propia nota.
+
+  Cuenta
+  - Botón nuevo debajo de Biblioteca: tus personajes con nivel, zona y
+    oro. Al pulsar uno se despliega su mochila. Abajo, el oro total de la
+    cuenta. Cada personaje se actualiza al conectar con él.
+
+  Próxima actualización
+  - Las partes que aún no están completas (fichas de reputación, mapas y
+    datos de mazmorras, zonas, razas y clases, y profesiones de la
+    Biblioteca) lo indican con «Próxima actualización».
+
+Versión 7.3
+  El tutorial sale a todos al conectar.
+
+  Tutorial
+  - Sale al conectar con cualquier personaje. La x y Empezar solo lo
+    cierran por esa vez.
+  - Botón Desactivar tutorial: abre Opciones > Ajustes con la opción
+    Mostrar el tutorial al conectar resaltada. Al quitar la marca no sale
+    más en ningún personaje de la cuenta.
+
+Versión 7.2
+  Primer uso, enlace de misiones, seguimiento automático y sonidos.
+
+  Pestaña Guía
+  - Shift+clic en un objetivo con misión: la enlaza en el chat.
+  - Las misiones del paso se ponen solas en el seguimiento de misiones y
+    se quitan al cambiar de paso (solo las que puso el addon).
+
+  Primer uso
+  - Cuatro pantallas cortas que explican la
+    ventana. Se pueden volver a ver con /ga tutorial.
+
+  Opciones
+  - En Ajustes: Seguir las misiones del paso (encendido) y Sonidos
+    (apagado): al llegar a un destino, al completar los objetivos y al
+    pasar de paso.
+
+Versión 7.1
+  Tema Pergamino y flecha de colores con rumbo.
+
+  Opciones
+  - Tema nuevo Pergamino, que también cambia el fondo y el borde de la
+    ventana.
+
+  Flecha
+  - Verde cerca, amarilla a media distancia y roja lejos (se apaga en
+    Ajustes).
+  - Junto a la distancia, el rumbo (al norte, al sureste...).
+
+Versión 7.0
+  Retrato del PNJ, celebraciones, destinos en el minimapa y bienvenida.
+
+  Pestaña Guía
+  - Retrato del PNJ al que vas en la caja del paso. Clic en el retrato: lo
+    selecciona si está cerca.
+
+  Celebraciones
+  - Al subir de nivel: tiempo y misiones del nivel y los hechizos nuevos
+    con su icono y su precio.
+  - Al acabar una sección: cuál has hecho y cuál empieza.
+
+  Minimapa
+  - Los destinos del paso también salen en el minimapa.
+
+  Bienvenida
+  - Al conectar: dónde lo dejaste y cuánto te falta para el siguiente
+    nivel, con botón Seguir.
+
+Versión 6.9
+  Ritmo de subida, avisos, vender lo gris, modo grupo, estadísticas y
+  puntos de vuelo.
+
+  Pestaña Guía
+  - Junto a la sección: tu experiencia por hora y cuánto te falta para el
+    siguiente nivel.
+  - Avisos con botón Entendido: pieza a punto de romperse, pocos huecos en
+    las bolsas y poca comida o bebida.
+  - Grupo: con compañeros que llevan la guía ves en qué paso va cada uno y
+    qué misiones les puedes compartir.
+
+  Personaje > Estadísticas
+  - Tiempo jugado, misiones entregadas, ritmo medio y muertes, y una tabla
+    por nivel. Cuenta desde esta versión.
+
+  Exploración
+  - Puntos de vuelo de la zona (activados o no) y los siguientes que te
+    faltan en tu ruta, con Llevarme.
+
+  Opciones
+  - Automatismo nuevo Vender lo gris (apagado de serie; Mayús al abrir el
+    vendedor para no hacerlo).
+  - En Ajustes se pueden apagar los avisos y el modo grupo.
+
+Versión 6.8
+  Biblioteca de datos del mundo, con su botón en el lateral derecho.
+
+  Biblioteca
+  - Nuevo botón Biblioteca debajo de Mazmorras, con cinco categorías:
+    Zonas, Facciones, Mazmorras, Razas y clases, y Profesiones.
+  - El buscador busca en todas a la vez.
+  - Al pulsar una entrada sale su ficha (descripción, niveles, puntos de
+    interés) con botones a lo relacionado: la mazmorra, la reputación o la
+    flecha.
+  - Facciones y Mazmorras usan las mismas fichas de la 6.6 y la 6.7. Las
+    zonas son de ejemplo y el resto se irá rellenando con datos de Forever.
+
+Versión 6.7
+  Guía de mazmorras, con su botón en el lateral derecho.
+
+  Mazmorras
+  - Nuevo botón Mazmorras debajo de Reputación: las mazmorras ordenadas
+    por nivel, con el color según el tuyo.
+  - Incluye las 9 mazmorras nuevas de Forever: Salón de los Feudales,
+    Ruinas de Lordaeron, Excavación, Ciudad de Dalaran, La Ciudad
+    Sumergida, Bastión Krol'dok, Prisión de Alcaz, Bastión Faucenegra y
+    Bancal del Creador.
+  - Pulsa una para desplegarla: zona y entrada, misiones de la Alianza (y
+    si ya las llevas) y los botones Marcar entrada (punto en el mapa del
+    mundo) y Llevarme (la flecha va a la entrada sin perder tu paso).
+  - Los datos solo se cargan al abrir Mazmorras y aún no están
+    comprobados en WoW Forever.
+
+Versión 6.6
+  Guía de reputación, con botones nuevos en el lateral derecho de la
+  ventana.
+
+  Lateral derecho
+  - Dos botones pegados a la ventana: Guía (lo de siempre) y debajo
+    Reputación. El activo se ve dorado.
+  - Guía te devuelve a la pestaña donde estabas y la ventana recuerda en
+    qué modo la dejaste.
+
+  Reputación
+  - La lista de tus facciones con su barra y su rango, leídos del juego
+    (rueda del ratón para ver más).
+  - Pulsa una para ver su ficha: cómo subirla, intendente y recompensas.
+    Las fichas que aún no están comprobadas en WoW Forever lo dicen.
+  - Los datos de las fichas solo se cargan al abrir Reputación.
+
+Versión 6.4
+  Personaje > Equipo con tu equipo y tu dinero, y comparador de equipo en
+  los tooltips.
+
+  Personaje > Equipo
+  - Nuevo botón junto a Talentos y Hechizos: lo que busca la guía para tu
+    clase (de los pesos de tu ruta), lo que llevas puesto con su nivel y
+    durabilidad (lo más gastado primero) y las ranuras vacías.
+  - Dinero: lo que llevas, lo que cuesta ahora lo recomendado en tu
+    instructor, el próximo entrenamiento y lo que costaba reparar todo en
+    el último vendedor que repara. Solo precios del juego.
+
+  Comparador
+  - En el tooltip de las piezas que puedes equiparte: la diferencia de
+    estadísticas con lo que llevas en esa ranura y si es mejor o peor según
+    lo que busca la guía para tu clase. Si no es para tu clase o aún no
+    tienes el nivel, lo dice.
+  - Se quita en Opciones > Ajustes (Comparador de equipo en los tooltips).
+
+Versión 6.3
+  Aviso de preparación antes de dejar una zona: misiones, instructor y
+  materiales.
+
+  Antes de dejar la zona
+  - Cuando el paso siguiente es en otra zona, la pestaña Guía te dice lo
+    que conviene hacer antes de irte: las misiones de tu diario con algo
+    que hacer o entregar ahí (con su progreso), los hechizos que puedes
+    aprender ya y el instructor de la ruta más cercano, los materiales que
+    te faltan para el paso actual de tus profesiones (contando bolsas y
+    banco) y cuántas misiones de la guía quedan en la zona.
+  - Seguir lleva la flecha ahí como desvío. Entendido cierra el aviso hasta
+    la próxima zona. Si no falta nada, pone Todo listo para irte.
+
+  Comandos
+  - /ga preparar muestra el aviso cuando quieras.
+
+Versión 6.2
+  Desvíos sin perder tu paso y aviso para retomar la ruta si te alejas.
+
+  Desvíos
+  - Seguir un objetivo de Cerca de ti, o una misión de Exploración, lleva
+    la flecha ahí sin cambiar tu paso. La pestaña Guía lo indica con una
+    barra azul y el botón Volver a mi paso; la flecha pone Desvío y se ve
+    en azul.
+  - En Exploración, pulsa una misión: Seguir (como desvío) o Ir a su paso
+    (la guía salta a ese paso).
+
+  Recuperar la ruta
+  - Si estás en otra zona que la de tu paso, la pestaña Guía te dice cuál
+    es el paso pendiente más cercano de esa zona, con dos botones: Retomar
+    ahí o Seguir con mi paso (no vuelve a avisar mientras sigas en esa
+    zona). En los viajes en grifo no avisa.
+
+Versión 6.1
+  Panel de aventura en la pestaña Guía: objetivos en grupos y botones
+  Seguir, Posponer e Ignorar.
+
+  Resumen
+  - Arriba, junto a tu nivel: el % de experiencia y cuántas misiones llevas
+    en el diario.
+  - La barra cuenta los pasos que ya tienes hechos de verdad (por las
+    misiones completadas), no el paso en el que estás.
+
+  Objetivos
+  - Los destinos del paso salen en grupos: Siguiente (lo que falta), Cerca
+    de ti (destinos de los pasos siguientes a menos de 200 m, para hacerlos
+    de paso) y Completado.
+  - Pulsa un objetivo y salen tres botones: Seguir (la flecha va ahí),
+    Posponer (lo deja para el final del paso) e Ignorar (cuenta como hecho
+    en este personaje).
+  - /ga ignorados recupera los ignorados y quita lo pospuesto.
+
+Versión 6.0.3
+  Cada personaje guarda lo suyo, con puesta al día ordenada, y
+  /ga depurar revisa también la ruta.
+
+  Preferencias por personaje
+  - Ajustes, automatismos, avisos, navegación, progreso y pasos atascados
+    se guardan aparte en cada personaje: lo que cambias en uno no toca a
+    los demás.
+  - Al actualizar, lo guardado se pone al día una sola vez y por orden,
+    sin borrar nada (tampoco los pasos atascados apuntados).
+
+  Diagnóstico
+  - /ga depurar revisa además la ruta: destinos sin mapa o
+    coordenadas, mapas que el juego no reconoce y pasos que no pueden
+    avanzar solos.
+  - También dice qué automatismos tienes encendidos, en qué punto está lo
+    guardado y cuántos pasos atascados llevas apuntados.
+
+Versión 6.0.2
+  Automatismos separados en las opciones, cada uno con su descripción y su
+  estado.
+
+  Automatismos
+  - La rueda abre Opciones con tres botones: Ajustes, Automatismos y
+    Novedades.
+  - En Automatismos está todo lo que la guía hace sola: avance de pasos,
+    siguiente destino al llegar, aceptar y entregar misiones, aprender
+    hechizos y recetas en el instructor y poner talentos. Cada uno dice qué
+    hace y si está Encendido o Apagado (pulsa para cambiarlo). Arriba,
+    cuántos llevas encendidos y Apagar todos.
+  - Nuevo: Siguiente destino al llegar se puede apagar (antes la flecha
+    pasaba siempre sola al siguiente PNJ del paso).
+  - En los personajes nuevos empiezan todos apagados. Los personajes que
+    ya usaban la guía conservan lo que tenían.
+
+  Distancias
+  - La flecha y Exploración dan la distancia en metros.
+
+  Comandos
+  - /ga automatismos abre esa parte de las opciones.
+
+Versión 6.0.1
+  Ventana nueva con cuatro pestañas: Guía, Personaje, Profesiones y
+  Exploración.
+
+  Pestañas
+  - Personaje junta Talentos y Hechizos, cada uno con su botón y su icono
+    de siempre.
+  - Exploración (nueva): tu zona, subzona y coordenadas; cuántas misiones
+    de la guía en esa zona llevas hechas, con su barra y la lista (rueda
+    del ratón para ver más); y el destino de la flecha con la distancia y
+    hacia dónde queda.
+  - Las misiones de Exploración son las de la guía con destino en tu zona:
+    el juego no da la lista de todas las misiones de una zona.
+
+  Opciones
+  - Siguen en la rueda dentada de arriba (no son una pestaña), ahora con
+    dos botones: Ajustes y Novedades.
+
+  Comandos
+  - /ga personaje y /ga exploracion abren esas pestañas.
+    /ga talentos y /ga hechizos siguen funcionando.
+
+Versión 5.9.7
+  Druida elfo de la noche: el talento del 40 se llama ya como en el juego.
+
+  Druida elfo de la noche
+  - Mordedura primigenia (antes la guía la llamaba Mordisco primigenio) en
+    la ruta, los talentos y los consejos. Comprobados también los ids de
+    Mordedura primigenia (407995) y Carga feral (16979).
+
+Versión 5.9.6
+  Sacerdote elfo de la noche: nombres y descripciones de sus hechizos de
+  raza corregidos.
+
+  Sacerdote elfo de la noche
+  - La ruta y los consejos llaman ya por su nombre a Fragmentos estelares
+    (al 10, con Estrellas de Elune): daño Arcano canalizado desde lejos, con
+    30 s de reutilización en Forever.
+  - Gracia de Elune (al 40, en Darnassus): durante 15 s los ataques cuerpo a
+    cuerpo y a distancia te aciertan la mitad de veces. Antes la guía decía
+    que solo protegía de los ataques a distancia.
+
+Versión 5.9.5
+  Arreglos en las rutas y un comando para apuntar los pasos que no avanzan
+  solos.
+
+  Rutas
+  - Inicio de Dun Morogh (las ocho rutas de enano y gnomo): la flecha pasa
+    también por quien te da Cazador de jabalíes, La cueva de los trols, El
+    diario robado, las entregas de correo y Las observaciones de Senir, que
+    antes no tenían su punto de aceptar.
+  - Villanorte (las siete rutas humanas): el libro mordisqueado que sueltan
+    los kóbolds tiene su punto, y el paso avanza solo al aceptar su misión.
+  - Mago gnomo y mago humano: fuera un paso de Poniente que daba por
+    entregada La hermandad de los Defias antes de tiempo (se entrega en
+    Villa del Lago).
+  - La leyenda de Stalvan se acepta y se entrega en Villa Oscura en todas
+    las rutas, como en las de elfo desde la 5.9.4.
+  - Los pasos de profesión vuelven a llevar su icono propio (esencias,
+    polvos, fórmulas y cajas de Forzar cerraduras).
+
+  Comandos
+  - /ga atascado [nota]: si un paso no avanza solo, apúntalo. La guía
+    guarda una foto del paso (ruta, sección, nivel, zona y el estado de cada
+    misión) por personaje, hasta 30.
+  - /ga atascado ver enseña las fotos para copiarlas y pasármelas;
+    /ga atascado borrar las quita.
+
+Versión 5.9.4
+  Arreglos en las cinco rutas de elfo de la noche.
+
+  Rutas de elfo
+  - El colmillo de Githyiss (Cañada Umbría): la guía marca dónde cae el
+    colmillo, te dice que lo abras con clic derecho para aceptar la misión y
+    ya avanza sola en ese paso.
+  - La leyenda de Stalvan (Bosque del Ocaso): el paso ahora también la
+    entrega en Villa Oscura, así que no se queda a medias en tu registro; el
+    resto de la cadena, de élite, sigue siendo opcional.
+
+Versión 5.9.3
+  Nueva ruta: sacerdote elfo de la noche (Sombra), con sus misiones de clase
+  y de raza.
+
+  Sacerdote elfo de la noche
+  - Ruta 1-60 desde la Cañada Umbría con las instructoras de sacerdote de
+    Aldrassil, Dolanaar y el Templo de la Luna de Darnassus; desde Poniente,
+    los de Forjaz y Ventormenta.
+  - Misiones de clase: El sigilo sagrado al 1 y Prendas de la luna al 5
+    (curar a la centinela Shaya).
+  - Misiones de raza: La vuelta a casa y Estrellas de Elune al 10 (tu
+    hechizo de raza de daño Arcano, con sus rangos en el instructor) y La
+    Gracia de Elune, que la guía hace al 40 en Darnassus.
+  - Los mismos talentos, hechizos y consejos de equipo que el sacerdote
+    enano o gnomo, con Sastrería, Encantamiento y Primeros auxilios en
+    Dolanaar, Darnassus y Auberdine.
+  - Al 40 entrena en Darnassus: de paso, el sable de la noche.
+
+  Rutas de elfo
+  - Las rutas del druida, el guerrero y el pícaro elfos ya solo se
+    construyen si son la de tu personaje, como las demás: la guía carga un
+    poco más rápido.
+
+Versión 5.9.2
+  Nueva ruta: pícaro elfo de la noche, con sus misiones de clase, Venenos y
+  Forzar cerraduras.
+
+  Pícaro elfo de la noche
+  - Ruta 1-60 desde la Cañada Umbría con los instructores de pícaro de
+    Aldrassil, Dolanaar y el Enclave Cenarion de Darnassus; desde Poniente,
+    los de Forjaz y Ventormenta.
+  - Misiones de clase: El sigilo cifrado al 1, Cuando cae la manzana y La
+    llamada del destino al 10 (el diario de Sethir, con Robar), La orden de
+    Erion y el Molino de Alther al 16 (Forzar cerraduras) y La torre de Klaven
+    al 20-24 (Venenos).
+  - Los mismos talentos, hechizos y consejos de equipo que el pícaro enano o
+    gnomo, con Minería, Desuello, Primeros auxilios, Venenos y Forzar
+    cerraduras.
+  - Al 40 entrena en Darnassus: de paso, el sable de la noche.
+
+Versión 5.9.1
+  Nueva ruta: guerrero elfo de la noche (Armas, arma de dos manos), con sus
+  misiones de clase e instructores.
+
+  Guerrero elfo de la noche
+  - Ruta 1-60 desde la Cañada Umbría con los instructores de guerrero de
+    Aldrassil, Dolanaar y la Terraza del Guerrero de Darnassus; desde
+    Poniente, los de Forjaz, Ventormenta, Theramore y el Pico Nidal.
+  - Misiones de clase: El sigilo simple al 1, Vorlus Pezuñavil al 10 (Actitud
+    defensiva, Provocar y Hender armadura), La sombra de Elura y el arma de
+    elunita al 16, La Reyerta al 30 (Actitud rabiosa) y el arma torbellino.
+  - Los mismos talentos, hechizos y consejos de equipo que el guerrero enano o
+    gnomo, con Minería, Desuello y Primeros auxilios de los elfos.
+  - Al 40 entrena en Darnassus: placas y sable de la noche.
+
+Versión 5.9
+  Nueva ruta: druida elfo de la noche, leveado de tanque en forma de oso, con
+  sus misiones de clase, hechizos, talentos, equipo y Peletería.
+
+  Druida elfo de la noche
+  - Ruta 1-60 desde la Cañada Umbría, con los instructores de druida de
+    Aldrassil, Dolanaar, Darnassus, Ventormenta y Claro de la Luna
+    (Teletransporte: Claro de la Luna).
+  - Misiones de clase en la ruta: forma de oso al 10, Curar envenenamiento al
+    14, forma acuática al 16 y forma felina al 20.
+  - Consejos de tanque y de equipo en cada zona: cuero con Aguante y Agilidad,
+    bastones, mazas, dagas y armas de puño, y mazmorras para ir de tanque.
+
+  Hechizos y talentos
+  - Lista de hechizos con prioridad para el oso tanque y aviso de los hechizos
+    de misión y de talento.
+  - Talentos que se ponen solos: 41 en Combate feral (Carga feral, Lacerar,
+    Líder de la manada, Reacción natural, Mordisco primigenio) y 10 en
+    Restauración, con el árbol de Forever.
+
+  Profesiones
+  - Desuello, Peletería 1-300 y Primeros auxilios. La Peletería se aprende
+    entera con Telonis, en Darnassus.
+  - Los pasos de profesión sin icono propio piden el icono del objeto al
+    juego.
+
+Versión 5.8.5
+  Información del objeto en su ventana al pasar el ratón: nivel de objeto,
+  nivel requerido, tipo y valor de venta.
+
+  Objetos
+  - Información contextual en los tooltips de objetos: nivel de objeto,
+    nivel requerido, tipo y valor de venta, cuando el cliente facilita esos
+    datos.
+  - Nueva opción para activar o desactivar esta información desde Opciones.
+  - Función exclusivamente informativa: no vende, destruye ni modifica
+    objetos.
+
+Versión 5.8.4
+  Nuevo modo discreto: la ventana principal y la flecha se ocultan durante el
+  combate y vuelven al terminar.
+
+  Modo discreto
+  - Nueva casilla en Opciones: Modo discreto durante el combate. Al entrar en
+    combate oculta la ventana principal y la flecha si estaban visibles; al
+    terminar las restaura. Si estaban ocultas antes, permanecen ocultas.
+  - Está desactivado por defecto y se puede activar o desactivar cuando
+    quieras. No cambia rutas, pasos ni progreso guardado.
+
+Versión 5.8.3
+  Nuevo /ga depurar: un informe con la versión, el cliente, la ruta y
+  el estado de la guía, listo para copiar y pegar.
+
+  Diagnóstico
+  - /ga depurar abre una ventana con el informe: versión del addon y
+    del cliente, personaje, ruta cargada y posición, tema, opciones cambiadas,
+    tamaño de las ventanas, memoria y qué funciones del juego o módulos del
+    addon faltan. Pulsa Ctrl+C para copiarlo y pégalo donde te lo pidan.
+  - Funciona aunque la ventana de la guía no haya cargado, que es cuando más
+    hace falta.
+  - /ga depurar errores activa o quita los avisos de error de los
+    módulos en el chat.
+
+Versión 5.8.2
+  La flecha dice el rumbo con palabras si el cliente no puede girar la imagen.
+
+  Flecha
+  - Si el cliente no tiene la función que gira la flecha (SetRotation), la
+    imagen se oculta y bajo la distancia sale el rumbo: delante, a la derecha,
+    detrás a la izquierda... o norte, sudeste... si el juego no dice hacia
+    dónde miras.
+  - Si la flecha gira, todo sigue igual.
+
+Versión 5.8.1
+  El tema de color se cambia al momento, sin recargar la interfaz.
+
+  Opciones
+  - Al elegir un tema, las pestañas, botones, barras, casillas, deslizadores y
+    el resto de la ventana cambian de color en el acto. El botón Recargar ya
+    no hace falta y se quita.
+  - El tema elegido se guarda y se aplica igual al entrar.
+
+Versión 5.8
+  Temas de color, tamaño del texto del paso, destello al cambiar de paso,
+  una flecha mucho más ligera y la guía solo carga la ruta de tu clase y
+  raza.
+
+  Opciones
+  - Tema: dorado (el de siempre), azul, verde o morado. Cambia el acento de
+    pestañas, botones, barras, casillas y flecha. Se aplica al recargar:
+    pulsa Recargar o escribe /reload.
+  - Tamaño del texto del paso, del 80 % al 150 %, con un deslizador. Cambia
+    al momento.
+  - Destello al cambiar de paso: la caja del paso brilla un momento para que
+    notes el cambio. Se quita con su casilla.
+
+  Más ligera
+  - La flecha es ahora una sola imagen que gira, en vez de una hoja con 64
+    dibujos: el archivo pasa de 1 MB a 16 KB, y gira con más suavidad.
+  - La guía solo construye la ruta de tu clase y raza. Las demás se leen al
+    entrar, pero sus datos se tiran al momento: el addon ocupa unos 5 MB
+    menos de memoria.
+
+  Sin cambios
+  - Rutas, talentos, hechizos, misiones y datos guardados siguen igual. Para
+    cambiar de ruta, /ga ruta <id> y /reload, como antes.
+
+Versión 5.7
+  Interfaz renovada: tema oscuro con acento dorado, pestañas planas, barras
+  finas, flecha con la distancia en grande y su borde de color, botón de
+  cerrar, casillas y deslizadores propios y sombra en las ventanas.
+
+  Ventana
+  - Marco plano de 1 píxel con sombra suave, banda de cabecera y una línea
+    dorada arriba, en vez del borde biselado del juego. Lo mismo en la ventana
+    compacta y en los paneles del instructor y de recetas.
+  - Pestañas planas: la activa se marca con una línea dorada debajo, y el
+    resto se queda en gris.
+  - Botón de cerrar plano (se pone rojo al pasar el ratón) y esquina de
+    redimensionar con puntitos, más discreta.
+  - Los botones se oscurecen al pulsarlos, y los principales (Siguiente, Poner
+    talentos, Aprender lo recomendado y Aprender lo de la guía) llevan borde
+    dorado.
+
+  Guía
+  - El texto del paso es más grande y con más aire entre líneas, y la caja
+    lleva una raya de color a la izquierda: dorada en curso, verde hecha y
+    gris sin misiones.
+  - La barra de ruta es plana y fina, con borde y un brillo suave. La de
+    profesiones, igual pero dorada.
+  - Los destinos van con filas alternas y las coordenadas alineadas en una
+    columna fija.
+
+  Flecha
+  - Ahora tiene su propio fondo semitransparente. La distancia sale en grande,
+    con el nombre del destino debajo.
+  - El borde de la flecha cambia de color según lo cerca que estés: dorado a
+    menos de 300 yardas, verde a menos de 60 y al llegar.
+
+  Listas y opciones
+  - Talentos, profesiones y destinos con filas alternas, y una raya verde en
+    la fila que toca ahora. En Hechizos, una línea fina separa un hechizo del
+    siguiente.
+  - Casillas y deslizadores propios, planos y con el mismo acento dorado, en
+    vez de los del juego.
+
+  Sin cambios
+  - Rutas, talentos, hechizos, misiones y datos guardados siguen igual: solo
+    cambia el aspecto. Los colores del tema están juntos en la tabla COLOR de
+    GuiaLeveo.lua, por si quieres retocarlos.
+
+Versión 5.6
+  Las siete rutas humanas siguen ahora el orden de las guías: Elwynn,
+  Poniente del 11 al 15, Loch Modan y la Costa Oscura antes del 20, y desde
+  Crestagrana como siempre.
+
+  Rutas humanas
+  - Al 10, Ventormenta (vuelo, misión de clase y profesiones) y después
+    Poniente: las granjas de los Cejade y los Saldean (Estofado de los
+    Páramos de Poniente, Pastel de hígado de dentosangre, La pobre y vieja
+    Blanchy, La reliquia olvidada y Campos de la muerte), Las Milicias del
+    Pueblo y las misiones de la Colina del Centinela y del faro.
+  - Del 15 al 18, en grifo a Ventormenta, tranvía a Forjaz y Loch Modan, con
+    los entrenamientos de siempre.
+  - Del 18 al 20, la Costa Oscura: por Los Humedales hasta Menethil y en
+    barco a Auberdine (el barco hundido, Rico marisco, los osos de Tierras
+    infestadas, la Torre de Althalaxx, la cueva de los champiñones, Un amor
+    eterno y Onus).
+  - Al 20 vuelas de Menethil a Ventormenta para entrenar y hacer tus
+    misiones de clase, y sigues por Crestagrana.
+  - La ruta del mago humano también trae las misiones nuevas de Loch Modan
+    de la 5.5.
+
+
+Versión 5.5
+  Ruta del gnomo mago: más misiones del 10 al 18 en Dun Morogh y Loch Modan,
+  para que llegues al nivel de cada paso sin tener que buscar misiones por
+  tu cuenta.
+
+  Ruta del gnomo mago
+  - Dun Morogh, de camino a Loch Modan: La protección del rebaño (Vagash, en
+    el Rancho Calmámbar), El piloto perdido y Vengar al piloto.
+  - Loch Modan: La tarea del montaraz Pico Tormenta y Zarpas asquerosas en
+    la Mina de Arroyoplata, El cuchillo de Marek en la Cabaña del Errante,
+    La excavación de Vetaferro, Recoger ídolos y el informe de la
+    excavación, la segunda y la tercera parte de En defensa de las tierras
+    del rey y El estandarte de los caídos en el Valle Rompepiedras.
+
+
+Versión 5.4
+  Nueva ruta 1-60 del cazador elfo de la noche: Teldrassil con tus
+  instructores y las tres de Domesticar la bestia en Dolanaar al 10,
+  Darnassus y la Costa Oscura hasta el 19, el barco a Menethil y, desde los
+  Páramos de Poniente, la ruta del cazador con arco, con Desuello, Minería y
+  Primeros auxilios.
+
+  Ruta del cazador elfo de la noche
+  - Ruta completa del 1 al 60 para el cazador elfo de la noche, de Bestias.
+    La guía la elige sola.
+  - Del 1 al 12 va por Teldrassil: la Cañada Umbría, Dolanaar, el Túmulo de
+    Ban'ethil, Darnassus y El Claro del Oráculo, con las misiones nuevas de
+    Forever (los tótems Tuercepinos, el colmillo de Githyiss, las pieles de
+    sable de Aldia, la huida de Ban'ethil, las jefas de las arpías y el
+    final de La corona de la Tierra en el Templo de la Luna). Tus
+    instructores: Ayanna Semprerguida en lo alto de Aldrassil, Dazalar en
+    Dolanaar y Jocaste en el Enclave Cenarion de Darnassus.
+  - Misiones de clase: al 1, El sigilo con grabados te lleva a Ayanna. Al
+    10, Dazalar te da las tres de Domesticar la bestia (con la fusta de
+    domador: un rondador Tejemadera, un acechador sable de la noche y un
+    estridador estrígido) y Entrenar a la bestia, que entregas a Jocaste en
+    Darnassus: aprendes Domesticar bestia y lo de tu mascota.
+  - Del 12 al 19, la Costa Oscura desde Auberdine, con una vuelta a
+    Darnassus al 16 para entrenar. Después, el barco a Menethil y el camino
+    por Los Humedales y Loch Modan hasta Forjaz, activando los vuelos, y el
+    entrenamiento del 18 con Olmin Barbanllamas.
+  - Desde los Páramos de Poniente sigue la ruta del cazador humano: activas
+    el vuelo de Ventormenta al pasar, a Menethil llegas volando y al 40
+    entrenas en Darnassus y compras allí el sable de la noche.
+  - Talentos, hechizos y consejos: los mismos que los otros cazadores (31
+    puntos en Bestias y 20 en Puntería al 60). La pestaña Hechizos dice con
+    qué misión de Dazalar y de Jocaste se aprende Domesticar bestia y lo de
+    la mascota. Al elegir recompensa te marca arcos, bastones y dagas; en
+    Darnassus, Ilyenia Fuegolunar enseña Bastones.
+  - Profesiones: Desuello, Minería y Primeros auxilios con los instructores
+    elfos: los aprendices junto a Aldrassil, Desuello de oficial con
+    Eladriel en Darnassus y Minería de oficial con Kurdram Rocamartillo en
+    Auberdine. En Teldrassil no hay vetas: la minería empieza en la Costa
+    Oscura.
+
+
+Versión 5.3
+  Nueva ruta 1-60 del cazador humano: Villanorte y Elwynn con tus
+  instructores, las tres de Domesticar la bestia en Villadorada al 10 y
+  desde Loch Modan la ruta del cazador con arco y flechas, con Desuello,
+  Minería y Primeros auxilios.
+
+  Ruta del cazador humano
+  - Ruta completa del 1 al 60 para el cazador humano, de Bestias. La guía la
+    elige sola.
+  - Del 1 al 11 va por el bosque de Elwynn como las otras rutas humanas, con
+    las misiones nuevas de Forever. Tus instructores: Tordrin Sternblade en
+    el establo de detrás de la abadía de Villanorte y Josephine Carson junto
+    a la herrería de Villadorada; después, Dargh Endiana en Loch Modan,
+    Ulfir Barbaférrea en el Distrito de los Enanos de Ventormenta y Olmin
+    Barbanllamas en Forjaz.
+  - Misiones de clase: al 1, Una carta garabateada te lleva a Tordrin. Al
+    10, Josephine Carson te da las tres de Domesticar la bestia (con la
+    fusta de domador: un jabalí Ocultorroca, un lobo gris del bosque y un
+    oso del bosque joven) y Entrenar a la bestia, que entregas a Isaac Chan,
+    a su lado: aprendes Domesticar bestia y lo de tu mascota. La guía las
+    pone al volver de Arroyoeste, porque piden nivel 10.
+  - Armas: empiezas con arco y dagas, así que la guía te manda a los
+    vendedores de arcos y flechas en vez de a los de armas de fuego y balas,
+    y al elegir recompensa te marca arcos, bastones y dagas. En Ventormenta,
+    Woo Ping enseña Bastones.
+  - Desde Loch Modan sigue la ruta del cazador enano: al 24-26, al 40 y al
+    42-44 entrenas en Ventormenta con Ulfir Barbaférrea y Karrina Mekenda en
+    vez de en Forjaz, y al 40 compras un caballo en el campamento maderero
+    del este de Elwynn.
+  - Talentos, hechizos y consejos: los mismos que el cazador enano (31
+    puntos en Bestias y 20 en Puntería al 60). La pestaña Hechizos dice con
+    qué misión de Josephine Carson se aprende Domesticar bestia y lo de la
+    mascota.
+  - Profesiones: Desuello, Minería y Primeros auxilios con los instructores
+    humanos: Desuello con Riley Desollapelambres en Villanorte, Minería con
+    Kelsey Fargo en la Mina del Eco y los rangos de oficial en Ventormenta.
+
+  Otras rutas
+  - Cazador enano: los talentos nuevos o cambiados de Forever usan ya los
+    nombres en español que publicó Blizzard (Aspectos letales, Fuego
+    enfocado, Entrenamiento de robustez, Rapidez de bestias y Afinar la
+    puntería). Si tu cliente los llama de otra forma, la guía los sigue
+    encontrando por el nombre en inglés o por el icono.
+
+
+Versión 5.2
+  Nueva ruta 1-60 del sacerdote humano: Villanorte y Elwynn con tus
+  instructoras, Las prendas de la Luz en Villadorada, tus misiones de raza
+  Gracia divina y La reacción Arcana y desde Loch Modan la ruta del
+  sacerdote, con las profesiones de tela en Elwynn y Ventormenta.
+
+  Ruta del sacerdote humano
+  - Ruta completa del 1 al 60 para el sacerdote humano, de Sombra. La guía
+    la elige sola.
+  - Del 1 al 11 va por el bosque de Elwynn como las otras rutas humanas, con
+    las misiones nuevas de Forever. Tus instructoras: la sacerdotisa Anetta
+    en la planta baja de la biblioteca de la abadía de Villanorte y la
+    sacerdotisa Josetta en el piso de arriba de la posada de Villadorada;
+    después, la suma sacerdotisa Laurena en la Catedral de la Luz de
+    Ventormenta y el sumo sacerdote Rohan en Forjaz.
+  - Misiones de clase: al 1, Una carta sacralizada te lleva a Anetta, que al
+    5 te manda con Josetta (Al servicio de la Luz). Josetta te da Las
+    prendas de la Luz: curar y fortalecer al guardia Roberts, herido en la
+    orilla del lago, al este de Villadorada. Da las Togas de la luz de
+    Friar.
+  - Misiones de raza: al 10, Josetta te da Gracia divina, que se entrega a
+    Laurena en Ventormenta y te enseña Gracia divina (cura al instante a un
+    aliado por debajo de la mitad de su vida; no sirve contigo). Al 20,
+    Laurena te da La reacción Arcana, que le entregas a ella misma: aprendes
+    Retroalimentación.
+  - Desde Loch Modan sigue la ruta del sacerdote enano o gnomo, sin sus
+    misiones de raza: al 24-26 y al 40 entrenas con Laurena en Ventormenta
+    en vez de en Forjaz, y al 40 compras un caballo en el campamento
+    maderero del este de Elwynn.
+  - Talentos, hechizos y consejos: los mismos que el sacerdote enano o gnomo
+    (42 puntos en Sombra y 9 en Disciplina al 60). La pestaña Hechizos dice
+    con qué misión se aprende cada hechizo de raza.
+  - Profesiones: Sastrería, Encantamiento y Primeros auxilios con los
+    instructores humanos, como el mago humano: Sastrería con Eldrin en el
+    campamento maderero del este de Elwynn, Encantamiento en el Barrio de
+    los Magos y Primeros auxilios con Michelle Belle, al lado de Josetta, o
+    en la Plaza de la Catedral.
+
+  Otras rutas
+  - Mago humano: al 40 entrenas con Jennea Cannon en Ventormenta, que te da
+    también Viaje al pantano, y compras un caballo en el campamento maderero
+    del este de Elwynn. Antes te mandaba a Forjaz y a por el mecazancudo de
+    Dun Morogh, que no es para humanos.
+
+
+Versión 5.1
+  Nueva ruta 1-60 del mago humano: Villanorte y Elwynn con tus instructores,
+  Habla con Jennea y Lago Espejo al 10 y desde Loch Modan la ruta del mago,
+  con las profesiones de tela en Elwynn y Ventormenta.
+
+  Ruta del mago humano
+  - Ruta completa del 1 al 60 para el mago humano, de Escarcha. La guía la
+    elige sola.
+  - Del 1 al 11 va por el bosque de Elwynn como las otras rutas humanas, con
+    las misiones nuevas de Forever. Tus instructores: Khelden Bremen en el
+    piso de arriba de la biblioteca de la abadía de Villanorte y Zaldimar
+    Wefhellt en el piso de arriba de la posada de Villadorada; después,
+    Jennea Cannon en el Barrio de los Magos de Ventormenta y Nittlebur
+    Chispancio en Forjaz.
+  - Misiones de clase: al 1, Una carta con glifos te lleva a Khelden Bremen.
+    Al 10, Zaldimar Wefhellt te da Habla con Jennea: en Ventormenta, Jennea
+    Cannon te da Lago Espejo, que se hace con su frasco en el Lago Espejo,
+    al sur de la ciudad, y da a elegir el Bastón Ley o el Orbe Ley.
+  - Desde Loch Modan sigue la ruta del mago gnomo, con Viaje al pantano y la
+    varita de mago al 40.
+  - Talentos, hechizos y consejos: los mismos que el mago gnomo (33 puntos
+    en Escarcha y 18 en Arcano al 60). El teletransporte recomendado sigue
+    siendo el de Forjaz: desde Loch Modan casi todos los entrenamientos son
+    allí.
+  - Profesiones: Sastrería, Encantamiento y Primeros auxilios con los
+    instructores humanos, como el brujo humano: Sastrería con Eldrin en el
+    campamento maderero del este de Elwynn, Encantamiento en el Barrio de
+    los Magos y Primeros auxilios en Villadorada o en la Plaza de la
+    Catedral.
+
+  Otras rutas
+  - Mago gnomo: al pasar por Ventormenta camino de Poniente, la ruta te pide
+    activar allí el vuelo, que usas al 20 para volver a entrenar (antes
+    decía que cogieras un vuelo que no tenías).
+  - Mago gnomo: Traslación ya sale con su nombre del juego (antes decía
+    Parpadeo).
+
+
+Versión 5.0
+  Nueva ruta 1-60 del brujo humano: el diablillo en Villanorte, el abisario
+  con Gakin en Ventormenta y desde Loch Modan la ruta del brujo, con las
+  profesiones de tela en Elwynn y Ventormenta.
+
+  Ruta del brujo humano
+  - Ruta completa del 1 al 60 para el brujo humano, de Aflicción con el
+    abisario. La guía la elige sola.
+  - Del 1 al 11 va por el bosque de Elwynn como las otras rutas humanas, con
+    las misiones nuevas de Forever. Tus instructores: Drusilla La Salle en
+    la abadía de Villanorte y Maximillian Crowe en el sótano de la posada de
+    Villadorada; después, los de El Cordero Degollado, en el Barrio de los
+    Magos de Ventormenta, y Brezospina en Forjaz.
+  - Misiones de clase: al 1, Una carta manchada te lleva a Drusilla La
+    Salle, que te da El libro robado: el libro está entre los matones Defias
+    del este de la abadía, y al entregarlo aprendes Invocar diablillo. Al
+    10, Remen Marcot, a su lado en Villadorada, te manda con Gakin el
+    Presotenebra a Ventormenta: Surena Caledon está en el huerto de
+    calabazas del sureste de Elwynn, y con El vínculo aprendes Invocar
+    abisario.
+  - Desde Loch Modan sigue la ruta del brujo gnomo: la súcubo o el íncubo y
+    el manáfago, opcionales, y el malignoecus al 40.
+  - Talentos, hechizos y consejos: los mismos que el brujo gnomo (40 puntos
+    en Aflicción, 7 en Demonología y 4 en Destrucción al 60). La pestaña
+    Hechizos dice que el diablillo se aprende con El libro robado.
+  - Profesiones: Sastrería, Encantamiento y Primeros auxilios con los
+    instructores humanos. Sastrería con Eldrin en el campamento maderero del
+    este de Elwynn; Encantamiento y los rangos siguientes de Sastrería en el
+    Barrio de los Magos; Primeros auxilios en Villadorada o en la Plaza de
+    la Catedral. La fórmula de intelecto inferior para armas de 2M solo se
+    vende en Forjaz.
+
+  Otras rutas
+  - Brujo gnomo: para ir a Poniente, la ruta te dice que salgas de
+    Ventormenta por el Valle de los Héroes (antes hablaba de una puerta
+    oeste).
+  - Loch Modan, en todas las rutas: el paso opcional del jefe trogg Grawmug
+    ya no repite dos veces el mismo nombre de misión.
+
+
+Versión 4.9
+  Nueva ruta 1-60 del pícaro humano: Villanorte y Elwynn con tus
+  instructores, Busca el SI: 7 y El robo con Mathias Shaw y desde Loch Modan
+  la ruta del pícaro.
+
+  Ruta del pícaro humano
+  - Ruta completa del 1 al 60 para el pícaro humano, de Combate con dos
+    armas. La guía la elige sola.
+  - Del 1 al 11 va por el bosque de Elwynn como el guerrero humano, con las
+    misiones nuevas de Forever. Tus instructores: Jorik Kerridan en el
+    establo de detrás de la abadía de Villanorte y Keryn Sylvius en la
+    posada de Villadorada; después, Osborne en el Casco Antiguo de
+    Ventormenta, junto al SI:7, y Hulfdan Barbanegra en Forjaz.
+  - Misiones de clase: al 1, Una carta cifrada te lleva a Jorik Kerridan. Al
+    10, Keryn Sylvius te da Busca el SI: 7: al llegar a Ventormenta le das
+    su paquete a Mathias Shaw, que te da El robo. Al 18, camino de Poniente,
+    matas al maestro de embarcadero Defias en el Embarcadero de Jerod, al
+    sur de Elwynn, y al 20, cuando vas a entrenar, le llevas a Shaw el
+    horario y te da Mathias y los Defias, la de los venenos.
+  - Desde Loch Modan sigue la ruta del pícaro enano o gnomo, sin sus
+    misiones de clase de Dun Morogh: al 16, Una regia sacudida te lleva a
+    las Herramientas de ladrón de Crestagrana, y al 20-24 La torre de Klaven
+    te enseña Venenos. Al 40 la montura es un caballo del campamento
+    maderero del este de Elwynn.
+  - Talentos, hechizos y consejos: los mismos que el pícaro enano o gnomo
+    (35 puntos en Combate y 16 en Asesinato al 60).
+  - Profesiones: Minería, Desuello y Primeros auxilios con los instructores
+    humanos, como el guerrero humano, y Venenos y Forzar cerraduras, como el
+    pícaro enano o gnomo.
+
+  Otras rutas
+  - En las rutas del guerrero y del pícaro, la Ciudad Vieja de Ventormenta
+    se llama ahora Casco Antiguo, como en el juego.
+
+
+Versión 4.8
+  Nueva ruta 1-60 del paladín humano: Villanorte y Elwynn con tus
+  instructores, el Libro de la Divinidad de Ventormenta para aprender
+  Redención y desde Loch Modan la ruta del paladín.
+
+  Ruta del paladín humano
+  - Ruta completa del 1 al 60 para el paladín humano, de Reprensión con arma
+    de dos manos. La guía la elige sola.
+  - Del 1 al 11 va por el bosque de Elwynn como el guerrero humano, con las
+    misiones nuevas de Forever. Tus instructores: el hermano Sammuel en la
+    abadía de Villanorte y el hermano Fijalontad junto a la herrería de
+    Villadorada; después, lord Grisillo Quiebrasombras en la Catedral de la
+    Luz de Ventormenta y Brandur Martiyerro en Forjaz.
+  - Misiones de clase: al 1, Una carta consagrada te lleva al hermano
+    Sammuel. Al 18, Brandur te da Libro de la Divinidad, que sigue en
+    Ventormenta: al 20, cuando vas a entrenar, hablas con Duthorian Rall y
+    Gazin Tenorm en la Catedral y le das 10 paños de lino a Stephanie
+    Turner. Camino de Crestagrana resucitas a Henze Faulk junto al lago del
+    nordeste de Elwynn y consigues el Pergamino Defias, y al 22, de vuelta
+    en la Catedral, aprendes Redención. Al 40, Libro de la nobleza te da el
+    caballo de guerra, como al enano.
+  - Desde Loch Modan sigue la ruta del paladín enano, sin su misión de clase
+    de Dun Morogh.
+  - Talentos, hechizos y consejos: los mismos que el paladín enano (16
+    puntos en Sagrado y 35 en Reprensión al 60). La pestaña Hechizos dice
+    que Redención se aprende con el Libro de la Divinidad.
+  - Profesiones: Minería, Desuello y Primeros auxilios con los instructores
+    humanos, como el guerrero humano. Guarda 10 paños de lino para tu misión
+    de clase del 20.
+
+
+Versión 4.7
+  Nueva ruta 1-60 del guerrero humano: Villanorte, Villadorada y el este de
+  Elwynn con las misiones nuevas de Forever, la actitud defensiva en
+  Ventormenta y desde Loch Modan la ruta del guerrero.
+
+  Ruta del guerrero humano
+  - Ruta completa del 1 al 60 para el guerrero humano. Es la primera ruta de
+    humano y la guía la elige sola.
+  - Bosque de Elwynn del 1 al 11, con las misiones nuevas de Forever: en
+    Villanorte, Un libro mordisqueado te lleva a la biblioteca de la abadía
+    y empieza una cadena que pasa por la Mina del Eco y acaba en Villadorada
+    con Devolución de libros; en Villadorada y el lago, Redes destrozadas,
+    Asunto de múrlocs, Una oferta tentadora y Botellas y baratijas; en el
+    este, Instrumentos delicados, Suministros de encantamiento robados y Río
+    abajo.
+  - Croaky y Elmpaw son raros: la guía te dice por dónde andan y que su
+    cabeza empieza una misión, pero no se para a esperarlos. Hogger es
+    élite: solo en grupo.
+  - Misiones de clase: al 1, Una carta simple te lleva a Llane Beshere, en
+    la abadía. Al 10, Lyria Du Lac, en Villadorada, o Ilsa Corbin, en
+    Ventormenta, te mandan a Harry Burlguard, en el Casco Antiguo: vence a
+    Bartleby y lleva su jarra para aprender Actitud defensiva, Provocar y
+    Hender armadura. Después, en Forjaz, Muren Pico Tormenta te manda con
+    Tormus Forjahonda al Complejo Vetaferro, camino de Loch Modan, y al
+    volver eliges un arma, como los enanos.
+  - Desde Loch Modan sigue la ruta del guerrero enano o gnomo, con La
+    Reyerta al 30. Al 40 la montura es un caballo del campamento maderero
+    del este de Elwynn.
+  - Pasos para entrenar con tus instructores de guerrero: Llane Beshere en
+    Villanorte, Lyria Du Lac en Villadorada y Wu Shen en los barracones de
+    Ventormenta; después, los de la ruta del guerrero.
+  - Talentos, hechizos y consejos: los mismos que el guerrero enano o gnomo
+    (Armas con arma de dos manos y Golpe mortal al 40). La pestaña Hechizos
+    dice que la actitud defensiva se aprende con La jarra de Bartleby.
+  - Profesiones: Minería, Desuello y Primeros auxilios con los instructores
+    humanos. Desuello en Villanorte, al oeste de la abadía, y Minería en la
+    entrada de la Mina del Eco; los rangos siguientes, en Ventormenta o en
+    Forjaz. Primeros auxilios en Villadorada y en la Plaza de la Catedral.
+    Pieles de lobo bastas, junto al lago de Villadorada, te pide pieles de
+    lobo.
+
+
+Versión 4.6
+  Nueva ruta 1-60 del brujo gnomo, de Aflicción con el abisario, con las
+  misiones de tus demonios y las perdiciones de Forever.
+
+  Ruta del brujo gnomo
+  - Ruta completa del 1 al 60 para el brujo gnomo. Va por las mismas zonas
+    que el sacerdote, con las misiones de clase del brujo en lugar de las
+    suyas.
+  - Misiones de clase: al 1, Memorándum corrupto te lleva a Alamar Grimm,
+    que te da Novato: lo que pide se consigue en la cueva de Grik'nir, en el
+    mismo paso que El diario robado, y al entregarla aprendes Invocar
+    diablillo. Al 10, Llago Llavenegra te manda a El Cordero Degollado, en
+    Ventormenta: Surena Caledon y El vínculo te dan el abisario, tu demonio
+    para toda la ruta. Al 40, Brezospina te da Invoca un malignoecus, que se
+    entrega en Trinquete: aprendes tu montura y con ella la equitación.
+  - La súcubo o el íncubo (20), el manáfago (30) y el infernal (50) tienen
+    pasos opcionales que dicen lo que pide cada cadena. No llevan puntos,
+    así que la guía no se para en ellos.
+  - Pasos para entrenar con tus instructores de brujo: Yunquemar, Kharanos,
+    Forjaz y El Cordero Degollado de Ventormenta. En Kalimdor la Alianza no
+    tiene instructor de brujo, así que la ruta te lleva a entrenar a Forjaz
+    o a Ventormenta.
+  - Talentos de Aflicción con el abisario: Corrupción mejorada al 10
+    (Corrupción instantánea), Poder profano y Energías demoníacas del 20 al
+    26 para tu demonio, Pandemia al 35 (nueva en Forever), Sifón de alma al
+    38, Succionar vida al 41 y después Malevolencia, Maestría en las
+    Sombras, Concentración vil y Anochecer; los últimos puntos, a Descarga
+    de las Sombras mejorada (40, 7 y 4 puntos). Se ponen solos como los de
+    las otras clases.
+  - Hechizos con su prioridad: Corrupción, Perdición de agonía, Transfusión
+    de vida, Drenar vida, Cauce de salud y Drenar alma van primero. En
+    Forever la Perdición de agonía y la del Apocalipsis son perdiciones, no
+    maldiciones: llevas una perdición y una maldición tuyas a la vez. La
+    Maldición de debilidad solo se compra hasta el 19 y desde el 20 la
+    cambias por la Maldición de los elementos. La piedra de hechizo, que en
+    Forever es un encantamiento temporal del arma, se compra; la piedra de
+    fuego, Drenar maná y Desterrar son opcionales; Lluvia de Fuego, Fuego
+    infernal, el Ojo de Kilrogg y los talentos de Destrucción se saltan.
+  - Los rangos de Succionar vida que vende el instructor se compran en
+    cuanto tienes el talento.
+  - La pestaña Hechizos dice con qué misión se aprende cada demonio, el
+    Ritual de fatalidad y el malignoecus, y filtra por Aflicción,
+    Demonología y Destrucción.
+  - Profesiones: Sastrería, Encantamiento y Primeros auxilios, como el mago
+    y el sacerdote. Equipo: tela; varitas, bastones, dagas, espadas de una
+    mano y objetos de la mano izquierda. La varita es tu mayor mejora:
+    rematas con ella sin gastar maná.
+
+
+Versión 4.5
+  Nueva ruta 1-60 del pícaro enano o gnomo, de Combate con dos armas, y la
+  guía sabe qué nivel de Venenos pide cada veneno del instructor.
+
+  Ruta del pícaro enano o gnomo
+  - Ruta completa del 1 al 60 para el pícaro enano o gnomo. La misma ruta
+    sirve para las dos razas y la guía la elige sola. Va por las mismas
+    zonas que el guerrero, con las misiones de clase del pícaro en lugar de
+    las suyas.
+  - Misiones de clase: al 1, Runa encriptada si eres enano o Memorándum
+    encriptado si eres gnomo te llevan a tu instructor; al 10, Hogral te
+    manda a Forjaz y a buscar a Onin MacHammar junto a Gnomeregan, y te dan
+    la Hoja de Astucia; al 16, Renzik "Cuchillo" te manda a Lucius, en
+    Crestagrana, que te da las Herramientas de ladrón; al 20-24, Mathias y
+    los Defias y La torre de Klaven, en Poniente, te enseñan Venenos y el
+    Veneno instantáneo.
+  - Forzar cerraduras: la ruta te lleva a los arcones de prácticas del
+    Molino de Alther y a los baúles del fondo del lago Sempiterno para
+    llegar a 80, lo que pide el cofre de la torre de Klaven.
+  - Pasos para entrenar con tus instructores de pícaro: Yunquemar, Kharanos,
+    Forjaz y la Ciudad Vieja de Ventormenta. En Kalimdor la Alianza solo
+    tiene instructor de pícaro en Darnassus, así que la ruta te lleva a
+    entrenar a Forjaz o a Ventormenta, y los rangos del 52 y del 54 los
+    compras al 58.
+  - Talentos de Combate para levear con dos armas: Golpes eficientes al 10
+    (nuevo en Forever), Respuesta al 21, Aluvión de acero al 30, Destello de
+    acero al 35 (mejora Navajazo) y Subidón de adrenalina al 40; después,
+    Asesinato: Malicia, Despiadado, Hacer picadillo mejorado, Letalidad,
+    Vigor y Sangre fría al 60 (35 y 16 puntos). Se ponen solos como los de
+    las otras clases.
+  - Hechizos con su prioridad: Golpe siniestro, Eviscerar, Hacer picadillo y
+    Navajazo, nuevo en Forever, van primero. Puñalada solo se compra
+    mientras llevas la daga del principio: con Combate llevas un arma lenta
+    en la mano derecha. Emboscada, Garrote, Ruptura y Porrazo son
+    opcionales; las trampas y los venenos de aturdimiento mental e hiriente
+    se saltan.
+  - Equipo: cuero; dagas, espadas, mazas, hachas de una mano y armas de
+    puño, una en cada mano. Al 36-39 la ruta te dice dónde está la Mansión
+    Ravenholdt, por si quieres hacer sus misiones de pícaro nuevas de
+    Forever.
+
+  Venenos y Forzar cerraduras
+  - En Forever, Venenos y Forzar cerraduras son habilidades aparte, como
+    Primeros auxilios, y la pestaña Profesiones del pícaro las trae con sus
+    pasos. Venenos sube 1 punto con cualquier veneno, así que se sube con el
+    Veneno instantáneo más barato, y cada paso dice qué venenos hacer para
+    tus armas; Forzar cerraduras dice dónde abrir arcones, baúles y cajas de
+    trastos del 1 al 300.
+  - Los venenos del instructor piden un nivel de Venenos además del nivel de
+    personaje. El aviso al subir de nivel lo dice ("Veneno instantáneo
+    (rango 2, con Venenos 120)"), la pestaña Hechizos los marca en rojo
+    hasta que llegas y añade la línea "Sube Venenos para aprender" con los
+    que solo esperan a eso, y la guía no te los pide antes.
+  - Los venenos que sabes no salen en el libro de hechizos, pero la guía los
+    reconoce igual.
+  - Con cinco profesiones, los botones de la pestaña Profesiones llevan un
+    nombre corto y quitan el icono para que quepan; el nombre entero sale al
+    elegirla.
+
+  Recompensas
+  - Con un arma en cada mano, un arma de una mano se compara con la peor de
+    las dos que llevas, y no te recomienda armas de dos manos, escudos ni
+    objetos de la mano izquierda que no son armas.
+  - Las armas arrojadizas cuentan como armas a distancia: para el pícaro su
+    daño pesa poco.
+
+  Rutas
+  - Un hechizo del instructor puede pedir un nivel de una habilidad (hab en
+    R.entrenamiento, con su nombre en R.habilidades), una ruta puede llevar
+    un arma en cada mano (dobleArma en R.equipo) y una profesión puede traer
+    un nombre corto para su botón (corto). El LEEME explica cómo se escribe.
+
+
+Versión 4.4
+  Nueva ruta 1-60 del cazador enano, de Dominio de bestias, con su mascota
+  desde el 10, y la guía también te ayuda en el instructor de mascotas.
+
+  Ruta del cazador enano
+  - Ruta completa del 1 al 60 para el cazador enano. Va por las mismas zonas
+    que el paladín y el sacerdote, con las misiones de clase del cazador en
+    lugar de las suyas.
+  - Misiones de clase: al 1, Runa con grabados te lleva a tu instructor; al
+    10, Grif Corazón Salvaje, en Kharanos, te manda domar un jabalí, un
+    leopardo de la nieve y un oso con la Fusta de domador (el oso se queda
+    como tu primera mascota), y Entrenar a la bestia, en Forjaz, te enseña a
+    llamar, alimentar, revivir y adiestrar a tu mascota.
+  - Pasos para entrenar con tus instructores de cazador y de mascotas:
+    Yunquemar, Kharanos, el Barrio Militar de Forjaz, la Cabaña del Errante
+    (Loch Modan), el Distrito de los Enanos de Ventormenta, el Pico Nidal y
+    el norte de Frondavil. En las zonas de Kalimdor de la ruta no hay
+    instructor de cazador hasta Frondavil, así que mientras tanto la ruta te
+    lleva a entrenar a Forjaz o a Ventormenta.
+  - Talentos de Dominio de bestias para levear con tu mascota: Aspectos
+    mortales al 10 (nuevo en Forever), Rapidez bestial al 20, Intimidación
+    al 30 y Cólera de las bestias al 40; después, Puntería: Ataques letales,
+    Puntería cuidadosa, Eficiencia y Disparos mortales (31 y 20 puntos al
+    60). Se ponen solos como los de las otras clases.
+  - Hechizos con su prioridad: Disparo Arcano, Picadura de serpiente, Marca
+    del cazador y Aspecto del halcón van primero. En Forever Disparo de
+    puntería ya no es un talento: lo vende el instructor al 20. Picadura de
+    escórpido, Disparo distractor y los rastreos de un solo tipo de enemigo
+    se saltan.
+  - Profesiones: Minería, Desuello y Primeros auxilios, como el paladín.
+    Equipo: cuero y, desde el 40, malla; armas de fuego y hachas, las que
+    sabe usar un cazador enano (las de dos manos te las enseña el maestro de
+    armas de Forjaz). No te recomienda arcos, ballestas, escudos ni nada
+    para la mano izquierda.
+  - Sin munición no disparas: cada zona te dice quién la vende, y la ruta te
+    avisa de cuándo cambiarla por una mejor (al 10, al 25 y al 40).
+
+  Instructor de mascotas
+  - La guía también te ayuda en el instructor de mascotas: el aviso al subir
+    de nivel dice qué se compra allí ("Gran aguante (rango 2, en el
+    instructor de mascotas)") y, al hablar con él, la ventana de la guía
+    sale a su lado y aprende sola lo recomendado, como en tu instructor de
+    clase.
+  - Lo que aprendes en el instructor de mascotas no va a tu libro de
+    hechizos, así que la guía lo apunta ella misma: al aprenderlo y cada vez
+    que abres Adiestramiento de bestias. Si ya lo tenías de antes de esta
+    versión, abre Adiestramiento de bestias una vez y la guía lo sabrá.
+  - En la ventana de Adiestramiento de bestias la guía no compra ni enseña
+    nada a tu mascota: solo mira lo que sabes.
+  - La pestaña Hechizos dice de cada uno de ellos "Se compra en el
+    instructor de mascotas."
+
+  Hechizos
+  - Aliviar mascota sale con "Necesita Domesticar bestia" hasta que acabas
+    las misiones de domar, y el aviso al subir de nivel no te lo pide antes.
+
+  Recompensas
+  - El daño de las armas a distancia (arcos, armas de fuego y ballestas)
+    tiene su propio peso: para el cazador cuenta mucho más que el de un arma
+    cuerpo a cuerpo.
+
+  Rutas
+  - Una ruta puede decir dónde se compran los hechizos que no vende tu
+    instructor de clase (R.donde) y cuánto pesa el daño de un arma a
+    distancia (DISTANCIA en R.equipo.pesos). El LEEME explica cómo se
+    escribe.
+
+
+Versión 4.3
+  Nueva ruta 1-60 del sacerdote enano o gnomo, de Sombra, con las misiones
+  de raza de cada uno: la guía solo te enseña los hechizos de la tuya.
+
+  Ruta del sacerdote enano o gnomo
+  - Ruta completa del 1 al 60 para el sacerdote enano o gnomo. La misma ruta
+    sirve para las dos razas y la guía la elige sola. Va por las mismas
+    zonas que el paladín, sin sus misiones de clase.
+  - Misiones de clase: al 1, si eres enano, Runa sagrada te lleva a tu
+    instructor; al 5, Las prendas de la Luz (curar al montaraz Dolf en
+    Kharanos), para las dos razas.
+  - Misiones de raza: al 10, Oración desesperada si eres enano (se entrega
+    en Ventormenta) o Destello desconcertante si eres gnomo (en Forjaz); al
+    20, Sin miedo, que te enseña Castigo, o Plan de contingencia. Las dos
+    del 20 te las da la suma sacerdotisa Laurena en Ventormenta y se
+    entregan en Forjaz.
+  - Pasos para entrenar con tus instructores de sacerdote: Silo Khalder en
+    Yunquemar, Maxan Anvol en Kharanos, el sumo sacerdote Rohan en Forjaz y
+    la suma sacerdotisa Laurena en la Catedral de Ventormenta. En Kalimdor
+    solo hay instructores en Darnassus, así que mientras subes allí la ruta
+    te lleva a entrenar a Forjaz o a Ventormenta.
+  - Talentos de Sombra para levear: Golpe de espíritu al 10, Tortura mental
+    al 20, Abrazo vampírico al 25, Silencio al 30 y Forma de las Sombras al
+    40; después, Especialización en varitas, Disciplinas gemelas y Fuerza
+    mental en Disciplina (42 y 9 puntos al 60). Se ponen solos como los de
+    las otras clases.
+  - Hechizos con su prioridad: Palabra de las Sombras: dolor, Explosión
+    mental, Palabra de poder: escudo y Tortura mental van primero. En
+    Forever Palabra de las Sombras: muerte (al 32) es nueva, Peste
+    devoradora la aprenden todas las razas y Espíritu divino lo vende el
+    instructor. Punición se deja de comprar al 20, cuando tienes Tortura
+    mental.
+  - Profesiones: Sastrería, Encantamiento y Primeros auxilios, como el mago.
+    Equipo: tela, mazas de una mano, bastones, dagas y varitas; no te
+    recomienda malla, placas, escudos ni espadas.
+
+  Hechizos
+  - Los hechizos de una sola raza salen solo a esa raza, en la lista, en el
+    aviso al subir de nivel y en el instructor: Oración desesperada y
+    Castigo al enano, Destello desconcertante y Plan de contingencia al
+    gnomo.
+  - Rezo de espíritu ya no se toma por un rango de Espíritu divino: sale
+    aparte, con "Necesita Espíritu divino (rango 4)".
+
+  Rutas
+  - Los hechizos del instructor y los de fuera de él (R.entrenamiento y
+    R.hechizosExtra) pueden llevar raza, como los puntos: al cargar la ruta
+    se quitan los de las otras razas. El LEEME explica cómo se escribe.
+
+
+Versión 4.2
+  Nueva ruta 1-60 del enano paladín, con sus misiones de clase: Redención al
+  12 y el caballo de guerra al 40.
+
+  Ruta del enano paladín
+  - Ruta completa del 1 al 60 para el enano paladín. Va por las mismas zonas
+    que el guerrero, con las misiones de clase del paladín en lugar de las
+    suyas.
+  - Misiones de clase: al 1, Runa consagrada te lleva a tu instructor; al
+    12, El Libro de la Divinidad (de Forjaz al Lago Lecho de Helm y vuelta a
+    Forjaz al 18) te enseña Redención; al 40, Duthorian Rall, en la Catedral
+    de Ventormenta, te da el caballo de guerra, y con él la equitación.
+  - Para El Libro de la Divinidad hacen falta 10 paños de lino: la guía te
+    lo recuerda desde Kharanos. La parte que empieza el Escrito sobre
+    Divinidad tiene su propio destino en la flecha, junto a Tiza
+    Forjabatalla.
+  - Pasos para entrenar con tus instructores de paladín: Bromos Grummner en
+    Yunquemar, Azar Martillopujante en Kharanos, Brandur Martiyerro en
+    Forjaz, lord Grisillo Quiebrasombras en la Catedral de Ventormenta y el
+    hermano Karman en Theramore. En el Pico Nidal no hay instructor de
+    paladín: al 46 la ruta te manda a Forjaz.
+  - Talentos para levear con un arma de dos manos: 16 puntos en Sagrado
+    (Fuerza divina, Sellos mejorados y Conducto sagrado) y 35 en Reprensión
+    (Sello de orden al 32, Árbitro sagrado al 37, Venganza al 45, Campeón de
+    la Luz al 48 y Cólera sin sello al 53). Se ponen solos como los de las
+    otras clases.
+  - Hechizos con su prioridad: Sentencia (en Forever ya no gasta el sello),
+    Golpe sagrado, tu sello y Consagración van primero. Lo de tanque (Sello
+    de furia y Furia recta), las auras de resistencia y las bendiciones
+    superiores se saltan.
+  - Profesiones: Minería, Desuello y Primeros auxilios, como el chamán y el
+    guerrero. Equipo: mazas, hachas, espadas y armas de asta de dos manos,
+    malla y, desde el 40, placas; no te recomienda escudos, dagas ni
+    bastones.
+
+  Hechizos
+  - El Sello de rectitud del principio cambia de número en el juego cuando
+    aprendes Sentencia. La guía lo sigue reconociendo: te ofrece su rango 2
+    al 10 y la lista lo marca como aprendido.
+  - Si un hechizo pide un rango concreto de otro, la lista dice cuál:
+    "Necesita Bendición de poderío (rango 6)".
+
+  Rutas
+  - Una ruta puede decir qué hechizos cambian de número en el juego
+    (R.equivalentes): la guía da el hechizo por conocido si tienes
+    cualquiera de ellos. El LEEME explica cómo se escribe.
+
+
+Versión 4.1
+  Nueva ruta 1-60 del guerrero enano o gnomo, con las misiones de clase de
+  las actitudes, y la lista de hechizos te dice qué actitud pide cada uno.
+
+  Ruta del guerrero enano o gnomo
+  - Ruta completa del 1 al 60 para el guerrero enano o gnomo. La misma ruta
+    sirve para las dos razas y la guía la elige sola; los pasos de una sola
+    raza (tu primera misión de clase y la montura) solo te salen con los PNJ
+    de la tuya.
+  - Misiones de clase: al 10, Vejrek te da Actitud defensiva, Provocar y
+    Hender armadura, y después eliges un arma en Forjaz; al 30, La Reyerta,
+    en una isla de Los Baldíos, te da Actitud rabiosa e Interceptar. Sin la
+    Actitud rabiosa el instructor no te vende Ira rabiosa, Torbellino,
+    Zurrar ni Temeridad.
+  - Pasos para entrenar con tus instructores de guerrero: Thran Khorman en
+    Yunquemar, Granis Hachaveloz en Kharanos, Kelstrum Rompepedras en
+    Forjaz, Wu Shen en Ventormenta, el Capitán Sempremimbre en Theramore y
+    Bordolf Axegrim en el Pico Nidal.
+  - Talentos de Armas para levear con un arma de dos manos (Control de la
+    ira, Golpes de barrido, Embate mejorado y Golpe mortal al 40) y después
+    Furia: 31 y 20 puntos al 60. Se ponen solos como los de las otras
+    clases.
+  - Hechizos con su prioridad: Embate, que en Forever es tu golpe principal
+    con arma de dos manos, va primero. Lo de tanque y los rangos de los
+    talentos que no coges se saltan.
+  - El arma torbellino (de Bath'rah, en las Montañas de Alterac) va en pasos
+    opcionales: si no la haces, la ruta sigue igual.
+  - Profesiones: Minería, Desuello y Primeros auxilios, como el chamán.
+    Equipo: armas de dos manos, malla y, desde el 40, placas; no te
+    recomienda escudos.
+
+  Hechizos
+  - Los hechizos que piden una actitud (Revancha, Torbellino y otros) ya no
+    se toman por un rango de esa actitud: salen con sus propios rangos.
+  - Si te falta la actitud, la lista te lo dice ("Necesita Actitud rabiosa,
+    que se aprende con la misión La Reyerta") y los rangos de tu nivel salen
+    en rojo hasta que la tengas. El aviso al subir de nivel tampoco te los
+    pide antes.
+  - El aviso al subir de nivel ya escribe bien el singular: "Hay 1 más que
+    no hace falta" y "1 hechizo nuevo".
+
+  Rutas
+  - Una ruta puede tener puntos solo para una raza: al cargarla se quitan
+    los de las otras razas. El LEEME explica cómo se escriben.
+
+
+Versión 4.0
+  Nueva ruta 1-60 del enano chamán, con sus misiones de tótem, y la guía
+  elige sola la ruta de tu clase y raza.
+
+  Ruta del enano chamán
+  - Ruta completa del 1 al 60 para el enano chamán, con las cuatro cadenas
+    de tótem nuevas de Forever: tierra al 4 en el Valle de Crestanevada,
+    fuego al 10 entre Dun Morogh y Loch Modan, agua al 20 con los tres odres
+    (Los Humedales, Crestagrana y Vallefresno) y aire al 30 en Arathi.
+  - Pasos para entrenar con tus instructores de chamán: Teo en Yunquemar,
+    Ingrid en Kharanos, Eldrun en Forjaz y Maret en el Pico Nidal. En
+    Kalimdor no hay instructor de chamán de la Alianza: la guía te dice
+    cuándo volver con la piedra de hogar o con Regreso astral.
+  - Talentos de Mejora para levear con un arma de dos manos (Golpe de
+    tormenta, Aluvión, Arma vorágine e Ira del clarividente) y después
+    Elemental; se ponen solos como los del mago.
+  - Hechizos con su prioridad: el instructor compra solo lo que hace falta.
+    Arma Muerdepiedras se compra hasta el 30 y después se salta, porque la
+    cambias por Arma Viento Furioso.
+  - Profesiones de la ruta: Minería y Desuello (dan oro para los
+    entrenamientos) y Primeros auxilios. En el instructor de Minería se
+    aprenden solas las fundiciones que usa la guía.
+  - Equipo pensado para el chamán: armas de dos manos, cuero y, desde el 40,
+    malla.
+
+  Rutas
+  - La guía elige sola la ruta de tu clase y raza (gnomo mago o enano
+    chamán). Escribe /ga rutas para verlas y /ga ruta <id>
+    para cambiar de ruta.
+
+  Flecha
+  - Al llegar a un PNJ del paso que no es de misión (instructor, maestro de
+    vuelo, vendedor), la flecha pasa sola al siguiente destino.
+
+  Ruta del mago
+  - En Kharanos se añaden las misiones nuevas de Forever "Asegurar la
+    montaña" (sin ellas no te dan Los informes) y el cargamento de Tognus
+    Fuegosílex, en la misma cueva de los wendigos.
+  - La ruta te recuerda activar el vuelo de Forjaz la primera vez que
+    llegas, comprar en Theramore las especias que pide "Ojolodo" Jarl y
+    entregar La cerveza perfecta de camino a Kharanos.
+  - Ya no deja misiones a medias: se quitan Cerveza rivales, Mira las
+    estrellas y Superpegajoso, que no se podían terminar en la ruta, y se
+    añaden las misiones que faltaba aceptar (Pescado a la venta, la pista de
+    la presa, Despejando el camino y otras).
+
+
+Versión 3.7
+  La lista de hechizos ya no repite lo que hace cada hechizo: lo ves al
+  pasar el ratón por su icono.
+
+  Hechizos
+  - Cada hechizo de la pestaña Hechizos ya no lleva la descripción del juego
+    escrita debajo: sale en la ventana del hechizo al pasar el ratón por el
+    icono. La lista es más corta y se lee mejor.
+  - Los hechizos que tienes desde el principio ya no repiten "Lo tienes
+    desde el principio" en otra línea: lo dice el rango 1.
+
+  Novedades
+  - Si te saltas alguna versión, el aviso del chat al actualizar dice
+    también lo nuevo de esas.
+
+
+Versión 3.6
+  En el instructor de profesión, la guía aprende sola el rango nuevo y las
+  recetas que usa para seguir subiendo.
+
+  Profesiones
+  - Al hablar con el instructor de una profesión que ya tienes, la guía
+    aprende sola el rango nuevo (oficial, experto, artesano) y las recetas
+    que usan los pasos de la pestaña Profesiones que aún te quedan, en
+    orden: primero el rango y luego la receta del paso más cercano.
+  - También aprende la receta de un material que pide un paso que te queda,
+    por ejemplo la descarga de paño de lana para el manteo de lana.
+  - No aprende recetas de pasos que ya has pasado ni las que la guía no usa.
+    Si no te llega el dinero para todo, aprende lo que puedas pagar, en
+    orden: el rango siempre primero. Mantén Mayús al hablar con el
+    instructor si no quieres que aprenda nada.
+  - Panel junto al instructor con lo que hace falta, en orden, para qué
+    sirve cada cosa y lo que cuesta, con el botón "Aprender lo de la guía"
+    para hacerlo a mano.
+  - El rango de aprendiz (empezar una profesión) y las recetas que se
+    compran a vendedores o caen de enemigos siguen siendo cosa tuya: la
+    pestaña Profesiones dice dónde están.
+
+  Opciones
+  - Casilla nueva "Aprender solas las recetas de la guía". La ayuda en el
+    instructor ahora vale para los dos instructores, el de clase y el de
+    profesión.
+  - Si la ventana es pequeña, las opciones bajan con la rueda del ratón.
+
+  Comandos
+  - /ga autorecetas activa o quita el aprendizaje automático de
+    recetas.
+
+
+Versión 3.5
+  Pestaña Hechizos: todos los hechizos de tu clase con el nivel, lo que
+  cuestan y lo que hacen, con filtro por especialización.
+
+  Hechizos
+  - Pestaña nueva con todos los hechizos de tu clase. Cada uno dice el nivel
+    de cada rango, lo que cuesta en el instructor y lo que hace, con la
+    descripción del propio juego en español.
+  - Filtro por especialización: Todas, General (lo que usa cualquier mago),
+    Arcano, Fuego y Escarcha. Descarga de pirofrío sale en Fuego y en
+    Escarcha.
+  - Colores de cada rango: verde lo que ya tienes, amarillo lo que puedes
+    aprender ya, gris lo que viene más adelante y rojo los rangos de un
+    talento que no tienes.
+  - Cada hechizo dice si viene de un talento (y a qué nivel lo coge la
+    guía), de una misión o si lo tienes desde el principio, y el consejo de
+    la guía: Compra, Opcional o Sáltalo.
+  - Arriba ves lo que cuesta lo que puedes aprender ya y lo que te falta
+    hasta el 60, todo junto y solo lo recomendado.
+  - Botón "Solo lo disponible" para ver solo lo que puedes aprender ya. Al
+    pasar el ratón por el icono sale la ventana del hechizo del juego.
+
+  Ventana
+  - Si la haces estrecha, las pestañas quitan el icono para que se lea el
+    nombre entero.
+
+  Comandos
+  - /ga hechizos abre la pestaña. También con filtro, por ejemplo
+    /ga hechizos escarcha.
+
+
+Versión 3.4
+  Hechizos por orden de prioridad que se aprenden solos en el instructor,
+  talentos que se ponen solos al subir de nivel y pasos de la ruta para ir
+  al instructor.
+
+  Instructor
+  - El panel del instructor numera los hechizos que hay que comprar por
+    orden de prioridad: el 1 es el más importante. Debajo salen los
+    opcionales y los que puedes saltarte.
+  - Al abrir la ventana del instructor, la guía aprende sola lo marcado con
+    Compra, en ese orden. Si no te llega el dinero para uno, se para ahí
+    para no gastarlo en algo menos importante. Mantén Mayús pulsada al
+    hablar con el instructor si no quieres que compre nada.
+  - Botón "Aprender lo recomendado" en el panel, para hacerlo a mano cuando
+    quieras.
+
+  Talentos
+  - Al subir de nivel, la guía gasta el punto nuevo en el talento que toca
+    según el plan, en el mismo orden que la pestaña Talentos. Nunca quita
+    puntos que ya tengas puestos.
+  - Botón "Poner talentos" en la pestaña Talentos para gastar los puntos
+    libres cuando quieras.
+  - Si estás en combate, los pone al salir. Si el juego no los aplica, lo
+    intenta otra vez, y si un talento del plan no aparece en tu árbol, te
+    avisa para que lo pongas a mano.
+
+  Ruta
+  - Pasos nuevos para ir al instructor de clase en los niveles que toca, con
+    el nombre y el sitio del instructor. El paso se marca solo cuando
+    aprendes el hechizo importante de ese nivel.
+  - La pestaña Hechizos dice qué puedes aprender ya, por prioridad y con lo
+    que cuesta, y en qué nivel es el siguiente entrenamiento.
+  - Al subir de nivel, el chat dice qué hechizos nuevos tienes en el
+    instructor, lo importante primero. Usa los datos de entrenamiento de WoW
+    Forever (nivel y precio de cada rango).
+
+  Opciones y comandos
+  - Opciones nuevas: "Aprender solo lo recomendado en el instructor" y
+    "Poner los talentos de la guía al subir de nivel". Las dos vienen
+    activadas.
+  - /ga autohechizos, ponertalentos y autotalentos.
+
+
+Versión 3.3
+  Progreso de cada misión, misiones que se aceptan y entregan solas, marcas
+  en el mapa, ayuda en el instructor, materiales de profesión, modo compacto
+  y opciones.
+
+  Guía
+  - Cada destino muestra cómo vas en su misión (por ejemplo 3/4) y "lista"
+    cuando ya puedes entregarla. Al pasar el ratón ves cada objetivo.
+  - Los pasos sin misiones se marcan solos: al aprender las profesiones, al
+    llegar a la zona que toca, al conocer la ruta de vuelo (se lee al abrir
+    el mapa de vuelo) o al llegar al nivel 60.
+
+  Misiones
+  - Acepta y entrega solas las misiones de la guía al hablar con el PNJ.
+    Solo toca misiones de la ruta y, si mantienes Mayús pulsada, no hace
+    nada.
+  - Cuando hay que elegir recompensa, marca la que mejora tu equipo y, si
+    ninguna lo mejora, la que más vale en el vendedor. La eliges tú.
+
+  Mapa
+  - Pone el punto de ruta del juego en el destino de la flecha: lo ves en el
+    mapa, en el minimapa y en pantalla con la distancia.
+  - Dibuja en el mapa del mundo los destinos del paso con su icono. Si
+    pulsas uno, la flecha apunta ahí. Los que están en el mismo sitio van
+    juntos en un icono.
+
+  Profesiones
+  - Cada paso dice cuántos materiales llevas en bolsas y banco y cuántos
+    hacen falta, por ejemplo "Tienes: 20/15 Descarga de paño de lana".
+
+  Instructor
+  - Al hablar con el instructor de clase sale un panel al lado con los
+    hechizos que conviene comprar, los opcionales y los que puedes saltarte,
+    y lo que cuesta lo recomendado.
+
+  Ventana
+  - Modo compacto: una ventana pequeña con el paso y el destino actual
+    (botón de la nota, arriba).
+  - Opciones (botón de la rueda dentada): tamaño de la ventana, opacidad del
+    fondo, tamaño de la flecha, bloquear ventanas y activar o quitar cada
+    función.
+  - Botón en el minimapa: clic para mostrar u ocultar la guía, clic derecho
+    para las opciones y arrastrar para moverlo. También está en el menú de
+    addons del minimapa.
+  - Este registro de novedades (botón Novedades en las opciones). Cuando el
+    addon se actualiza, te avisa en el chat.
+
+  Comandos nuevos
+  - /ga compacto, opciones, misiones, instructor, marca, minimapa y
+    novedades.
+
+
+Versión 3.2
+  Imágenes en los talentos, interfaz nueva y ventana redimensionable.
+
+  - Cada talento lleva su icono del juego con los puntos encima, y arriba
+    ves los puntos que llevas en cada rama (por ejemplo Escarcha 15/33).
+  - Barra con lo que llevas de ruta y el estado del paso (En curso o Hecho).
+  - Destinos en lista con iconos: recoger, objetivo, entregar y hecho. Si
+    pulsas uno, la flecha apunta ahí.
+  - Profesiones con el icono de lo que fabricas en cada paso y una barra con
+    tu nivel y el tope de tu rango (por ejemplo 87/150).
+  - La ventana cambia de tamaño arrastrando la esquina de abajo a la derecha
+    (de 360x460 a 900x1100). El tamaño se guarda por personaje y /ga
+    reset lo devuelve al inicial.
+
+
+Versión 3.1
+  Avance automático con las misiones que ya tienes hechas.
+
+  - El addon mira en el juego qué misiones de la guía tienes aceptadas, con
+    los objetivos listos o entregadas, y pasa solo al siguiente paso.
+  - Dentro de un paso, la flecha salta sola al siguiente destino que te
+    falta y los hechos salen marcados.
+  - Al entrar con un personaje que ya ha avanzado, salta los pasos que
+    tengas hechos. "Mi nivel" hace lo mismo desde la sección de tu nivel.
+  - Si vuelves a mano a un paso ya hecho, no te mueve de ahí hasta que
+    cambies de paso.
+  - /ga auto lo quita o lo vuelve a poner.
+
+
+Versión 3.0
+  Guía Leveo para el cliente de WoW Forever.
+
+  - Nuevo nombre: Guía Leveo (antes Guía Gnomo Mago), preparada para añadir
+    rutas de otras clases y razas. Se abre con /ga.
+  - Adaptada al cliente moderno de WoW Forever; la versión anterior, hecha
+    para la 1.12, no cargaba.
+  - Misiones, PNJ y enemigos revisados con los datos de Forever, con
+    coordenadas nuevas en Crestagrana, Ventormenta y las Tierras de la Peste
+    del Este.
+  - Talentos rehechos con los árboles de Forever (Lanza de hielo, Dedos de
+    Escarcha y Hacer añicos de 3 rangos).
+  - Profesiones con los instructores y las recetas de Forever; Primeros
+    auxilios también hace pociones. Hechizos nuevos de Forever.
+  - "Creado por JKRiveroF" abajo a la derecha de la ventana.
+
+
+Versión 2.0
+  Nombres en español, flecha, talentos y profesiones.
+
+  - Misiones, PNJ, objetos y zonas con sus nombres oficiales del cliente en
+    español.
+  - Flecha que te lleva a cada destino del paso (recoger, hacer y entregar),
+    con las yardas que faltan y la zona a la que ir. Con < y > cambias de
+    destino.
+  - Pestaña de talentos con el que toca en cada nivel, del 10 al 60.
+  - Pestaña de profesiones paso a paso, leyendo tu nivel del juego.
+  - "Creado por JKRiveroF" como autor del addon y en la ventana.
+  - Corregidos niveles, sitios y una misión de la primera versión.
+
+
+Versión 1.0
+  Primera versión: Guía Gnomo Mago para el cliente 1.12.
+
+  - Ruta del 1 al 60 en 17 zonas y 86 pasos, del Valle de Crestanevada a las
+    Tierras de la Peste.
+  - Pestañas de mago (hechizos y talentos), equipo y oficios (Sastrería,
+    Encantamiento y Primeros auxilios).
+  - Botón "Mi nivel", progreso guardado por personaje y aviso para ir al
+    instructor en cada nivel par.
+
+9.7.7 - Herboristería: estimación conjunta de hierbas de Alquimia y Primeros auxilios en la tarjeta existente; inventario de bolsas descontado una sola vez. Circuitos aproximados sin cambios. / Herbalism: shared herb demand estimate in existing gathering card; bag stock counted once. Approximate circuits unchanged.
+
+9.7.7 Herboristería revisión 3: aviso de cuevas desde 245, circuitos orientativos y campamentos según habilidad. Sin cambios de coordenadas; pendientes pruebas en cliente.
+
+9.7.7 Herboristería revisión 4: 27 instructores documentados, sugerencia por facción y mapa, rangos y aviso de planos. Circuitos existentes sin cambios; no comprobados en juego. / 27 documented trainers, faction/map suggestion, rank and blueprint reminders.
+
+9.7.7 Herboristería revisión 6: límites de tramo inclusivos en tarjeta, consejos de terreno y aviso de circuitos no certificados. / Inclusive skill ranges, terrain tips and unverified circuit warning.
+
+9.7.7 Desuello revision 1: nivel maximo orientativo por habilidad, tramos y avisos de circuitos. Coordenadas sin validar en juego.
+Skinning revision 1: estimated maximum creature level and route warnings. Coordinates not verified in game.
+
+9.7.7 Desuello revisión 3: 17 instructores de rangos, campamentos avanzados y aviso de contenido alto pendiente. / Skinning revision 3: 17 rank trainers, advanced camps and pending endgame data notice.
+
+9.7.7 — Desuello revisión 5: avisos bilingües de bonificaciones y materiales escasos. Fuentes: https://www.icy-veins.com/wow-forever/skinning/ (consulta 24-11-2026). No se presupone que las bonificaciones se apliquen correctamente en el cliente.
+
+9.7.7 Pesca: ampliados instructores de ambas facciones y neutrales, con traducciones. Auditoría de continuidad de 12 planes base, 600 casos de Pesca y prueba simulada de inventario compartido. Pendiente cliente real.
