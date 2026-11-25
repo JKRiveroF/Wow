@@ -118,6 +118,9 @@ def audit_structure(routes):
                         report("DESTINOS_INVALIDOS", "wp debe ser una secuencia de tablas de destino.", location)
                     elif any(not text(wp.get("n")) for wp in waypoints):
                         report("NOMBRE_DESTINO_INVALIDO", "La flecha requiere un nombre para el destino.", location)
+                    elif any("alternativa" in wp and (not positive_id(wp.get("q")) or not positive_id(wp["alternativa"])
+                                                      or wp["alternativa"] == wp["q"]) for wp in waypoints):
+                        report("ALTERNATIVA_INVALIDA", "Una alternativa requiere dos IDs de misión válidos y distintos.", location)
                 checks = step.get("comprobar", {})
                 if not isinstance(checks, dict) and checks != []:
                     report("COMPROBACION_INVALIDA", "comprobar debe ser una tabla de condiciones.", location)

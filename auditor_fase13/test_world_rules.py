@@ -34,6 +34,15 @@ def engine_functions(*names):
 
 
 class WorldRulesTest(unittest.TestCase):
+    def test_xp_excludes_the_second_branch_and_separates_specializations(self):
+        route = sample([dict(waypoint("T", 10), alternativa=20), dict(waypoint("T", 20), alternativa=10)])
+        route["secciones"][0]["pasos"].append({"t": "Misión opcional de especialización", "wp": [waypoint("T", 30)]})
+        source = {"estado": "forever", "fuente": "fixture"}
+        catalog = {"misiones": {"10": dict(source, xp=100), "20": dict(source, xp=200), "30": dict(source, xp=300)}}
+        report = next(item for item in audit_world(route, catalog) if item["codigo"] == "xp_escenario_misiones")
+        self.assertIn("100 XP de misión registrada (1/1 entregas)", report["detalle"])
+        self.assertIn("300 XP documentada aparte", report["detalle"])
+
     def test_partial_xp_reports_separate_combat_and_mission_subtotals(self):
         route = sample([waypoint("T", 10), waypoint("T", 10)])
         data = {

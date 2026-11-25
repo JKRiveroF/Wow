@@ -82,6 +82,10 @@ def _route_without_reviewed_edits(source):
         if 'q = 20, a = "A"' in line and 'q = 20, a = "T"' in line:
             line = re.sub(r't = "[^"]+"', 't = "<bloqueo revisado>"', line, count=1)
             line = re.sub(r', \{ [^{}]+q = 98387, a = "[AT]" \}', "", line)
+        if re.search(r'\bq = (?:324|526|94484|94493|464|465|544|545)\b', line):
+            line = re.sub(r't = "[^"]+"', 't = "<cadena revisada>"', line, count=1)
+            line = re.sub(r'(q = (?:324|526|94484|94493), a = "[AT]"), alternativa = \d+', r'\1', line)
+            line = re.sub(r', \{ [^{}]+q = (?:98221|93680), a = "[AT]" \}', "", line)
         if any(f'q = {quest}, a = "T"' in line for quest in (94495, 94497, 94499)):
             line = re.sub(r't = "[^"]+"', 't = "<odres revisados>"', line, count=1)
             line = re.sub(r', \{ [^{}]+q = (?:94499|94500), a = "A" \}', "", line)

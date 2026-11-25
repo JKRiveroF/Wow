@@ -459,6 +459,9 @@ local function DestinoHecho(d)
   if d and Marcado("ignorados", d) then return true end   -- ignorado: cuenta como hecho
   if not d or not d.q then return nil end
   if MisionCompletada(d.q) then return true end
+  -- La alternativa activa permite seguir su rama. Si se aceptaron las dos, queda pendiente la entrega.
+  if d.alternativa and (MisionCompletada(d.alternativa) or
+     (not MisionEnDiario(d.q) and MisionEnDiario(d.alternativa))) then return true end
   if d.a == "A" then return MisionEnDiario(d.q) end
   if d.a == "C" then return MisionEnDiario(d.q) and ObjetivosListos(d.q) end
   return false

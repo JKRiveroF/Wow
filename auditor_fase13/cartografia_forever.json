@@ -1,6 +1,14 @@
 {
   "fecha_consulta_cartografia": "2026-11-25",
   "misiones": {
+    "98221": {
+      "posiciones": {"A": [{"m": 1437, "x": 9.9, "y": 57.5}], "T": [{"m": 1437, "x": 9.9, "y": 57.5}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/98221/", "build": "1.60.1.70938", "fecha_consulta": "2026-11-26"}}
+    },
+    "93680": {
+      "posiciones": {"A": [{"m": 1424, "x": 61.7, "y": 20.7}], "T": [{"m": 1424, "x": 61.7, "y": 20.7}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/93680/", "build": "1.60.1.70938", "fecha_consulta": "2026-11-26"}}
+    },
     "3520": {
       "posiciones": {"A": [{"m": 1446, "x": 67, "y": 22.4}], "T": [{"m": 1446, "x": 67, "y": 22.4}]},
       "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/3520/", "build": "1.60.1.70938"}},

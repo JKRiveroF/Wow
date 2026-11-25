@@ -6,6 +6,7 @@ import re
 
 
 XP_REFUERZO = re.compile(r"no quedarte corto de nivel|refuerzo de (?:xp|experiencia)", re.IGNORECASE)
+XP_OPCIONAL = re.compile(r"^Misión opcional de especialización\b")
 
 
 def _dict(value):
@@ -170,6 +171,7 @@ class WorldAudit:
             if step_index <= len(lines):
                 location = f"línea {lines[step_index - 1]}, {location}"
             self.check_section_step(step, level_range, location)
+            optional = isinstance(step.get("t"), str) and bool(XP_OPCIONAL.match(step["t"]))
             points = []
             for index, point in enumerate(_list(step.get("wp")), 1):
                 if not isinstance(point, dict):
@@ -180,7 +182,8 @@ class WorldAudit:
                 quest_id = point.get("q")
                 if point.get("a") == "T" and _id(quest_id):
                     self.check_turn_in(quest_id, step, waypoint_location)
-                    section_turn_ins.append((quest_id, point.get("raza")))
+                    alternative = point.get("alternativa")
+                    section_turn_ins.append((quest_id, point.get("raza"), alternative if _id(alternative) else None, optional))
                 if position and not point.get("raza"):
                     if not self.legs or position[0] != self.legs[-1]:
                         self.legs.append(position[0])
@@ -248,17 +251,23 @@ class WorldAudit:
             race_xp = 0
             combat_xp = 0
             known = 0
+            optional_count = 0
+            optional_xp = 0
             below, above = [], []
             for index, (levels, turn_ins) in enumerate(zip(ranges, self.turn_ins), 1):
                 section_xp = 0
-                for quest_id, point_race in turn_ins:
-                    if quest_id in counted or (point_race and point_race != race):
+                for quest_id, point_race, alternative, optional in turn_ins:
+                    if quest_id in counted or alternative in counted or (point_race and point_race != race):
                         continue
                     counted.add(quest_id)
                     record = _catalog_entry(self.catalog.get("misiones"), quest_id)
+                    optional_count += int(optional)
                     if _source(record, "xp") and type(record.get("xp")) is int and record["xp"] >= 0:
-                        section_xp += record["xp"]
-                        known += 1
+                        if optional:
+                            optional_xp += record["xp"]
+                        else:
+                            section_xp += record["xp"]
+                            known += 1
                 race_xp += section_xp
                 combat = _dict(combat_sections.get(str(index)))
                 estimate = combat.get("xp")
@@ -272,8 +281,10 @@ class WorldAudit:
                         below.append(index)
                     elif section_xp + estimate > needed:
                         above.append(index)
-            if known or combat_xp:
-                detail = f"{race or 'ruta'}: {race_xp} XP de misión registrada ({known}/{len(counted)} entregas)"
+            if known or combat_xp or optional_xp:
+                detail = f"{race or 'ruta'}: {race_xp} XP de misión registrada ({known}/{len(counted) - optional_count} entregas)"
+                if optional_count:
+                    detail += f", {optional_xp} XP documentada aparte en misiones opcionales de especialización"
                 if combat_xp:
                     detail += f", {combat_xp} XP de combate estimada en los tramos documentados"
                 if thresholds:
@@ -281,7 +292,8 @@ class WorldAudit:
                 observed.append(detail)
         if observed:
             self.add(4, "pendiente", "xp_escenario_misiones",
-                     ". ".join(observed) + ". Escenario parcial que cuenta una entrega por ID y perfil. "
+                     ". ".join(observed) + ". Escenario parcial con una entrega por ID y perfil, "
+                     "que toma la primera alternativa de cada par. "
                      "Requiere validar la XP efectiva, las actividades adicionales y el nivel inicial de cada tramo.")
 
     def check_clustering(self, points, location):

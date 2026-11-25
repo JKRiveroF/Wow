@@ -221,9 +221,11 @@ def _point_sequence(route, events, race, catalog):
     planned_acceptances = {point.quest for point in events if point.action == "A"}
     planned_turn_ins = {point.quest for point in events if point.action == "T"}
     first_acceptance = {}
+    alternatives_by_quest = defaultdict(set)
     for index, point in enumerate(events):
         if point.action == "A":
             first_acceptance.setdefault(point.quest, index)
+        alternatives_by_quest[point.quest].add(_id(point.waypoint.get("alternativa")))
     incompatibilities = set()
     variant = f" ({race})" if len(_list(route.get("razas"))) > 1 else ""
 
@@ -293,6 +295,8 @@ def _point_sequence(route, events, race, catalog):
         if source:
             for incompatible in _list(entry.get("excluyentes")):
                 if _id(incompatible) is None or incompatible == quest or incompatible not in planned_acceptances:
+                    continue
+                if alternatives_by_quest[quest] == {incompatible} and alternatives_by_quest[incompatible] == {quest}:
                     continue
                 pair = frozenset((quest, incompatible))
                 if pair not in incompatibilities:

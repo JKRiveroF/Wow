@@ -25,7 +25,7 @@ auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/auditar.py --trazas-qu
 auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/agrupamientos.py --trazas-questie auditor_fase13/cache_fuentes --datos-questie auditor_fase13/cache_fuentes
 ```
 
-El informe de experiencia compara un subtotal de entregas registradas con la curva documentada de `curva_xp_forever.json`. Un catálogo adicional puede incluir estimaciones de combate por ruta y tramo en `xp_combates.<id de ruta>.tramos.<número de tramo>`, con `xp`, `estado` y `fuente`. Los tramos sin evidencia quedan pendientes y los subtotales se muestran como escenario, con el número de entregas cubiertas.
+El informe de experiencia compara un subtotal de entregas registradas con la curva documentada de `curva_xp_forever.json`. Un catálogo adicional puede incluir estimaciones de combate por ruta y tramo en `xp_combates.<id de ruta>.tramos.<número de tramo>`, con `xp`, `estado` y `fuente`. Los tramos sin evidencia quedan pendientes y los subtotales se muestran como escenario, con el número de entregas cubiertas. El escenario cuenta una opción por grupo de misiones excluyentes en el orden de la ruta y desglosa las recompensas opcionales de especialización de herrería.
 
 El manifiesto `SHA256_ORIGINALES.sha256` identifica los 219 archivos del commit de restauración 9.7.9. Sus rutas parten de la raíz del repositorio.
 
