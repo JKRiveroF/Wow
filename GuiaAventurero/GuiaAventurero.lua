@@ -513,10 +513,21 @@ end
 
 local function VueloConocido(nombre)
   local vuelos = GuiaAventureroDB and GuiaAventureroDB.vuelos
-  if not vuelos or not nombre then return false end
+  if type(vuelos) ~= "table" or type(nombre) ~= "string" or nombre == "" then return false end
+  -- Las claves guardadas pueden venir de un cliente de otro idioma. La API puede añadir la zona tras una coma.
+  local traducir = GL.EnIngles
+  local ingles = traducir and string.lower(traducir(nombre))
   nombre = string.lower(nombre)
-  for nodo in pairs(vuelos) do
-    if string.find(string.lower(nodo), nombre, 1, true) then return true end
+  for nodo, conocido in pairs(vuelos) do
+    if conocido and type(nodo) == "string" then
+      local guardado = string.lower(nodo)
+      if string.find(guardado, nombre, 1, true) then return true end
+      if traducir then
+        if ingles ~= nombre and string.find(guardado, ingles, 1, true) then return true end
+        local lugar = string.match(nodo, "^[^,]+") or nodo
+        if string.find(string.lower(traducir(lugar)), ingles, 1, true) then return true end
+      end
+    end
   end
   return false
 end

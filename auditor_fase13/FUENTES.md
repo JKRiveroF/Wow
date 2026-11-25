@@ -19,6 +19,7 @@ Consulta del 25 de noviembre de 2026. La base analizada es la 9.7.9, commit `592
 - `GuiaAventurero.lua`, función `SeccionPorNivel`. El motor selecciona el primer intervalo `min <= nivel < max`. Las 47 rutas cubren 1–59 con esta regla. El nivel 60 usa el tramo final. Los solapes y los tramos con el mismo mínimo y máximo permiten transiciones al avanzar paso a paso.
 - `GuiaAventurero.lua`, funciones `DestinoHecho` y `EstadoPaso`. La entrega de `3520` conserva la comprobación de finalización al retirar el punto de objetivo obsoleto.
 - `GuiaAventurero.lua`, funciones `VueloConocido` y `GuardarVuelos`. En la base, el motor busca el nombre de vuelo de la ruta, que puede estar en español, en claves localizadas por el cliente. Por ejemplo, `Forjaz` frente a `Ironforge, Dun Morogh`. El caso se puede reproducir con estados de vuelo simulados.
+- Los registros de jugadores para [Gryth](https://guide.wow4ever.se/en/npc/1573), [Devrak](https://guide.wow4ever.se/en/npc/3615) y [Michael Garrett](https://guide.wow4ever.se/en/npc/4551) respaldan la existencia de Forjaz, El Cruce y Entrañas y documentan nombres ingleses con sufijo de zona. Se usan como evidencia de esos nodos, sin generalizar tiempos o conexiones.
 
 ## Pendiente de verificación
 

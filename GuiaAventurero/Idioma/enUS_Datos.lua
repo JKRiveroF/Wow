@@ -2,6 +2,17 @@
 -- Nombres oficiales de QuestieDB. Van como texto: solo se leen si la guía o el cliente están en inglés. Creado por JKRiveroF.
 local _, GL = ...
 if type(GL) ~= "table" or not GL.AnadirIngles then return end
+
+-- Alias de vuelos que también se reconocen en guardados de un cliente inglés al jugar en español.
+GL.AnadirIngles({
+  ["Hachazo"]="Splintertree",
+  ["Juncobrezo"]="Brackenwall",
+  ["Mojache"]="Camp Mojache",
+  ["Roca del Sol"]="Sun Rock",
+  ["Sangrevenenosa"]="Bloodvenom",
+  ["Sombraprensa"]="Shadowprey",
+  ["Viento Libre"]="Freewind",
+})
 GL.AnadirIngles([==[
 return {
 ["Garfanieve"]="Snowtalon",
@@ -1966,7 +1977,6 @@ return {
 ["Hacha de mano ornamentada"]="Ornate Hand Axe",
 ["Hachas"]="Axes",
 ["Hachas de dos manos"]="Two-Handed Axes",
-["Hachazo"]="Splintertree",
 ["Hacia los Reinos del Este"]="To the Eastern Kingdoms",
 ["Hadoken Zanco Veloz"]="Hadoken Swiftstrider",
 ["Hagar Relampafauce"]="Hagar Lightninghoof",
@@ -2218,7 +2228,6 @@ return {
 ["Juegos de herramientas mecánicas de reparación"]="Mechanical Repair Kits",
 ["Juez Escarlata"]="Scarlet Judge",
 ["Junco maderahelecho"]="Briarwood Reed",
-["Juncobrezo"]="Brackenwall",
 ["Juntar pedazos del amuleto"]="Uniting the Shattered Amulet",
 ["Justicia para bandidos"]="Wastewander Justice",
 ["Juzgar y redimir"]="Judgment and Redemption",
@@ -3193,7 +3202,6 @@ return {
 ["Mocogusano"]="Oozeworm",
 ["Modista Jonti"]="Haughty Modiste",
 ["Modulatores de cobre"]="Copper Modulator",
-["Mojache"]="Camp Mojache",
 ["Mojo el Retorcido"]="Mojo the Twisted",
 ["Molde rima con... ¿oro?"]="Mold Rhymes With...",
 ["Molino Tarren"]="Tarren Mill",
@@ -3830,7 +3838,6 @@ return {
 ["Roca Machacamiedo"]="Dreadmaul Rock",
 ["Roca del Cráneo"]="Skull Rock",
 ["Roca del Kodo"]="Call of Earth",
-["Roca del Sol"]="Sun Rock",
 ["Rocaestruendo el Ancestro"]="Rumblerock the Elder",
 ["Rocal"]="Stonard",
 ["Roedores bribones"]="Rascal Rodents",
@@ -3914,7 +3921,6 @@ return {
 ["Sangre por sangre"]="Blood for Blood",
 ["Sangrerregia, Vidarraíz, Pálida, Espina de oro, Mostacho de Khadgar (185)"]="Kingsblood, Liferoot, Fadeleaf, Goldthorn, Khadgar's Whisker (185)",
 ["Sangrevaja el Indomable"]="Razorgore the Untamed",
-["Sangrevenenosa"]="Bloodvenom",
 ["Santuario Oculto"]="Hidden Shrine",
 ["Santuario de Remulos"]="Trial of the Sea Lion",
 ["Santuario de la orilla"]="Call of Water",
@@ -4039,7 +4045,6 @@ return {
 ["Sombra de Eranikus"]="Shade of Eranikus",
 ["Sombra durmiente"]="The Dormant Shade",
 ["Sombradiente"]="Shadowfang",
-["Sombraprensa"]="Shadowprey",
 ["Sombras del Apocalipsis"]="Shadows of Doom",
 ["Sombras del pasado"]="Shadow of the Past",
 ["Sopa de fangorroca con tropezones"]="Mudrock Soup and Bugs",
@@ -4679,7 +4684,6 @@ return {
 ["Viejo Saltariscos"]="Old Cliff Jumper",
 ["Viejo Serra'kis"]="Old Serra'kis",
 ["Viejo Tripasgrises"]="Old Grizzlegut",
-["Viento Libre"]="Freewind",
 ["Vigiarrisco Cuernolargo"]="Cliffwatcher Longhorn",
 ["Vigilancia nocturna"]="The Night Watch",
 ["Vigilante Bel'dugur"]="Keeper Bel'dugur",

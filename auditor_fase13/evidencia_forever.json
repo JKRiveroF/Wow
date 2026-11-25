@@ -27,5 +27,25 @@
         }
       }
     }
+  },
+  "vuelos": {
+    "Forjaz": {
+      "estado": "forever",
+      "fuente": "https://guide.wow4ever.se/en/npc/1573",
+      "fecha_consulta": "2026-11-25",
+      "existe": true
+    },
+    "El Cruce": {
+      "estado": "forever",
+      "fuente": "https://guide.wow4ever.se/en/npc/3615",
+      "fecha_consulta": "2026-11-25",
+      "existe": true
+    },
+    "Entrañas": {
+      "estado": "forever",
+      "fuente": "https://guide.wow4ever.se/en/npc/4551",
+      "fecha_consulta": "2026-11-25",
+      "existe": true
+    }
   }
 }
