@@ -2,17 +2,31 @@
 
 ## Preparación
 
-- [x] Verificar la base 9.7.9, su estructura, el ZIP y las herramientas locales.
-- [x] Crear el commit inicial local con los originales y activar `fase-13-auditoria-leveo`.
-- [x] Inventariar las 47 rutas, guardar los SHA-256 y preparar `auditor_fase13/`.
-- [x] Registrar las instrucciones permanentes y el avance de la preparación.
+- [x] Verificar el commit de restauración `592d887`, la versión 9.7.9, el estado de Git y los 219 SHA-256 del addon y el ZIP. Comprobar la concordancia entre la rama local y `origin`.
+- [x] Confirmar Git y Python. Preparar Lua 5.1 mediante Lupa en el entorno Python del auditor. El equipo carece de un ejecutable `lua` independiente en el PATH.
+- [x] Identificar las 47 rutas en el TOC. Mantener `AGENTS.md`, `PROGRESO_FASE13.md` y el auditor fuera del addon.
 
-## Desarrollo pendiente
+## Criterios de medición
 
-- [ ] Definir las entradas del auditor, las reglas de comprobación y el formato del informe. Usar el TOC de la 9.7.9 y las 47 rutas inventariadas como alcance inicial.
-- [ ] Implementar el auditor en `auditor_fase13/` con lectura del addon y comprobaciones de registro, carga y selección de rutas por facción, raza y clase.
-- [ ] Comprobar las secciones de nivel y los datos de los pasos. Revisar los campos de mapa y coordenadas, los IDs de misión y la secuencia de aceptar, cumplir objetivos y entregar, teniendo en cuenta las misiones de clase, las cadenas y las ramas de ruta.
-- [ ] Identificar las transformaciones que aplican los módulos compartidos a la ruta activa y determinar qué reglas deben comprobarse después de aplicarlas.
-- [ ] Determinar si la auditoría requiere ejecutar Lua. Si hace falta, comprobar la disponibilidad de un intérprete compatible antes de ejecutar las pruebas que lo usen.
-- [ ] Ejecutar el auditor sobre las 47 rutas, revisar los hallazgos y registrar evidencias y limitaciones en `PROGRESO_FASE13.md`. Volver a comparar los originales con `auditor_fase13/SHA256_ORIGINALES.sha256`.
-- [ ] Validar en WoW Forever los hallazgos que dependan del cliente y registrar la versión del cliente, la ruta usada y el resultado observado.
+Cada fila enumera criterios que se completan cuando se cumple toda su cobertura. En los bloques 1–6 se mide cada criterio aplicable por ruta. Un criterio específico de una ruta queda pendiente si le falta evidencia obligatoria. Las pruebas transversales de sintaxis de módulos y regresión se miden para el addon completo. El porcentaje del bloque es `comprobaciones completas ÷ comprobaciones aplicables × 100`. El porcentaje global suma el porcentaje de cada bloque multiplicado por su peso. Los porcentajes se redondean solo al mostrarlos.
+
+| Bloque | Peso | Criterios de finalización |
+| --- | ---: | --- |
+| 1. Estructura | 10 % | Compilar los Lua del TOC. Cargar el registro y comprobar campos, secuencias, cobertura declarada 1–60 y duplicados de paso. Probar selección, carga y filtros raciales del motor con las 56 combinaciones. |
+| 2. Misiones | 25 % | Comprobar IDs y acciones locales, con secuencias A/C/T y duplicados por raza. Verificar identidad y nombres ES/EN con evidencia. Validar orden, dependencias y requisitos con evidencia. Confirmar condiciones especiales, exclusiones y desbloqueos. |
+| 3. Cartografía | 20 % | Comprobar formato de IDs, coordenadas y referencias locales. Verificar mapas y posiciones de objetivos y PNJ. Confirmar cambios de zona, interiores y puntos de vuelo en Forever. |
+| 4. Experiencia | 15 % | Comprobar cobertura, saltos y requisitos locales. Estimar XP de misiones y combates con datos trazables. Validar saldo y bloqueos por tramo en el modelo de Forever. |
+| 5. Viaje | 15 % | Identificar distancias relativas y visitas repetidas con contexto local. Verificar alternativas, disponibilidad y desbloqueos de transporte. Medir ahorros y confirmar secuencias mejoradas en condiciones comparables. |
+| 6. Clase, raza y facción | 10 % | Comprobar cabeceras, ramas, filtros y particularidades locales. Verificar zonas iniciales, clases y restricciones con evidencia de Forever. Confirmar acceso real, desbloqueos y traducciones específicas. |
+| 7. Regresión y preparación | 5 % | Ejecutar regresión local y pruebas con API simulada. Completar y documentar las pruebas obligatorias en Forever. Preparar novedades ES/EN, documentación y ZIP definitivo. Verificar la sincronización del cierre en GitHub. |
+
+Una ruta completamente verificada requiere todos sus criterios aplicables, incluidas las pruebas obligatorias del cliente. Una ruta revisada localmente ya pasó por los conjuntos de reglas disponibles en todos los bloques de ruta, con sus hallazgos y dependencias de datos registrados. Una ruta en revisión ya tiene alguna auditoría ejecutada. Las pruebas preparadas para el cliente se registran como pendientes hasta observar sus resultados.
+
+## Secuencia de trabajo
+
+- [x] Ejecutar y cerrar la auditoría estructural inicial con los archivos originales protegidos por el manifiesto.
+- [ ] Ejecutar las comprobaciones de misiones, cartografía, experiencia, viajes y particularidades. Registrar para cada hallazgo el estado, la ruta, la evidencia y la fecha si procede.
+- [ ] Corregir solo errores reproducibles y volver a ejecutar las reglas afectadas y la regresión. Las dudas sobre datos de Forever quedan anotadas.
+- [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.
+- [ ] Actualizar las novedades ES/EN y preparar el ZIP definitivo con los archivos distribuibles, tras superar los criterios de cierre local.
+- [ ] Sincronizar únicamente la rama de desarrollo con `origin`. La fusión y las Releases quedan pendientes de autorización expresa.

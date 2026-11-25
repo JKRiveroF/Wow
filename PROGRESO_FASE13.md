@@ -21,7 +21,82 @@
 | `GuiaAventurero/Rutas/` | 47 | Rutas de leveo Lua |
 | `GuiaAventurero-9.7.9.zip` | 1 | Distribución original comprimida |
 
-## Pendiente
+## Estado de la auditoría · 25 de noviembre de 2026
 
-- Implementar el auditor y determinar si las comprobaciones de ejecución requieren un intérprete Lua compatible con el cliente.
-- Validar el funcionamiento dentro de WoW Forever. La documentación original de la 9.7.9 ya marca esta prueba como pendiente.
+La rama local partió del mismo commit que GitHub, `83fab5b`. `git fsck --full` terminó sin errores. Los 219 SHA-256 coinciden con el disco y con los blobs del commit de restauración `592d887`.
+
+El auditor externo compiló los 144 ficheros Lua del TOC con Lupa 2.8 (Lua 5.1) y cargó 47 rutas. Las 56 combinaciones pasaron selección, carga y filtro racial con las funciones originales y API simulada. La comprobación estructural no registró errores, avisos ni pendientes. Los originales seguían intactos al cerrar el bloque.
+
+| Área | Peso | Comprobaciones completas | Anterior | Actual |
+| --- | ---: | ---: | ---: | ---: |
+| Estructura | 10 % | 95/95 | 0 % | 100 % |
+| Misiones | 25 % | 0/188 | 0 % | 0 % |
+| Cartografía | 20 % | 0/141 | 0 % | 0 % |
+| Experiencia | 15 % | 0/141 | 0 % | 0 % |
+| Viajes | 15 % | 0/141 | 0 % | 0 % |
+| Clase, raza y facción | 10 % | 0/141 | 0 % | 0 % |
+| Regresión y preparación | 5 % | 0/4 | 0 % | 0 % |
+| **Global ponderado** | **100 %** | | **0 %** | **10 %** |
+
+Las 95 comprobaciones estructurales son una compilación global, 47 verificaciones del contrato de ruta y 47 validaciones del motor por ruta con todas sus combinaciones declaradas.
+
+| Rutas pendientes | En revisión | Revisadas localmente | Verificadas por completo |
+| ---: | ---: | ---: | ---: |
+| 0 | 47 | 0 | 0 |
+
+- Errores detectados, corregidos y pendientes en la auditoría estructural: 0, 0 y 0.
+- Primera comprobación en cliente pendiente: arranque, selección, carga de destinos, compatibilidad con Questie, traducciones y continuidad de datos guardados.
+- Último cierre en Git: `Audita la estructura de las 47 rutas de leveo` en `fase-13-auditoria-leveo`.
+- Siguiente tarea: ejecutar las comprobaciones de misiones y la cobertura por fuente, y registrar las discrepancias antes de corregirlas.
+
+## Avance individual
+
+| ID | Bloques auditados localmente | Validación en Forever |
+| --- | ---: | --- |
+| `gnomo_mago` | 1/6 | Pendiente |
+| `enano_chaman` | 1/6 | Pendiente |
+| `enano_gnomo_guerrero` | 1/6 | Pendiente |
+| `enano_paladin` | 1/6 | Pendiente |
+| `enano_gnomo_sacerdote` | 1/6 | Pendiente |
+| `enano_cazador` | 1/6 | Pendiente |
+| `enano_gnomo_picaro` | 1/6 | Pendiente |
+| `gnomo_brujo` | 1/6 | Pendiente |
+| `humano_guerrero` | 1/6 | Pendiente |
+| `humano_paladin` | 1/6 | Pendiente |
+| `humano_picaro` | 1/6 | Pendiente |
+| `humano_brujo` | 1/6 | Pendiente |
+| `humano_mago` | 1/6 | Pendiente |
+| `humano_sacerdote` | 1/6 | Pendiente |
+| `humano_cazador` | 1/6 | Pendiente |
+| `elfo_cazador` | 1/6 | Pendiente |
+| `elfo_druida` | 1/6 | Pendiente |
+| `elfo_guerrero` | 1/6 | Pendiente |
+| `elfo_picaro` | 1/6 | Pendiente |
+| `elfo_sacerdote` | 1/6 | Pendiente |
+| `orco_trol_guerrero` | 1/6 | Pendiente |
+| `orco_trol_cazador` | 1/6 | Pendiente |
+| `orco_trol_picaro` | 1/6 | Pendiente |
+| `orco_trol_chaman` | 1/6 | Pendiente |
+| `orco_trol_brujo` | 1/6 | Pendiente |
+| `orco_trol_mago` | 1/6 | Pendiente |
+| `trol_sacerdote` | 1/6 | Pendiente |
+| `tauren_guerrero` | 1/6 | Pendiente |
+| `tauren_cazador` | 1/6 | Pendiente |
+| `tauren_chaman` | 1/6 | Pendiente |
+| `tauren_druida` | 1/6 | Pendiente |
+| `nomuerto_guerrero` | 1/6 | Pendiente |
+| `nomuerto_picaro` | 1/6 | Pendiente |
+| `nomuerto_mago` | 1/6 | Pendiente |
+| `nomuerto_sacerdote` | 1/6 | Pendiente |
+| `nomuerto_brujo` | 1/6 | Pendiente |
+| `nomuerto_paladin` | 1/6 | Pendiente |
+| `skyborne_guerrero` | 1/6 | Pendiente |
+| `skyborne_cazador` | 1/6 | Pendiente |
+| `skyborne_picaro` | 1/6 | Pendiente |
+| `skyborne_chaman` | 1/6 | Pendiente |
+| `skyborne_druida` | 1/6 | Pendiente |
+| `skyborne_a_guerrero` | 1/6 | Pendiente |
+| `skyborne_a_cazador` | 1/6 | Pendiente |
+| `skyborne_a_picaro` | 1/6 | Pendiente |
+| `skyborne_a_mago` | 1/6 | Pendiente |
+| `skyborne_a_druida` | 1/6 | Pendiente |
