@@ -16,4 +16,6 @@ La salida contiene `INFORME.md`, `resultados.json` y un informe por ruta en `rut
 
 `--trazas-questie` acepta una carpeta local con `foreverQuestTraces.lua`, `xpDB-traces.lua` y `uiMapIdToAreaId.lua` de QuestieDB 1.1.6. El auditor verifica los hashes y lee las filas de datos sin ejecutar esos módulos. La cobertura alcanza la existencia observada, los títulos EN presentes, la XP base registrada y los mapas canónicos de la build 1.60.1.69893. Las fichas confirmadas de `evidencia_forever.json` tienen prioridad sobre las trazas. El catálogo adicional puede aportar evidencia posterior por campo. Consulta [las fuentes y su alcance](FUENTES.md).
 
+El informe de experiencia compara un subtotal de entregas registradas con la curva documentada de `curva_xp_forever.json`. Un catálogo adicional puede incluir estimaciones de combate por ruta y tramo en `xp_combates.<id de ruta>.tramos.<número de tramo>`, con `xp`, `estado` y `fuente`. Los tramos sin evidencia quedan pendientes y los subtotales se muestran como escenario, con el número de entregas cubiertas.
+
 El manifiesto `SHA256_ORIGINALES.sha256` identifica los 219 archivos del commit de restauración 9.7.9. Sus rutas parten de la raíz del repositorio.

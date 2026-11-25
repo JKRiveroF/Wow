@@ -105,4 +105,5 @@ def _merge_catalog(previous, current):
 def load_catalog(path=None, trace_directory=None):
     catalog = import_traces(trace_directory) if trace_directory is not None else {}
     catalog = _merge_catalog(catalog, read_catalog(HERE / "evidencia_forever.json"))
+    catalog = _merge_catalog(catalog, read_catalog(HERE / "curva_xp_forever.json"))
     return _merge_catalog(catalog, read_catalog(path)) if path is not None else catalog

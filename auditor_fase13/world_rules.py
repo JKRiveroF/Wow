@@ -232,8 +232,7 @@ class WorldAudit:
             curve_status = "curva 1–60 documentada" if has_curve else "curva 1–60 sin evidencia completa"
             self.add(4, "pendiente", "xp_evidencia_incompleta",
                      f"{len(self.checks_xp)} entregas distintas con XP pendiente de confirmar en Forever. {curve_status.capitalize()}.")
-        if has_curve:
-            self.compare_xp_scenario(ranges, thresholds)
+        self.compare_xp_scenario(ranges, thresholds if has_curve else None)
         self.add(4, "pendiente", "xp_real_cliente",
                  "Verificar recompensas por nivel, XP de combate, estado de descanso y progreso efectivo en Forever.")
 
@@ -242,9 +241,13 @@ class WorldAudit:
         # Contamos una entrega por ID y por raza porque AdaptarARaza elimina destinos.
         races = _list(self.route.get("razas")) or [None]
         observed = []
+        combat_catalog = _catalog_entry(self.catalog.get("xp_combates"), self.route.get("id"))
+        combat_sections = _dict(combat_catalog.get("tramos"))
         for race in races:
             counted = set()
             race_xp = 0
+            combat_xp = 0
+            known = 0
             below, above = [], []
             for index, (levels, turn_ins) in enumerate(zip(ranges, self.turn_ins), 1):
                 section_xp = 0
@@ -255,21 +258,31 @@ class WorldAudit:
                     record = _catalog_entry(self.catalog.get("misiones"), quest_id)
                     if _source(record, "xp") and type(record.get("xp")) is int and record["xp"] >= 0:
                         section_xp += record["xp"]
+                        known += 1
                 race_xp += section_xp
-                if levels and levels[0] < levels[1]:
+                combat = _dict(combat_sections.get(str(index)))
+                estimate = combat.get("xp")
+                if not _source(combat, "xp") or type(estimate) is not int or estimate < 0:
+                    estimate = 0
+                combat_xp += estimate
+                if thresholds and levels and levels[0] < levels[1]:
                     start, end = levels
                     needed = sum(thresholds[start - 1:end - 1])
-                    if section_xp < needed:
+                    if section_xp + estimate < needed:
                         below.append(index)
-                    elif section_xp > needed:
+                    elif section_xp + estimate > needed:
                         above.append(index)
-            observed.append(
-                f"{race or 'ruta'}: {race_xp} XP registrada acumulada. "
-                f"{len(below)} tramos por debajo y {len(above)} por encima de su intervalo"
-            )
-        self.add(4, "aviso", "xp_escenario_misiones",
-                 ". ".join(observed) + ". Escenario de una entrega por misión con recompensas documentadas. "
-                 "El subtotal no acredita un exceso ni un bloqueo real.")
+            if known or combat_xp:
+                detail = f"{race or 'ruta'}: {race_xp} XP de misión registrada ({known}/{len(counted)} entregas)"
+                if combat_xp:
+                    detail += f", {combat_xp} XP de combate estimada en los tramos documentados"
+                if thresholds:
+                    detail += f", subtotal inferior al intervalo en {len(below)} tramos y superior en {len(above)}"
+                observed.append(detail)
+        if observed:
+            self.add(4, "pendiente", "xp_escenario_misiones",
+                     ". ".join(observed) + ". Escenario parcial que cuenta una entrega por ID y perfil. "
+                     "Requiere validar la XP efectiva, las actividades adicionales y el nivel inicial de cada tramo.")
 
     def check_clustering(self, points, location):
         for previous, first, second, following in zip(points, points[1:], points[2:], points[3:]):

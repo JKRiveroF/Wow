@@ -31,12 +31,12 @@ El auditor externo compiló los 144 ficheros Lua del TOC con Lupa 2.8 (Lua 5.1) 
 | --- | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % |
 | Misiones | 25 % | 47/188 | 25 % | 25 % |
-| Cartografía | 20 % | 47/141 | 0 % | 33,33 % |
-| Experiencia | 15 % | 0/141 | 0 % | 0 % |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % |
+| Experiencia | 15 % | 47/141 | 0 % | 33,33 % |
 | Viajes | 15 % | 0/141 | 0 % | 0 % |
 | Clase, raza y facción | 10 % | 47/141 | 33,33 % | 33,33 % |
 | Regresión y preparación | 5 % | 0/4 | 0 % | 0 % |
-| **Global ponderado** | **100 %** | | **19,58 %** | **26,25 %** |
+| **Global ponderado** | **100 %** | | **26,25 %** | **31,25 %** |
 
 Las 95 comprobaciones estructurales son una compilación global, 47 verificaciones del contrato de ruta y 47 validaciones del motor por ruta con todas sus combinaciones declaradas.
 
@@ -52,6 +52,7 @@ Las 95 comprobaciones estructurales son una compilación global, 47 verificacion
 - Revisados los 103.896 destinos de misión de las 47 rutas, con 2.462 IDs distintos. Las secuencias A/C/T, las variantes raciales y los títulos A/T en las tablas ES/EN del addon se comprobaron sin errores locales. Los 240 títulos EN comparables con trazas coincidieron.
 - Las 47 rutas conservan comprobaciones externas pendientes de misiones y de perfil. Las trazas separan existencia, título y XP base por cada campo. No cubren todos los nombres ES, dependencias, exclusiones, requisitos, objetivos especiales ni desbloqueos.
 - Referencia del cierre estructural publicado, `a7ed567`. Último corte de misiones y perfiles en Git, `Contrasta las misiones y perfiles de las rutas`.
+
 ## Cartografía · avance local
 
 - Comprobados formato y existencia documentada de los 47 UiMapID usados. QuestieDB 1.1.6 identifica los mapas canónicos de la build 1.60.1.69893. Las coordenadas reales de objetivos, interiores y desplazamientos todavía requieren evidencia específica.
@@ -60,56 +61,63 @@ Las 95 comprobaciones estructurales son una compilación global, 47 verificacion
 - Alineadas las dos ubicaciones del catálogo de vuelos para los PNJ 352 y 931 con sus posiciones de ruta, respaldadas por observaciones de Forever. Evidencia y fecha de consulta en `auditor_fase13/FUENTES.md`.
 - La repetición del bloque registró 0 errores y 0 avisos. Conserva un pendiente de posiciones por cada ruta.
 - Último corte previo publicado, `c42d537`. Último corte cartográfico en Git, `Corrige destinos y etiquetas de cartografía de leveo`.
-- Siguiente tarea: corregir la recomendación de XP de la repetible 1878 y volver a ejecutar el bloque de experiencia.
+
+## Experiencia · avance local
+
+- Comprobada la cobertura 1–59 con la regla real de selección de tramo. El nivel 60 usa el tramo final. El informe guarda el subtotal de XP de misiones por perfil y su cobertura frente a la curva de cliente 1.60.1.70959.
+- Actualizadas 38 instrucciones de la misión 1878, intercambio repetible de Tanaris. Blizzard retiró su XP. El texto bilingüe lo ofrece como actividad opcional y conserva la primera entrega 1707, todos los destinos y los requisitos existentes.
+- El bloque volvió a ejecutarse en las 47 rutas con 0 errores y 0 avisos. Las estimaciones de combate, XP efectiva y saldo por tramo quedan pendientes del cliente y de evidencia adicional.
+- Último corte de cartografía publicado, `4d2466e`. Último corte de experiencia en Git, `Contrasta la progresión y corrige el refuerzo sin XP de Tanaris`.
+- Siguiente tarea: verificar la compatibilidad de los vuelos en ambos idiomas y sincronizar la corrección del motor.
 
 ## Avance individual
 
 | ID | Bloques auditados localmente | Validación en Forever |
 | --- | ---: | --- |
-| `gnomo_mago` | 4/6 | Pendiente |
-| `enano_chaman` | 4/6 | Pendiente |
-| `enano_gnomo_guerrero` | 4/6 | Pendiente |
-| `enano_paladin` | 4/6 | Pendiente |
-| `enano_gnomo_sacerdote` | 4/6 | Pendiente |
-| `enano_cazador` | 4/6 | Pendiente |
-| `enano_gnomo_picaro` | 4/6 | Pendiente |
-| `gnomo_brujo` | 4/6 | Pendiente |
-| `humano_guerrero` | 4/6 | Pendiente |
-| `humano_paladin` | 4/6 | Pendiente |
-| `humano_picaro` | 4/6 | Pendiente |
-| `humano_brujo` | 4/6 | Pendiente |
-| `humano_mago` | 4/6 | Pendiente |
-| `humano_sacerdote` | 4/6 | Pendiente |
-| `humano_cazador` | 4/6 | Pendiente |
-| `elfo_cazador` | 4/6 | Pendiente |
-| `elfo_druida` | 4/6 | Pendiente |
-| `elfo_guerrero` | 4/6 | Pendiente |
-| `elfo_picaro` | 4/6 | Pendiente |
-| `elfo_sacerdote` | 4/6 | Pendiente |
-| `orco_trol_guerrero` | 4/6 | Pendiente |
-| `orco_trol_cazador` | 4/6 | Pendiente |
-| `orco_trol_picaro` | 4/6 | Pendiente |
-| `orco_trol_chaman` | 4/6 | Pendiente |
-| `orco_trol_brujo` | 4/6 | Pendiente |
-| `orco_trol_mago` | 4/6 | Pendiente |
-| `trol_sacerdote` | 4/6 | Pendiente |
-| `tauren_guerrero` | 4/6 | Pendiente |
-| `tauren_cazador` | 4/6 | Pendiente |
-| `tauren_chaman` | 4/6 | Pendiente |
-| `tauren_druida` | 4/6 | Pendiente |
-| `nomuerto_guerrero` | 4/6 | Pendiente |
-| `nomuerto_picaro` | 4/6 | Pendiente |
-| `nomuerto_mago` | 4/6 | Pendiente |
-| `nomuerto_sacerdote` | 4/6 | Pendiente |
-| `nomuerto_brujo` | 4/6 | Pendiente |
-| `nomuerto_paladin` | 4/6 | Pendiente |
-| `skyborne_guerrero` | 4/6 | Pendiente |
-| `skyborne_cazador` | 4/6 | Pendiente |
-| `skyborne_picaro` | 4/6 | Pendiente |
-| `skyborne_chaman` | 4/6 | Pendiente |
-| `skyborne_druida` | 4/6 | Pendiente |
-| `skyborne_a_guerrero` | 4/6 | Pendiente |
-| `skyborne_a_cazador` | 4/6 | Pendiente |
-| `skyborne_a_picaro` | 4/6 | Pendiente |
-| `skyborne_a_mago` | 4/6 | Pendiente |
-| `skyborne_a_druida` | 4/6 | Pendiente |
+| `gnomo_mago` | 5/6 | Pendiente |
+| `enano_chaman` | 5/6 | Pendiente |
+| `enano_gnomo_guerrero` | 5/6 | Pendiente |
+| `enano_paladin` | 5/6 | Pendiente |
+| `enano_gnomo_sacerdote` | 5/6 | Pendiente |
+| `enano_cazador` | 5/6 | Pendiente |
+| `enano_gnomo_picaro` | 5/6 | Pendiente |
+| `gnomo_brujo` | 5/6 | Pendiente |
+| `humano_guerrero` | 5/6 | Pendiente |
+| `humano_paladin` | 5/6 | Pendiente |
+| `humano_picaro` | 5/6 | Pendiente |
+| `humano_brujo` | 5/6 | Pendiente |
+| `humano_mago` | 5/6 | Pendiente |
+| `humano_sacerdote` | 5/6 | Pendiente |
+| `humano_cazador` | 5/6 | Pendiente |
+| `elfo_cazador` | 5/6 | Pendiente |
+| `elfo_druida` | 5/6 | Pendiente |
+| `elfo_guerrero` | 5/6 | Pendiente |
+| `elfo_picaro` | 5/6 | Pendiente |
+| `elfo_sacerdote` | 5/6 | Pendiente |
+| `orco_trol_guerrero` | 5/6 | Pendiente |
+| `orco_trol_cazador` | 5/6 | Pendiente |
+| `orco_trol_picaro` | 5/6 | Pendiente |
+| `orco_trol_chaman` | 5/6 | Pendiente |
+| `orco_trol_brujo` | 5/6 | Pendiente |
+| `orco_trol_mago` | 5/6 | Pendiente |
+| `trol_sacerdote` | 5/6 | Pendiente |
+| `tauren_guerrero` | 5/6 | Pendiente |
+| `tauren_cazador` | 5/6 | Pendiente |
+| `tauren_chaman` | 5/6 | Pendiente |
+| `tauren_druida` | 5/6 | Pendiente |
+| `nomuerto_guerrero` | 5/6 | Pendiente |
+| `nomuerto_picaro` | 5/6 | Pendiente |
+| `nomuerto_mago` | 5/6 | Pendiente |
+| `nomuerto_sacerdote` | 5/6 | Pendiente |
+| `nomuerto_brujo` | 5/6 | Pendiente |
+| `nomuerto_paladin` | 5/6 | Pendiente |
+| `skyborne_guerrero` | 5/6 | Pendiente |
+| `skyborne_cazador` | 5/6 | Pendiente |
+| `skyborne_picaro` | 5/6 | Pendiente |
+| `skyborne_chaman` | 5/6 | Pendiente |
+| `skyborne_druida` | 5/6 | Pendiente |
+| `skyborne_a_guerrero` | 5/6 | Pendiente |
+| `skyborne_a_cazador` | 5/6 | Pendiente |
+| `skyborne_a_picaro` | 5/6 | Pendiente |
+| `skyborne_a_mago` | 5/6 | Pendiente |
+| `skyborne_a_druida` | 5/6 | Pendiente |
