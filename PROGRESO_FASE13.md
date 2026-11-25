@@ -23,7 +23,7 @@
 
 ## Estado de la auditoría · 25 de noviembre de 2026
 
-La rama local partió del mismo commit que GitHub, `83fab5b`. `git fsck --full` terminó sin errores. Los 219 SHA-256 coinciden con el disco y con los blobs del commit de restauración `592d887`.
+La rama local partió del mismo commit que GitHub, `83fab5b`. `git fsck --full` terminó sin errores. Al iniciar, los 219 SHA-256 coincidían con el disco y con los blobs del commit de restauración `592d887`.
 
 El auditor externo compiló los 144 ficheros Lua del TOC con Lupa 2.8 (Lua 5.1) y cargó 47 rutas. Las 56 combinaciones pasaron selección, carga y filtro racial con las funciones originales y API simulada. La comprobación estructural no registró errores, avisos ni pendientes. Los originales seguían intactos al cerrar el bloque.
 
@@ -34,9 +34,9 @@ El auditor externo compiló los 144 ficheros Lua del TOC con Lupa 2.8 (Lua 5.1) 
 | Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % |
-| Clase, raza y facción | 10 % | 57/141 | 33,33 % | 40,43 % |
-| Regresión y preparación | 5 % | 0/4 | 0 % | 0 % |
-| **Global ponderado** | **100 %** | | **36,25 %** | **36,96 %** |
+| Clase, raza y facción | 10 % | 57/141 | 40,43 % | 40,43 % |
+| Regresión y preparación | 5 % | 1/4 | 0 % | 25 % |
+| **Global ponderado** | **100 %** | | **36,96 %** | **38,21 %** |
 
 Las 95 comprobaciones estructurales son una compilación global, 47 verificaciones del contrato de ruta y 47 validaciones del motor por ruta con todas sus combinaciones declaradas.
 
@@ -82,56 +82,65 @@ Las 95 comprobaciones estructurales son una compilación global, 47 verificacion
 - Corregidas cinco descripciones de Skysight y precisadas cinco de Read Leyline. Los diez textos se verificaron en español e inglés. La duración exacta de Skysight queda pendiente por discrepancia entre las fuentes.
 - Actualizada la entrega de Camping 101: Herbalism (97968) a Halassa Fernbreeze en Shen'dar. Se conservaron la recogida, los requisitos y el resto de misiones opcionales.
 - Último corte de viajes publicado, `d831b04`. Último corte de perfiles en Git, `Verifica perfiles y ajusta las rutas Skyborne`.
-- Siguiente tarea: ejecutar la regresión global y registrar los escenarios que requieren Forever.
+
+## Regresión global · corte local
+
+- La misma auditoría y el mismo catálogo obtuvieron 60 errores y 454 avisos en la base extraída del ZIP. Tras las correcciones, el resultado en la rama fue 0 errores y 0 avisos en los controles ejecutados, con 351 grupos de comprobaciones pendientes. Los grupos resumen datos o pruebas aún abiertos y pueden contener varias observaciones.
+- Pasaron 31 pruebas locales. Se cotejaron las rutas con el ZIP de restauración, los 219 hashes originales y los archivos fuera del alcance de los cambios. Las simulaciones ejecutaron las funciones de Questie y de migración de datos guardados del addon.
+- Preparados el borrador bilingüe de novedades y el protocolo de validación. Las pruebas efectivas en Forever quedan pendientes. No se detectó un cliente instalado en las ubicaciones consultadas. El ZIP final depende de los criterios de cierre.
+- Último corte de perfiles publicado, `a8e5218`. Último corte de regresión en Git, `Verifica regresiones y documenta el siguiente corte de fase 13`.
+- Siguiente tarea: ejecutar los escenarios de `auditor_fase13/VALIDACION_FOREVER.md` con la compilación registrada, empezando por arranque, datos guardados y Questie, y después las misiones 3520 y 1878, los vuelos bilingües y los raciales Skyborne. Continuar el contraste por ruta con las nuevas observaciones.
 
 ## Avance individual
 
-| ID | Bloques auditados localmente | Validación en Forever |
-| --- | ---: | --- |
-| `gnomo_mago` | 6/6 | Pendiente |
-| `enano_chaman` | 6/6 | Pendiente |
-| `enano_gnomo_guerrero` | 6/6 | Pendiente |
-| `enano_paladin` | 6/6 | Pendiente |
-| `enano_gnomo_sacerdote` | 6/6 | Pendiente |
-| `enano_cazador` | 6/6 | Pendiente |
-| `enano_gnomo_picaro` | 6/6 | Pendiente |
-| `gnomo_brujo` | 6/6 | Pendiente |
-| `humano_guerrero` | 6/6 | Pendiente |
-| `humano_paladin` | 6/6 | Pendiente |
-| `humano_picaro` | 6/6 | Pendiente |
-| `humano_brujo` | 6/6 | Pendiente |
-| `humano_mago` | 6/6 | Pendiente |
-| `humano_sacerdote` | 6/6 | Pendiente |
-| `humano_cazador` | 6/6 | Pendiente |
-| `elfo_cazador` | 6/6 | Pendiente |
-| `elfo_druida` | 6/6 | Pendiente |
-| `elfo_guerrero` | 6/6 | Pendiente |
-| `elfo_picaro` | 6/6 | Pendiente |
-| `elfo_sacerdote` | 6/6 | Pendiente |
-| `orco_trol_guerrero` | 6/6 | Pendiente |
-| `orco_trol_cazador` | 6/6 | Pendiente |
-| `orco_trol_picaro` | 6/6 | Pendiente |
-| `orco_trol_chaman` | 6/6 | Pendiente |
-| `orco_trol_brujo` | 6/6 | Pendiente |
-| `orco_trol_mago` | 6/6 | Pendiente |
-| `trol_sacerdote` | 6/6 | Pendiente |
-| `tauren_guerrero` | 6/6 | Pendiente |
-| `tauren_cazador` | 6/6 | Pendiente |
-| `tauren_chaman` | 6/6 | Pendiente |
-| `tauren_druida` | 6/6 | Pendiente |
-| `nomuerto_guerrero` | 6/6 | Pendiente |
-| `nomuerto_picaro` | 6/6 | Pendiente |
-| `nomuerto_mago` | 6/6 | Pendiente |
-| `nomuerto_sacerdote` | 6/6 | Pendiente |
-| `nomuerto_brujo` | 6/6 | Pendiente |
-| `nomuerto_paladin` | 6/6 | Pendiente |
-| `skyborne_guerrero` | 6/6 | Pendiente |
-| `skyborne_cazador` | 6/6 | Pendiente |
-| `skyborne_picaro` | 6/6 | Pendiente |
-| `skyborne_chaman` | 6/6 | Pendiente |
-| `skyborne_druida` | 6/6 | Pendiente |
-| `skyborne_a_guerrero` | 6/6 | Pendiente |
-| `skyborne_a_cazador` | 6/6 | Pendiente |
-| `skyborne_a_picaro` | 6/6 | Pendiente |
-| `skyborne_a_mago` | 6/6 | Pendiente |
-| `skyborne_a_druida` | 6/6 | Pendiente |
+Cada ruta completó los seis bloques de análisis local. La columna de criterios considera las 18 comprobaciones aplicables por ruta. Se completaron ocho para cada ruta Skyborne y siete para las restantes. Las comprobaciones globales se contabilizan en la tabla de áreas.
+
+| ID | Bloques locales | Criterios completos | Grupos pendientes | Validación en Forever |
+| --- | ---: | ---: | ---: | --- |
+| `gnomo_mago` | 6/6 | 7/18 | 7 | Pendiente |
+| `enano_chaman` | 6/6 | 7/18 | 7 | Pendiente |
+| `enano_gnomo_guerrero` | 6/6 | 7/18 | 7 | Pendiente |
+| `enano_paladin` | 6/6 | 7/18 | 7 | Pendiente |
+| `enano_gnomo_sacerdote` | 6/6 | 7/18 | 7 | Pendiente |
+| `enano_cazador` | 6/6 | 7/18 | 7 | Pendiente |
+| `enano_gnomo_picaro` | 6/6 | 7/18 | 7 | Pendiente |
+| `gnomo_brujo` | 6/6 | 7/18 | 7 | Pendiente |
+| `humano_guerrero` | 6/6 | 7/18 | 7 | Pendiente |
+| `humano_paladin` | 6/6 | 7/18 | 7 | Pendiente |
+| `humano_picaro` | 6/6 | 7/18 | 7 | Pendiente |
+| `humano_brujo` | 6/6 | 7/18 | 7 | Pendiente |
+| `humano_mago` | 6/6 | 7/18 | 7 | Pendiente |
+| `humano_sacerdote` | 6/6 | 7/18 | 7 | Pendiente |
+| `humano_cazador` | 6/6 | 7/18 | 7 | Pendiente |
+| `elfo_cazador` | 6/6 | 7/18 | 7 | Pendiente |
+| `elfo_druida` | 6/6 | 7/18 | 7 | Pendiente |
+| `elfo_guerrero` | 6/6 | 7/18 | 7 | Pendiente |
+| `elfo_picaro` | 6/6 | 7/18 | 7 | Pendiente |
+| `elfo_sacerdote` | 6/6 | 7/18 | 7 | Pendiente |
+| `orco_trol_guerrero` | 6/6 | 7/18 | 8 | Pendiente |
+| `orco_trol_cazador` | 6/6 | 7/18 | 8 | Pendiente |
+| `orco_trol_picaro` | 6/6 | 7/18 | 8 | Pendiente |
+| `orco_trol_chaman` | 6/6 | 7/18 | 8 | Pendiente |
+| `orco_trol_brujo` | 6/6 | 7/18 | 8 | Pendiente |
+| `orco_trol_mago` | 6/6 | 7/18 | 8 | Pendiente |
+| `trol_sacerdote` | 6/6 | 7/18 | 8 | Pendiente |
+| `tauren_guerrero` | 6/6 | 7/18 | 8 | Pendiente |
+| `tauren_cazador` | 6/6 | 7/18 | 8 | Pendiente |
+| `tauren_chaman` | 6/6 | 7/18 | 8 | Pendiente |
+| `tauren_druida` | 6/6 | 7/18 | 8 | Pendiente |
+| `nomuerto_guerrero` | 6/6 | 7/18 | 8 | Pendiente |
+| `nomuerto_picaro` | 6/6 | 7/18 | 8 | Pendiente |
+| `nomuerto_mago` | 6/6 | 7/18 | 8 | Pendiente |
+| `nomuerto_sacerdote` | 6/6 | 7/18 | 8 | Pendiente |
+| `nomuerto_brujo` | 6/6 | 7/18 | 8 | Pendiente |
+| `nomuerto_paladin` | 6/6 | 7/18 | 8 | Pendiente |
+| `skyborne_guerrero` | 6/6 | 8/18 | 8 | Pendiente |
+| `skyborne_cazador` | 6/6 | 8/18 | 8 | Pendiente |
+| `skyborne_picaro` | 6/6 | 8/18 | 8 | Pendiente |
+| `skyborne_chaman` | 6/6 | 8/18 | 8 | Pendiente |
+| `skyborne_druida` | 6/6 | 8/18 | 8 | Pendiente |
+| `skyborne_a_guerrero` | 6/6 | 8/18 | 7 | Pendiente |
+| `skyborne_a_cazador` | 6/6 | 8/18 | 7 | Pendiente |
+| `skyborne_a_picaro` | 6/6 | 8/18 | 7 | Pendiente |
+| `skyborne_a_mago` | 6/6 | 8/18 | 7 | Pendiente |
+| `skyborne_a_druida` | 6/6 | 8/18 | 7 | Pendiente |

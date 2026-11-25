@@ -2,7 +2,7 @@
 
 El auditor toma la carpeta instalable como entrada. Lua 5.1 compila los módulos que declara el TOC, carga las rutas y ejecuta las funciones originales de selección, carga y filtrado racial con una API simulada. El entorno local sirve para verificar el código y los datos. Las comprobaciones del cliente quedan registradas por separado.
 
-Desde la raíz del repositorio, en PowerShell:
+Con Python 3.11 o posterior, ejecuta estos comandos desde la raíz del repositorio en PowerShell:
 
 ```powershell
 python -m venv auditor_fase13/.venv
@@ -19,3 +19,5 @@ La salida contiene `INFORME.md`, `resultados.json` y un informe por ruta en `rut
 El informe de experiencia compara un subtotal de entregas registradas con la curva documentada de `curva_xp_forever.json`. Un catálogo adicional puede incluir estimaciones de combate por ruta y tramo en `xp_combates.<id de ruta>.tramos.<número de tramo>`, con `xp`, `estado` y `fuente`. Los tramos sin evidencia quedan pendientes y los subtotales se muestran como escenario, con el número de entregas cubiertas.
 
 El manifiesto `SHA256_ORIGINALES.sha256` identifica los 219 archivos del commit de restauración 9.7.9. Sus rutas parten de la raíz del repositorio.
+
+Ejecuta la regresión local con `auditor_fase13/.venv/Scripts/python.exe -B -m unittest discover -s auditor_fase13 -v`. Los escenarios de juego pendientes están en [VALIDACION_FOREVER.md](VALIDACION_FOREVER.md).

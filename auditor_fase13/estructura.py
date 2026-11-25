@@ -17,6 +17,27 @@ def text(value):
     return isinstance(value, str) and bool(value.strip())
 
 
+def positive_id(value):
+    return type(value) is int and value > 0
+
+
+def invalid_conditions(checks):
+    for field in ("hechizos", "oficios", "objetos"):
+        if field in checks:
+            entries = sequence(checks[field])
+            if not entries or not all(positive_id(entry) for entry in entries):
+                yield f"{field} requiere una secuencia no vacía de identificadores positivos."
+    if "mision" in checks and (not positive_id(checks["mision"]) or "objetos" not in checks):
+        yield "mision requiere un ID positivo y solo se usa como alternativa a objetos."
+    if "oficioMin" in checks:
+        professions = sequence(checks["oficioMin"])
+        if not professions or not all(
+            isinstance(profession, dict) and positive_id(profession.get("skill"))
+            and positive_id(profession.get("min", 1)) for profession in professions
+        ):
+            yield "oficioMin requiere una secuencia de oficios con ID y mínimo válidos."
+
+
 def step_location(route, section, step):
     location = f"sección {section}, paso {step}"
     lines = route.get("_lineas_pasos", [])
@@ -95,9 +116,14 @@ def audit_structure(routes):
                     waypoints = sequence(step["wp"])
                     if waypoints is None or any(not isinstance(wp, dict) for wp in waypoints):
                         report("DESTINOS_INVALIDOS", "wp debe ser una secuencia de tablas de destino.", location)
+                    elif any(not text(wp.get("n")) for wp in waypoints):
+                        report("NOMBRE_DESTINO_INVALIDO", "La flecha requiere un nombre para el destino.", location)
                 checks = step.get("comprobar", {})
                 if not isinstance(checks, dict) and checks != []:
                     report("COMPROBACION_INVALIDA", "comprobar debe ser una tabla de condiciones.", location)
+                elif isinstance(checks, dict):
+                    for error in invalid_conditions(checks):
+                        report("CONDICION_INVALIDA", error, location)
         missing = sorted(set(range(1, 61)) - levels)
         if missing:
             report("HUECO_NIVELES_DECLARADOS", "No hay ningún tramo declarado para los niveles " + ", ".join(map(str, missing)) + ".")

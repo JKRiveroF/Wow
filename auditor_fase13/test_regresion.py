@@ -1,0 +1,244 @@
+"""Integridad de la base y regresiones locales de guardados y Questie."""
+
+import hashlib
+import re
+import subprocess
+import unittest
+from pathlib import Path
+from zipfile import ZipFile
+
+from lupa.lua51 import LuaRuntime
+
+
+ROOT = Path(__file__).resolve().parents[1]
+ADDON = ROOT / "GuiaAventurero"
+BASE = "592d887a021ec136696e460895630982737fec95"
+BASE_ZIP = "GuiaAventurero-9.7.9.zip"
+MANIFEST = Path(__file__).with_name("SHA256_ORIGINALES.sha256")
+ALLOWED_MODULES = {
+    "GuiaAventurero/Datos94.lua",
+    "GuiaAventurero/GuiaAventurero.lua",
+    "GuiaAventurero/Idioma/enUS_Datos.lua",
+    "GuiaAventurero/Idioma/enUS_Refuerzos97.lua",
+    "GuiaAventurero/Idioma/enUS_Rutas.lua",
+    "GuiaAventurero/OpcionalesKalimdor.lua",
+    "GuiaAventurero/OpcionalesOtras.lua",
+}
+
+
+def _source(name):
+    return (ADDON / name).read_text(encoding="utf-8-sig")
+
+
+def _match(source, pattern):
+    match = re.search(pattern, source, re.MULTILINE | re.DOTALL)
+    if match is None:
+        raise AssertionError(f"No se encontró el bloque Lua: {pattern}")
+    return match[0]
+
+
+def _load(runtime, name):
+    return runtime.execute(_source(name), ADDON.name, runtime.globals().GL, name=f"@{name}")
+
+
+def _sha(path):
+    with path.open("rb") as file:
+        return hashlib.file_digest(file, "sha256").hexdigest()
+
+
+def _route_without_reviewed_edits(source):
+    original_alterac = r'm = 1459, z = "(?:|Alterac Valley|Valle de Alterac)"'
+    obsolete_objective = r'\{ m = 1444, z = "Feralas", x = 44\.7, y = 37\.6, n = "[^"]+", q = 3520, a = "C" \}, '
+    lines = []
+    for line in source.splitlines(keepends=True):
+        line = re.sub(original_alterac, 'm = 1459, z = "<etiqueta revisada>"', line)
+        if line.rstrip().endswith(("-- REFUERZO_97 q=3520", "-- REFUERZO_97 q=1878")):
+            line = re.sub(r't = "[^"]+"', 't = "<instrucciones revisadas>"', line, count=1)
+            line = re.sub(obsolete_objective, "", line)
+        if line.startswith("    entrenar = ") and "Walk on Air" in line:
+            line = re.sub(r"(?:Skysight|Read Ley ?[Ll]ine) .*?(?= Además)", "<racial revisada>.", line)
+        lines.append(line)
+    return "".join(lines)
+
+
+class IntegridadTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        pairs = [line.split("  ", 1) for line in MANIFEST.read_text(encoding="ascii").splitlines()]
+        cls.originals = {name: checksum for checksum, name in pairs}
+        if len(pairs) != 219 or len(cls.originals) != 219:
+            raise AssertionError("El manifiesto debe identificar 219 originales únicos.")
+        cls.files = set(cls.originals) - {BASE_ZIP}
+        cls.routes = {name for name in cls.files if name.startswith("GuiaAventurero/Rutas/")}
+
+    def test_manifiesto_y_zip_del_commit_base(self):
+        result = subprocess.run(
+            ["git", "cat-file", "blob", f"{BASE}:{BASE_ZIP}"],
+            cwd=ROOT, capture_output=True, check=True,
+        )
+        self.assertEqual(hashlib.sha256(result.stdout).hexdigest(), self.originals[BASE_ZIP])
+        archive = ROOT / BASE_ZIP
+        self.assertEqual(_sha(archive), self.originals[BASE_ZIP])
+        with ZipFile(archive) as zip_file:
+            members = [entry for entry in zip_file.infolist() if not entry.is_dir()]
+            self.assertEqual(len(members), len(self.files))
+            self.assertEqual({entry.filename for entry in members}, self.files)
+            for entry in members:
+                with self.subTest(path=entry.filename), zip_file.open(entry) as file:
+                    self.assertEqual(hashlib.file_digest(file, "sha256").hexdigest(), self.originals[entry.filename])
+
+    def test_distribucion_conserva_archivos_y_limites_de_cambios(self):
+        packaged = {path.relative_to(ROOT).as_posix() for path in ADDON.rglob("*") if path.is_file()}
+        self.assertEqual(packaged, self.files)
+        self.assertEqual(len(self.routes), 47)
+        self.assertLessEqual(ALLOWED_MODULES, packaged)
+        for name in sorted(packaged - self.routes - ALLOWED_MODULES):
+            with self.subTest(path=name):
+                self.assertEqual(_sha(ROOT / name), self.originals[name])
+
+    def test_las_rutas_conservan_todo_fuera_de_los_cambios_revisados(self):
+        with ZipFile(ROOT / BASE_ZIP) as original:
+            for name in sorted(self.routes):
+                with self.subTest(ruta=name):
+                    expected = _route_without_reviewed_edits(original.read(name).decode("utf-8"))
+                    actual = _route_without_reviewed_edits((ROOT / name).read_bytes().decode("utf-8"))
+                    self.assertTrue(expected == actual, f"La ruta {name} contiene cambios fuera del alcance documentado.")
+
+    def test_toc_version_guardados_y_recursos(self):
+        lines = _source("GuiaAventurero.toc").splitlines()
+        metadata = dict(line[3:].split(": ", 1) for line in lines if line.startswith("## "))
+        self.assertEqual(metadata["Version"], "9.7.9")
+        self.assertEqual(metadata["Interface"], "16001")
+        self.assertEqual(metadata["Author"], "JKRiveroF")
+        self.assertEqual(metadata["SavedVariables"], "GuiaAventureroCuenta, GuiaAventureroRespaldo")
+        self.assertEqual(metadata["SavedVariablesPerCharacter"], "GuiaAventureroDB")
+        modules = [f"GuiaAventurero/{line.replace(chr(92), '/')}" for line in lines if line.endswith(".lua")]
+        self.assertEqual(len(modules), 144)
+        self.assertEqual(set(modules), {name for name in self.files if name.endswith(".lua")})
+        self.assertEqual({name for name in modules if name in self.routes}, self.routes)
+        for extension, count in ((".blp", 61), (".tga", 9)):
+            assets = [name for name in self.files if name.endswith(extension)]
+            self.assertEqual(len(assets), count)
+            for name in sorted(assets):
+                with self.subTest(asset=name):
+                    self.assertEqual(_sha(ROOT / name), self.originals[name])
+
+
+class GuardadosTest(unittest.TestCase):
+    def test_migracion_legacy_preserva_identidad_progreso_y_preferencias(self):
+        runtime = LuaRuntime(register_eval=False, register_builtins=False)
+        runtime.execute('''
+            GL = {}
+            function CreateFrame()
+                return { RegisterEvent = function() end, SetScript = function() end }
+            end
+            function Mensaje(texto) error(texto) end
+            anterior = {
+                ruta = "orco_trol_guerrero", seccion = 4, paso = 11, destino = 2,
+                autoMisiones = false, notas = { "nota de personaje" },
+                vuelos = { ["El Cruce"] = true }, escala = "25",
+            }
+            GuiaLeveoDB = anterior
+            GuiaLeveoCuenta = { idioma = "es" }
+            GuiaAventureroCuenta = { idioma = "en" }
+        ''')
+        _load(runtime, "Idioma.lua")
+        core = _source("GuiaAventurero.lua")
+        runtime.execute(_match(core, r"^local AUTOMATISMOS = [^\n]+$") + "\n"
+                        + _match(core, r"^local ESQUEMA = .*?^local function Migrar\(db\)\n.*?^end$")
+                        + "\nmigrar = Migrar")
+        runtime.execute('''
+            GL._TraerNombreViejo()
+            assert(GuiaAventureroDB == anterior and GuiaLeveoDB == nil)
+            assert(GuiaAventureroCuenta.idioma == "en" and GuiaLeveoCuenta == nil)
+            assert(GL._LimpiarGuardado() == 1 and anterior.escala == 1.5)
+            migrar(anterior)
+            assert(anterior.esquema == 2 and anterior.ruta == "orco_trol_guerrero")
+            assert(anterior.seccion == 4 and anterior.paso == 11 and anterior.destino == 2)
+            assert(anterior.notas[1] == "nota de personaje" and anterior.vuelos["El Cruce"])
+            assert(anterior.autoMisiones == false and anterior.autoVender == false)
+            anterior.autoVender = true
+            migrar(anterior)
+            assert(anterior.autoVender == true)
+            local nuevo = {}
+            migrar(nuevo)
+            assert(nuevo.esquema == 2 and nuevo.autoMisiones == false and nuevo.autoVender == false)
+        ''')
+
+
+class QuestieTest(unittest.TestCase):
+    def setUp(self):
+        self.runtime = LuaRuntime(register_eval=False, register_builtins=False)
+        self.runtime.execute('''
+            GL = { comandos = {}, alIniciar = {}, colores = {} }
+            function GL.Seguro(v) return v end
+            function GL.Evento() end
+            function GL.Fallo(_, mensaje) error(mensaje) end
+            function CreateFrame()
+                return { SetScript = function(_, _, handler) evento_mision = handler end }
+            end
+            function GetQuestID() return 101 end
+            function IsQuestCompletable() return true end
+            llamadas = { acepta = 0, completa = 0, recompensa = 0 }
+            function AcceptQuest() llamadas.acepta = llamadas.acepta + 1 end
+            function CompleteQuest() llamadas.completa = llamadas.completa + 1 end
+            function GetQuestReward() llamadas.recompensa = llamadas.recompensa + 1 end
+            C_AddOns = { IsAddOnLoaded = function(nombre)
+                assert(nombre == "Questie")
+                return cargado
+            end }
+            GuiaAventureroDB = { questie976 = true, autoMisiones = true, autoSeguimiento = true }
+            GL.RUTA = { secciones = {{ pasos = {{ wp = {{ q = 101, a = "A" }, { q = 101, a = "T" }} }} }} }
+        ''')
+        for name in ("Asistente97.lua", "Revision976.lua", "Misiones.lua"):
+            _load(self.runtime, name)
+        self.runtime.execute("GL.alIniciar[1]()")
+
+    def test_eventos_de_mision_respetan_questie_y_el_estado_indeterminado(self):
+        self.runtime.execute('''
+            local function dialogo()
+                evento_mision(nil, "QUEST_DETAIL")
+                evento_mision(nil, "QUEST_PROGRESS")
+                evento_mision(nil, "QUEST_COMPLETE")
+            end
+            cargado = true
+            assert(GL.QuestieConvivencia976())
+            dialogo()
+            cargado = nil
+            assert(GL.QuestieConvivencia976())
+            dialogo()
+            assert(llamadas.acepta == 0 and llamadas.completa == 0 and llamadas.recompensa == 0)
+            cargado = false
+            assert(not GL.QuestieConvivencia976())
+            dialogo()
+            assert(llamadas.acepta == 1 and llamadas.completa == 1 and llamadas.recompensa == 1)
+        ''')
+
+    def test_seguimiento_no_quita_misiones_ajenas_al_cargar_questie(self):
+        experience = _source("Experiencia.lua")
+        self.runtime.execute(_match(experience, r"^local function DB\(\)[^\n]*$") + "\n"
+                             + _match(experience, r"^local function IndiceMision\(q\)\n.*?^GL\.ActualizarSeguimiento976 = [^\n]+$"))
+        self.runtime.execute('''
+            local wp = {{ q = 101, a = "C" }, { q = 102, a = "T" }}
+            function GL.PasoActual() return 1, { wp = wp } end
+            function GetQuestLogIndexByID(id) return id end
+            local seguimientos, agregadas, retiradas = { [102] = true }, {}, {}
+            function IsQuestWatched(id) return seguimientos[id] == true end
+            function AddQuestWatch(id) seguimientos[id] = true; table.insert(agregadas, id) end
+            function RemoveQuestWatch(id) seguimientos[id] = nil; table.insert(retiradas, id) end
+            cargado = false
+            GL.ActualizarSeguimiento976()
+            assert(#agregadas == 1 and agregadas[1] == 101 and #retiradas == 0)
+            wp = {}
+            cargado = true
+            GL.ActualizarSeguimiento976()
+            assert(seguimientos[101] and seguimientos[102] and #retiradas == 0)
+            cargado = false
+            GL.ActualizarSeguimiento976()
+            assert(seguimientos[101] and seguimientos[102] and #retiradas == 0)
+            assert(next(GuiaAventureroDB.vigiladas) == nil)
+        ''')
+
+
+if __name__ == "__main__":
+    unittest.main()

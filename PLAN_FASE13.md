@@ -25,8 +25,9 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 ## Secuencia de trabajo
 
 - [x] Ejecutar y cerrar la auditoría estructural inicial con los archivos originales protegidos por el manifiesto.
-- [ ] Ejecutar las comprobaciones de misiones, cartografía, experiencia, viajes y particularidades. Registrar para cada hallazgo el estado, la ruta, la evidencia y la fecha si procede.
-- [ ] Corregir solo errores reproducibles y volver a ejecutar las reglas afectadas y la regresión. Las dudas sobre datos de Forever quedan anotadas.
+- [x] Ejecutar las comprobaciones locales de misiones, cartografía, experiencia, viajes y particularidades en las 47 rutas. Registrar los hallazgos y el alcance de la evidencia.
+- [x] Aplicar las correcciones respaldadas y repetir la auditoría y la regresión local. Preparar el borrador de novedades ES/EN y el protocolo de pruebas en Forever.
+- [ ] Completar la evidencia por misión y perfil, especialmente las cadenas, restricciones, objetos, desbloqueos y títulos ES/EN. Validar posiciones, ganancias de XP y alternativas de viaje donde falten observaciones.
 - [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.
 - [ ] Actualizar las novedades ES/EN y preparar el ZIP definitivo con los archivos distribuibles, tras superar los criterios de cierre local.
-- [ ] Sincronizar únicamente la rama de desarrollo con `origin`. La fusión y las Releases quedan pendientes de autorización expresa.
+- [ ] Verificar la sincronización del cierre únicamente en la rama de desarrollo con `origin`. La fusión y las Releases quedan pendientes de autorización expresa.
