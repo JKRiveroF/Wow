@@ -12,9 +12,18 @@ auditor_fase13/.venv/Scripts/python.exe auditor_fase13/auditar.py
 
 La salida contiene `INFORME.md`, `resultados.json` y un informe por ruta en `rutas/`. El proceso devuelve `1` si encuentra errores y `2` si falla la lectura o la preparación de la salida. Usa `--addon` para auditar otra carpeta y `--salida` para guardar ejecuciones por separado. Las salidas por defecto y el entorno virtual permanecen fuera de los archivos versionados.
 
+El bloque 2 genera también `misiones_individuales.json`, con un registro por ID, sus rutas y posiciones compartidas, evidencia por campo e indicios por contrastar. Los informes distinguen los pendientes de investigación de los que requieren ejecutar el cliente.
+
 `--bloque` permite seleccionar uno o más ámbitos. La estructura siempre se comprueba porque los demás bloques dependen de las rutas cargadas. Usa `--catalogo` para aportar evidencia JSON adicional. `evidencia_forever.json` muestra ejemplos con fuente fechada y procedencia por campo. Las claves de misiones, mapas y PNJ son sus IDs como texto. Una ficha ausente deja la verificación pendiente.
 
 `--trazas-questie` acepta una carpeta local con `foreverQuestTraces.lua`, `xpDB-traces.lua` y `uiMapIdToAreaId.lua` de QuestieDB 1.1.6. El auditor verifica los hashes y lee las filas de datos sin ejecutar esos módulos. La cobertura alcanza la existencia observada, los títulos EN presentes, la XP base registrada y los mapas canónicos de la build 1.60.1.69893. Las fichas confirmadas de `evidencia_forever.json` tienen prioridad sobre las trazas. El catálogo adicional puede aportar evidencia posterior por campo. Consulta [las fuentes y su alcance](FUENTES.md).
+
+`--datos-questie` añade `foreverBaseQuest.lua`, `foreverQuestFixes.lua` y `foreverQuestRelationTraces.lua` de esa misma revisión. Opcionalmente lee `questie-forever-quests-esES.lua` y `questie-forever-quests-esMX.lua` si están en la carpeta. Las relaciones inferidas se muestran por separado de los requisitos contrastados. Consulta los archivos y enlaces en [FUENTES.md](FUENTES.md).
+
+```powershell
+auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/auditar.py --trazas-questie auditor_fase13/cache_fuentes --datos-questie auditor_fase13/cache_fuentes
+auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/agrupamientos.py --trazas-questie auditor_fase13/cache_fuentes --datos-questie auditor_fase13/cache_fuentes
+```
 
 El informe de experiencia compara un subtotal de entregas registradas con la curva documentada de `curva_xp_forever.json`. Un catálogo adicional puede incluir estimaciones de combate por ruta y tramo en `xp_combates.<id de ruta>.tramos.<número de tramo>`, con `xp`, `estado` y `fuente`. Los tramos sin evidencia quedan pendientes y los subtotales se muestran como escenario, con el número de entregas cubiertas.
 

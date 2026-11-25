@@ -23,6 +23,7 @@ ALLOWED_MODULES = {
     "GuiaAventurero/Idioma/enUS_Rutas.lua",
     "GuiaAventurero/OpcionalesKalimdor.lua",
     "GuiaAventurero/OpcionalesOtras.lua",
+    "GuiaAventurero/OpcionalesReinos.lua",
 }
 
 
@@ -52,9 +53,38 @@ def _route_without_reviewed_edits(source):
     lines = []
     for line in source.splitlines(keepends=True):
         line = re.sub(original_alterac, 'm = 1459, z = "<etiqueta revisada>"', line)
-        if line.rstrip().endswith(("-- REFUERZO_97 q=3520", "-- REFUERZO_97 q=1878")):
+        if line.rstrip().endswith(("-- REFUERZO_97 q=3520", "-- REFUERZO_97 q=1878",
+                                   "-- REFUERZO_97 q=5301", "-- REFUERZO_97 q=5283")):
             line = re.sub(r't = "[^"]+"', 't = "<instrucciones revisadas>"', line, count=1)
             line = re.sub(obsolete_objective, "", line)
+        if line.rstrip().endswith("-- REFUERZO_97 q=3481"):
+            line = line.replace("Abalarios...", "Abalorios...")
+        if line.rstrip().endswith("-- REFUERZO_97 q=8412"):
+            line = re.sub(r"T?ótem de espíritu", "<tótem>", line)
+        if ("q = 5386, a = \"C\"" in line and "q = 6142," in line) or (
+            "q = 1430, a = \"C\"" in line and "q = 698, a = \"C\"" in line
+        ):
+            line = re.sub(r't = "[^"]+"', 't = "<objetivos revisados>"', line, count=1)
+        if "q = 3110," in line and 'raza = "Dwarf"' in line:
+            line = re.sub(r't = "[^"]+"', 't = "<inicio racial revisado>"', line, count=1)
+            line = re.sub(r', \{ [^{}]+q = 98574, a = "A", raza = "Gnome" \}', "", line)
+            line = line.replace('n = "Entregar: Memorándum santificado (Silo Khalder)", q = 98574, a = "T", raza = "Gnome"',
+                                'n = "Silo Khalder", npc = 837, raza = "Gnome"')
+        if re.search(r"\b(?:q|mision) = 5645\b", line):
+            line = line.replace("Sin miedo", "Castigar")
+        if re.search(r"\b(?:q|mision) = 5679\b", line):
+            line = line.replace("[Peste devoradora]", "[Sacrificio oscuro]")
+            for field in ('misionNombre = "', "Recoger: ", "Entregar: "):
+                line = line.replace(field + "Peste devoradora", field + "Sacrificio oscuro")
+        if line.startswith('    entrenar = "') and "Aelthalyste te da tu misión de raza del 20:" in line:
+            line = line.replace("Aelthalyste te da tu misión de raza del 20: Peste devoradora.",
+                                "Aelthalyste te da tu misión de raza del 20: Sacrificio oscuro.")
+        if 'q = 20, a = "A"' in line and 'q = 20, a = "T"' in line:
+            line = re.sub(r't = "[^"]+"', 't = "<bloqueo revisado>"', line, count=1)
+            line = re.sub(r', \{ [^{}]+q = 98387, a = "[AT]" \}', "", line)
+        if any(f'q = {quest}, a = "T"' in line for quest in (94495, 94497, 94499)):
+            line = re.sub(r't = "[^"]+"', 't = "<odres revisados>"', line, count=1)
+            line = re.sub(r', \{ [^{}]+q = (?:94499|94500), a = "A" \}', "", line)
         if line.startswith("    entrenar = ") and "Walk on Air" in line:
             line = re.sub(r"(?:Skysight|Read Ley ?[Ll]ine) .*?(?= Además)", "<racial revisada>.", line)
         lines.append(line)

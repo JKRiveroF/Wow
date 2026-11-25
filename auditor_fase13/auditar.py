@@ -7,13 +7,16 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from catalogo import load_catalog
+from arranques import audit_arranques
 from estructura import audit_structure
+from inventario_misiones import inventory_missions
 from lua_routes import load_routes
 
 HERE = Path(__file__).resolve().parent
 BLOCKS = {1: "Estructura", 2: "Misiones", 3: "Cartografía", 4: "Experiencia",
           5: "Viajes", 6: "Clase, raza y facción"}
 SEVERITIES = ("error", "aviso", "pendiente")
+CLIENT_CHECKS = {"viajes_coste_cliente", "xp_real_cliente"}
 
 
 def readable(value):
@@ -23,11 +26,12 @@ def readable(value):
 def render_findings(findings):
     if not findings:
         return "Sin hallazgos en las comprobaciones ejecutadas.\n"
-    lines = ["| Bloque | Gravedad | Código | Ubicación | Detalle |",
-             "| ---: | --- | --- | --- | --- |"]
+    lines = ["| Bloque | Gravedad | Resolución | Código | Ubicación | Detalle |",
+             "| ---: | --- | --- | --- | --- | --- |"]
     for result in findings:
         location = " · ".join(filter(None, [result.get("archivo"), result.get("ubicacion")]))
-        fields = (result["bloque"], result["gravedad"], result["codigo"], location, result["detalle"])
+        fields = (result["bloque"], result["gravedad"], result.get("resolucion", ""),
+                  result["codigo"], location, result["detalle"])
         lines.append("| " + " | ".join(map(readable, fields)) + " |")
     return "\n".join(lines) + "\n"
 
@@ -56,6 +60,7 @@ def audit(addon, blocks, catalog):
                 findings.extend(audit_missions(route, catalog))
             if 6 in blocks:
                 findings.extend(audit_specializations(route, catalog))
+                findings.extend(audit_arranques(route, catalog))
         if 6 in blocks:
             findings.extend(audit_profile_matrix(routes, catalog))
     if blocks.intersection({3, 4, 5}):
@@ -63,6 +68,9 @@ def audit(addon, blocks, catalog):
 
         for route in eligible:
             findings.extend(result for result in audit_world(route, catalog) if result["bloque"] in blocks)
+    for item in findings:
+        if item["gravedad"] == "pendiente":
+            item["resolucion"] = "cliente" if item["codigo"] in CLIENT_CHECKS else "investigación"
     findings.sort(key=lambda item: (item["bloque"], SEVERITIES.index(item["gravedad"]),
                                     item.get("archivo") or "", item["codigo"], str(item.get("ubicacion", ""))))
     return routes, findings
@@ -83,11 +91,13 @@ def write_reports(output, version, blocks, routes, findings):
         filename = f"{number:02d}-{Path(path).stem}.md"
         results = by_file.pop(path, [])
         totals = Counter(item["gravedad"] for item in results)
+        pending = Counter(item["resolucion"] for item in results if "resolucion" in item)
         route_index.append(f"| [{readable(name)}](rutas/{filename}) | {readable(route_id)} | "
                            f"{totals['error']} | {totals['aviso']} | {totals['pendiente']} |")
         manifest.append({"id": route_id, "nombre": name, "archivo": path,
                          "faccion": route.get("_faccion"), "razas": route.get("razas"),
-                         "clase": route.get("clase"), "hallazgos": dict(totals)})
+                         "clase": route.get("clase"), "hallazgos": dict(totals),
+                         "pendientes_por_via": dict(pending)})
         (route_output / filename).write_text(
             f"# {name}\n\nVersión {version} · `{path}` · `{route_id}`\n\n"
             + render_findings(results), encoding="utf-8", newline="\n")
@@ -104,7 +114,9 @@ def write_reports(output, version, blocks, routes, findings):
                     "## Resultados por ruta", "", "| Ruta | ID | Errores | Avisos | Pendientes |",
                     "| --- | --- | ---: | ---: | ---: |", *route_index, ""])
     (output / "INFORME.md").write_text("\n".join(summary), encoding="utf-8", newline="\n")
-    data = {"version": version, "bloques": sorted(blocks | {1}), "rutas": manifest, "hallazgos": findings}
+    pending = Counter(item["resolucion"] for item in findings if "resolucion" in item)
+    data = {"version": version, "bloques": sorted(blocks | {1}), "rutas": manifest, "hallazgos": findings,
+            "pendientes_por_via": dict(pending)}
     (output / "resultados.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n",
                                             encoding="utf-8", newline="\n")
     return manifest
@@ -116,6 +128,7 @@ def main():
     parser.add_argument("--salida", type=Path, default=HERE / "salida")
     parser.add_argument("--catalogo", type=Path, help="Catálogo JSON opcional de evidencia por campo.")
     parser.add_argument("--trazas-questie", type=Path, help="Directorio local con las trazas de QuestieDB 1.1.6.")
+    parser.add_argument("--datos-questie", type=Path, help="Directorio local con las reglas Forever de QuestieDB 1.1.6.")
     parser.add_argument("--bloque", action="append", type=int, choices=BLOCKS,
                         help="Bloque que ejecutar. Repetible. Por defecto ejecuta todos.")
     args = parser.parse_args()
@@ -125,9 +138,13 @@ def main():
     blocks = set(args.bloque or BLOCKS)
     try:
         version = report_version(addon)
-        catalog = load_catalog(args.catalogo, args.trazas_questie)
+        catalog = load_catalog(args.catalogo, args.trazas_questie, args.datos_questie)
         routes, findings = audit(addon, blocks, catalog)
         write_reports(output, version, blocks, routes, findings)
+        if 2 in blocks:
+            missions = inventory_missions(routes, catalog)
+            (output / "misiones_individuales.json").write_text(json.dumps(missions, ensure_ascii=False, indent=2) + "\n",
+                                                               encoding="utf-8", newline="\n")
     except (OSError, ValueError) as error:
         print(f"Error del auditor: {error}", file=sys.stderr)
         return 2

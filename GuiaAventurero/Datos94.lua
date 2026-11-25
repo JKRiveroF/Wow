@@ -241,8 +241,8 @@ GL.D94 = {
     { clase = "PRIEST", nivel = 20, lado = "A", razas = 1, titulo = "La reacción Arcana", nota = "Te enseña Reacción: quema maná al lanzador que te ataque.", pasos = {
       { q = 5676, n = "La reacción Arcana", ing = "Arcane Feedback", nivel = 20, wp = { { a = "A", q = 5676, m = 1453, x = 38.5, y = 26.9, z = "Ciudad de Ventormenta", n = "Recoger: La reacción Arcana (Hermano Joshua)" }, { a = "T", q = 5676, m = 1453, x = 38.6, y = 26.1, z = "Ciudad de Ventormenta", n = "Entregar: La reacción Arcana (Suma Sacerdotisa Laurena)" } } },
     } },
-    { clase = "PRIEST", nivel = 20, lado = "A", razas = 4, titulo = "Custodia de miedo", nota = "Te enseña Custodia de miedo: inmune al próximo miedo. Muy buscada en bandas.", pasos = {
-      { q = 5645, n = "Sin miedo", ing = "A Lack of Fear", nivel = 20, wp = { { a = "A", q = 5645, m = 1455, x = 25.2, y = 10.8, z = "Forjaz", n = "Recoger: Sin miedo (Toldren Acerhondo)" }, { a = "T", q = 5645, m = 1455, x = 24.7, y = 8.2, z = "Forjaz", n = "Entregar: Sin miedo (Sumo Sacerdote Rohan)" } } },
+    { clase = "PRIEST", nivel = 20, lado = "A", razas = 4, titulo = "Castigar", nota = "Te enseña Castigo, tu hechizo racial del nivel 20.", pasos = {
+      { q = 5645, n = "Castigar", ing = "Chastise", nivel = 20, wp = { { a = "A", q = 5645, m = 1455, x = 25.2, y = 10.8, z = "Forjaz", n = "Recoger: Castigar (Toldren Acerhondo)" }, { a = "T", q = 5645, m = 1455, x = 24.7, y = 8.2, z = "Forjaz", n = "Entregar: Castigar (Sumo Sacerdote Rohan)" } } },
     } },
     { clase = "PRIEST", nivel = 20, lado = "A", razas = 8, titulo = "La Gracia de Elune", nota = "Te enseña La Gracia de Elune: esquivas más los ataques a distancia.", pasos = {
       { q = 5674, n = "La Gracia de Elune", ing = "Elune's Grace", nivel = 20, wp = { { a = "A", q = 5674, m = 1457, x = 38.3, y = 81.0, z = "Darnassus", n = "Recoger: La Gracia de Elune (Astarii Buscaestelar)" }, { a = "T", q = 5674, m = 1457, x = 39.5, y = 81.2, z = "Darnassus", n = "Entregar: La Gracia de Elune (Sacerdotisa Alathea)" } } },
@@ -250,8 +250,8 @@ GL.D94 = {
     { clase = "PRIEST", nivel = 20, lado = "H", razas = 128, titulo = "Guardia de las Sombras", nota = "Te enseña Guardia de las Sombras: daña a quien te pega.", pasos = {
       { q = 5680, n = "Guardia de las Sombras", ing = "Shadowguard", nivel = 20, wp = { { a = "A", q = 5680, m = 1454, x = 35.7, y = 86.9, z = "Orgrimmar", n = "Recoger: Guardia de las Sombras (Zayus)" }, { a = "T", q = 5680, m = 1454, x = 35.6, y = 87.8, z = "Orgrimmar", n = "Entregar: Guardia de las Sombras (Ur'kyo)" } } },
     } },
-    { clase = "PRIEST", nivel = 20, lado = "H", razas = 16, titulo = "Peste devoradora", nota = "Te enseña Peste devoradora: daño de sombras que te cura.", pasos = {
-      { q = 5679, n = "Peste devoradora", ing = "Devouring Plague", nivel = 20, wp = { { a = "A", q = 5679, m = 1458, x = 49.1, y = 14.6, z = "Entrañas", n = "Recoger: Peste devoradora (Padre Lankester)" }, { a = "T", q = 5679, m = 1458, x = 49.3, y = 17.1, z = "Entrañas", n = "Entregar: Peste devoradora (Aelthalyste)" } } },
+    { clase = "PRIEST", nivel = 20, lado = "H", razas = 16, titulo = "Sacrificio oscuro", nota = "Te enseña Sacrificio oscuro, tu hechizo racial del nivel 20.", pasos = {
+      { q = 5679, n = "Sacrificio oscuro", ing = "Dark Sacrifice", nivel = 20, wp = { { a = "A", q = 5679, m = 1458, x = 49.1, y = 14.6, z = "Entrañas", n = "Recoger: Sacrificio oscuro (Padre Lankester)" }, { a = "T", q = 5679, m = 1458, x = 49.3, y = 17.1, z = "Entrañas", n = "Entregar: Sacrificio oscuro (Aelthalyste)" } } },
     } },
     { clase = "MAGE", nivel = 15, lado = "A", razas = 65, titulo = "Toga Tejemaná", nota = "Una toga de mago muy buena para tu nivel. Empieza en Forjaz o en Ventormenta.", pasos = {
       { q = 1919, n = "Preséntate ante Jennea", ing = "Report to Jennea", nivel = 15, wp = { { a = "A", q = 1919, m = 1455, x = 27.2, y = 8.6, z = "Forjaz", n = "Recoger: Preséntate ante Jennea (Dink)" }, { a = "T", q = 1919, m = 1453, x = 38.6, y = 79.3, z = "Ciudad de Ventormenta", n = "Entregar: Preséntate ante Jennea (Jennea Cannon)" } } },

@@ -1,5 +1,13 @@
 # Progreso de la fase 13
 
+**Avance global · 40,83 %**
+
+`████████░░░░░░░░░░░░`
+
+**Última actualización · 2026-11-25 19:57:09 +01:00 (Madrid)**
+
+**Tarea actual** · Contrastar los avisos restantes por ID compartido, empezando por exclusiones y cadenas con prerrequisitos ausentes. Las mediciones que necesitan el cliente están en una cola aparte.
+
 ## Preparación completada · 25 de noviembre de 2026
 
 - Confirmada la versión 9.7.9 de la fase 12 en `GuiaAventurero.toc`, en la versión que expone `Novedades.lua` y en la documentación de la distribución.
@@ -34,9 +42,9 @@ El auditor externo compiló los 144 ficheros Lua del TOC con Lupa 2.8 (Lua 5.1) 
 | Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % |
-| Clase, raza y facción | 10 % | 57/141 | 40,43 % | 40,43 % |
-| Regresión y preparación | 5 % | 1/4 | 0 % | 25 % |
-| **Global ponderado** | **100 %** | | **36,96 %** | **38,21 %** |
+| Clase, raza y facción | 10 % | 94/141 | 40,43 % | 66,67 % |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % |
+| **Global ponderado** | **100 %** | | **38,21 %** | **40,83 %** |
 
 Las 95 comprobaciones estructurales son una compilación global, 47 verificaciones del contrato de ruta y 47 validaciones del motor por ruta con todas sus combinaciones declaradas.
 
@@ -91,56 +99,85 @@ Las 95 comprobaciones estructurales son una compilación global, 47 verificacion
 - Último corte de perfiles publicado, `a8e5218`. Último corte de regresión en Git, `Verifica regresiones y documenta el siguiente corte de fase 13`.
 - Siguiente tarea: ejecutar los escenarios de `auditor_fase13/VALIDACION_FOREVER.md` con la compilación registrada, empezando por arranque, datos guardados y Questie, y después las misiones 3520 y 1878, los vuelos bilingües y los raciales Skyborne. Continuar el contraste por ruta con las nuevas observaciones.
 
+## Últimas mejoras y comprobaciones
+
+- Inventario individual de 2.464 IDs en las 47 rutas. Incluye los 2.462 del corte anterior y dos añadidos verificados. Las fichas reutilizan evidencia por ID y destino y conservan las relaciones inferidas por separado.
+- Cobertura de fuentes por ID. Existencia 2.098, título ES 2.262, título EN 250, nivel mínimo 246, clase 84, raza y facción 214, XP base 2.089, objetos objetivo 70. Se documentaron 15 listas acumulativas, 187 listas de alternativas y 154 seguimientos. Una ficha puede tener evidencia de un campo y conservar otros pendientes.
+- Contraste de los 56 perfiles de inicio. Las 37 rutas añadidas a esta comprobación cubren 46 perfiles, seis zonas compartidas y 92 hitos de apertura. Se añadió la introducción de sacerdote gnomo 98574 y se conservaron los destinos del enano.
+- Corregidos los pasos del odre de chamán enano para aceptar cada misión tras entregar la anterior. Las 25 rutas de Alianza incluyen Bloqueo Roca Negra (98387) antes de los dos encargos que lo requieren.
+- Corregidos los objetivos de 5386 y 1430 en las 22 rutas Horda, las instrucciones opcionales de herrería 5283 y 5301 y cuatro títulos de misión. Los cambios de texto y recorrido conservan sus traducciones al inglés.
+- La evidencia cartográfica respalda 20 combinaciones únicas de misión, acción y posición reutilizadas en 466 apariciones por ruta. Los 22 avisos de agrupamiento se desglosaron en 51 apariciones de tres ventanas compartidas. [Detalle de los agrupamientos](auditor_fase13/AGRUPAMIENTOS_FASE13.md).
+
+## Incidencias y regresión del corte
+
+| Resultado | Antes con las fuentes ampliadas | Después |
+| --- | ---: | ---: |
+| Errores automáticos | 0 | 0 |
+| Avisos por contraste de datos | 722 | 632 |
+| Grupos pendientes de investigación | 304 | 304 |
+| Grupos que requieren el cliente | 94 | 94 |
+
+Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadenas corregidas, la regresión de integridad y las simulaciones de datos guardados y Questie. El contraste dejó 90 avisos menos con las mismas fuentes. Los avisos restantes incluyen variantes legítimas por resolver, no constituyen 632 defectos demostrados. El inventario anterior tenía 351 grupos; el nuevo separa 47 grupos de evidencia de vuelos que estaban mezclados con las mediciones del cliente.
+
+## Siguientes tareas
+
+1. Contrastar las exclusiones 324/526 y 94484/94493, y los requisitos 98221 y 93680. Revisar discrepancias de localización y clase a partir de fichas compartidas, comenzando por las que afectan a más rutas.
+2. Ampliar la evidencia de objetos, desbloqueos, posiciones y recompensas de cada misión. El informe individual conserva los campos sin fuente para retomar cada ID.
+3. Resolver las dependencias, el acceso y los objetos de las tres ventanas de viaje antes de cambiar su orden. La piedra temporal de 924 requiere una medición real hacia el altar.
+4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
+
+La fase sigue abierta. El último corte previo fue `901a392`. El corte actual se identifica en la rama por el commit `Amplía el contraste por misión y verifica los arranques`.
+
 ## Avance individual
 
-Cada ruta completó los seis bloques de análisis local. La columna de criterios considera las 18 comprobaciones aplicables por ruta. Se completaron ocho para cada ruta Skyborne y siete para las restantes. Las comprobaciones globales se contabilizan en la tabla de áreas.
+Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criterios por ruta. Cada ruta conserva evidencia de investigación pendiente. Cero rutas están verificadas por completo en Forever.
 
-| ID | Bloques locales | Criterios completos | Grupos pendientes | Validación en Forever |
-| --- | ---: | ---: | ---: | --- |
-| `gnomo_mago` | 6/6 | 7/18 | 7 | Pendiente |
-| `enano_chaman` | 6/6 | 7/18 | 7 | Pendiente |
-| `enano_gnomo_guerrero` | 6/6 | 7/18 | 7 | Pendiente |
-| `enano_paladin` | 6/6 | 7/18 | 7 | Pendiente |
-| `enano_gnomo_sacerdote` | 6/6 | 7/18 | 7 | Pendiente |
-| `enano_cazador` | 6/6 | 7/18 | 7 | Pendiente |
-| `enano_gnomo_picaro` | 6/6 | 7/18 | 7 | Pendiente |
-| `gnomo_brujo` | 6/6 | 7/18 | 7 | Pendiente |
-| `humano_guerrero` | 6/6 | 7/18 | 7 | Pendiente |
-| `humano_paladin` | 6/6 | 7/18 | 7 | Pendiente |
-| `humano_picaro` | 6/6 | 7/18 | 7 | Pendiente |
-| `humano_brujo` | 6/6 | 7/18 | 7 | Pendiente |
-| `humano_mago` | 6/6 | 7/18 | 7 | Pendiente |
-| `humano_sacerdote` | 6/6 | 7/18 | 7 | Pendiente |
-| `humano_cazador` | 6/6 | 7/18 | 7 | Pendiente |
-| `elfo_cazador` | 6/6 | 7/18 | 7 | Pendiente |
-| `elfo_druida` | 6/6 | 7/18 | 7 | Pendiente |
-| `elfo_guerrero` | 6/6 | 7/18 | 7 | Pendiente |
-| `elfo_picaro` | 6/6 | 7/18 | 7 | Pendiente |
-| `elfo_sacerdote` | 6/6 | 7/18 | 7 | Pendiente |
-| `orco_trol_guerrero` | 6/6 | 7/18 | 8 | Pendiente |
-| `orco_trol_cazador` | 6/6 | 7/18 | 8 | Pendiente |
-| `orco_trol_picaro` | 6/6 | 7/18 | 8 | Pendiente |
-| `orco_trol_chaman` | 6/6 | 7/18 | 8 | Pendiente |
-| `orco_trol_brujo` | 6/6 | 7/18 | 8 | Pendiente |
-| `orco_trol_mago` | 6/6 | 7/18 | 8 | Pendiente |
-| `trol_sacerdote` | 6/6 | 7/18 | 8 | Pendiente |
-| `tauren_guerrero` | 6/6 | 7/18 | 8 | Pendiente |
-| `tauren_cazador` | 6/6 | 7/18 | 8 | Pendiente |
-| `tauren_chaman` | 6/6 | 7/18 | 8 | Pendiente |
-| `tauren_druida` | 6/6 | 7/18 | 8 | Pendiente |
-| `nomuerto_guerrero` | 6/6 | 7/18 | 8 | Pendiente |
-| `nomuerto_picaro` | 6/6 | 7/18 | 8 | Pendiente |
-| `nomuerto_mago` | 6/6 | 7/18 | 8 | Pendiente |
-| `nomuerto_sacerdote` | 6/6 | 7/18 | 8 | Pendiente |
-| `nomuerto_brujo` | 6/6 | 7/18 | 8 | Pendiente |
-| `nomuerto_paladin` | 6/6 | 7/18 | 8 | Pendiente |
-| `skyborne_guerrero` | 6/6 | 8/18 | 8 | Pendiente |
-| `skyborne_cazador` | 6/6 | 8/18 | 8 | Pendiente |
-| `skyborne_picaro` | 6/6 | 8/18 | 8 | Pendiente |
-| `skyborne_chaman` | 6/6 | 8/18 | 8 | Pendiente |
-| `skyborne_druida` | 6/6 | 8/18 | 8 | Pendiente |
-| `skyborne_a_guerrero` | 6/6 | 8/18 | 7 | Pendiente |
-| `skyborne_a_cazador` | 6/6 | 8/18 | 7 | Pendiente |
-| `skyborne_a_picaro` | 6/6 | 8/18 | 7 | Pendiente |
-| `skyborne_a_mago` | 6/6 | 8/18 | 7 | Pendiente |
-| `skyborne_a_druida` | 6/6 | 8/18 | 7 | Pendiente |
+| Ruta | Estado | Bloques locales | Criterios | Avisos | Investigación | Cliente |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| `gnomo_mago` | Revisada localmente | 6/6 | 8/18 | 14 | 6 | 2 |
+| `enano_chaman` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
+| `enano_gnomo_guerrero` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
+| `enano_paladin` | Revisada localmente | 6/6 | 8/18 | 18 | 6 | 2 |
+| `enano_gnomo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 17 | 6 | 2 |
+| `enano_cazador` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
+| `enano_gnomo_picaro` | Revisada localmente | 6/6 | 8/18 | 17 | 6 | 2 |
+| `gnomo_brujo` | Revisada localmente | 6/6 | 8/18 | 14 | 6 | 2 |
+| `humano_guerrero` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
+| `humano_paladin` | Revisada localmente | 6/6 | 8/18 | 18 | 6 | 2 |
+| `humano_picaro` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
+| `humano_brujo` | Revisada localmente | 6/6 | 8/18 | 14 | 6 | 2 |
+| `humano_mago` | Revisada localmente | 6/6 | 8/18 | 14 | 6 | 2 |
+| `humano_sacerdote` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
+| `humano_cazador` | Revisada localmente | 6/6 | 8/18 | 17 | 6 | 2 |
+| `elfo_cazador` | Revisada localmente | 6/6 | 8/18 | 18 | 6 | 2 |
+| `elfo_druida` | Revisada localmente | 6/6 | 8/18 | 17 | 6 | 2 |
+| `elfo_guerrero` | Revisada localmente | 6/6 | 8/18 | 17 | 6 | 2 |
+| `elfo_picaro` | Revisada localmente | 6/6 | 8/18 | 17 | 6 | 2 |
+| `elfo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 18 | 6 | 2 |
+| `orco_trol_guerrero` | Revisada localmente | 6/6 | 8/18 | 9 | 7 | 2 |
+| `orco_trol_cazador` | Revisada localmente | 6/6 | 8/18 | 10 | 7 | 2 |
+| `orco_trol_picaro` | Revisada localmente | 6/6 | 8/18 | 11 | 7 | 2 |
+| `orco_trol_chaman` | Revisada localmente | 6/6 | 8/18 | 12 | 7 | 2 |
+| `orco_trol_brujo` | Revisada localmente | 6/6 | 8/18 | 11 | 7 | 2 |
+| `orco_trol_mago` | Revisada localmente | 6/6 | 8/18 | 10 | 7 | 2 |
+| `trol_sacerdote` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
+| `tauren_guerrero` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
+| `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
+| `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
+| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 9 | 7 | 2 |
+| `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
+| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 10 | 7 | 2 |
+| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 9 | 7 | 2 |
+| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 10 | 7 | 2 |
+| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 11 | 7 | 2 |
+| `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 11 | 7 | 2 |
+| `skyborne_guerrero` | Revisada localmente | 6/6 | 8/18 | 13 | 7 | 2 |
+| `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 17 | 7 | 2 |
+| `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 14 | 7 | 2 |
+| `skyborne_chaman` | Revisada localmente | 6/6 | 8/18 | 13 | 7 | 2 |
+| `skyborne_druida` | Revisada localmente | 6/6 | 8/18 | 14 | 7 | 2 |
+| `skyborne_a_guerrero` | Revisada localmente | 6/6 | 8/18 | 16 | 6 | 2 |
+| `skyborne_a_cazador` | Revisada localmente | 6/6 | 8/18 | 16 | 6 | 2 |
+| `skyborne_a_picaro` | Revisada localmente | 6/6 | 8/18 | 16 | 6 | 2 |
+| `skyborne_a_mago` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
+| `skyborne_a_druida` | Revisada localmente | 6/6 | 8/18 | 17 | 6 | 2 |

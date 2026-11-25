@@ -17,6 +17,7 @@ TRACE_HASHES = {
 }
 QUEST_ROW = re.compile(r"^ {8}\[(\d+)\] = \{$")
 QUEST_NAME = re.compile(r'^ {12}\[questKeys\.name\] = ("(?:[^"\\]|\\.)*"),$')
+QUEST_OBJECTIVES = re.compile(r"^ {12}\[questKeys\.objectives\] = (.*),$")
 XP_ROW = re.compile(r"^QuestXP\.db\[(\d+)\] = \{(\d+), (\d+)\}$")
 MAP_ROW = re.compile(r"^\s*\[(\d+)\] = (\d+), -- (.+)$")
 ENTITY_KEYS = ("misiones", "mapas", "pnj", "vuelos")
@@ -43,6 +44,8 @@ def _trace_lines(directory, reference):
 
 
 def import_traces(directory):
+    from questie_rules import observed_objectives
+
     quests = {}
 
     def record(quest_id, field, value, reference, line_number):
@@ -61,6 +64,9 @@ def import_traces(directory):
             quest_id = None
         elif quest_id and (name := QUEST_NAME.fullmatch(line)):
             record(quest_id, "nombres", {"en": json.loads(name[1])}, TRACE_QUESTS, line_number)
+        elif quest_id and (objectives := QUEST_OBJECTIVES.fullmatch(line)):
+            if items := observed_objectives(objectives[1]):
+                record(quest_id, "objetos_objetivo", items, TRACE_QUESTS, line_number)
 
     for line_number, line in enumerate(_trace_lines(directory, TRACE_XP), 1):
         if entry := XP_ROW.fullmatch(line):
@@ -91,20 +97,51 @@ def _merge_catalog(previous, current):
         for key, new in new_records.items():
             old = old_records.get(key, {})
             evidence = old.get("evidencia", {}).copy()
+            record = {**old, **new}
+            if isinstance(new.get("nombres"), dict) and isinstance(old.get("nombres"), dict):
+                record["nombres"] = {**old["nombres"], **new["nombres"]}
             for field in new:
-                if field in evidence:
+                if field in evidence and field != "nombres":
                     del evidence[field]
-            evidence.update(new.get("evidencia", {}))
-            records[key] = {**old, **new}
+            supplied = new.get("evidencia", {})
+            for locale in ("es", "en"):
+                if isinstance(new.get("nombres"), dict) and locale in new["nombres"]:
+                    field = f"nombre_{locale}"
+                    source = supplied.get(field, supplied.get("nombres"))
+                    if source:
+                        evidence[field] = source
+                    else:
+                        evidence.pop(field, None)
+            evidence.update(supplied)
             if evidence:
-                records[key]["evidencia"] = evidence
+                record["evidencia"] = evidence
+            records[key] = record
         combined[entity] = records
     return combined
 
 
-def load_catalog(path=None, trace_directory=None):
+def load_catalog(path=None, trace_directory=None, quest_directory=None):
     catalog = import_traces(trace_directory) if trace_directory is not None else {}
+    if quest_directory is not None:
+        from questie_evidence import import_spanish_titles
+        from questie_rules import import_quest_rules
+
+        rules = import_quest_rules(quest_directory)
+        for quest, entry in rules["misiones"].items():
+            title = entry["evidencia"].get("nombre_en")
+            observed = catalog.get("misiones", {}).get(quest, {})
+            if title and "/generated/" in title["fuente"] and "nombres" in observed:
+                entry.pop("nombres")
+                entry["evidencia"].pop("nombre_en")
+            objects = entry["evidencia"].get("objetos_objetivo")
+            if objects and "/generated/" in objects["fuente"] and "objetos_objetivo" in observed:
+                entry.pop("objetos_objetivo")
+                entry["evidencia"].pop("objetos_objetivo")
+        catalog = _merge_catalog(catalog, rules)
+        catalog = _merge_catalog(catalog, import_spanish_titles(quest_directory))
     catalog = _merge_catalog(catalog, read_catalog(HERE / "evidencia_forever.json"))
     catalog = _merge_catalog(catalog, read_catalog(HERE / "curva_xp_forever.json"))
     catalog = _merge_catalog(catalog, read_catalog(HERE / "perfiles_forever.json"))
+    catalog = _merge_catalog(catalog, read_catalog(HERE / "arranques_forever.json"))
+    catalog = _merge_catalog(catalog, read_catalog(HERE / "cartografia_forever.json"))
     return _merge_catalog(catalog, read_catalog(path)) if path is not None else catalog

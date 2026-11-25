@@ -327,9 +327,13 @@ class WorldAudit:
             self.add(5, "pendiente", "objetivos_agrupables",
                      f"{len(self.cluster_options)} pares candidatos a agrupar dentro del mismo paso. "
                      "La comparación en línea recta no mide accesibilidad ni dependencias.", sample)
+        if unverified:
+            self.add(5, "pendiente", "viajes_fuente_pendiente",
+                     f"{len(unverified)} nodos de vuelo sin evidencia suficiente: {', '.join(unverified)}. "
+                     "Contrastar disponibilidad, requisitos y conexiones con fuentes de Forever.")
         self.add(5, "pendiente", "viajes_coste_cliente",
-                 f"{len(unverified)} nodos de vuelo con evidencia específica pendiente. {returns} retornos inmediatos a un mapa. "
-                 "Confirmar desbloqueos, rutas, piedra de hogar, barcos y zepelines antes de reordenar.")
+                 f"{returns} retornos inmediatos a un mapa. Medir recorridos transitables, esperas y tiempos reales "
+                 "en las alternativas que superen el contraste de requisitos.")
 
     def run(self):
         ranges = self.check_ranges()

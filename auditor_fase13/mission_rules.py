@@ -220,6 +220,10 @@ def _point_sequence(route, events, race, catalog):
     accepted, turned_in = set(), set()
     planned_acceptances = {point.quest for point in events if point.action == "A"}
     planned_turn_ins = {point.quest for point in events if point.action == "T"}
+    first_acceptance = {}
+    for index, point in enumerate(events):
+        if point.action == "A":
+            first_acceptance.setdefault(point.quest, index)
     incompatibilities = set()
     variant = f" ({race})" if len(_list(route.get("razas"))) > 1 else ""
 
@@ -274,6 +278,17 @@ def _point_sequence(route, events, race, catalog):
                     f"Misión {quest}: el requisito obligatorio {required} {context}{variant}."
                 ), point.location, source))
 
+        source = _confirmed(entry, "prerrequisitos_alternativos")
+        alternatives = {value for required in _list(entry.get("prerrequisitos_alternativos"))
+                        if (value := _id(required)) is not None}
+        if source and alternatives and alternatives.isdisjoint(turned_in):
+            available_later = alternatives & planned_turn_ins
+            detail = "la ruta solo entrega opciones después" if available_later else "la ruta carece de las entregas alternativas"
+            names = ", ".join(map(str, sorted(alternatives)))
+            issues.append(_issue(route, 2, "aviso", "MISION_REQUISITO_ALTERNATIVO", (
+                f"Misión {quest}: se necesita una entrega entre {names} y {detail}{variant}."
+            ), point.location, source))
+
         source = _confirmed(entry, "excluyentes")
         if source:
             for incompatible in _list(entry.get("excluyentes")):
@@ -286,7 +301,7 @@ def _point_sequence(route, events, race, catalog):
                         f"La ruta incluye la aceptación de las misiones excluyentes {quest} y {incompatible}{variant}."
                     ), point.location, source))
 
-    for point in events:
+    for index, point in enumerate(events):
         if point.action != "T":
             continue
         entry = _entry(catalog, point.quest)
@@ -296,9 +311,7 @@ def _point_sequence(route, events, race, catalog):
         for next_quest in _list(entry.get("seguimientos")):
             if _id(next_quest) is None:
                 continue
-            accepted_early = any(event.quest == next_quest and event.action == "A" and
-                                 (event.section, event.step, event.point) < (point.section, point.step, point.point)
-                                 for event in events)
+            accepted_early = first_acceptance.get(next_quest, index) < index
             if accepted_early:
                 issues.append(_issue(route, 2, "aviso", "MISION_SEGUIMIENTO_ORDEN", (
                     f"La ruta propone aceptar la misión de seguimiento {next_quest} antes de entregar {point.quest}{variant}."
@@ -393,10 +406,13 @@ def audit_specializations(route: dict, catalog: dict) -> list[dict]:
                 continue
             checked.add(point.quest)
             entry = _entry(catalog, point.quest)
+            faction_races = entry.get("razas_por_faccion")
             for field, value in (("clases", route.get("clase")), ("razas", race),
                                  ("facciones", route.get("_faccion"))):
                 source = _confirmed(entry, field)
                 allowed = _list(entry.get(field))
+                if field == "razas" and allowed and isinstance(faction_races, dict):
+                    allowed = _list(faction_races.get(route.get("_faccion"), allowed))
                 if source and allowed and value not in allowed:
                     issues.append(_issue(route, 6, "aviso", "PERFIL_REQUISITO_DE_MISION", (
                         f"Misión {point.quest}: {field} admitidos {', '.join(map(str, allowed))}, "

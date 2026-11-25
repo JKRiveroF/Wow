@@ -1,0 +1,57 @@
+{
+  "fecha_consulta_cartografia": "2026-11-25",
+  "misiones": {
+    "3520": {
+      "posiciones": {"A": [{"m": 1446, "x": 67, "y": 22.4}], "T": [{"m": 1446, "x": 67, "y": 22.4}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/3520/", "build": "1.60.1.70938"}},
+      "contraste_cartografia": ["https://guide.wow4ever.se/en/quests/3520"],
+      "objetivo_cartografia_pendiente": {
+        "detalle": "Blizzard trasladó los estriadores a la costa de la Isla del Terror. Un jugador indicó la costa este hacia (35, 72), sin compilación ni fecha visibles. El registro posterior del espíritu 8612 en otro lugar no acredita un punto de aparición del estriador 272401.",
+        "fuentes": ["https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-23-2026", "https://www.wowhead.com/forever/npc=272401/vale-screamer", "https://guide.wow4ever.se/en/npc/8612"]
+      }
+    },
+    "5386": {
+      "posiciones": {"A": [{"m": 1443, "x": 55.4, "y": 55.8}], "T": [{"m": 1443, "x": 55.5, "y": 55.9}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5386/", "build": "1.60.1.70938"}}
+    },
+    "5381": {
+      "posiciones": {"A": [{"m": 1443, "x": 25.7, "y": 68.2}], "T": [{"m": 1443, "x": 25.8, "y": 68.3}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5381/", "build": "1.60.1.70938"}}
+    },
+    "6142": {
+      "posiciones": {"A": [{"m": 1443, "x": 22.7, "y": 72.1}], "T": [{"m": 1443, "x": 22.7, "y": 72}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/6142/", "build": "1.60.1.70938"}}
+    },
+    "1430": {
+      "posiciones": {"A": [{"m": 1435, "x": 44.7, "y": 57.2}], "T": [{"m": 1435, "x": 44.7, "y": 57.2}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/1430/", "build": "1.60.1.70938"}},
+      "contraste_cartografia": ["https://guide.wow4ever.se/en/quests/1430"]
+    },
+    "698": {
+      "posiciones": {"A": [{"m": 1435, "x": 44.7, "y": 57.2}], "T": [{"m": 1435, "x": 81.3, "y": 81}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/698/", "build": "1.60.1.70938"}}
+    },
+    "1424": {
+      "posiciones": {"A": [{"m": 1435, "x": 47.9, "y": 54.8}], "T": [{"m": 1435, "x": 47.9, "y": 54.8}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/1424/", "build": "1.60.1.70938"}}
+    },
+    "848": {
+      "posiciones": {"A": [{"m": 1413, "x": 51.5, "y": 30.2}], "T": [{"m": 1413, "x": 51.5, "y": 30.2}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/848/", "build": "1.60.1.70938"}}
+    },
+    "924": {
+      "posiciones": {"A": [{"m": 1413, "x": 62.3, "y": 20.1}], "T": [{"m": 1413, "x": 62.3, "y": 20.1}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/924/", "build": "1.60.1.70938"}}
+    }
+  },
+  "vuelos": {
+    "Rocal": {
+      "existe": true,
+      "facciones": ["Horde"],
+      "estado": "forever",
+      "fuente": "https://guide.wow4ever.se/en/npc/6026",
+      "fecha_consulta": "2026-11-25",
+      "trayecto_observado": {"destino": "Grom'gol", "sentido": "Rocal → Grom'gol", "segundos": 188, "procedencia": "EG Link"}
+    }
+  }
+}

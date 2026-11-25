@@ -1,0 +1,75 @@
+{
+  "arranques": {
+    "fecha_consulta": "2026-11-25",
+    "alcance": "Zona de inicio y primeros hitos de las razas no Skyborne. La guía de los autores de BoF, contrastada con la build 1.60.1.70532, identifica los arranques. Sus fichas indican el cliente y la procedencia de los datos de cada misión. La tabla canónica de QuestieDB fija los UiMapID. Los hitos no agotan las misiones iniciales, no implican que toda relación sea un prerrequisito y no confirman posiciones puntuales ni el avance en el cliente actual.",
+    "fuentes": [
+      "https://worldofwarcraft.blizzard.com/en-gb/news/24304071/world-of-warcraft-forever-found-photos-panel-recap",
+      "https://bindonforever.com/articles/wow-forever-first-hour-every-starting-zone",
+      "https://github.com/Questie/QuestieDB/blob/v1.1.6/support/Forever/Zones/uiMapIdToAreaId.lua#L63-L88",
+      "https://github.com/Questie/QuestieDB/blob/v1.1.6/support/Forever/QuestXP/xpDB-traces.lua",
+      "https://news.blizzard.com/en-us/article/24304075/create-the-hero-you-want-to-be-in-world-of-warcraft-forever"
+    ],
+    "zonas": [
+      {"m": 1429, "nombre": "Valle de Villanorte", "razas": ["Human"], "hitos": [
+        {"q": 783, "acciones": "AT", "fuente": "https://bindonforever.com/quest/783"},
+        {"q": 7, "acciones": "ACT", "fuente": "https://bindonforever.com/quest/7"}
+      ]},
+      {"m": 1426, "nombre": "Valle de Crestanevada", "razas": ["Dwarf", "Gnome"], "hitos": [
+        {"q": 179, "acciones": "ACT", "fuente": "https://bindonforever.com/quest/179"},
+        {"q": 233, "acciones": "AT", "fuente": "https://bindonforever.com/quest/233"}
+      ]},
+      {"m": 1438, "nombre": "Cañada Umbría", "razas": ["NightElf"], "hitos": [
+        {"q": 458, "acciones": "AT", "fuente": "https://bindonforever.com/quest/458"},
+        {"q": 459, "acciones": "ACT", "fuente": "https://bindonforever.com/quest/459"}
+      ]},
+      {"m": 1411, "nombre": "Valle de los Retos", "razas": ["Orc", "Troll"], "hitos": [
+        {"q": 4641, "acciones": "AT", "fuente": "https://bindonforever.com/quest/4641"},
+        {"q": 788, "acciones": "ACT", "fuente": "https://bindonforever.com/quest/788"}
+      ]},
+      {"m": 1412, "nombre": "Campamento Narache", "razas": ["Tauren"], "hitos": [
+        {"q": 747, "acciones": "ACT", "fuente": "https://bindonforever.com/quest/747"},
+        {"q": 752, "acciones": "AT", "fuente": "https://bindonforever.com/quest/752"}
+      ]},
+      {"m": 1420, "nombre": "Camposanto", "razas": ["Scourge"], "hitos": [
+        {"q": 363, "acciones": "AT", "fuente": "https://bindonforever.com/quest/363"},
+        {"q": 364, "acciones": "ACT", "fuente": "https://bindonforever.com/quest/364"}
+      ]}
+    ],
+    "clases_nuevas": [
+      {"raza": "Human", "clase": "HUNTER", "q": 92479, "previa": 7, "acciones": "AT", "fuente": "https://zephras.com/forever/enUS/quest/92479/"},
+      {"raza": "Dwarf", "clase": "SHAMAN", "q": 98581, "previa": 179, "acciones": "AT", "fuente": "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestTraces.lua#L12448-L12454", "fuente_previa": "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L6444-L6446"},
+      {"raza": "Gnome", "clase": "PRIEST", "q": 98574, "previa": 179, "acciones": "AT", "fuente": "https://guildloot.de/en/quest/forever/98574-hallowed-memorandum/", "fuente_previa": "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L6435-L6437"},
+      {"raza": "Orc", "clase": "MAGE", "q": 98576, "previa": 788, "acciones": "AT", "fuente": "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestTraces.lua#L12440-L12446", "fuente_previa": "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L6441-L6443"},
+      {"raza": "Troll", "clase": "WARLOCK", "q": 98575, "previa": 788, "acciones": "AT", "fuente": "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestTraces.lua#L12432-L12438", "fuente_previa": "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L6438-L6440"},
+      {"raza": "Scourge", "clase": "PALADIN", "q": 98601, "previa": 364, "acciones": "AT", "fuente": "https://zephras.com/forever/enUS/quest/98601/"}
+    ],
+    "hallazgos": [
+      {
+        "ruta": "enano_gnomo_sacerdote",
+        "archivo": "Rutas/EnanoGnomoSacerdote.lua",
+        "q": 98574,
+        "estado": "confirmado",
+        "detalle": "Tras entregar 179, el sacerdote gnomo recibe su misión introductoria de Sten Brazofuerte (658) y la entrega a Silo Khalder (837). La ruta 901a392 realiza la visita al instructor pero omite la aceptación y entrega de la misión. El título de QuestieDB para esES es Memorándum santificado y para esMX, Memorándum sacralizado.",
+        "fuentes": [
+          "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestTraces.lua#L12424-L12430",
+          "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestRelationTraces.lua#L20317-L20320",
+          "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L6435-L6437",
+          "https://github.com/Questie/QuestieDB/blob/v1.1.6/l10n/Forever/traces/lookupQuests/esES.lua#L4151",
+          "https://github.com/Questie/QuestieDB/blob/v1.1.6/l10n/Forever/traces/lookupQuests/esMX.lua#L3876",
+          "https://guildloot.de/en/quest/forever/98574-hallowed-memorandum/"
+        ]
+      },
+      {
+        "ruta": "enano_gnomo_sacerdote",
+        "archivo": "Rutas/EnanoGnomoSacerdote.lua",
+        "q": 5626,
+        "estado": "pendiente",
+        "detalle": "Al servicio de la Luz se ofrece a nivel 5 y consta como cadena hacia 5625. Datos94.lua ya contiene la introducción para el panel de clase. Falta observar si la entrega es indispensable para recibir 5625 en el cliente vigente antes de cambiar el orden de la ruta principal.",
+        "fuentes": [
+          "https://zephras.com/forever/enUS/quest/5626/",
+          "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestRelationTraces.lua#L11334-L11338"
+        ]
+      }
+    ]
+  }
+}

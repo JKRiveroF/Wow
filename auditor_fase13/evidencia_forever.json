@@ -13,6 +13,26 @@
         }
       }
     },
+    "98387": {
+      "existe": true,
+      "nivel_minimo": 18,
+      "facciones": ["Alliance"],
+      "objetos_objetivo": [280841, 280839],
+      "cantidades_objetivo": {"280841": 8, "280839": 10},
+      "posiciones": {
+        "A": [{"m": 1433, "x": 28.4, "y": 49}],
+        "T": [{"m": 1433, "x": 28.4, "y": 49}]
+      },
+      "fecha_consulta": "2026-11-25",
+      "evidencia": {
+        "existe": {"estado": "forever", "fuente": "https://guide.wow4ever.se/en/quests/98387"},
+        "nivel_minimo": {"estado": "forever", "fuente": "https://guide.wow4ever.se/en/quests/98387"},
+        "facciones": {"estado": "forever", "fuente": "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L6332-L6334"},
+        "objetos_objetivo": {"estado": "forever", "fuente": "https://guide.wow4ever.se/en/quests/98387"},
+        "cantidades_objetivo": {"estado": "forever", "fuente": "https://guide.wow4ever.se/en/quests/98387"},
+        "posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/98387/"}
+      }
+    },
     "3520": {
       "estado": "forever",
       "fuente": "https://worldofwarcraft.blizzard.com/en-us/news/24315281/wow-forever-hotfixes-november-16-2026",

@@ -20,6 +20,27 @@ Consulta del 25 de noviembre de 2026. La base analizada es la 9.7.9, commit `592
 - `GuiaAventurero.lua`, función `SeccionPorNivel`. El motor selecciona el primer intervalo `min <= nivel < max`. Las 47 rutas cubren 1–59 con esta regla. El nivel 60 usa el tramo final. Los solapes y los tramos con el mismo mínimo y máximo permiten transiciones al avanzar paso a paso.
 - `GuiaAventurero.lua`, funciones `DestinoHecho` y `EstadoPaso`. La entrega de `3520` conserva la comprobación de finalización al retirar el punto de objetivo obsoleto.
 - `GuiaAventurero.lua`, funciones `VueloConocido` y `GuardarVuelos`. En la base, el motor busca el nombre de vuelo de la ruta, que puede estar en español, en claves localizadas por el cliente. Por ejemplo, `Forjaz` frente a `Ironforge, Dun Morogh`. El caso se puede reproducir con estados de vuelo simulados.
+
+## Contraste ampliado · 25 de noviembre de 2026
+
+Los archivos se leen como datos en la revisión de QuestieDB 1.1.6 `4377c981ac368d1593ec92788218e0a689a6a02b`. Se comprueba el SHA-256 de cada archivo antes de extraer filas. Los datos heredados de Era, las máscaras desconocidas y los requisitos condicionales quedan fuera del contraste concluyente. Una observación de orden de las trazas puede orientar la investigación sin acreditar por sí sola un requisito obligatorio.
+
+| Archivo local | Procedencia y alcance |
+| --- | --- |
+| `foreverBaseQuest.lua` | Campos explícitos de [base diferencial Forever](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/generated/foreverBaseQuest.lua). [Documentación de alcance](https://github.com/Questie/QuestieDB/blob/v1.1.6/docs/forever-delta-base.md). |
+| `foreverQuestFixes.lua` | [Correcciones estáticas de Forever](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua). Se distinguen los prerrequisitos acumulativos de las listas de alternativas. Las condiciones dinámicas identificadas requieren contraste específico. |
+| `foreverQuestRelationTraces.lua` | [Relaciones inferidas de trazas](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestRelationTraces.lua). Los indicios quedan etiquetados en las fichas por ID. |
+| `questie-forever-quests-esES.lua` y `questie-forever-quests-esMX.lua` | [Títulos observados esES](https://github.com/Questie/QuestieDB/blob/v1.1.6/l10n/Forever/traces/lookupQuests/esES.lua) y [esMX](https://github.com/Questie/QuestieDB/blob/v1.1.6/l10n/Forever/traces/lookupQuests/esMX.lua). Se conservan variantes de ambos clientes. Una diferencia de título es un aviso que admite revisión. |
+| `cartografia_forever.json` | Posiciones de aceptación y entrega por ID y un vuelo observado. Incluye fuente y, cuando consta, build. Para 3520 las observaciones actuales acreditan la zona del objetivo; la posición exacta sigue pendiente. |
+| `arranques_forever.json` | Zonas de inicio, dos hitos de apertura por perfil y misiones de nuevas combinaciones. Incluye fuentes por hito. [Comparación de recorridos de Forever](https://bindonforever.com/articles/wow-forever-first-hour-every-starting-zone). |
+
+| Corrección | Evidencia |
+| --- | --- |
+| 98387, Bloqueo Roca Negra | Los jugadores registraron el nivel 18, los dos objetivos de objetos y la recogida y entrega en Marris. QuestieDB lista la misión como requisito de 19 y 115, junto con 20. [Observación de Forever](https://guide.wow4ever.se/en/quests/98387) · [Requisitos de 19 y 115](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L37-L57). |
+| 94497 → 94499 → 94500 | La secuencia de entregas y nuevas aceptaciones coincide con la cadena de Hervdana. [Cadena del odre rojo](https://zephras.com/forever/enUS/quest/94499/) · [Orden documentado](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L3558-L3569). |
+| 98574 y títulos 5645, 5679 | Se verifican la variante gnoma de inicio y los títulos de misión separados de las habilidades que se aprenden. [Inicio 98574](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestTraces.lua#L12424-L12430) · [Castigar](https://zephras.com/forever/enUS/quest/5645/) · [Sacrificio oscuro](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L447-L449). |
+| 5386, 5421 y 1430 | El canje de Desolace entrega un pez por cinco mariscos. En el pantano 1430 exige patas de cangrejo; los flancos de crocolisco pertenecen a 698. [Misión 5386](https://zephras.com/forever/enUS/quest/5386/) · [Canje 5421](https://guide.wow4ever.se/en/quests/5421) · [Misión 1430](https://zephras.com/forever/enUS/quest/1430/). |
+| 5283 y 5301 | Las dos variantes exigen nivel 40 y Herrería 200 y enumeran las mismas tres piezas. Las fuentes discrepan sobre la disponibilidad para paladines Horda, que queda por contrastar. [Alianza](https://zephras.com/forever/enUS/quest/5283/) · [Horda](https://zephras.com/forever/enUS/quest/5301/). |
 - Los registros de jugadores para [Gryth](https://guide.wow4ever.se/en/npc/1573), [Devrak](https://guide.wow4ever.se/en/npc/3615) y [Michael Garrett](https://guide.wow4ever.se/en/npc/4551) respaldan la existencia de Forjaz, El Cruce y Entrañas y documentan nombres ingleses con sufijo de zona. Se usan como evidencia de esos nodos, sin generalizar tiempos o conexiones.
 
 ## Pendiente de verificación
