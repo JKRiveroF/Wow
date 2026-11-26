@@ -22,7 +22,7 @@ def _coordinate_result(entry, action, position):
     return "investigacion"
 
 
-def inventory_missions(routes, catalog):
+def inventory_missions(routes, catalog, quest_v2=None):
     missions = defaultdict(lambda: {"rutas": set(), "acciones": Counter(), "posiciones": defaultdict(set)})
     for route in routes:
         route_id = route.get("id") or route["_archivo"]
@@ -38,6 +38,7 @@ def inventory_missions(routes, catalog):
     quest_ids = missions.keys() | {int(quest) for quest in retired}
 
     coverage = Counter()
+    table = Counter()
     reports = []
     fields_to_check = (*FIELDS, *EG_FIELDS) if "vuelos_observados" in catalog else FIELDS
     candidates = catalog.get("candidatos_por_mision", {})
@@ -64,8 +65,23 @@ def inventory_missions(routes, catalog):
                   "posiciones": positions, "indicios": candidates.get(str(quest), [])}
         if str(quest) in retired:
             record["retirada_de_rutas_originales"] = retired[str(quest)]
+        if quest_v2 is not None:
+            present = quest in quest_v2["ids"]
+            server_evidence = fields.get("existe", {}).get("valor")
+            record["fila_questv2"] = present
+            table["con_fila" if present else "sin_fila"] += 1
+            if not present and server_evidence is True:
+                table["sin_fila_con_evidencia_servidor"] += 1
+            if lookup["rutas"] and server_evidence is None:
+                table["activa_sin_evidencia_servidor"] += 1
+                if present:
+                    table["activa_sin_evidencia_servidor_con_fila"] += 1
         reports.append(record)
 
-    return {"total": len(reports), "total_en_rutas": active_count,
-            "cobertura": {field: coverage[field] for field in fields_to_check},
-            "misiones": reports}
+    result = {"total": len(reports), "total_en_rutas": active_count,
+              "cobertura": {field: coverage[field] for field in fields_to_check},
+              "misiones": reports}
+    if quest_v2 is not None:
+        result["questv2"] = {"build": quest_v2["build"], "fuente": quest_v2["fuente"],
+                             "recuentos": dict(table)}
+    return result

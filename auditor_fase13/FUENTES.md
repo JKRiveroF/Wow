@@ -100,6 +100,7 @@ La cadena es opcional en el cálculo de XP del recorrido. Lleva del Pantano de l
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.
+- La tabla QuestV2 de la compilación 1.60.1.71139 contiene 6.626 filas. El auditor conserva el resultado de inscripción de cada ID y la evidencia de oferta en campos independientes. El contraste encontró 141 IDs con evidencia de servidor sin fila en esta tabla. [QuestV2 de Forever](https://wago.tools/db2/QuestV2/csv?build=1.60.1.71139).
 - Duración de Skysight en la compilación en ejecución. Las notas de Blizzard y la extracción del cliente difieren. La guía distingue el efecto breve del beneficio Charged de una hora.
 - Coordenadas exactas de los estriadores reubicados y puntos de objetivo, PNJ o entradas con evidencia parcial.
 - Disponibilidad efectiva, requisitos y tiempos de los viajes, vuelos, piedras de hogar, barcos y zepelines. Se contrastaron los requisitos y objetos con evidencia disponible para las tres ventanas de [agrupamiento](AGRUPAMIENTOS_FASE13.md). Los tiempos, el terreno y el acceso con objetivos activos se miden en Forever.

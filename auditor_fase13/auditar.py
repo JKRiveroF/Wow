@@ -6,7 +6,7 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from catalogo import load_catalog
+from catalogo import import_quest_v2, load_catalog
 from arranques import audit_arranques
 from estructura import audit_structure
 from inventario_misiones import inventory_missions
@@ -136,6 +136,7 @@ def main():
     parser.add_argument("--trazas-questie", type=Path, help="Directorio local con las trazas de QuestieDB 1.1.6.")
     parser.add_argument("--datos-questie", type=Path, help="Directorio local con las reglas Forever de QuestieDB 1.1.6.")
     parser.add_argument("--datos-eg", type=Path, help="Directorio local con EG Link y QuestXP de Forever.")
+    parser.add_argument("--questv2", type=Path, help="Tabla QuestV2 CSV de Forever 1.60.1.71139.")
     parser.add_argument("--bloque", action="append", type=int, choices=BLOCKS,
                         help="Bloque que ejecutar. Repetible. Por defecto ejecuta todos.")
     args = parser.parse_args()
@@ -146,6 +147,7 @@ def main():
     try:
         version = report_version(addon)
         catalog = load_catalog(args.catalogo, args.trazas_questie, args.datos_questie, args.datos_eg)
+        quest_v2 = import_quest_v2(args.questv2) if args.questv2 else None
         flights = {}
         routes, findings = audit(addon, blocks, catalog, flights)
         write_reports(output, version, blocks, routes, findings)
@@ -153,7 +155,7 @@ def main():
             (output / "vuelos_observados.json").write_text(
                 json.dumps(flights, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
         if 2 in blocks:
-            missions = inventory_missions(routes, catalog)
+            missions = inventory_missions(routes, catalog, quest_v2)
             (output / "misiones_individuales.json").write_text(json.dumps(missions, ensure_ascii=False, indent=2) + "\n",
                                                                encoding="utf-8", newline="\n")
     except (OSError, ValueError) as error:

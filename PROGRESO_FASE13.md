@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 01:22:39 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 01:25:54 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar las nuevas variantes de los khanes de Desolace y los 29 IDs activos sin evidencia de oferta del servidor.
+**Tarea actual** · Revisar los 29 IDs activos sin evidencia de oferta del servidor, las variantes de los khanes de Desolace y los títulos españoles que difieren de las fuentes.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -169,7 +169,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - La auditoría local de las 47 rutas registró 0 errores, 1.448 avisos y 395 grupos pendientes. Los criterios completos mantienen el avance global en 40,83 %.
 - Pasaron las 58 pruebas locales. La regresión conservó los destinos, las traducciones y el orden de las tres ventanas.
 
-## Último bloque verificado · Kum'isha
+## Kum'isha · corte verificado
 
 - Los 94 pasos de Kum'isha de las 47 rutas usan los IDs de Forever 93685 y 93686. Conservan sus índices. Cada entrega pide una esfera de draenetista perfecta. Las rutas identifican el requisito El Encontrado y dejan el viaje como opcional.
 - Se contrastaron las seis misiones previas y los PNJ del Pantano de las Penas, Desolace y las Tierras Devastadas. La recogida y entrega de ambos encargos respaldan 188 nuevas apariciones de coordenadas. Total contrastado de forma directa, 770 apariciones.
@@ -177,14 +177,21 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Pasaron las 59 pruebas locales. El auditor registró 0 errores y 1.504 avisos. Los 56 avisos nuevos indican que El Encontrado está documentado pero falta colocar el desvío completo en las rutas. La XP de Kum'isha se muestra aparte.
 - Se mantienen 301 grupos de investigación, 94 de cliente y el 40,83 % de avance por criterios completos. [Cadena y fuentes de Kum'isha](auditor_fase13/FUENTES.md#cadena-opcional-de-kumisha--26-de-noviembre-de-2026).
 
+## Último bloque verificado · Registro de misiones del cliente
+
+- Se cruzaron las 2.468 fichas con QuestV2 de Forever 1.60.1.71139. Hay 2.317 filas coincidentes. De los 151 IDs sin fila, 141 tienen evidencia de existencia por otras fuentes del servidor.
+- De los 29 IDs activos sin evidencia de oferta, 20 figuran en la tabla del cliente. Los nueve restantes son 5201, 5227, 6848, 8319, 8353, 8355, 8356, 8863 y 9266. El informe conserva ambos resultados para cada ID. [QuestV2 1.60.1.71139](https://wago.tools/db2/QuestV2/csv?build=1.60.1.71139).
+- Resultado de la auditoría de las 47 rutas. 0 errores, 1.504 avisos, 301 grupos de investigación y 94 de cliente. El avance global se mantiene en 40,83 % por criterios completos.
+- Pasaron las 60 pruebas locales. El control del índice comprobó que una fila del cliente y una oferta del servidor conservan resultados independientes y detectó cambios en el CSV.
+
 ## Siguientes tareas
 
 1. Contrastar los 58 refuerzos restantes y los requisitos de perfil que siguen en discrepancia.
-2. Revisar los 29 IDs activos pendientes de existencia. Priorizar los khanes de Desolace. Colocar el desvío opcional de Kum'isha y seguir con los nombres ES y los 567 historiales de misiones previas.
+2. Revisar los 29 IDs activos pendientes de existencia. Priorizar los khanes de Desolace, los nueve IDs sin fila y las condiciones de evento. Colocar el desvío opcional de Kum'isha y seguir con los nombres ES y los 567 historiales de misiones previas.
 3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `7bd9de1`.
+La fase sigue abierta. El corte previo es `5c27550`.
 
 ## Avance individual
 

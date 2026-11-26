@@ -36,6 +36,7 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Corregir las variantes de Frondavil y los pasos de invasión que llevaban a ciudades de la otra facción.
 - [x] Contrastar los objetos, el temporizador y el riesgo de las tres ventanas de agrupamiento y corregir sus instrucciones.
 - [x] Actualizar los IDs de las dos entregas de Kum'isha y contrastar los pasos previos en Pantano de las Penas y Desolace.
+- [x] Contrastar las fichas con la tabla QuestV2 del cliente y comprobar los casos de oferta sin fila y fila sin oferta observada.
 - [ ] Colocar la cadena opcional de Kum'isha y revisar los 29 IDs activos sin evidencia de oferta.
 - [ ] Revisar los 58 refuerzos restantes, los requisitos de perfil y los títulos ES discrepantes.
 - [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.

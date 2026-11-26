@@ -4,7 +4,7 @@ from hashlib import sha256
 from pathlib import Path
 from unittest.mock import patch
 
-from catalogo import _merge_catalog
+from catalogo import _merge_catalog, import_quest_v2
 from inventario_misiones import inventory_missions
 from lua_routes import load_routes
 from mission_rules import load_mission_localization
@@ -14,6 +14,28 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 class QuestieRulesTest(unittest.TestCase):
+    def test_client_quest_index_does_not_supply_server_availability(self):
+        raw = b"ID,UniqueBitFlag,UiQuestDetailsThemeID\n42,4,0\n"
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "QuestV2.csv"
+            path.write_bytes(raw)
+            with patch("catalogo.QUEST_V2_HASH", sha256(raw).hexdigest()):
+                quest_v2 = import_quest_v2(path)
+                path.write_bytes(raw + b"7,1,0\n")
+                with self.assertRaises(ValueError):
+                    import_quest_v2(path)
+
+        source = {"estado": "forever", "fuente": "servidor"}
+        catalog = {"misiones": {"7": {**source, "existe": True}}}
+        routes = [{"id": "ruta", "_archivo": "ruta.lua",
+                   "secciones": [{"pasos": [{"wp": [{"q": 7, "a": "A"}, {"q": 42, "a": "A"}]}]}]}]
+        result = inventory_missions(routes, catalog, quest_v2)
+        offered, registered = result["misiones"]
+        self.assertFalse(offered["fila_questv2"])
+        self.assertTrue(offered["evidencia"]["existe"]["valor"])
+        self.assertTrue(registered["fila_questv2"])
+        self.assertIn("existe", registered["pendientes_de_fuente"])
+
     def test_static_priority_and_inferred_separation(self):
         rows = {
             BASE: '        [7] = {\n            [questKeys.requiredClasses] = classIDs.WARRIOR,\n        },\n',

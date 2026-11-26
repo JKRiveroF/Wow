@@ -1,5 +1,6 @@
 """Carga evidencia acotada por campo, sin ejecutar código de fuentes externas."""
 
+import csv
 import json
 import re
 from hashlib import sha256
@@ -21,6 +22,8 @@ QUEST_OBJECTIVES = re.compile(r"^ {12}\[questKeys\.objectives\] = (.*),$")
 XP_ROW = re.compile(r"^QuestXP\.db\[(\d+)\] = \{(\d+), (\d+)\}$")
 MAP_ROW = re.compile(r"^\s*\[(\d+)\] = (\d+), -- (.+)$")
 ENTITY_KEYS = ("misiones", "mapas", "pnj", "vuelos")
+QUEST_V2_BUILD = "1.60.1.71139"
+QUEST_V2_HASH = "90cf939d1231e08257527add9259d4fecd429763d57b3f075a0ec2ff73f5f6dd"
 
 
 def read_catalog(path):
@@ -85,6 +88,15 @@ def import_traces(directory):
     if len(maps) != 54:
         raise ValueError("No se pudieron extraer los 54 mapas canónicos de QuestieDB 1.1.6.")
     return {"misiones": quests, "mapas": maps}
+
+
+def import_quest_v2(path):
+    raw = path.read_bytes()
+    if sha256(raw).hexdigest() != QUEST_V2_HASH:
+        raise ValueError(f"SHA-256 inesperado en {path}. Se requiere QuestV2 de Forever {QUEST_V2_BUILD}.")
+    rows = csv.DictReader(raw.decode("utf-8-sig").splitlines())
+    return {"build": QUEST_V2_BUILD, "fuente": f"https://wago.tools/db2/QuestV2/csv?build={QUEST_V2_BUILD}",
+            "ids": {int(row["ID"]) for row in rows}}
 
 
 def _merge_catalog(previous, current):
