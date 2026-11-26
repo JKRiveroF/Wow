@@ -11,6 +11,7 @@ from arranques import audit_arranques
 from estructura import audit_structure
 from inventario_misiones import inventory_missions
 from lua_routes import load_routes
+from vuelos_observados import link_flights
 
 HERE = Path(__file__).resolve().parent
 BLOCKS = {1: "Estructura", 2: "Misiones", 3: "Cartografía", 4: "Experiencia",
@@ -45,12 +46,17 @@ def report_version(addon):
     return "desconocida"
 
 
-def audit(addon, blocks, catalog):
+def audit(addon, blocks, catalog, flight_reports=None):
     routes, findings = load_routes(addon)
     findings.extend(audit_structure(routes))
     invalid = {finding["archivo"] for finding in findings
                if finding["gravedad"] == "error" and finding.get("archivo")}
     eligible = [route for route in routes if route["_archivo"] not in invalid]
+    if 5 in blocks and catalog.get("vuelos_observados"):
+        flights = link_flights(eligible, catalog["vuelos_observados"])
+        catalog = {**catalog, "vuelos_por_faccion": flights["nodos"]}
+        if flight_reports is not None:
+            flight_reports.update(flights)
     if 2 in blocks or 6 in blocks:
         from mission_rules import audit_missions, audit_profile_matrix, audit_specializations, load_mission_localization
 
@@ -129,6 +135,7 @@ def main():
     parser.add_argument("--catalogo", type=Path, help="Catálogo JSON opcional de evidencia por campo.")
     parser.add_argument("--trazas-questie", type=Path, help="Directorio local con las trazas de QuestieDB 1.1.6.")
     parser.add_argument("--datos-questie", type=Path, help="Directorio local con las reglas Forever de QuestieDB 1.1.6.")
+    parser.add_argument("--datos-eg", type=Path, help="Directorio local con EG Link y QuestXP de Forever.")
     parser.add_argument("--bloque", action="append", type=int, choices=BLOCKS,
                         help="Bloque que ejecutar. Repetible. Por defecto ejecuta todos.")
     args = parser.parse_args()
@@ -138,9 +145,13 @@ def main():
     blocks = set(args.bloque or BLOCKS)
     try:
         version = report_version(addon)
-        catalog = load_catalog(args.catalogo, args.trazas_questie, args.datos_questie)
-        routes, findings = audit(addon, blocks, catalog)
+        catalog = load_catalog(args.catalogo, args.trazas_questie, args.datos_questie, args.datos_eg)
+        flights = {}
+        routes, findings = audit(addon, blocks, catalog, flights)
         write_reports(output, version, blocks, routes, findings)
+        if flights:
+            (output / "vuelos_observados.json").write_text(
+                json.dumps(flights, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
         if 2 in blocks:
             missions = inventory_missions(routes, catalog)
             (output / "misiones_individuales.json").write_text(json.dumps(missions, ensure_ascii=False, indent=2) + "\n",

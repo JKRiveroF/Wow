@@ -58,6 +58,16 @@ def _positions_by_action(entry, field, action):
     return _places(_dict(positions).get(action) if action else positions)
 
 
+def _matches_positions(position, references, tolerance):
+    return any(position[0] == other[0] and _proximity(position, other) <= tolerance for other in references)
+
+
+def _matches_observation(entry, action, position, tolerance):
+    return any(_source(entry, field)
+               and _matches_positions(position, _positions_by_action(entry, field, action), tolerance)
+               for field in ("posiciones_observadas", "progreso_observado"))
+
+
 class WorldAudit:
     def __init__(self, route, context):
         self.route = route
@@ -133,7 +143,8 @@ class WorldAudit:
         tolerance = record.get("tolerancia", 1)
         if not _coordinate(tolerance):
             tolerance = 1
-        nearby = any(position[0] == other[0] and _proximity(position, other) <= tolerance for other in allowed)
+        nearby = (_matches_positions(position, allowed, tolerance)
+                  or _matches_observation(record, action, position, tolerance))
         if not nearby:
             self.unverified_positions[category] += 1
             if allowed and record.get("posiciones_completas") is True:
@@ -199,8 +210,15 @@ class WorldAudit:
         elif record["xp"] == 0 and isinstance(text, str) and XP_REFUERZO.search(text) and all(
             _dict(point).get("a") != "T" or _dict(point).get("q") == quest_id for point in _list(step.get("wp"))
         ):
-            self.add(4, "error", "mision_sin_xp_usada_como_refuerzo",
-                     f"La misión {quest_id} se recomienda como refuerzo de nivel pero no da XP en Forever. Fuente: {source}.", location)
+            calculated = _dict(_dict(record.get("evidencia")).get("xp")).get("metodo") == "calculada"
+            if calculated:
+                self.add(4, "aviso", "refuerzo_xp_base_cero",
+                         f"La misión {quest_id} figura como refuerzo y su XP base calculada es 0. "
+                         f"Contrastar la entrega y las recompensas especiales. Fuente: {source}.", location)
+            else:
+                self.add(4, "error", "mision_sin_xp_usada_como_refuerzo",
+                         f"La misión {quest_id} se recomienda como refuerzo de nivel pero no da XP en Forever. "
+                         f"Fuente: {source}.", location)
 
     def check_ranges(self):
         covered = set()
@@ -318,15 +336,16 @@ class WorldAudit:
 
     def check_travel(self):
         flight_index = _dict(self.catalog.get("vuelos"))
+        faction = self.route.get("_faccion")
+        observed_nodes = _dict(_dict(self.catalog.get("vuelos_por_faccion")).get(faction))
         unverified = []
         for name in sorted(self.flight_checks):
             flight = _catalog_entry(flight_index, name)
             existence = _source(flight, "existe")
             factions = _source(flight, "facciones")
-            if not (existence or factions):
+            if not (existence or factions or name in observed_nodes):
                 unverified.append(name)
                 continue
-            faction = self.route.get("_faccion")
             contradicts_existence = existence and flight.get("existe") is False
             contradicts_faction = factions and _list(flight.get("facciones")) and faction not in flight["facciones"]
             if contradicts_existence or contradicts_faction:

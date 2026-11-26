@@ -1088,7 +1088,7 @@ GL.AnadirIngles({
   ["El encantamiento del provocador"] = "The Instigator's Enchantment",
   ["El escrito del Crepúsculo"] = "The Twilight Writing",
   ["El fragmento brillante"] = "The Glowing Shard",
-  ["El gran Ezra Grimm"] = "The Great Fras Siabi",
+  ["El gran Ezra Grimm"] = "The Great Ezra Grimm",
   ["El juego aún no muestra ninguna reputación."] = "The game does not show any reputation yet.",
   ["El juego no da la posición de los jefes en esta planta."] = "The game does not give the bosses' position on this floor.",
   ["El legado de los Hierro Negro"] = "Dark Iron Legacy",

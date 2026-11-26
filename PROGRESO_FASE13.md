@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 00:49:42 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 01:01:32 +01:00 (Madrid)**
 
-**Tarea actual** · Incorporar registros de misiones y observaciones de Forever para validar títulos, requisitos, objetos, posiciones, XP y vuelos por ID.
+**Tarea actual** · Contrastar los refuerzos con XP base cero, las variantes de facción y los 32 IDs sin registro de existencia por ID.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -119,21 +119,39 @@ Las 95 comprobaciones estructurales son una compilación global, 47 verificacion
 
 Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadenas corregidas, la regresión de integridad y las simulaciones de datos guardados y Questie. El contraste dejó 90 avisos menos con las mismas fuentes. Los avisos restantes incluyen variantes legítimas por resolver, no constituyen 632 defectos demostrados. El inventario anterior tenía 351 grupos; el nuevo separa 47 grupos de evidencia de vuelos que estaban mezclados con las mediciones del cliente.
 
-## Último bloque verificado · Cadenas y alternativas
+## Cadenas y alternativas · corte verificado
 
 - Los Humedales y la Isla Zephras indican qué misiones son excluyentes. Se marcaron las dos opciones en cada uno de los 124 destinos de aceptación y entrega afectados. El motor reconoce la alternativa activa o completada y conserva los índices de las rutas guardadas.
 - Se incorporaron los requisitos 98221 de la misión 465 en 25 rutas y 93680 de la misión 545 en 22 rutas. Hay 2.466 IDs inventariados, incluidos los 2.462 originales. El contraste respalda 560 apariciones de destinos en las rutas.
 - Se resolvieron 33 avisos de exclusión y 56 de prerrequisitos. El auditor registró 0 errores y 543 avisos por contrastar. Quedan 304 grupos de investigación y 94 de cliente. La cobertura parcial de estos grupos mantiene el avance global en 40,83 %.
 - Pasaron las 52 pruebas locales. Incluyen la carga de las 47 rutas, las conexiones de las nuevas cadenas, la selección de misiones alternativas, el cálculo de XP y la regresión de datos guardados. [Fuentes y método](auditor_fase13/FUENTES.md).
 
+## Último bloque verificado · Datos del servidor y observaciones
+
+| Campo | IDs con evidencia | Antes |
+| --- | ---: | ---: |
+| Existencia | 2.434 | 2.100 |
+| Título inglés | 2.434 | 252 |
+| Título español | 2.264 | 2.264 |
+| Nivel mínimo | 2.434 | 248 |
+| XP base | 2.434 | 2.090 |
+| Objetos objetivo | 1.520 | 71 |
+
+- Contrastados los 2.466 IDs con consultas del servidor y trazas. Se corrigieron 18 títulos ingleses en las tablas del addon, que explicaban 275 avisos por ruta. La misión 92551 se observó completada por un Skyborne Horda y se corrigió el catálogo para los recorridos de ambas facciones.
+- El auditor encontró 14.217 apariciones de destinos cerca de observaciones del mismo mapa y acción, además de las 560 apariciones ya cotejadas con coordenadas documentadas.
+- Se vincularon 20 nodos de vuelo por ID del maestro. Hay 111 conexiones registradas entre ellos, con tiempos observados en 25. Tres rutas dejaron de tener el grupo pendiente de evidencia de nodos. Se conservan los pendientes de acceso y tiempos reales.
+- Hubo 0 errores en la auditoría y 3.038 avisos. De ellos, 2.275 corresponden a 98 misiones recomendadas como refuerzo cuya XP base calculada es cero. Quedan 487 avisos de títulos ES, 268 de perfil y 8 de prerrequisitos alternativos. Los avisos cuentan apariciones en rutas, por lo que un mismo ID puede aparecer varias veces.
+- Pasaron las 55 pruebas locales, incluidas las de máscaras raciales, XP cero, coordenadas por acción y conexiones por facción.
+- Quedan 301 grupos de investigación y 94 de cliente. El global sigue en 40,83 % con los criterios completos de la tabla. [Método, compilaciones y fuentes](auditor_fase13/FUENTES.md#consultas-del-servidor-y-observaciones-de-efficient-games--26-de-noviembre-de-2026).
+
 ## Siguientes tareas
 
-1. Contrastar títulos EN, requisitos, objetos y desbloqueos de las 2.466 misiones con los registros de Efficient Games para Forever. Resolver discrepancias por ID, empezando por las que afectan a más rutas.
-2. Cruzar las observaciones de objetivos, PNJ, entregas y vuelos con los destinos y subtotales de XP. Conservar la compilación y alcance de cada observación.
+1. Revisar los 98 refuerzos con XP base calculada cero mediante entregas observadas, recompensas y fichas de Forever. Resolver las variantes de Bálsamo de Frondavil y los encargos de invasión entre facciones.
+2. Contrastar los 32 IDs sin evidencia de existencia, los nombres ES y los 567 historiales de misiones previas. Buscar requisitos confirmados y separar los casos que dependen de un evento o condición del cliente.
 3. Resolver las dependencias, el acceso y los objetos de las tres ventanas de viaje antes de cambiar su orden. La piedra temporal de 924 requiere una medición real hacia el altar.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `f390c8a`.
+La fase sigue abierta. El corte previo es `15b1a02`.
 
 ## Avance individual
 
@@ -141,50 +159,50 @@ Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criter
 
 | Ruta | Estado | Bloques locales | Criterios | Avisos | Investigación | Cliente |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| `gnomo_mago` | Revisada localmente | 6/6 | 8/18 | 12 | 6 | 2 |
-| `enano_chaman` | Revisada localmente | 6/6 | 8/18 | 12 | 6 | 2 |
-| `enano_gnomo_guerrero` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `enano_paladin` | Revisada localmente | 6/6 | 8/18 | 16 | 6 | 2 |
-| `enano_gnomo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `enano_cazador` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `enano_gnomo_picaro` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `gnomo_brujo` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `humano_guerrero` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `humano_paladin` | Revisada localmente | 6/6 | 8/18 | 16 | 6 | 2 |
-| `humano_picaro` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `humano_brujo` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `humano_mago` | Revisada localmente | 6/6 | 8/18 | 12 | 6 | 2 |
-| `humano_sacerdote` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `humano_cazador` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
-| `elfo_cazador` | Revisada localmente | 6/6 | 8/18 | 16 | 6 | 2 |
-| `elfo_druida` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
-| `elfo_guerrero` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
-| `elfo_picaro` | Revisada localmente | 6/6 | 8/18 | 15 | 6 | 2 |
-| `elfo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 16 | 6 | 2 |
-| `orco_trol_guerrero` | Revisada localmente | 6/6 | 8/18 | 7 | 7 | 2 |
-| `orco_trol_cazador` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
-| `orco_trol_picaro` | Revisada localmente | 6/6 | 8/18 | 9 | 7 | 2 |
-| `orco_trol_chaman` | Revisada localmente | 6/6 | 8/18 | 10 | 7 | 2 |
-| `orco_trol_brujo` | Revisada localmente | 6/6 | 8/18 | 9 | 7 | 2 |
-| `orco_trol_mago` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
-| `trol_sacerdote` | Revisada localmente | 6/6 | 8/18 | 7 | 7 | 2 |
-| `tauren_guerrero` | Revisada localmente | 6/6 | 8/18 | 7 | 7 | 2 |
-| `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 7 | 7 | 2 |
-| `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 7 | 7 | 2 |
-| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
-| `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 7 | 7 | 2 |
-| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 9 | 7 | 2 |
-| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 8 | 7 | 2 |
-| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 9 | 7 | 2 |
-| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 10 | 7 | 2 |
-| `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 10 | 7 | 2 |
-| `skyborne_guerrero` | Revisada localmente | 6/6 | 8/18 | 11 | 7 | 2 |
-| `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 15 | 7 | 2 |
-| `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 12 | 7 | 2 |
-| `skyborne_chaman` | Revisada localmente | 6/6 | 8/18 | 11 | 7 | 2 |
-| `skyborne_druida` | Revisada localmente | 6/6 | 8/18 | 12 | 7 | 2 |
-| `skyborne_a_guerrero` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `skyborne_a_cazador` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `skyborne_a_picaro` | Revisada localmente | 6/6 | 8/18 | 13 | 6 | 2 |
-| `skyborne_a_mago` | Revisada localmente | 6/6 | 8/18 | 12 | 6 | 2 |
-| `skyborne_a_druida` | Revisada localmente | 6/6 | 8/18 | 14 | 6 | 2 |
+| `gnomo_mago` | Revisada localmente | 6/6 | 8/18 | 55 | 5 | 2 |
+| `enano_chaman` | Revisada localmente | 6/6 | 8/18 | 56 | 6 | 2 |
+| `enano_gnomo_guerrero` | Revisada localmente | 6/6 | 8/18 | 93 | 6 | 2 |
+| `enano_paladin` | Revisada localmente | 6/6 | 8/18 | 88 | 6 | 2 |
+| `enano_gnomo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 93 | 6 | 2 |
+| `enano_cazador` | Revisada localmente | 6/6 | 8/18 | 83 | 6 | 2 |
+| `enano_gnomo_picaro` | Revisada localmente | 6/6 | 8/18 | 95 | 6 | 2 |
+| `gnomo_brujo` | Revisada localmente | 6/6 | 8/18 | 82 | 6 | 2 |
+| `humano_guerrero` | Revisada localmente | 6/6 | 8/18 | 80 | 6 | 2 |
+| `humano_paladin` | Revisada localmente | 6/6 | 8/18 | 85 | 6 | 2 |
+| `humano_picaro` | Revisada localmente | 6/6 | 8/18 | 82 | 6 | 2 |
+| `humano_brujo` | Revisada localmente | 6/6 | 8/18 | 81 | 6 | 2 |
+| `humano_mago` | Revisada localmente | 6/6 | 8/18 | 53 | 5 | 2 |
+| `humano_sacerdote` | Revisada localmente | 6/6 | 8/18 | 82 | 6 | 2 |
+| `humano_cazador` | Revisada localmente | 6/6 | 8/18 | 81 | 6 | 2 |
+| `elfo_cazador` | Revisada localmente | 6/6 | 8/18 | 86 | 6 | 2 |
+| `elfo_druida` | Revisada localmente | 6/6 | 8/18 | 83 | 6 | 2 |
+| `elfo_guerrero` | Revisada localmente | 6/6 | 8/18 | 84 | 6 | 2 |
+| `elfo_picaro` | Revisada localmente | 6/6 | 8/18 | 86 | 6 | 2 |
+| `elfo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 86 | 6 | 2 |
+| `orco_trol_guerrero` | Revisada localmente | 6/6 | 8/18 | 48 | 7 | 2 |
+| `orco_trol_cazador` | Revisada localmente | 6/6 | 8/18 | 45 | 7 | 2 |
+| `orco_trol_picaro` | Revisada localmente | 6/6 | 8/18 | 49 | 7 | 2 |
+| `orco_trol_chaman` | Revisada localmente | 6/6 | 8/18 | 49 | 7 | 2 |
+| `orco_trol_brujo` | Revisada localmente | 6/6 | 8/18 | 49 | 7 | 2 |
+| `orco_trol_mago` | Revisada localmente | 6/6 | 8/18 | 45 | 7 | 2 |
+| `trol_sacerdote` | Revisada localmente | 6/6 | 8/18 | 46 | 7 | 2 |
+| `tauren_guerrero` | Revisada localmente | 6/6 | 8/18 | 48 | 7 | 2 |
+| `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 44 | 7 | 2 |
+| `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 46 | 7 | 2 |
+| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 50 | 7 | 2 |
+| `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 50 | 7 | 2 |
+| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 52 | 7 | 2 |
+| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 47 | 7 | 2 |
+| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 54 | 7 | 2 |
+| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 52 | 7 | 2 |
+| `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 56 | 7 | 2 |
+| `skyborne_guerrero` | Revisada localmente | 6/6 | 8/18 | 50 | 7 | 2 |
+| `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 47 | 7 | 2 |
+| `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 50 | 7 | 2 |
+| `skyborne_chaman` | Revisada localmente | 6/6 | 8/18 | 45 | 7 | 2 |
+| `skyborne_druida` | Revisada localmente | 6/6 | 8/18 | 49 | 7 | 2 |
+| `skyborne_a_guerrero` | Revisada localmente | 6/6 | 8/18 | 73 | 6 | 2 |
+| `skyborne_a_cazador` | Revisada localmente | 6/6 | 8/18 | 76 | 6 | 2 |
+| `skyborne_a_picaro` | Revisada localmente | 6/6 | 8/18 | 78 | 6 | 2 |
+| `skyborne_a_mago` | Revisada localmente | 6/6 | 8/18 | 55 | 5 | 2 |
+| `skyborne_a_druida` | Revisada localmente | 6/6 | 8/18 | 71 | 6 | 2 |

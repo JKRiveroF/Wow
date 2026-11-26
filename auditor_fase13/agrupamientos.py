@@ -175,6 +175,7 @@ def main():
     parser.add_argument("--catalogo", type=Path)
     parser.add_argument("--trazas-questie", type=Path)
     parser.add_argument("--datos-questie", type=Path)
+    parser.add_argument("--datos-eg", type=Path)
     parser.add_argument("--salida", type=Path, default=HERE / "salida" / "agrupamientos")
     args = parser.parse_args()
 
@@ -183,7 +184,7 @@ def main():
     routes, findings = load_routes(args.addon)
     if not routes or any(finding["gravedad"] == "error" for finding in findings):
         parser.error("El addon tiene errores de carga. Ejecuta auditar.py para localizarlos.")
-    catalog = load_catalog(args.catalogo, args.trazas_questie, args.datos_questie)
+    catalog = load_catalog(args.catalogo, args.trazas_questie, args.datos_questie, args.datos_eg)
     report = analyze_clustering(routes, catalog)
     args.salida.mkdir(parents=True, exist_ok=True)
     (args.salida / "AGRUPAMIENTOS.md").write_text(render_clustering(report), encoding="utf-8")

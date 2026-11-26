@@ -120,7 +120,7 @@ def _merge_catalog(previous, current):
     return combined
 
 
-def load_catalog(path=None, trace_directory=None, quest_directory=None):
+def load_catalog(path=None, trace_directory=None, quest_directory=None, eg_directory=None):
     catalog = import_traces(trace_directory) if trace_directory is not None else {}
     if quest_directory is not None:
         from questie_evidence import import_spanish_titles
@@ -139,6 +139,16 @@ def load_catalog(path=None, trace_directory=None, quest_directory=None):
                 entry["evidencia"].pop("objetos_objetivo")
         catalog = _merge_catalog(catalog, rules)
         catalog = _merge_catalog(catalog, import_spanish_titles(quest_directory))
+    if eg_directory is not None:
+        from eg_link import import_eg_link
+
+        observations = import_eg_link(eg_directory)
+        for quest, entry in observations["misiones"].items():
+            current = catalog.get("misiones", {}).get(quest, {})
+            if "xp_calculada" in entry and "xp" not in current:
+                entry["xp"] = entry["xp_calculada"]
+                entry["evidencia"]["xp"] = entry["evidencia"]["xp_calculada"]
+        catalog = _merge_catalog(catalog, observations)
     catalog = _merge_catalog(catalog, read_catalog(HERE / "evidencia_forever.json"))
     catalog = _merge_catalog(catalog, read_catalog(HERE / "curva_xp_forever.json"))
     catalog = _merge_catalog(catalog, read_catalog(HERE / "perfiles_forever.json"))

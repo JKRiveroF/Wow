@@ -20,10 +20,14 @@ El bloque 2 genera también `misiones_individuales.json`, con un registro por ID
 
 `--datos-questie` añade `foreverBaseQuest.lua`, `foreverQuestFixes.lua` y `foreverQuestRelationTraces.lua` de esa misma revisión. Opcionalmente lee `questie-forever-quests-esES.lua` y `questie-forever-quests-esMX.lua` si están en la carpeta. Las relaciones inferidas se muestran por separado de los requisitos contrastados. Consulta los archivos y enlaces en [FUENTES.md](FUENTES.md).
 
+`--datos-eg` incorpora los JSON de [EG Link](FUENTES.md#consultas-del-servidor-y-observaciones-de-efficient-games--26-de-noviembre-de-2026) y `QuestXP-1.60.1.71091.csv`. Guarda cada JSON como `eg-1.60.1.<compilación>-<dataset>.json` en `cache_fuentes/`. Los nombres, las compilaciones y los hashes están en `eg_link.py`. El bloque 5 genera también `vuelos_observados.json`. El cálculo de XP base completa huecos de la traza y conserva método y fuente. Las observaciones de entregas y de progreso siguen en sus propios campos.
+
 ```powershell
 auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/auditar.py --trazas-questie auditor_fase13/cache_fuentes --datos-questie auditor_fase13/cache_fuentes
 auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/agrupamientos.py --trazas-questie auditor_fase13/cache_fuentes --datos-questie auditor_fase13/cache_fuentes
 ```
+
+Añade `--datos-eg auditor_fase13/cache_fuentes` cuando tengas la revisión de Efficient Games y la tabla de XP.
 
 El informe de experiencia compara un subtotal de entregas registradas con la curva documentada de `curva_xp_forever.json`. Un catálogo adicional puede incluir estimaciones de combate por ruta y tramo en `xp_combates.<id de ruta>.tramos.<número de tramo>`, con `xp`, `estado` y `fuente`. Los tramos sin evidencia quedan pendientes y los subtotales se muestran como escenario, con el número de entregas cubiertas. El escenario cuenta una opción por grupo de misiones excluyentes en el orden de la ruta y desglosa las recompensas opcionales de especialización de herrería.
 

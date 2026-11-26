@@ -13,6 +13,18 @@
         }
       }
     },
+    "92551": {
+      "facciones": ["Alliance", "Horde"],
+      "razas": ["Skyborne"],
+      "razas_por_faccion": {"Alliance": ["Skyborne"], "Horde": ["Skyborne"]},
+      "fecha_consulta": "2026-11-26",
+      "evidencia": {
+        "facciones": {
+          "estado": "forever",
+          "fuente": "https://github.com/JIVESCORP/eg-link-output-wowf/blob/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf/1.60.1.70959/turn_ins.json"
+        }
+      }
+    },
     "98387": {
       "existe": true,
       "nivel_minimo": 18,
