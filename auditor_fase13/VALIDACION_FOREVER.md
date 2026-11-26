@@ -38,13 +38,13 @@ El calendario extraído sitúa el Festival de Invierno del 15 de diciembre de 20
 | 1375 | 34 | Investigar oferta | Con Warug y la rama Magram tras 1371, distingue la oferta heredada de los pasos de la variante 93196. Registra las condiciones de reputación y el ID mostrado. |
 | 2358 | 4 | Investigar oferta | Busca la oferta de la Sombra de Arantir en Villa del Lago con pícaro y confirma si pide los cuernos 7906. |
 | 3504 | 22 | Investigar oferta | Ag'tor ofrece 3505 en dos muestras. Busca la carta con Belgrom y prueba la oferta de Ag'tor con y sin 3504 entregada. Registra si la carta sigue dando acceso a la cadena. |
-| 5201 | 24 | Investigar oferta | Comprueba a Rivern con Alianza desde nivel 58 y reputación con los Instructores de Sableinvernales. Registra si ofrece 5201 tras el primer encargo, su umbral y si se repite. |
+| 5201 | 24 | Investigar oferta | Comprueba a Rivern con Alianza desde nivel 58 antes y después de entregar 4970. Compara por debajo y a partir de 1.500 puntos con los Instructores de Sableinvernales, el umbral heredado. Si aparece 5201, registra si pide cinco chamanes y cinco ursas Nevada y vuelve a ofrecerse. |
 | 6804 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 55. Si la ofrece, registra cuándo entrega el Aspecto de Neptulon (17310) y si conserva el objetivo de 12 brazales (17309). |
 | 6805 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 55, con y sin 6804 aceptada o entregada. Registra si ofrece 6805 y pide 15 elementales de cada tipo. |
 | 6821 | 47 | Investigar oferta | Comprueba a Hydraxis después de entregar 6804 y 6805. Registra si pide el ojo 17322, si procede del Piroguardián brasadivino y si la entrega ofrece 6822. |
-| 6848 | 1 | Investigar oferta | En Valle de Alterac, busca a Ryson con Alianza. Registra el ID de la oferta y la posición del ojo en las cuevas de los Hacha Invernal. |
+| 6848 | 1 | Investigar oferta | En Valle de Alterac, busca al PNJ 13151 con Alianza y Horda. Distingue 6848 de la variante 6847 de la Horda en la base heredada. Registra el ID de oferta y la posición del ojo en las cuevas de los Hacha Invernal. |
 | 7622 | 3 | Cliente con objeto de banda | Con sacerdote al nivel 60, comprueba cómo se consigue el Ojo de la Divinidad en Forever. Equípalo, busca a Eris y registra la oferta y el resultado del reto de los campesinos. |
-| 8319 | 46 | Investigar oferta | Tras 8318, comprueba si Bor ofrece el canje de diez textos 20404 y vuelve a ofrecerlo después de entregarlo. |
+| 8319 | 46 | Investigar oferta | Tras 8318, comprueba si Bor ofrece el canje de diez textos 20404 y vuelve a ofrecerlo después de entregarlo. Identifica al receptor 15306 para distinguirlo de 8324, el canje ya observado con Ortell. |
 | 8353 | 1 | Cliente durante Halloween | Con 8311 activa, usa `/chicken` frente al tabernero Fuegobrezo en Forjaz. Verifica el ID y el caramelo. |
 | 8355 | 1 | Cliente durante Halloween | Con 8311 activa, usa `/train` frente a Talvash en Forjaz. Verifica el ID y el caramelo. |
 | 8356 | 1 | Cliente durante Halloween | Con 8311 activa, usa `/flex` frente a la tabernera Allison en Ventormenta. Verifica el ID y el caramelo. |
@@ -57,4 +57,4 @@ El calendario extraído sitúa el Festival de Invierno del 15 de diciembre de 20
 | 8696 | 2 | Cliente con botín de Ahn'Qiraj | Con cazador de nivel 60 y Reverenciado, comprueba el canje con Keyl. Referencia heredada: 1 × 20889, 2 × 20868, 5 × 20858 y 5 × 20862. |
 | 8788 | 6 | Cliente durante Festival de Invierno | Abre el regalo 180746 de Orgrimmar (52,3 / 69,4). Contrasta el ID que reciben un paladín, un Skyborne y otro personaje de la Horda. |
 | 8863 | 43 | Cliente durante Festival Lunar | Comprueba si el PNJ 15864 acepta una moneda 21100 y vuelve a ofrecer el canje con un personaje de cada facción. |
-| 9266 | 20 | Investigar oferta | Comprueba el canje de 40 paños rúnicos (14047) y cuatro carbones (3857) con Bronn en Vista Eterna. Registra reputación al ofrecerse, efecto al entregarlo y si vuelve a ofrecerlo. |
+| 9266 | 20 | Investigar oferta | Comprueba el canje de 40 paños rúnicos (14047) y cuatro carbones (3857) con Bronn en Vista Eterna. Compara la oferta por debajo y al alcanzar 0 de reputación con Vista Eterna. Registra el cambio de reputación y si vuelve a ofrecerse. |

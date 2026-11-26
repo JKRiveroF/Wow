@@ -27,7 +27,7 @@ El auditor registra **279 grupos de investigación** y **116 grupos de validaci�
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Verificar iniciadores y desbloqueos de 11 ofertas investigables, empezando por las cuatro sin fila en QuestV2.
+**Tarea actual** · Buscar observaciones de oferta y requisitos para las 11 misiones investigables. Los cuatro casos sin fila en QuestV2 ya tienen un contraste de variantes y umbrales.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -348,6 +348,10 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Pasaron **9 pruebas específicas** de medición y la **regresión de 94 pruebas**. Se reprodujeron los siete numeradores y denominadores certificados y los hallazgos de las 47 rutas. La implementación de seguimiento está en el auditor externo.
 - El registro de comprobaciones admite resultados con fecha, compilación y evidencia de sesión. Las pruebas de juego pendientes podrán realizarse en el equipo personal con Forever. [Protocolo de cliente](auditor_fase13/VALIDACION_FOREVER.md) · [Formato de registro](auditor_fase13/README.md#actualizar-la-medición-de-la-fase).
 
+## Último contraste · Ofertas sin fila en QuestV2
+
+- Se precisaron los límites de reputación heredados de 5201 y 9266. Se distinguieron la variante de Horda 6847 y el canje observado 8324 de los casos pendientes 6848 y 8319. La comprobación por ID reutilizó QuestieDB, QuestV2 y las instantáneas de Forever. Las cuatro ofertas siguen pendientes y los dos indicadores conservan sus valores. [Resultado del contraste](auditor_fase13/FUENTES.md#umbrales-y-variantes-de-cuatro-ofertas--26-de-noviembre-de-2026).
+
 ## Comprobaciones que impiden cerrar los criterios
 
 | Bloque | Investigación pendiente | Validación en Forever |
@@ -361,11 +365,11 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 
 ## Siguientes tareas
 
-1. Contrastar las ofertas 5201, 6848, 8319 y 9266 y los iniciadores y desbloqueos de las demás misiones investigables. Priorizar campos de repetición, objetos y exclusiones.
+1. Buscar observaciones directas de las cuatro ofertas contrastadas y revisar los iniciadores y desbloqueos de las siete ofertas investigables restantes. Priorizar repetición, objetos y exclusiones.
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `a52613a`.
+La fase sigue abierta. El corte previo es `6266c3d`.
 
 ## Avance individual
 

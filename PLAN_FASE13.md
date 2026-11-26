@@ -107,6 +107,7 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Contrastar los 24 IDs pendientes en las seis instantáneas iniciales y documentar los requisitos de prueba y las rutas afectadas por ID.
 - [x] Inventariar las interacciones de oferta y entrega por PNJ u objeto. Contrastar con ellas el inicio de Ongeku y de la cadena de Ag'tor.
 - [x] Detallar los objetivos y requisitos contrastados de 1371, 1373 y 8318 en ES/EN. Unificar la referencia a Mensajes secretos en los pasos de 8319.
+- [x] Contrastar los umbrales heredados de 5201 y 9266 y distinguir 6848 de 6847 y 8319 de 8324. Registrar las pruebas que distinguen las ofertas.
 - [ ] Buscar evidencia de iniciador, variante y requisitos para las 11 ofertas investigables, con prioridad para 5201, 6848, 8319 y 9266, que carecen de fila en QuestV2. Usar las tablas y trazas ya archivadas.
 - [ ] Verificar las cinco ofertas estacionales y los ocho casos vinculados a botín de banda cuando haya cliente y se cumplan las condiciones de contenido. Confirmar las cantidades heredadas de los siete canjes de Ahn'Qiraj.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
