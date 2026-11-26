@@ -12,6 +12,42 @@ auditor_fase13/.venv/Scripts/python.exe auditor_fase13/auditar.py
 
 La salida contiene `INFORME.md`, `resultados.json` y un informe por ruta en `rutas/`. El proceso devuelve `1` si encuentra errores y `2` si falla la lectura o la preparación de la salida. Usa `--addon` para auditar otra carpeta y `--salida` para guardar ejecuciones por separado. Las salidas por defecto y el entorno virtual permanecen fuera de los archivos versionados.
 
+## Actualizar la medición de la fase
+
+Al cerrar un bloque verificado, ejecuta desde la raíz del repositorio la auditoría completa con las cuatro fuentes locales. La opción `--actualizar-progreso` ejecuta la regresión y regenera los indicadores de `PROGRESO_FASE13.md`, `PLAN_FASE13.md` y `auditor_fase13/progreso_medicion.json`. Una consulta sin esa opción guarda su medición bajo `--salida`. `--regresion` permite añadir las pruebas a una consulta local.
+
+```powershell
+$fuentes = 'auditor_fase13/cache_fuentes'
+auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/auditar.py --trazas-questie $fuentes --datos-questie $fuentes --datos-eg $fuentes --questv2 "$fuentes/QuestV2-1.60.1.71139.csv" --actualizar-progreso
+```
+
+El procedimiento reutiliza el inventario de misiones, posiciones, vuelos y agrupamientos de esa misma ejecución. El JSON versionado conserva las fracciones exactas, los numeradores y denominadores de las familias, los estados de evidencia y las diferencias con el último corte medido. [Fórmula y criterios](../PLAN_FASE13.md#criterios-de-medición).
+
+Las comprobaciones realizadas en Forever se pueden añadir a `auditor_fase13/validaciones_progreso.json` o indicar con `--validaciones`. El archivo contiene una lista JSON. Usa el ID de ruta como `unidad` para los criterios de ruta, el título de la fila del protocolo para `7.caso_cliente`, y la clave publicada en `ventanas_agrupamiento` para `5.ahorro`. Las revisiones `7.paquete` y `7.sincronizacion` usan `final`. Cada resultado cita la sesión o fichero que documenta el alcance de la comprobación. Los resultados `fallo` y `pendiente` quedan abiertos. Registra como `verificado` cada comprobación completa según el plan, con la compilación en las pruebas de cliente. [Protocolo de Forever](VALIDACION_FOREVER.md).
+
+| Comprobación en Forever | Claves de registro |
+| --- | --- |
+| Transiciones, interiores y puntos de vuelo | `3.transiciones`, `3.interiores`, `3.puntos_vuelo` |
+| Saldo y bloqueos de XP por tramo | `4.saldo`, `4.bloqueos` |
+| Tiempos y secuencias de viaje, medición de agrupamientos | `5.tiempos_secuencias`, `5.ahorro` |
+| Acceso, desbloqueos y traducciones por perfil | `6.acceso`, `6.desbloqueos`, `6.traducciones` |
+| Casos transversales de regresión | `7.caso_cliente` |
+
+Las revisiones de investigación usan `2.identidad`, `2.dependencias`, `2.especiales`, `3.posiciones`, `4.estimacion`, `5.transporte`, `5.desbloqueos` y `5.alternativas`. Cita la ficha de contraste y completa su evidencia en el catálogo antes de cerrar un criterio. Para las unidades sin aplicación, la revisión debe justificarlo en la evidencia citada.
+
+```json
+[
+  {
+    "criterio": "3.interiores",
+    "unidad": "gnomo_mago",
+    "resultado": "pendiente",
+    "fecha": "2026-11-26",
+    "compilacion": "1.60.1.71139",
+    "fuente": "VALIDACION_FOREVER.md#evidencia-de-la-sesión"
+  }
+]
+```
+
 El bloque 2 genera también `misiones_individuales.json`, con un registro por ID, sus rutas y posiciones compartidas, evidencia por campo e indicios por contrastar. Las misiones de 9.7.9 retiradas de las rutas conservan sus fichas y el motivo. Los informes distinguen los pendientes de investigación de los que requieren ejecutar el cliente.
 
 `--bloque` permite seleccionar uno o más ámbitos. La estructura siempre se comprueba porque los demás bloques dependen de las rutas cargadas. Usa `--catalogo` para aportar evidencia JSON adicional. `evidencia_forever.json` muestra ejemplos con fuente fechada y procedencia por campo. Las claves de misiones, mapas y PNJ son sus IDs como texto. Una ficha ausente deja la verificación pendiente.

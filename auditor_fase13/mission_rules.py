@@ -346,6 +346,8 @@ def audit_missions(route: dict, catalog: dict) -> list[dict]:
                 f"La fuente marca la misión {quest} como inexistente en WoW Forever."
             ), first.location, source))
         title_issues, missing_english = _titles(route, first, points, entry, localization)
+        for issue in title_issues:
+            issue["mision"] = quest
         issues.extend(title_issues)
         if missing_english:
             untranslated.append(quest)

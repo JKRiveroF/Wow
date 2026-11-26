@@ -5,12 +5,14 @@ import json
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
+import unittest
 
 from catalogo import import_quest_v2, load_catalog
 from arranques import audit_arranques
 from estructura import audit_structure
 from inventario_misiones import inventory_missions
 from lua_routes import load_routes
+from progreso import compare, measure, render, update_section, validate_records
 from vuelos_observados import link_flights
 
 HERE = Path(__file__).resolve().parent
@@ -46,7 +48,7 @@ def report_version(addon):
     return "desconocida"
 
 
-def audit(addon, blocks, catalog, flight_reports=None):
+def audit(addon, blocks, catalog, flight_reports=None, clustering_report=None):
     routes, findings = load_routes(addon)
     findings.extend(audit_structure(routes))
     invalid = {finding["archivo"] for finding in findings
@@ -82,7 +84,10 @@ def audit(addon, blocks, catalog, flight_reports=None):
     if 5 in blocks:
         from agrupamientos import analyze_clustering, clustering_findings
 
-        findings.extend(clustering_findings(analyze_clustering(eligible, catalog)))
+        clustering = analyze_clustering(eligible, catalog)
+        findings.extend(clustering_findings(clustering))
+        if clustering_report is not None:
+            clustering_report.update(clustering)
     for item in findings:
         if item["gravedad"] == "pendiente" and "resolucion" not in item:
             item["resolucion"] = "cliente" if item["codigo"] in CLIENT_CHECKS else "investigación"
@@ -91,7 +96,7 @@ def audit(addon, blocks, catalog, flight_reports=None):
     return routes, findings
 
 
-def write_reports(output, version, blocks, routes, findings):
+def write_reports(output, version, blocks, routes, findings, progress=None):
     route_output = output / "rutas"
     route_output.mkdir(parents=True, exist_ok=True)
     by_file = defaultdict(list)
@@ -124,6 +129,8 @@ def write_reports(output, version, blocks, routes, findings):
     for block in sorted(blocks | {1}):
         totals = Counter(item["gravedad"] for item in findings if item["bloque"] == block)
         summary.append(f"| {BLOCKS[block]} | {totals['error']} | {totals['aviso']} | {totals['pendiente']} |")
+    if progress is not None:
+        summary.extend(["", "## Medición de la fase 13", "", render(progress)])
     summary.extend(["", "## Resultados transversales y archivos sin ruta cargada", "",
                     render_findings([result for group in by_file.values() for result in group]),
                     "## Resultados por ruta", "", "| Ruta | ID | Errores | Avisos | Pendientes |",
@@ -137,6 +144,35 @@ def write_reports(output, version, blocks, routes, findings):
     return manifest
 
 
+class RegressionResult(unittest.TextTestResult):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.passed = 0
+
+    def addSuccess(self, test):
+        super().addSuccess(test)
+        self.passed += 1
+
+
+def run_regression():
+    suite = unittest.defaultTestLoader.discover(str(HERE))
+    result = unittest.TextTestRunner(resultclass=RegressionResult).run(suite)
+    return {"ejecutadas": result.testsRun, "superadas": result.passed, "correcta": result.wasSuccessful()}
+
+
+def write_progress(path, data):
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+
+def update_project_progress(history, data):
+    files = {HERE.parent / name: update_section((HERE.parent / name).read_text(encoding="utf-8"),
+                                               "medicion-fase13", render(data))
+             for name in ("PROGRESO_FASE13.md", "PLAN_FASE13.md")}
+    for path, content in files.items():
+        path.write_text(content, encoding="utf-8", newline="\n")
+    write_progress(history, data)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--addon", type=Path, default=HERE.parent / "GuiaAventurero")
@@ -148,24 +184,49 @@ def main():
     parser.add_argument("--questv2", type=Path, help="Tabla QuestV2 CSV de Forever 1.60.1.71139.")
     parser.add_argument("--bloque", action="append", type=int, choices=BLOCKS,
                         help="Bloque que ejecutar. Repetible. Por defecto ejecuta todos.")
+    parser.add_argument("--regresion", action="store_true", help="Ejecuta también la batería local completa.")
+    parser.add_argument("--actualizar-progreso", action="store_true",
+                        help="Mide los siete bloques con las fuentes locales, ejecuta la regresión y actualiza los Markdown.")
+    parser.add_argument("--validaciones", type=Path, default=HERE / "validaciones_progreso.json",
+                        help="Registro JSON opcional de comprobaciones documentadas y de cliente.")
     args = parser.parse_args()
     addon, output = args.addon.resolve(), args.salida.resolve()
     if output.is_relative_to(addon) or (output / "rutas").resolve().is_relative_to(addon):
         parser.error("La salida del auditor debe quedar fuera del addon instalable.")
     blocks = set(args.bloque or BLOCKS)
+    full_project = blocks == set(BLOCKS) and addon == (HERE.parent / "GuiaAventurero").resolve()
+    if args.actualizar_progreso and (not full_project or not all((args.trazas_questie, args.datos_questie,
+                                                                args.datos_eg, args.questv2))):
+        parser.error("Para actualizar el progreso, ejecuta todos los bloques del addon del proyecto con las cuatro fuentes locales.")
+    if args.regresion and not full_project:
+        parser.error("La batería de regresión se ejecuta sobre los archivos del proyecto con el análisis completo.")
+    regression = {}
     try:
         version = report_version(addon)
         catalog = load_catalog(args.catalogo, args.trazas_questie, args.datos_questie, args.datos_eg)
         quest_v2 = import_quest_v2(args.questv2) if args.questv2 else None
-        flights = {}
-        routes, findings = audit(addon, blocks, catalog, flights)
-        write_reports(output, version, blocks, routes, findings)
+        flights, clustering = {}, {}
+        routes, findings = audit(addon, blocks, catalog, flights, clustering)
+        inventory = inventory_missions(routes, catalog, quest_v2) if 2 in blocks else None
+        progress = None
+        if full_project:
+            if args.regresion or args.actualizar_progreso:
+                regression = run_regression()
+            history = HERE / "progreso_medicion.json"
+            previous = json.loads(history.read_text(encoding="utf-8")) if history.is_file() else None
+            metrics = measure(routes, findings, catalog, inventory, flights, clustering, regression,
+                              HERE.parent, validate_records(args.validaciones))
+            progress = compare(metrics, previous)
+        write_reports(output, version, blocks, routes, findings, progress)
+        if progress is not None:
+            write_progress(output / "progreso_medicion.json", progress)
+            if args.actualizar_progreso:
+                update_project_progress(history, progress)
         if flights:
             (output / "vuelos_observados.json").write_text(
                 json.dumps(flights, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
         if 2 in blocks:
-            missions = inventory_missions(routes, catalog, quest_v2)
-            (output / "misiones_individuales.json").write_text(json.dumps(missions, ensure_ascii=False, indent=2) + "\n",
+            (output / "misiones_individuales.json").write_text(json.dumps(inventory, ensure_ascii=False, indent=2) + "\n",
                                                                encoding="utf-8", newline="\n")
     except (OSError, ValueError) as error:
         print(f"Error del auditor: {error}", file=sys.stderr)
@@ -174,7 +235,7 @@ def main():
     print(f"{len(routes)} rutas | {totals['error']} errores | {totals['aviso']} avisos | "
           f"{totals['pendiente']} pendientes")
     print(output / "INFORME.md")
-    return int(bool(totals["error"]))
+    return int(bool(totals["error"] or regression.get("correcta") is False))
 
 
 if __name__ == "__main__":

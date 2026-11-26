@@ -1,10 +1,31 @@
 # Progreso de la fase 13
 
-**Avance global · 40,83 %**
+<!-- medicion-fase13:inicio -->
+
+**Progreso certificado global · 40,83 %**
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 17:30:51 +01:00 (Madrid)**
+**Progreso efectivo global · 55,67 %**
+
+`███████████░░░░░░░░░`
+
+| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | — | 100 % | — |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | — | 52,33 % | — |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 45,04 % | — |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 51,58 % | — |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 47,32 % | — |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | — | 68,74 % | — |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | — | 37,5 % | — |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | — | 55,67 % | — |
+
+**Última actualización de la medición · 2026-11-26 17:48:42+01:00 (Madrid)**
+
+El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
+
+<!-- medicion-fase13:fin -->
 
 **Tarea actual** · Verificar iniciadores y desbloqueos de 11 ofertas investigables, empezando por las cuatro sin fila en QuestV2.
 
@@ -34,17 +55,6 @@
 La rama local partió del mismo commit que GitHub, `83fab5b`. `git fsck --full` terminó sin errores. Al iniciar, los 219 SHA-256 coincidían con el disco y con los blobs del commit de restauración `592d887`.
 
 El auditor externo compiló los 144 ficheros Lua del TOC con Lupa 2.8 (Lua 5.1) y cargó 47 rutas. Las 56 combinaciones pasaron selección, carga y filtro racial con las funciones originales y API simulada. La comprobación estructural no registró errores, avisos ni pendientes. Los originales seguían intactos al cerrar el bloque.
-
-| Área | Peso | Comprobaciones completas | Anterior | Actual |
-| --- | ---: | ---: | ---: | ---: |
-| Estructura | 10 % | 95/95 | 100 % | 100 % |
-| Misiones | 25 % | 47/188 | 25 % | 25 % |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % |
-| Clase, raza y facción | 10 % | 94/141 | 40,43 % | 66,67 % |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % |
-| **Global ponderado** | **100 %** | | **38,21 %** | **40,83 %** |
 
 Las 95 comprobaciones estructurales son una compilación global, 47 verificaciones del contrato de ruta y 47 validaciones del motor por ruta con todas sus combinaciones declaradas.
 
@@ -327,10 +337,16 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Se comprobó que Uthek ofrece 1373 y que la continuación registrada es 93034. Ag'tor aparece como iniciador de 3505 en dos compilaciones. Siguen pendientes la oferta de 1374 y la función de la carta 3504 en el acceso a la cadena. [Comprobaciones por ID](auditor_fase13/VALIDACION_FOREVER.md#matriz-de-oferta-pendiente-por-misión).
 - Pasaron **9 pruebas específicas** y la **regresión de 85 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
 
-## Último bloque verificado · Encargos de Gelkis, Magram y Bor
+## Misiones y dependencias · Encargos de Gelkis, Magram y Bor
 
 - Se precisaron los materiales y requisitos de 1371, 1373 y 8318. El canje opcional 8319 remite ahora a Mensajes secretos, el título acreditado de 8318. Se verificaron **159 textos ES/EN** en las 47 rutas con sus destinos y secuencias originales. [Objetivos y fuentes](auditor_fase13/FUENTES.md#encargos-de-gelkis-magram-y-bor--26-de-noviembre-de-2026).
 - Pasaron **15 pruebas específicas** y la **regresión de 85 pruebas**. El auditor mantiene **0 errores y 56 avisos** en las 47 rutas, con **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
+
+## Seguimiento automático de la fase
+
+- El auditor calcula los siete bloques con los pesos originales. El primer corte efectivo se calcula con el inventario y las pruebas existentes. La comparación histórica del efectivo empieza en este corte. [Fórmula y familias de cobertura](PLAN_FASE13.md#progreso-efectivo).
+- Pasaron **9 pruebas específicas** de medición y la **regresión de 94 pruebas**. Se reprodujeron los siete numeradores y denominadores certificados y los hallazgos de las 47 rutas. La implementación de seguimiento está en el auditor externo.
+- El registro de comprobaciones admite resultados con fecha, compilación y evidencia de sesión. Las pruebas de juego pendientes podrán realizarse en el equipo personal con Forever. [Protocolo de cliente](auditor_fase13/VALIDACION_FOREVER.md) · [Formato de registro](auditor_fase13/README.md#actualizar-la-medición-de-la-fase).
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -349,7 +365,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `0ef5bd9`.
+La fase sigue abierta. El corte previo es `a52613a`.
 
 ## Avance individual
 

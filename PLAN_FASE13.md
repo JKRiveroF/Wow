@@ -8,7 +8,7 @@
 
 ## Criterios de medición
 
-Cada fila enumera criterios que se completan cuando se cumple toda su cobertura. En los bloques 1–6 se mide cada criterio aplicable por ruta. Un criterio específico de una ruta queda pendiente si le falta evidencia obligatoria. Las pruebas transversales de sintaxis de módulos y regresión se miden para el addon completo. El porcentaje del bloque es `comprobaciones completas ÷ comprobaciones aplicables × 100`. El porcentaje global suma el porcentaje de cada bloque multiplicado por su peso. Los porcentajes se redondean solo al mostrarlos.
+El **progreso certificado** conserva los criterios siguientes. En los bloques 1–6, cada criterio se cuenta por ruta salvo la compilación Lua global. El bloque 7 contiene cuatro criterios transversales. El certificado del bloque es `criterios completos ÷ criterios aplicables × 100`. Cada criterio se cierra cuando cumple todos sus requisitos y existe evidencia obligatoria. Los pesos globales se conservan.
 
 | Bloque | Peso | Criterios de finalización |
 | --- | ---: | --- |
@@ -21,6 +21,55 @@ Cada fila enumera criterios que se completan cuando se cumple toda su cobertura.
 | 7. Regresión y preparación | 5 % | Ejecutar regresión local y pruebas con API simulada. Completar y documentar las pruebas obligatorias en Forever. Preparar novedades ES/EN, documentación y ZIP definitivo. Verificar la sincronización del cierre en GitHub. |
 
 Una ruta completamente verificada requiere todos sus criterios aplicables, incluidas las pruebas obligatorias del cliente. Una ruta revisada localmente ya pasó por los conjuntos de reglas disponibles en todos los bloques de ruta, con sus hallazgos y dependencias de datos registrados. Una ruta en revisión ya tiene alguna auditoría ejecutada. Las pruebas preparadas para el cliente se registran como pendientes hasta observar sus resultados.
+
+### Progreso efectivo
+
+Para cada criterio, el auditor calcula `C = unidades certificadas ÷ unidades aplicables`. Para cada familia de comprobaciones con unidades aplicables calcula `F = comprobaciones superadas ÷ comprobaciones aplicables`. El efectivo del criterio es `máximo(C, (C + suma de F) ÷ (1 + número de familias))`. La media da el mismo peso a cada familia del criterio. La revisión integral `C` sigue siendo una comprobación obligatoria. Si `C < 1`, el efectivo del criterio queda por debajo de 1 aunque todas las familias de contraste estén completas. Un criterio sin familias tiene efectivo igual a su certificado.
+
+Cada bloque pondera el efectivo de sus criterios por la misma cantidad de unidades que usa el certificado. Los dos globales ponderan los siete bloques con los pesos de la tabla. El cálculo usa fracciones exactas. Se muestran hasta dos decimales y se reserva **100 %** para el valor exacto. La variación compara cortes medidos en puntos porcentuales. `—` indica que aún falta un corte comparable. Se conserva el último corte distinto cuando se repite la misma ejecución.
+
+| Bloque | Familias de cobertura efectiva |
+| --- | --- |
+| Estructura | Compilación, contrato y motor ejecutado con API simulada. |
+| Misiones | Identidad, títulos por idioma, nivel mínimo, requisitos acumulativos y alternativos, seguimientos, exclusiones, repetición, objetos y condiciones especiales. Cada combinación de ID activo y campo se mide una vez para las 47 rutas. |
+| Cartografía | UiMapID, destinos por misión y acción, destinos de PNJ y orientación, y pruebas por ruta de transiciones, interiores y puntos de vuelo. |
+| Experiencia | Umbrales de nivel, XP base por ID, estimación de combate por tramo, entregas con XP observada, saldo y bloqueos en Forever. |
+| Viajes | Nodos por facción, alternativas y desbloqueos por ruta, ventanas geométricas únicas y su medición de tiempos en Forever. |
+| Clase, raza y facción | Evidencia de clase, raza y facción por misión, verificación de la matriz y arranques, y pruebas por ruta de acceso, desbloqueos y traducciones. |
+| Regresión y preparación | Pruebas locales ejecutadas y superadas, casos del protocolo de cliente, borradores ES/EN y protocolo, validación del paquete y sincronización del cierre. |
+
+La evidencia **confirmada** supera la comprobación de la familia. Los títulos ES/EN y las coordenadas tienen dos comprobaciones por unidad, una de contraste y otra de confirmación. Un cotejo heredado que coincide, un título de Forever contrastado con una discrepancia visible o una posición cercana supera solo el contraste. Una inferencia o una comprobación pendiente queda registrada sin superar ninguna etapa. Las correcciones se reflejan en la concordancia acreditada y las pruebas superadas. Repetir una observación o corregir el mismo ID en varias rutas no añade verificaciones del dato compartido. Los pendientes agrupados del auditor y las unidades específicas del protocolo se presentan por separado.
+
+### Lectura automática del avance
+
+<!-- medicion-fase13:inicio -->
+
+**Progreso certificado global · 40,83 %**
+
+`████████░░░░░░░░░░░░`
+
+**Progreso efectivo global · 55,67 %**
+
+`███████████░░░░░░░░░`
+
+| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | — | 100 % | — |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | — | 52,33 % | — |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 45,04 % | — |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 51,58 % | — |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 47,32 % | — |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | — | 68,74 % | — |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | — | 37,5 % | — |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | — | 55,67 % | — |
+
+**Última actualización de la medición · 2026-11-26 17:48:42+01:00 (Madrid)**
+
+El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
+
+<!-- medicion-fase13:fin -->
+
+El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](auditor_fase13/progreso_medicion.json). La ejecución oficial con `--actualizar-progreso` regenera esta tabla y la de `PROGRESO_FASE13.md` después de la regresión. Las ejecuciones parciales no reemplazan el corte compartido. [Comando y registro de validaciones](auditor_fase13/README.md#actualizar-la-medición-de-la-fase).
 
 ## Secuencia de trabajo
 
