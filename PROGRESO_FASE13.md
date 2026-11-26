@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 07:55:23 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 08:02:50 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar los 27 IDs sin oferta confirmada y preparar el seguimiento de Forma acuática en las dos rutas Skyborne.
+**Tarea actual** · Contrastar y actualizar la cadena de Traición en Azshara y revisar la oferta de los demás IDs pendientes.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -225,21 +225,27 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Pasaron las **65 pruebas locales**. La auditoría de las 47 rutas quedó en **0 errores y 80 avisos**, 12 menos que en el corte anterior. Quedan 56 avisos de la entrega opcional previa a Kum'isha y 24 de perfil. Hay 301 grupos de investigación y 94 de cliente. El global por criterios completos sigue en **40,83 %**.
 - El inventario tiene 2.472 fichas y 2.466 IDs activos e incluye los 2.462 IDs originales. Hay evidencia de existencia para 2.441 IDs, título español para 2.269 y título inglés y XP base para 2.440.
 
-## Último bloque verificado · Herrería y rama de Klockmort
+## Herrería y rama de Klockmort · corte verificado
 
 - La ruta de enano y gnomo guerrero toma las notas de Furen, las entrega en Forjaz y marca dónde reunir el coral al pasar por Menethil. El encargo final de Klockmort da los guanteletes de mallas. La ruta humana conserva la cadena de Grimand.
 - Se eligió 85712 como variante opcional de Forja de armaduras en 17 rutas Horda. Cinco rutas de Guerrero y Paladín conservan 5301. Ambas variantes comparten PNJ, materiales y hechizo de recompensa. Quedan por comprobar la oferta efectiva y el requisito profesional de 85712. [Máscaras, datos y ubicaciones](auditor_fase13/FUENTES.md#herrería-y-rama-de-klockmort--26-de-noviembre-de-2026).
 - Pasaron las **67 pruebas locales**. Las 47 rutas registraron **0 errores y 56 avisos**, 24 menos que en el corte anterior. Todos corresponden al requisito opcional de Kum'isha. Quedan 301 grupos de investigación y 94 de cliente. El avance global por criterios completos sigue en **40,83 %**.
 - El inventario tiene 2.473 fichas, 2.467 IDs activos y los 2.462 IDs de 9.7.9. Hay evidencia de existencia para 2.442 IDs y título inglés y XP base para 2.441. La prioridad siguiente incluye los 27 IDs activos sin evidencia de oferta.
 
+## Último bloque verificado · Forma acuática de Skyborne
+
+- Las dos rutas Skyborne de druida muestran cómo iniciar Forma acuática desde nivel 16. Cada facción tiene sus cuatro misiones en el catálogo opcional. El requisito del paso anterior se comprueba antes de ofrecer el siguiente. La habilidad figura en ambas listas de hechizos.
+- Las notas ES/EN indican dónde recoger las dos mitades del colgante durante el recorrido. Los puntos de Argénteos son aproximados. Queda por probar en Forever la oferta, la duración del adorno y el tiempo de los desvíos. [Máscaras, cadenas y arcones](auditor_fase13/FUENTES.md#forma-acuática-de-skyborne--26-de-noviembre-de-2026).
+- Pasaron las **68 pruebas locales**, con una prueba nueva de nivel, clase, raza, facción, orden de las entregas y traducciones. Se repitió la auditoría de las 47 rutas con **0 errores, 56 avisos**, 301 grupos de investigación y 94 de cliente. El avance global por criterios completos sigue en **40,83 %**.
+
 ## Siguientes tareas
 
-1. Contrastar el desbloqueo de Forma acuática en ambas rutas Skyborne y cómo aprovechar los trayectos existentes.
+1. Verificar la continuación de Traición en Azshara. Las consultas 71037 enlazan 3505 → 91497 → 91500 → 91531. Contrastar objetivos y destinos antes de actualizar las 22 rutas Horda.
 2. Contrastar los 27 IDs activos sin evidencia de oferta, incluidos los nueve sin fila en QuestV2, las variantes heredadas y las condiciones de evento. Ampliar la cobertura de títulos y requisitos con los 569 historiales de misiones previas.
 3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `4ef7bc4`.
+La fase sigue abierta. El corte previo es `a372262`.
 
 ## Avance individual
 

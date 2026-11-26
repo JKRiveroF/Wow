@@ -37,6 +37,24 @@ GuiaAventurero_Datos.Otras = {
 return {
   opcionalesNuevas = {
 ]=] .. kumisha .. [=[
+    [26] = { n = "Una lección que aprender", nivel = 16, nivelMinimo = 16, clasesM = 1024, razas = 4294967296, wp = {
+      { a = "A", m = 1457, x = 35.4, y = 8.4, z = "Darnassus", n = "Recoger: Una lección que aprender (Mathrengyl Garroso)" },
+      { a = "T", m = 1450, x = 56.2, y = 30.6, z = "Claro de la Luna", n = "Entregar: Una lección que aprender (Dendrite Rafagaestelar)" },
+    } },
+    [29] = { n = "La prueba del lago", nivel = 16, nivelMinimo = 16, clasesM = 1024, razas = 4294967296, preT = { 26 }, wp = {
+      { a = "A", m = 1450, x = 56.2, y = 30.6, z = "Claro de la Luna", n = "Recoger: La prueba del lago (Dendrite Rafagaestelar)" },
+      { a = "C", m = 1450, x = 48, y = 47.1, z = "Claro de la Luna", n = "Recoge un adorno del fondo del lago y úsalo en el Santuario de Remulos antes de que caduque" },
+      { a = "T", m = 1450, x = 36.5, y = 40.1, z = "Claro de la Luna", n = "Entregar: La prueba del lago (Tajarri)" },
+    } },
+    [272] = { n = "La prueba del león marino", nivel = 16, nivelMinimo = 16, clasesM = 1024, razas = 4294967296, preT = { 29 }, wp = {
+      { a = "A", m = 1450, x = 36.5, y = 40.1, z = "Claro de la Luna", n = "Recoger: La prueba del león marino (Tajarri)" },
+      { a = "C", m = 1450, x = 36, y = 41.4, z = "Claro de la Luna", n = "Une las mitades de Costa Oscura y Páramos de Poniente en el Santuario de Remulos" },
+      { a = "T", m = 1450, x = 56.2, y = 30.6, z = "Claro de la Luna", n = "Entregar: La prueba del león marino (Dendrite Rafagaestelar)" },
+    } },
+    [5061] = { n = "Forma acuática", nivel = 16, nivelMinimo = 16, clasesM = 1024, razas = 4294967296, preT = { 272 }, wp = {
+      { a = "A", m = 1450, x = 56.2, y = 30.6, z = "Claro de la Luna", n = "Recoger: Forma acuática (Dendrite Rafagaestelar)" },
+      { a = "T", m = 1457, x = 35.4, y = 8.4, z = "Darnassus", n = "Entregar: Forma acuática (Mathrengyl Garroso)" },
+    } },
   },
 }
 ]=],
@@ -131,6 +149,24 @@ return {
   },
   opcionalesNuevasH = {
 ]=] .. kumisha .. [=[
+    [27] = { n = "Una lección que aprender", nivel = 16, nivelMinimo = 16, clasesM = 1024, razas = 8589934592, wp = {
+      { a = "A", m = 1456, x = 76.5, y = 27.2, z = "Cima del Trueno", n = "Recoger: Una lección que aprender (Turak Runatótem)" },
+      { a = "T", m = 1450, x = 56.2, y = 30.6, z = "Claro de la Luna", n = "Entregar: Una lección que aprender (Dendrite Rafagaestelar)" },
+    } },
+    [28] = { n = "La prueba del lago", nivel = 16, nivelMinimo = 16, clasesM = 1024, razas = 8589934592, preT = { 27 }, wp = {
+      { a = "A", m = 1450, x = 56.2, y = 30.6, z = "Claro de la Luna", n = "Recoger: La prueba del lago (Dendrite Rafagaestelar)" },
+      { a = "C", m = 1450, x = 48, y = 47.1, z = "Claro de la Luna", n = "Recoge un adorno del fondo del lago y úsalo en el Santuario de Remulos antes de que caduque" },
+      { a = "T", m = 1450, x = 36.5, y = 40.1, z = "Claro de la Luna", n = "Entregar: La prueba del lago (Tajarri)" },
+    } },
+    [30] = { n = "La prueba del león marino", nivel = 16, nivelMinimo = 16, clasesM = 1024, razas = 8589934592, preT = { 28 }, wp = {
+      { a = "A", m = 1450, x = 36.5, y = 40.1, z = "Claro de la Luna", n = "Recoger: La prueba del león marino (Tajarri)" },
+      { a = "C", m = 1450, x = 36, y = 41.4, z = "Claro de la Luna", n = "Une las mitades de Los Baldíos y el Bosque de Argénteos en el Santuario de Remulos" },
+      { a = "T", m = 1450, x = 56.2, y = 30.6, z = "Claro de la Luna", n = "Entregar: La prueba del león marino (Dendrite Rafagaestelar)" },
+    } },
+    [31] = { n = "Forma acuática", nivel = 16, nivelMinimo = 16, clasesM = 1024, razas = 8589934592, preT = { 30 }, wp = {
+      { a = "A", m = 1450, x = 56.2, y = 30.6, z = "Claro de la Luna", n = "Recoger: Forma acuática (Dendrite Rafagaestelar)" },
+      { a = "T", m = 1456, x = 76.5, y = 27.2, z = "Cima del Trueno", n = "Entregar: Forma acuática (Turak Runatótem)" },
+    } },
     [93159] = { n = "The Strange Hermit", nivel = 13, nueva = true, wp = { { a = "A", m = 2521, n = "Recoger: The Strange Hermit (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" }, { a = "T", m = 2521, n = "Entregar: The Strange Hermit (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" } } },
     [93160] = { n = "The Forest's Bounty", nivel = 13, nueva = true, pre1 = { 93159 }, wp = { { a = "A", m = 2521, n = "Recoger: The Forest's Bounty (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" }, { a = "C", m = 2521, n = "Objetivo: The Forest's Bounty", x = 58.6, y = 38.8, z = "Isla Zephras" }, { a = "T", m = 2521, n = "Entregar: The Forest's Bounty (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" } } },
     [93172] = { n = "Free the Hollows", nivel = 13, nueva = true, pre1 = { 93159 }, wp = { { a = "A", m = 2521, n = "Recoger: Free the Hollows (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" }, { a = "C", m = 2521, n = "Objetivo: Free the Hollows", x = 58.2, y = 32.1, z = "Isla Zephras" }, { a = "T", m = 2521, n = "Entregar: Free the Hollows (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" } } },

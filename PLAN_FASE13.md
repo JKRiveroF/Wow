@@ -41,6 +41,7 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Colocar la cadena opcional de Kum'isha y probar los seis pasos previos en ambos catálogos con Lua.
 - [x] Corregir las variantes acuáticas de druida, añadir el encargo previo de Forma felina y completar la cadena de Ivar.
 - [x] Ajustar la rama de Klockmort para enano y gnomo, y distinguir las dos variantes documentadas de Forja de armaduras de la Horda.
+- [x] Incorporar de forma opcional las dos cadenas de Forma acuática de Skyborne y señalar las visitas de ruta donde recoger las mitades.
 - [ ] Revisar los 27 IDs activos sin evidencia de oferta.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
 - [x] Corregir 26 encargos de canje, reputación, eventos y JcJ que aparecían como refuerzos de XP.

@@ -73,6 +73,7 @@ def _route_without_reviewed_edits(source):
     original_alterac = r'm = 1459, z = "(?:|Alterac Valley|Valle de Alterac)"'
     obsolete_objective = r'\{ m = 1444, z = "Feralas", x = 44\.7, y = 37\.6, n = "[^"]+", q = 3520, a = "C" \}, '
     klockmort_route = 'id = "enano_gnomo_guerrero"' in source
+    skyborne_druid = bool(re.search(r'id = "skyborne_(?:a_)?druida"', source))
 
     def restore_title(match):
         changed = ES_TITLES.get(match[1])
@@ -83,6 +84,10 @@ def _route_without_reviewed_edits(source):
 
     lines = []
     for line in source.splitlines(keepends=True):
+        if skyborne_druid and re.search(r'^  \{ n = 16, id = 1066, origen = "mision", mision = (31|5061),', line):
+            continue
+        if skyborne_druid and 'nota = "Forma acuática opcional, desde nivel 16:' in line:
+            line = re.sub(r', nota = "Forma acuática opcional, desde nivel 16:[^"]*"', "", line)
         for quest in set(ROUTE_QUEST_WAYPOINT.findall(line)).intersection(ES_TITLES):
             title = ES_TITLES[quest]
             line = line.replace(f"[{title['titulo']}]", f"[{title['anterior']}]")
