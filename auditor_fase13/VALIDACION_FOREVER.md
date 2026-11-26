@@ -28,7 +28,18 @@ Los resultados de las pruebas simuladas quedan en las pruebas del auditor. El es
 
 Compara el libro de hechizos antes de aceptar y tras aceptar y entregar el encargo. En cazador, comprueba Llamar y Retirar mascota al entregar la tercera doma, y Alimentar, Revivir y Adiestramiento tras la entrega final. En pícaro, anota el rango inicial de Venenos y la aparición de la receta 8681 al entregar 2359 o 2480.
 
-Para Teletransporte a Claro de la Luna (18960), observa el libro antes y después de hablar con el instructor, tras entregar el encargo previo y tras aceptar 5921, 5922, 94913 o 94914. En 90902 comprueba Luz Sagrada (635) tras aceptar, antes de empezar a curar, y de nuevo tras la entrega. En 7463, 9364 y 94505 anota qué habilidad aparece tras la entrega y su ID. [Distinción y fuentes](FUENTES.md#aprendizaje-por-misión--26-de-noviembre-de-2026).
+| Misión declarada | Hechizo | Vía | Evidencia pendiente |
+| ---: | ---: | --- | --- |
+| 5921 | 18960 | Cliente | Con elfo de la noche, revisa el libro antes y después del instructor, de entregar 5925 y de aceptar 5921. |
+| 5922 | 18960 | Cliente | Con tauren, revisa el libro antes y después del instructor, de entregar 5928 y de aceptar 5922. |
+| 7463 | 10140 | Cliente | Tras la entrega, confirma el ID que aprende el mago y que el efecto se aplica al personaje. |
+| 9364 | 28272 | Cliente | Tras la entrega, confirma el ID que aprende el mago y que el efecto se aplica al personaje. |
+| 90902 | 635 | Cliente | Comprueba Luz Sagrada al aceptar, antes de empezar a curar y tras la entrega. |
+| 94505 | 5394 | Cliente | Comprueba el libro del chamán antes de aceptar y tras la entrega. Registra el ID aprendido. |
+| 94911 | 18960 | Cliente | Con Skyborne Horda, revisa el libro al hablar con el instructor, al entregar 94911 y al aceptar 94913. |
+| 94912 | 18960 | Cliente | Con Skyborne Alianza, revisa el libro al hablar con el instructor, al entregar 94912 y al aceptar 94914. |
+
+Registra el momento del aprendizaje y el ID observado. [Distinción y fuentes](FUENTES.md#aprendizaje-por-misión--26-de-noviembre-de-2026).
 
 ## Matriz de oferta pendiente por misión
 

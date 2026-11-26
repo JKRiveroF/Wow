@@ -31,7 +31,10 @@ CLIENT_TASKS = {
     "5.cliente": ("5.tiempos_secuencias",),
     "6.cliente": ("6.acceso", "6.desbloqueos", "6.traducciones"),
 }
-CLIENT_REVIEWS = {"5.ahorro", "7.caso_cliente"} | {part for parts in CLIENT_TASKS.values() for part in parts}
+CLIENT_REVIEWS = {"5.ahorro", "6.aprendizaje", "7.caso_cliente"} | {part for parts in CLIENT_TASKS.values() for part in parts}
+TWO_STAGE_FIELDS = {"nombre_es", "nombre_en", "razas", "facciones"}
+LEARNING_CONFIRMED = {"efecto_de_aprendizaje", "aprendizaje_por_habilidad"}
+LEARNING_CONTRASTED = LEARNING_CONFIRMED | {"indicio_de_recompensa", "destino_de_aprendizaje_pendiente"}
 
 
 def family(name, states, contrast=False):
@@ -53,7 +56,7 @@ def criterion(key, closed, parts=()):
     cert = Fraction(complete, total) if total else Fraction()
     # La revisión integral es una comprobación expresa y participa junto a las familias.
     ratios = [cert, *(Fraction(p["comprobaciones_superadas"], p["comprobaciones_aplicables"]) for p in parts)]
-    effective = max(cert, sum(ratios) / len(ratios))
+    effective = sum(ratios) / len(ratios)
     return {"id": key, "completos": complete, "aplicables": total, "efectivo": _pair(effective), "familias": parts}
 
 
@@ -101,6 +104,11 @@ def _field_state(mission, field, conditional):
         if match["titulo_guia_cotejado"] and not match["titulos_guia_distintos"]:
             return "parcial"
         return "inferencia"
+    if field in ("razas", "facciones"):
+        samples = evidence.get("acceso_observado", {}).get("valor", [])
+        token = "raza" if field == "razas" else "faccion"
+        if any(row.get(token) for row in samples):
+            return "parcial"
     related = {"prerrequisitos": "misiones_previas_observadas", "seguimientos": "siguiente_sugerida"}
     if related.get(field) in evidence or any(row.get("campo") == field for row in mission["indicios"]):
         return "inferencia"
@@ -188,6 +196,16 @@ def _window_id(group):
     return json.dumps([group["mapa"], *points], separators=(",", ":"))
 
 
+def _learning_state(claim, records, client_pairs):
+    pair = f"{claim['mision']}/{claim['hechizo']}"
+    states = set(claim["rutas_por_estado"])
+    if (states and states <= LEARNING_CONFIRMED) or ("6.aprendizaje", pair) in records:
+        return "confirmada"
+    if states & LEARNING_CONTRASTED:
+        return "parcial"
+    return "cliente" if pair in client_pairs else "investigacion"
+
+
 def measure(routes, findings, catalog, inventory, flights, clustering, regression, root, records):
     missions = [row for row in inventory["misiones"] if row["rutas"]]
     routes_by_id = {route["id"]: route for route in routes if route.get("id")}
@@ -214,8 +232,18 @@ def measure(routes, findings, catalog, inventory, flights, clustering, regressio
 
     # La matriz del protocolo delimita los casos de oferta que dependen de contenido del cliente.
     client_path = documents / "VALIDACION_FOREVER.md"
-    conditional_ids = {int(q) for q in re.findall(r"^\| (\d+) \| \d+ \| Cliente ",
-                                                  client_path.read_text(encoding="utf-8"), re.M)}
+    protocol = client_path.read_text(encoding="utf-8")
+    conditional_ids = {int(q) for q in re.findall(r"^\| (\d+) \| \d+ \| Cliente [^|]",
+                                                  protocol, re.M)}
+    client_learning = {f"{quest}/{spell}" for quest, spell in
+                       re.findall(r"^\| (\d+) \| (\d+) \| Cliente \|", protocol, re.M)}
+    learning = inventory.get("aprendizaje_en_rutas", {}).get("declaraciones", [])
+    learning_states = [_learning_state(row, records, client_learning) for row in learning]
+    learning_family = family("Aprendizaje por misión y hechizo", learning_states, contrast=True)
+    if learning_family:
+        learning_family["confirmaciones_pendientes_cliente"] = sum(
+            state != "confirmada" and f"{row['mision']}/{row['hechizo']}" in client_learning
+            for row, state in zip(learning, learning_states))
     disputed_titles = {(row["mision"], "nombre_es" if row["codigo"] == "MISION_TITULO_ES_DISTINTO" else "nombre_en")
                        for row in by_block[2] if row.get("mision") and row["codigo"] in
                        ("MISION_TITULO_ES_DISTINTO", "MISION_TITULO_EN_DISTINTO")}
@@ -228,7 +256,7 @@ def measure(routes, findings, catalog, inventory, flights, clustering, regressio
 
     def mission_fields(*fields):
         return [family(field, (field_state(mission, field) for mission in missions),
-                       contrast=field in ("nombre_es", "nombre_en")) for field in fields]
+                       contrast=field in TWO_STAGE_FIELDS) for field in fields]
 
     def mission_reviews(key, fields, codes):
         unresolved = {route for mission in missions for route in mission["rutas"]
@@ -325,7 +353,7 @@ def measure(routes, findings, catalog, inventory, flights, clustering, regressio
         criterion("6.local", succeeds(6, {"PERFIL_FILTRO_RACIAL_INALCANZABLE", "PERFIL_RAMA_DE_TALENTO_INVALIDA"})),
         criterion("6.perfiles", succeeds(6, {row["codigo"] for row in by_block[6]
                                              if row["codigo"].startswith(("ARRANQUE_", "PERFIL_MATRIZ_", "PERFIL_NO_JUGABLE_", "PERFIL_SIN_RUTA"))})),
-        criterion("6.cliente", profile_client, (*profile_parts, *mission_fields("clases", "razas", "facciones"))),
+        criterion("6.cliente", profile_client, (*profile_parts, *mission_fields("clases", "razas", "facciones"), learning_family)),
         criterion("7.regresion", [tests > 0 and passed == tests and regression.get("correcta") is True],
                   (family("Pruebas locales", (_state(i < passed) for i in range(tests))),)),
         criterion("7.cliente", [bool(case_checks) and all(case_checks)], (

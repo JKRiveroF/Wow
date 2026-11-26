@@ -4,8 +4,8 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from progreso import (BLOCKS, PREVIOUS_CERTIFIED, _coverage, _global, _window_id, compare, criterion, family,
-                      measure, percentage, render, update_section, validate_records)
+from progreso import (BLOCKS, PREVIOUS_CERTIFIED, _coverage, _field_state, _global, _learning_state, _window_id,
+                      compare, criterion, family, measure, percentage, render, update_section, validate_records)
 
 
 class ProgressTests(unittest.TestCase):
@@ -23,6 +23,29 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(data["efectivo"], [3, 4])
         self.assertEqual(criterion("2.identidad", [True, True])["efectivo"], [1, 1])
         self.assertEqual(percentage([999999, 1000000]), "99,99 %")
+
+    def test_pending_family_blocks_full_effective_progress_even_with_review_recorded(self):
+        coverage = family("Aprendizaje", ("confirmada", "cliente"), contrast=True)
+        data = criterion("6.cliente", [True], (coverage,))
+        self.assertEqual([data["completos"], data["aplicables"]], [1, 1])
+        self.assertEqual(data["efectivo"], [3, 4])
+
+    def test_positive_profile_observation_only_passes_the_contrast_stage(self):
+        mission = {"evidencia": {"acceso_observado": {"valor": [{"raza": "Skyborne", "faccion": "Horde"}]}},
+                   "indicios": []}
+        self.assertEqual(_field_state(mission, "razas", False), "parcial")
+        self.assertEqual(_field_state(mission, "facciones", False), "parcial")
+        self.assertEqual(_field_state(mission, "clases", False), "investigacion")
+        mission["evidencia"]["razas"] = {"valor": ["Skyborne"]}
+        self.assertEqual(_field_state(mission, "razas", False), "confirmada")
+
+    def test_learning_keeps_one_pair_open_until_all_its_route_profiles_are_resolved(self):
+        claim = {"mision": 1, "hechizo": 2, "rutas_por_estado": {"pendiente": ["a", "b"]}}
+        self.assertEqual(_learning_state(claim, set(), set()), "investigacion")
+        self.assertEqual(_learning_state(claim, set(), {"1/2"}), "cliente")
+        claim["rutas_por_estado"]["aprendizaje_por_habilidad"] = ["c"]
+        self.assertEqual(_learning_state(claim, set(), {"1/2"}), "parcial")
+        self.assertEqual(_learning_state(claim, {("6.aprendizaje", "1/2")}, {"1/2"}), "confirmada")
 
     def test_weights_keep_exact_certified_baseline(self):
         data = {str(i): {"peso": weight, "certificado": certified, "efectivo": [1, 1]}

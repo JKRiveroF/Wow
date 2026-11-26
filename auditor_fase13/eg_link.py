@@ -64,7 +64,7 @@ EXTRA_HASHES = {
 EG_FIELDS = (
     "nivel_mision", "mascara_racial", "siguiente_sugerida", "area_mision", "objetivos_servidor",
     "objetos_por_botin", "habilidades_recompensa", "aprendizaje_recompensa", "componentes_xp", "entregas_observadas",
-    "misiones_previas_observadas", "escaneo_faccion", "opciones_dialogo_observadas", "usos_objetos_observados",
+    "misiones_previas_observadas", "escaneo_faccion", "acceso_observado", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
     "tipo_mision", "limite_segundos", "interlocutores_observados", "posiciones_observadas", "progreso_observado",
 )
@@ -76,6 +76,7 @@ QUEST_INFO_HASH = "06e1f7250d8ad8d042516ebae1fa4a78fa9307cab0fe62daf19a73331518f
 QUEST_INFO_SOURCE = f"https://wago.tools/db2/QuestInfo/csv?build={XP_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
 RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
+PLAYABLE_PROFILES = frozenset(RACES.values())
 
 
 def _source(build, dataset):
@@ -293,26 +294,35 @@ def _import_scan(missions, data, source):
         _record(missions, quest_id, {"repetible": True}, source)
 
 
-def _observed_factions(entry, profiles):
-    """Acredita las dos facciones con entregas de una ficha de acceso estable."""
-    if not profiles or "facciones" in entry:
-        return None
+def _import_access(missions, quest_id, profiles):
+    """Conserva los perfiles observados con los mismos datos de acceso que la última consulta."""
+    if not profiles:
+        return
+    entry = missions[quest_id]
     latest = max(profiles)
     reference = profiles[latest]
-    builds = {}
+    observed = {}
     for sample in entry.get("entregas_observadas", []):
-        faction, build = sample.get("faction"), sample.get("build")
+        faction, race, build = sample.get("faction"), sample.get("race"), sample.get("build")
         if (faction in ("Alliance", "Horde") and profiles.get(build) == reference
                 and sample.get("sources", 0) > 0 and type(sample.get("level")) is int
                 and sample["level"] >= reference[1]):
-            builds[faction] = max(build, builds.get(faction, build))
-    if builds.keys() != {"Alliance", "Horde"}:
-        return None
-    sources = [_source(build, "turn_ins") for build in sorted(set(builds.values()), reverse=True)]
-    detail_builds = sorted({latest, *builds.values()}, reverse=True)
+            # Una entrega sin raza identificable sigue acreditando su facción observada.
+            key = faction, race if (faction, race) in PLAYABLE_PROFILES else ""
+            observed[key] = max(build, observed.get(key, build))
+    if not observed:
+        return
+    builds = sorted(set(observed.values()), reverse=True)
+    sources = [_source(build, "turn_ins") for build in builds]
+    detail_builds = sorted({latest, *builds}, reverse=True)
     links = [source["fuente"] for source in sources[1:]]
     links.extend(_source(build, "quests.enUS")["fuente"] for build in detail_builds)
-    return {**sources[0], "metodo": "entregas_perfil_estable", "fuentes_adicionales": links}
+    source = {**sources[0], "metodo": "entregas_perfil_estable", "fuentes_adicionales": links}
+    access = [{"faccion": faction, "build": build, **({"raza": race} if race else {})}
+              for (faction, race), build in sorted(observed.items())]
+    _record(missions, quest_id, {"acceso_observado": access}, source)
+    if "facciones" not in entry and {row["faccion"] for row in access} == {"Alliance", "Horde"}:
+        _record(missions, quest_id, {"facciones": ["Alliance", "Horde"]}, source)
 
 
 def import_eg_link(directory):
@@ -347,8 +357,7 @@ def import_eg_link(directory):
         elif dataset == "quest_scan":
             _import_scan(missions, data, source)
     for quest_id, entry in missions.items():
-        if qualified := _observed_factions(entry, profiles.get(quest_id)):
-            _record(missions, quest_id, {"facciones": ["Alliance", "Horde"]}, qualified)
+        _import_access(missions, quest_id, profiles.get(quest_id))
         if processes := learning.get(entry.get("habilidades_recompensa", {}).get("aplicada")):
             source = {**entry["evidencia"]["habilidades_recompensa"], "tabla": EFFECT_SOURCE}
             if processes["por_habilidad"]:

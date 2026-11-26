@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-26T20:24:15+01:00",
+  "actualizado": "2026-11-26T22:59:35+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -894,8 +894,8 @@
           141
         ],
         "efectivo": [
-          8909,
-          12957
+          5166631,
+          6989376
         ],
         "criterios": [
           {
@@ -923,8 +923,8 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              271,
-              4319
+              507047,
+              2329792
             ],
             "familias": [
               {
@@ -996,15 +996,16 @@
                 "unidades": 2468,
                 "estados": {
                   "confirmada": 484,
-                  "parcial": 0,
-                  "inferencia": 43,
-                  "investigacion": 1941,
+                  "parcial": 878,
+                  "inferencia": 8,
+                  "investigacion": 1098,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 484,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_superadas": 1846,
+                "comprobaciones_aplicables": 4936,
                 "etapas": {
-                  "confirmadas": 484
+                  "confirmadas": 484,
+                  "contrastadas": 1362
                 }
               },
               {
@@ -1012,16 +1013,35 @@
                 "unidades": 2468,
                 "estados": {
                   "confirmada": 509,
-                  "parcial": 0,
-                  "inferencia": 43,
-                  "investigacion": 1916,
+                  "parcial": 863,
+                  "inferencia": 8,
+                  "investigacion": 1088,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 509,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_superadas": 1881,
+                "comprobaciones_aplicables": 4936,
                 "etapas": {
-                  "confirmadas": 509
+                  "confirmadas": 509,
+                  "contrastadas": 1372
                 }
+              },
+              {
+                "nombre": "Aprendizaje por misión y hechizo",
+                "unidades": 118,
+                "estados": {
+                  "confirmada": 110,
+                  "parcial": 4,
+                  "inferencia": 0,
+                  "investigacion": 0,
+                  "cliente": 4
+                },
+                "comprobaciones_superadas": 224,
+                "comprobaciones_aplicables": 236,
+                "etapas": {
+                  "confirmadas": 110,
+                  "contrastadas": 114
+                },
+                "confirmaciones_pendientes_cliente": 8
               }
             ]
           }
@@ -1053,18 +1073,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 101,
+                "unidades": 105,
                 "estados": {
-                  "confirmada": 101,
+                  "confirmada": 105,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 101,
-                "comprobaciones_aplicables": 101,
+                "comprobaciones_superadas": 105,
+                "comprobaciones_aplicables": 105,
                 "etapas": {
-                  "confirmadas": 101
+                  "confirmadas": 105
                 }
               }
             ]
@@ -1146,13 +1166,13 @@
         120
       ],
       "efectivo": [
-        210985706857,
-        376467535360
+        1794690747817,
+        3173083512320
       ]
     },
     "regresion": {
-      "ejecutadas": 101,
-      "superadas": 101,
+      "ejecutadas": 105,
+      "superadas": 105,
       "correcta": true
     },
     "casos_cliente": [
@@ -1243,8 +1263,8 @@
         1
       ],
       "efectivo": [
-        0,
-        1
+        842011,
+        16308544
       ]
     },
     "7": {
@@ -1263,8 +1283,8 @@
         1
       ],
       "efectivo": [
-        0,
-        1
+        842011,
+        163085440
       ]
     }
   }

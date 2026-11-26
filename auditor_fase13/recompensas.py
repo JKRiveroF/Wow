@@ -69,6 +69,8 @@ def _status(entry, spell, class_mask):
         if any(row["hechizo"] == spell and (not row["mascara_clase"] or row["mascara_clase"] & class_mask)
                for row in learning["por_habilidad"]):
             return "aprendizaje_por_habilidad"
+        if spell in learning.get("destino_sin_declarar", []):
+            return "destino_de_aprendizaje_pendiente"
     if _confirmed(entry, "habilidades_recompensa"):
         reward = entry["habilidades_recompensa"]
         if spell == reward.get("aplicada") or spell in _list(reward.get("mostradas")):

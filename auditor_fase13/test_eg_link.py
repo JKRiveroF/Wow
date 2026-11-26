@@ -2,8 +2,8 @@
 
 import unittest
 
-from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_npcs, _import_objectives,
-                     _import_scan, _import_turn_ins, _observed_factions, _quest_type, _quest_values, _race_fields, _source)
+from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_access, _import_npcs, _import_objectives,
+                     _import_scan, _import_turn_ins, _quest_type, _quest_values, _race_fields, _source)
 from inventario_misiones import _coordinate_result
 from vuelos_observados import link_flights
 
@@ -32,12 +32,29 @@ class EGLinkTests(unittest.TestCase):
         profile = ("Quest", 25, "ffffffffffffffff")
         samples = [{"faction": "Alliance", "build": late, "level": 27, "sources": 1},
                    {"faction": "Horde", "build": early, "level": 25, "sources": 1}]
-        entry = {"entregas_observadas": samples}
-        evidence = _observed_factions(entry, {early: profile, late: profile})
+        def import_samples(previous, **fields):
+            entry = {"entregas_observadas": samples, "evidencia": {}, **fields}
+            _import_access({"1": entry}, "1", {early: previous, late: profile})
+            return entry
+
+        entry = import_samples(profile)
+        self.assertEqual(entry["facciones"], ["Alliance", "Horde"])
+        evidence = entry["evidencia"]["facciones"]
         self.assertEqual(evidence["metodo"], "entregas_perfil_estable")
         self.assertIn(f"/{early}/turn_ins.json", evidence["fuentes_adicionales"][0])
-        self.assertIsNone(_observed_factions(entry, {early: ("Quest", 26, profile[2]), late: profile}))
-        self.assertIsNone(_observed_factions({**entry, "facciones": ["Alliance"]}, {early: profile, late: profile}))
+        changed = import_samples(("Quest", 26, profile[2]))
+        self.assertNotIn("facciones", changed)
+        self.assertEqual(changed["acceso_observado"], [{"faccion": "Alliance", "build": late}])
+        self.assertEqual(import_samples(profile, facciones=["Alliance"])["facciones"], ["Alliance"])
+
+    def test_observed_profiles_keep_positive_evidence_once_and_leave_classes_open(self):
+        build = "1.60.1.71139"
+        valid = {"build": build, "faction": "Horde", "race": "Skyborne", "level": 25, "sources": 1}
+        entry = {"evidencia": {}, "entregas_observadas": [valid, valid, {**valid, "level": 24},
+                 {**valid, "race": "Scourge", "sources": 0}]}
+        _import_access({"1": entry}, "1", {build: ("Quest", 25, "ffffffffffffffff")})
+        self.assertEqual(entry["acceso_observado"], [{"faccion": "Horde", "raza": "Skyborne", "build": build}])
+        self.assertTrue({"facciones", "razas", "clases"}.isdisjoint(entry))
 
     def test_quest_info_distinguishes_elite_dungeon_and_unclassified_quests(self):
         table = {1: "Elite", 41: "PvP", 62: "Raid", 81: "Dungeon"}

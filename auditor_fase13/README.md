@@ -23,7 +23,7 @@ auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/auditar.py --trazas-qu
 
 El procedimiento reutiliza el inventario de misiones, posiciones, vuelos y agrupamientos de esa misma ejecución. El JSON versionado conserva las fracciones exactas, los numeradores y denominadores de las familias, los estados de evidencia y las diferencias con el último corte medido. [Fórmula y criterios](../PLAN_FASE13.md#criterios-de-medición).
 
-Las comprobaciones realizadas en Forever se pueden añadir a `auditor_fase13/validaciones_progreso.json` o indicar con `--validaciones`. El archivo contiene una lista JSON. Usa el ID de ruta como `unidad` para los criterios de ruta, el título de la fila del protocolo para `7.caso_cliente`, y la clave publicada en `ventanas_agrupamiento` para `5.ahorro`. Las revisiones `7.paquete` y `7.sincronizacion` usan `final`. Cada resultado cita la sesión o fichero que documenta el alcance de la comprobación. Los resultados `fallo` y `pendiente` quedan abiertos. Registra como `verificado` cada comprobación completa según el plan, con la compilación en las pruebas de cliente. [Protocolo de Forever](VALIDACION_FOREVER.md).
+Las comprobaciones realizadas en Forever se pueden añadir a `auditor_fase13/validaciones_progreso.json` o indicar con `--validaciones`. El archivo contiene una lista JSON. Usa el ID de ruta como `unidad` para los criterios de ruta, el título de la fila del protocolo para `7.caso_cliente`, la clave publicada en `ventanas_agrupamiento` para `5.ahorro` y el par `misión/hechizo` para `6.aprendizaje`, por ejemplo `7463/10140`. Las revisiones `7.paquete` y `7.sincronizacion` usan `final`. Cada resultado cita la sesión o fichero que documenta el alcance de la comprobación. Los resultados `fallo` y `pendiente` quedan abiertos. Registra como `verificado` cada comprobación completa según el plan, con la compilación en las pruebas de cliente. Para un par de aprendizaje, incluye evidencia de los perfiles de ruta que sigan pendientes. [Protocolo de Forever](VALIDACION_FOREVER.md).
 
 | Comprobación en Forever | Claves de registro |
 | --- | --- |
@@ -31,6 +31,7 @@ Las comprobaciones realizadas en Forever se pueden añadir a `auditor_fase13/val
 | Saldo y bloqueos de XP por tramo | `4.saldo`, `4.bloqueos` |
 | Tiempos y secuencias de viaje, medición de agrupamientos | `5.tiempos_secuencias`, `5.ahorro` |
 | Acceso, desbloqueos y traducciones por perfil | `6.acceso`, `6.desbloqueos`, `6.traducciones` |
+| Confirmación del aprendizaje de un hechizo concreto | `6.aprendizaje` |
 | Casos transversales de regresión | `7.caso_cliente` |
 
 Las revisiones de investigación usan `2.identidad`, `2.dependencias`, `2.especiales`, `3.posiciones`, `4.estimacion`, `5.transporte`, `5.desbloqueos` y `5.alternativas`. Cita la ficha de contraste y completa su evidencia en el catálogo antes de cerrar un criterio. Para las unidades sin aplicación, la revisión debe justificarlo en la evidencia citada.
@@ -77,7 +78,9 @@ El mismo patrón permite incorporar `quests.enUS` y `turn_ins` de 70790, 70840, 
 
 `interlocutores_observados` reúne iniciadores (`A`) y receptores (`T`) por misión, con el tipo de entidad, su ID y la compilación. Las coordenadas y los requisitos de la misión se consultan en sus propios campos. [Iniciadores y entregas](FUENTES.md#iniciadores-y-entregas-observados--26-de-noviembre-de-2026).
 
-Con `--datos-eg`, guarda `SpellEffect-1.60.1.71139.csv` y `SkillLineAbility-1.60.1.71139.csv` en el mismo caché para contrastar las habilidades. El auditor verifica ambos SHA-256 y registra las pruebas en `aprendizaje_recompensa`. El apartado `aprendizaje_en_rutas` compara las declaraciones de las rutas una vez por par de misión y hechizo. Distingue el efecto directo, el aprendizaje por rango, el indicio de recompensa y los casos pendientes. [Fuentes y criterios](FUENTES.md#aprendizaje-por-misión--26-de-noviembre-de-2026).
+`acceso_observado` conserva una entrega representativa por combinación de raza y facción con ficha estable. Una observación de acceso cuenta como contraste parcial del campo correspondiente. Las restricciones explícitas y las comprobaciones de cliente se registran por separado. Las muestras carecen de clase.
+
+Con `--datos-eg`, guarda `SpellEffect-1.60.1.71139.csv` y `SkillLineAbility-1.60.1.71139.csv` en el mismo caché para contrastar las habilidades. El auditor verifica ambos SHA-256 y registra las pruebas en `aprendizaje_recompensa`. El apartado `aprendizaje_en_rutas` compara las declaraciones de las rutas una vez por par de misión y hechizo. Distingue el efecto directo, el aprendizaje por rango, el indicio de recompensa, el efecto con destino sin declarar y los casos pendientes. El efectivo acredita el par completo cuando existe evidencia para todos sus perfiles o una validación documentada en Forever. [Fuentes y criterios](FUENTES.md#aprendizaje-por-misión--26-de-noviembre-de-2026).
 
 El [CSV QuestInfo de Forever 1.60.1.71091](https://wago.tools/db2/QuestInfo/csv?build=1.60.1.71091) es opcional. Guárdalo como `QuestInfo-1.60.1.71091.csv` junto a los JSON de Efficient Games. Con él, el auditor identifica las categorías expresas de élite, mazmorra, banda y JcJ. Los límites de tiempo se leen de las consultas de misión cuando incluyen ese dato.
 

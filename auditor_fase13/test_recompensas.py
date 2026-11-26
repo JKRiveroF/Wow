@@ -23,17 +23,17 @@ class RewardTests(unittest.TestCase):
             {"hechizo": 8681, "linea": 40, "rango": 1, "mascara_clase": 8}]}})
 
     def test_route_audit_deduplicates_and_distinguishes_reward_display_from_learning(self):
-        entries = [{"origen": "mision", "mision": 1, "id": spell} for spell in (2, 3, 4, 5)]
+        entries = [{"origen": "mision", "mision": 1, "id": spell} for spell in (2, 3, 4, 5, 6)]
         a = {"id": "a", "clase": "ROGUE", "hechizosExtra": entries}
         b = {**a, "id": "b"}
         c = {**a, "id": "c", "clase": "HUNTER"}
-        catalog = {"misiones": {"1": {"estado": "forever", "fuente": "tabla", "habilidades_recompensa": {"mostradas": [4]},
+        catalog = {"misiones": {"1": {"estado": "forever", "fuente": "tabla", "habilidades_recompensa": {"mostradas": [6]},
                                        "aprendizaje_recompensa": {"directo": [2], "destino_sin_declarar": [4],
                                                                   "por_habilidad": [{"hechizo": 3, "mascara_clase": 8}]}}}}
         result = audit_learning([a, b], catalog)
-        self.assertEqual(result["total"], 4)
+        self.assertEqual(result["total"], 5)
         self.assertEqual(result["resumen"], {"efecto_de_aprendizaje": 1, "aprendizaje_por_habilidad": 1,
-                                             "indicio_de_recompensa": 1, "pendiente": 1})
+                                             "destino_de_aprendizaje_pendiente": 1, "pendiente": 1, "indicio_de_recompensa": 1})
         self.assertEqual(result["declaraciones"][0]["rutas_por_estado"], {"efecto_de_aprendizaje": ["a", "b"]})
         mixed = audit_learning([a, c], catalog)
         self.assertEqual(mixed["declaraciones"][1]["rutas_por_estado"], {"aprendizaje_por_habilidad": ["a"], "pendiente": ["c"]})
