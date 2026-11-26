@@ -158,6 +158,9 @@ def load_catalog(path=None, trace_directory=None, quest_directory=None, eg_direc
         observations = import_eg_link(eg_directory)
         for quest, entry in observations["misiones"].items():
             current = catalog.get("misiones", {}).get(quest, {})
+            faction_evidence = entry["evidencia"].get("facciones", {})
+            if "facciones" in current and faction_evidence.get("metodo") == "entregas_perfil_estable":
+                del entry["facciones"], entry["evidencia"]["facciones"]
             if "xp_calculada" in entry and "xp" not in current:
                 entry["xp"] = entry["xp_calculada"]
                 entry["evidencia"]["xp"] = entry["evidencia"]["xp_calculada"]

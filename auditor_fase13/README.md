@@ -73,6 +73,8 @@ Las siete instantáneas de misión de la [revisión 71139 de Efficient Games](ht
 
 Los archivos `quest_scan` y `npcs` de 70790, 70862 y 70888 son opcionales y usan el mismo patrón. Amplían las muestras de PNJ y el historial de consultas sin respuesta. [Instantáneas y alcance](FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).
 
+El mismo patrón permite incorporar `quests.enUS` y `turn_ins` de 70790, 70840, 70862 y 70888, `npcs` y `quest_scan` de 70840, y `npcs` y `turn_ins` de 70938. Las entregas guardan la compilación y el contexto, incluido el talento Legado cuando se observó. Para acreditar ambas facciones, el auditor exige una entrega de cada una con título, nivel mínimo y máscara racial del servidor iguales a los de la ficha más reciente. Conserva las fuentes de las dos entregas y las fichas comparadas. [Datos y límites](FUENTES.md#entregas-y-facciones-de-las-compilaciones-iniciales--26-de-noviembre-de-2026).
+
 `interlocutores_observados` reúne iniciadores (`A`) y receptores (`T`) por misión, con el tipo de entidad, su ID y la compilación. Las coordenadas y los requisitos de la misión se consultan en sus propios campos. [Iniciadores y entregas](FUENTES.md#iniciadores-y-entregas-observados--26-de-noviembre-de-2026).
 
 El [CSV QuestInfo de Forever 1.60.1.71091](https://wago.tools/db2/QuestInfo/csv?build=1.60.1.71091) es opcional. Guárdalo como `QuestInfo-1.60.1.71091.csv` junto a los JSON de Efficient Games. Con él, el auditor identifica las categorías expresas de élite, mazmorra, banda y JcJ. Los límites de tiempo se leen de las consultas de misión cuando incluyen ese dato.

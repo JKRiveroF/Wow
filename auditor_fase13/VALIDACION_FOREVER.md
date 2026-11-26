@@ -34,14 +34,14 @@ El calendario extraído sitúa el Festival de Invierno del 15 de diciembre de 20
 
 | ID | Rutas | Vía prioritaria | Comprobación pendiente |
 | ---: | ---: | --- | --- |
-| 1374 | 32 | Investigar oferta | Uthek ofrece 1373 y el servidor propone 93034 como continuación. Tras entregar 1373, registra si ofrece 1374 además de 93034, el ID mostrado y las condiciones de reputación. |
-| 1375 | 34 | Investigar oferta | Con Warug y la rama Magram tras 1371, distingue la oferta heredada de los pasos de la variante 93196. Registra las condiciones de reputación y el ID mostrado. |
-| 2358 | 4 | Investigar oferta | Busca la oferta de la Sombra de Arantir en Villa del Lago con pícaro y confirma si pide los cuernos 7906. |
+| 1374 | 32 | Investigar oferta | Uthek ofrece 1373 y el servidor propone 93034 como continuación. Tras entregar 1373, registra si ofrece 1374 y si exige los 3.000 puntos heredados. Comprueba por separado 93044 → 93045 y el acceso a 93128 con el mismo personaje. |
+| 1375 | 34 | Investigar oferta | Con Warug, tras 1371 y con 3.000 puntos Magram, comprueba si ofrece Khan Shaka (1375). Para Khan Jehn (93196) comprueba la oferta con Orgrul tras 93188 y el ritual con el objeto 257517. |
+| 2358 | 4 | Investigar oferta | Busca la oferta de la Sombra de Arantir (7009) en Villa del Lago con un pícaro de la Alianza. Contrasta el nivel 16 de la ficha heredada, el objeto 7906 y el acceso para Skyborne. |
 | 3504 | 22 | Investigar oferta | Ag'tor ofrece 3505 en dos muestras. Busca la carta con Belgrom y prueba la oferta de Ag'tor con y sin 3504 entregada. Registra si la carta sigue dando acceso a la cadena. |
 | 5201 | 24 | Investigar oferta | Comprueba a Rivern con Alianza desde nivel 58 antes y después de entregar 4970. Compara por debajo y a partir de 1.500 puntos con los Instructores de Sableinvernales, el umbral heredado. Si aparece 5201, registra si pide cinco chamanes y cinco ursas Nevada y vuelve a ofrecerse. |
 | 6804 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 55. Si la ofrece, registra cuándo entrega el Aspecto de Neptulon (17310) y si conserva el objetivo de 12 brazales (17309). |
 | 6805 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 55, con y sin 6804 aceptada o entregada. Registra si ofrece 6805 y pide 15 elementales de cada tipo. |
-| 6821 | 47 | Investigar oferta | Comprueba a Hydraxis después de entregar 6804 y 6805. Registra si pide el ojo 17322, si procede del Piroguardián brasadivino y si la entrega ofrece 6822. |
+| 6821 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 56, con cada entrega anterior por separado y tras completar 6804 y 6805. Registra si pide el ojo 17322, si procede del Piroguardián brasadivino y si la entrega ofrece 6822. |
 | 6848 | 1 | Investigar oferta | En Valle de Alterac, busca al PNJ 13151 con Alianza y Horda. Distingue 6848 de la variante 6847 de la Horda en la base heredada. Registra el ID de oferta y la posición del ojo en las cuevas de los Hacha Invernal. |
 | 7622 | 3 | Cliente con objeto de banda | Con sacerdote al nivel 60, comprueba cómo se consigue el Ojo de la Divinidad en Forever. Equípalo, busca a Eris y registra la oferta y el resultado del reto de los campesinos. |
 | 8319 | 46 | Investigar oferta | Tras 8318, comprueba si Bor ofrece el canje de diez textos 20404 y vuelve a ofrecerlo después de entregarlo. Identifica al receptor 15306 para distinguirlo de 8324, el canje ya observado con Ortell. |

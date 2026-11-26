@@ -27,12 +27,24 @@ HASHES = {
     ("71037", "flights"): "a1406e02cc1124769f7297cf6a0e96b91fc9dde61eac5af2c155349db63bc7e3",
 }
 EXTRA_HASHES = {
+    ("70790", "quests.enUS"): "1d338604744f0100ec58ea14c904f1b1c676b826d832bc747c90eae27b569bc7",
+    ("70790", "turn_ins"): "a462e92603a2a64a420dfbc383a3c62196da14f83fb2771ffd759fce8be9d795",
     ("70790", "quest_scan"): "61dcbb4de5f9b08fe65c091080bb3af8eeff0c4a4ced8f31b27ef0e449f17e56",
     ("70790", "npcs"): "e732c47ad4bde79fa6ea1acba656d7498c39ac46e8cc4afc29f43239e4f128b4",
+    ("70840", "quests.enUS"): "e78aaae3aee37b26a47de4eef4b171910a04e77b9cb85bc3985a25bd0c058294",
+    ("70840", "turn_ins"): "5580cc6050524a9b94ede61acf1f9af6a4678aacbf367569be668d68b611ba2a",
+    ("70840", "npcs"): "d657fb35416b2da2d9d75cbb3ff870f517111ce092a405301afdfb5fee4ef94b",
+    ("70840", "quest_scan"): "a33a0c1eb0eee42c747b6355ba38fad4892456ab44a7671b7fa944af8bd6b319",
+    ("70862", "quests.enUS"): "7b96a1e976a6746492f8a17e8de9ab1b014f236ebfb01e5f03dbe81880777877",
+    ("70862", "turn_ins"): "7d54c980222a6154bec6afb0413fb8cf39a172fd146ece3a6024504b7687ea5b",
     ("70862", "quest_scan"): "c237d72377bad9904bf4ad49d1121cc73ae3f2aa94847cfcc8d75e28268fbae3",
     ("70862", "npcs"): "64ca5ce997d82cc0ce9aa1ea1f96ea2c363b28bb3ebf3af460e2d16693915cdc",
+    ("70888", "quests.enUS"): "c3b3a6aeee4a6c90c0d88a1e8ec468a43957fd46a7153b927c9a41b0e67faf7d",
+    ("70888", "turn_ins"): "b9cc57d19b126a9696ddc1cd7ebe70e7674f739d2af039915f3cc60b5fd78549",
     ("70888", "quest_scan"): "f7bd32186f15993c6bdb42b1c4dfcf68e9bbdeca31834a4460a52d4854716fd9",
     ("70888", "npcs"): "e03cc30ff79ebf02f50bdc6baf3463b5b8c65569175a1e112102fcfc9ea74274",
+    ("70938", "turn_ins"): "b0bdb851d6790e590323432d9f08bef811613a829c03cd68414ad2ecec8899f1",
+    ("70938", "npcs"): "25707c9ea017a905cda6b01206cd6d3bf496e6f77c823034c33d5907d951752c",
     ("70959", "quest_scan"): "d765048784e3c9a2259869982a2da0fce7a2913712fc1aa618315f6647d429a2",
     ("71037", "npcs"): "25cbc37150af015aae0c0406c2485d1c26e2f35b622c0963e2b830b683e7b8b0",
     ("71037", "objectives"): "724e5c3263d78da807cb09e59fcdd87367e77306ba5a4a6ec4d3a91d054fc903",
@@ -58,7 +70,7 @@ EG_FIELDS = (
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
 NEW_BUILD = "1.60.1.71139"
-RECENT_REVISION_BUILDS = {"1.60.1.70790", "1.60.1.70862", "1.60.1.70888", NEW_BUILD}
+RECENT_REVISION_BUILDS = {"1.60.1.70790", "1.60.1.70840", "1.60.1.70862", "1.60.1.70888", NEW_BUILD}
 QUEST_INFO_HASH = "06e1f7250d8ad8d042516ebae1fa4a78fa9307cab0fe62daf19a73331518fd4b"
 QUEST_INFO_SOURCE = f"https://wago.tools/db2/QuestInfo/csv?build={XP_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
@@ -66,7 +78,8 @@ RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
 
 
 def _source(build, dataset):
-    revision = REVISION_71139 if build in RECENT_REVISION_BUILDS else REVISION
+    recent = build in RECENT_REVISION_BUILDS or (build == "1.60.1.70938" and dataset != "quests.enUS")
+    revision = REVISION_71139 if recent else REVISION
     return {"estado": "forever", "build": build, "fuente": f"{BASE}{revision}/data/wowf/{build}/{dataset}.json"}
 
 
@@ -279,8 +292,31 @@ def _import_scan(missions, data, source):
         _record(missions, quest_id, {"repetible": True}, source)
 
 
+def _observed_factions(entry, profiles):
+    """Acredita las dos facciones con entregas de una ficha de acceso estable."""
+    if not profiles or "facciones" in entry:
+        return None
+    latest = max(profiles)
+    reference = profiles[latest]
+    builds = {}
+    for sample in entry.get("entregas_observadas", []):
+        faction, build = sample.get("faction"), sample.get("build")
+        if (faction in ("Alliance", "Horde") and profiles.get(build) == reference
+                and sample.get("sources", 0) > 0 and type(sample.get("level")) is int
+                and sample["level"] >= reference[1]):
+            builds[faction] = max(build, builds.get(faction, build))
+    if builds.keys() != {"Alliance", "Horde"}:
+        return None
+    sources = [_source(build, "turn_ins") for build in sorted(set(builds.values()), reverse=True)]
+    detail_builds = sorted({latest, *builds.values()}, reverse=True)
+    links = [source["fuente"] for source in sources[1:]]
+    links.extend(_source(build, "quests.enUS")["fuente"] for build in detail_builds)
+    return {**sources[0], "metodo": "entregas_perfil_estable", "fuentes_adicionales": links}
+
+
 def import_eg_link(directory):
     missions, npcs, flights = {}, {}, {}
+    profiles = {}
     xp_table, xp_source = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
     extras = {key for key in EXTRA_HASHES if (directory / f"eg-1.60.1.{key[0]}-{key[1]}.json").is_file()}
@@ -289,6 +325,7 @@ def import_eg_link(directory):
         data, source = _read(directory, build, dataset)
         if dataset == "quests.enUS":
             for quest_id, row in data["quests"].items():
+                profiles.setdefault(quest_id, {})[source["build"]] = (row["title"], row["minLevel"], row["raceMask"])
                 missions[quest_id] = {"evidencia": {}}
                 _record(missions, quest_id, _quest_values(row), source)
                 if values := _quest_type(row, quest_info):
@@ -308,6 +345,8 @@ def import_eg_link(directory):
         elif dataset == "quest_scan":
             _import_scan(missions, data, source)
     for quest_id, entry in missions.items():
+        if qualified := _observed_factions(entry, profiles.get(quest_id)):
+            _record(missions, quest_id, {"facciones": ["Alliance", "Horde"]}, qualified)
         xp = _base_xp(entry, xp_table)
         if xp is not None:
             source = {**entry["evidencia"]["componentes_xp"], "tabla": xp_source, "metodo": "calculada"}

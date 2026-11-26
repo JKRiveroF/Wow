@@ -6,7 +6,7 @@
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 55,67 %**
+**Progreso efectivo global · 56,04 %**
 
 `███████████░░░░░░░░░`
 
@@ -14,20 +14,20 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,04 % | 45,04 % | 0 pp |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 51,58 % | 51,58 % | 0 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,04 % | 45,37 % | +0,33 pp |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 51,58 % | 53,58 % | +2 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,74 % | 68,74 % | 0 pp |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,74 % | 68,76 % | +0,02 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 55,67 % | 55,67 % | 0 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 55,67 % | 56,04 % | +0,37 pp |
 
-**Última actualización de la medición · 2026-11-26 17:55:29+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 19:58:41+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Buscar observaciones de oferta y requisitos para las 11 misiones investigables. Los cuatro casos sin fila en QuestV2 ya tienen un contraste de variantes y umbrales.
+**Tarea actual** · Contrastar requisitos y desbloqueos compartidos por ID. La matriz de ofertas identifica los datos que faltan para cada uno de los 24 casos.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -356,24 +356,30 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 
 - Se incorporaron los títulos observados de 2972, 4222 y 6609. Coinciden con las etiquetas existentes en 97 pares de misión y ruta. Quedan 191 IDs activos sin título esES observado. [Trazas por ID](auditor_fase13/FUENTES.md#títulos-eses-de-questiedb--26-de-noviembre-de-2026).
 
+## Último bloque verificado · Entregas y acceso de facción
+
+- Se incorporaron **12 instantáneas** adicionales de lanzamiento. Las misiones con entrega y XP observadas pasan de **493 a 1.085**. **273 destinos** adicionales tienen una muestra cercana del mismo mapa y acción. [Instantáneas y alcance](auditor_fase13/FUENTES.md#entregas-y-facciones-de-las-compilaciones-iniciales--26-de-noviembre-de-2026).
+- **11 misiones** tienen entregas documentadas de ambas facciones con datos de acceso estables. Se reutiliza la evidencia en **498 pares de misión y ruta**. En Gelkis queda por observar 93044 → 93045 con el mismo personaje por la discrepancia de facción entre ambos pasos. [Cadenas de los centauros](auditor_fase13/FUENTES.md#cadenas-de-los-centauros-y-ofertas-relacionadas--26-de-noviembre-de-2026).
+- Pasaron **28 pruebas específicas** y la **regresión de 95 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Las 24 ofertas pendientes y los 395 grupos conservan su estado. El avance efectivo sube a **56,04 %**. El certificado queda en **40,83 %**.
+
 ## Comprobaciones que impiden cerrar los criterios
 
 | Bloque | Investigación pendiente | Validación en Forever |
 | --- | --- | --- |
 | Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se prioriza investigar 11 de ellas. Faltan 191 títulos ES observados (189 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.443 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y las restantes cuando los registros externos no acrediten su oferta por fase o perfil. |
-| Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.970 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
-| Cartografía | 3.837 destinos únicos sin una referencia específica o cercana. Otros 2.113 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
-| Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP efectiva, nivel inicial y bloqueos por tramo en las 47 rutas. |
+| Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.959 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
+| Cartografía | 3.564 destinos de misión únicos sin una referencia específica o cercana. Otros 2.386 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
+| Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP de entrega pendiente de observación en 1.383 IDs, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Posiciones, transporte y requisitos de nodos en 44 rutas. | Costes y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
 | Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
 
 ## Siguientes tareas
 
-1. Buscar observaciones directas de las cuatro ofertas contrastadas y revisar los iniciadores y desbloqueos de las siete ofertas investigables restantes. Priorizar repetición, objetos y exclusiones.
+1. Cruzar requisitos, objetos de desbloqueo y repetición por misión. Incorporar las ofertas pendientes que aparezcan en nuevas observaciones de Forever.
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `6266c3d`.
+La fase sigue abierta. El corte previo es `a433a8a`.
 
 ## Avance individual
 

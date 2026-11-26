@@ -3,7 +3,7 @@
 import unittest
 
 from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_npcs, _import_objectives,
-                     _import_scan, _import_turn_ins, _quest_type, _quest_values, _race_fields, _source)
+                     _import_scan, _import_turn_ins, _observed_factions, _quest_type, _quest_values, _race_fields, _source)
 from inventario_misiones import _coordinate_result
 from vuelos_observados import link_flights
 
@@ -17,11 +17,27 @@ class EGLinkTests(unittest.TestCase):
         self.assertTrue(current["fuente"].endswith(f"/{NEW_BUILD}/quests.enUS.json"))
 
     def test_early_live_snapshots_link_to_the_revision_with_verified_hashes(self):
-        for build in ("1.60.1.70790", "1.60.1.70862", "1.60.1.70888"):
-            for dataset in ("npcs", "quest_scan"):
+        for build in ("1.60.1.70790", "1.60.1.70840", "1.60.1.70862", "1.60.1.70888"):
+            for dataset in ("npcs", "quest_scan", "turn_ins", "quests.enUS"):
                 with self.subTest(build=build, dataset=dataset):
                     source = _source(build, dataset)
                     self.assertIn(f"/{REVISION_71139}/data/wowf/{build}/{dataset}.json", source["fuente"])
+
+        for dataset in ("npcs", "turn_ins"):
+            self.assertIn(REVISION_71139, _source("1.60.1.70938", dataset)["fuente"])
+        self.assertNotIn(REVISION_71139, _source("1.60.1.70938", "quests.enUS")["fuente"])
+
+    def test_two_faction_turn_ins_require_unchanged_server_profiles(self):
+        early, late = "1.60.1.70888", "1.60.1.71091"
+        profile = ("Quest", 25, "ffffffffffffffff")
+        samples = [{"faction": "Alliance", "build": late, "level": 27, "sources": 1},
+                   {"faction": "Horde", "build": early, "level": 25, "sources": 1}]
+        entry = {"entregas_observadas": samples}
+        evidence = _observed_factions(entry, {early: profile, late: profile})
+        self.assertEqual(evidence["metodo"], "entregas_perfil_estable")
+        self.assertIn(f"/{early}/turn_ins.json", evidence["fuentes_adicionales"][0])
+        self.assertIsNone(_observed_factions(entry, {early: ("Quest", 26, profile[2]), late: profile}))
+        self.assertIsNone(_observed_factions({**entry, "facciones": ["Alliance"]}, {early: profile, late: profile}))
 
     def test_quest_info_distinguishes_elite_dungeon_and_unclassified_quests(self):
         table = {1: "Elite", 41: "PvP", 62: "Raid", 81: "Dungeon"}
