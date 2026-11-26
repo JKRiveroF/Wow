@@ -154,6 +154,12 @@ El auditor leyó la columna `nextQuestInChain` de la base Classic y sus correcci
 
 Se cotejaron las etiquetas de recogida y entrega de los IDs sin título observado con la localización española que empaqueta QuestieDB 1.1.6 para Forever. El archivo es idéntico al de Classic en esa revisión. Las etiquetas de 193 IDs coinciden. 85712 y 93686 carecen de título en esa base heredada. El informe conserva el resultado, el título y la línea de referencia de cada ID. Los títulos de esES observados en el cliente se contabilizan aparte. [Archivo heredado de Forever](https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/lookupQuests/esES.lua) · [Archivo Classic](https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Classic/lookupQuests/esES.lua).
 
+## Categorías de misión y temporizadores · 26 de noviembre de 2026
+
+Se cruzó `questInfoId` de las consultas de Efficient Games con la tabla QuestInfo de la compilación 1.60.1.71091. La tabla define 1 como élite, 41 como JcJ, 62 como banda y 81 como mazmorra. La categoría describe el encargo. El tamaño de grupo recomendado se consulta aparte. Se importaron los temporizadores expresos de las consultas, separados de la duración de objetos como la piedra de 924. [Tabla QuestInfo](https://wago.tools/db2/QuestInfo/csv?build=1.60.1.71091) · [Consultas de Efficient Games](https://github.com/JIVESCORP/eg-link-output-wowf/tree/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf).
+
+Se contrastó la oferta pendiente con el CSV de EverlookDB. De los 24 IDs pendientes, 18 aparecen con iniciadores y entregas procedentes de ClassicDB y seis carecen de fila. Las 18 fichas sirven de referencia heredada y no aportan una observación nueva de oferta en Forever. [Exportación EverlookDB](https://everlookdb.com/data.html) · [Procedencia de datos](https://everlookdb.com/credits.html).
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

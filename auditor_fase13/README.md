@@ -31,6 +31,8 @@ auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/agrupamientos.py --tra
 
 Añade `--datos-eg auditor_fase13/cache_fuentes` cuando tengas la revisión de Efficient Games y la tabla de XP.
 
+El [CSV QuestInfo de Forever 1.60.1.71091](https://wago.tools/db2/QuestInfo/csv?build=1.60.1.71091) es opcional. Guárdalo como `QuestInfo-1.60.1.71091.csv` junto a los JSON de Efficient Games. Con él, el auditor identifica las categorías expresas de élite, mazmorra, banda y JcJ. Los límites de tiempo se leen de las consultas de misión cuando incluyen ese dato.
+
 Con `--datos-questie` y `--datos-eg`, puedes añadir dos fuentes opcionales para el contraste de seguimientos. Guarda la [base Classic de QuestieDB 1.1.6](https://raw.githubusercontent.com/Questie/QuestieDB/v1.1.6/data/Classic/classicQuestDB.lua) como `classicQuestDB.lua` y las [correcciones heredadas por Forever](https://raw.githubusercontent.com/Questie/QuestieDB/v1.1.6/src/corrections/Forever/legacy/classicQuestFixes.lua) como `legacyForeverClassicQuestFixes.lua` en `cache_fuentes/`. El auditor verifica ambos hashes. Guarda la continuación y sus tres fuentes solo cuando coinciden el enlace heredado, la sugerencia del servidor y el historial del sucesor.
 
 Para contrastar si cada ID figura en el índice del cliente, guarda el [CSV QuestV2](https://wago.tools/db2/QuestV2/csv?build=1.60.1.71139) en la carpeta de fuentes y añade `--questv2 auditor_fase13/cache_fuentes/QuestV2-1.60.1.71139.csv`. El auditor verifica el hash y registra la fila del cliente y la evidencia del servidor en campos independientes.

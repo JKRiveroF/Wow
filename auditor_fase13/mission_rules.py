@@ -356,6 +356,7 @@ def audit_missions(route: dict, catalog: dict) -> list[dict]:
                 f"Misión {quest}: la fuente la marca como {'de grupo' if group == 'grupo' else 'de élite'} "
                 "y los pasos asociados no lo indican expresamente."
             ), first.location, _confirmed(entry, group)))
+            issues[-1]["mision"] = quest
 
     if untranslated:
         sample = ", ".join(str(quest) for quest in untranslated[:12])

@@ -2,12 +2,21 @@
 
 import unittest
 
-from eg_link import _base_xp, _import_npcs, _import_objectives, _import_scan, _import_turn_ins, _quest_values, _race_fields
+from eg_link import (_base_xp, _import_npcs, _import_objectives, _import_scan, _import_turn_ins,
+                     _quest_type, _quest_values, _race_fields)
 from inventario_misiones import _coordinate_result
 from vuelos_observados import link_flights
 
 
 class EGLinkTests(unittest.TestCase):
+    def test_quest_info_distinguishes_elite_dungeon_and_unclassified_quests(self):
+        table = {1: "Elite", 41: "PvP", 62: "Raid", 81: "Dungeon"}
+        self.assertEqual(_quest_type({"questInfoId": 1}, table), {"tipo_mision": "Elite", "elite": True})
+        self.assertEqual(_quest_type({"questInfoId": 62}, table), {"tipo_mision": "Raid", "grupo": True})
+        self.assertEqual(_quest_type({"questInfoId": 81}, table), {"tipo_mision": "Dungeon", "grupo": True})
+        self.assertEqual(_quest_type({"questInfoId": 41}, table), {"tipo_mision": "PvP"})
+        self.assertEqual(_quest_type({}, table), {})
+
     def test_missing_scan_reply_does_not_erase_identity(self):
         missions = {}
         _import_scan(missions, {"described": {"1": {"sources": 1}}, "noData": [2], "repeatable": {}},

@@ -30,10 +30,13 @@ EG_FIELDS = (
     "objetos_por_botin", "habilidades_recompensa", "componentes_xp", "entregas_observadas",
     "misiones_previas_observadas", "escaneo_faccion", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
+    "tipo_mision", "limite_segundos",
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
 XP_SOURCE = f"https://wago.tools/db2/QuestXP/csv?build={XP_BUILD}"
+QUEST_INFO_HASH = "06e1f7250d8ad8d042516ebae1fa4a78fa9307cab0fe62daf19a73331518fd4b"
+QUEST_INFO_SOURCE = f"https://wago.tools/db2/QuestInfo/csv?build={XP_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
 RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
 
@@ -84,6 +87,16 @@ def _read_xp_table(directory):
     return {int(row["ID"]): row for row in csv.DictReader(raw.decode("utf-8-sig").splitlines())}
 
 
+def _read_quest_info(directory):
+    path = directory / f"QuestInfo-{XP_BUILD}.csv"
+    if not path.is_file():
+        return {}
+    raw = path.read_bytes()
+    if sha256(raw).hexdigest() != QUEST_INFO_HASH:
+        raise ValueError(f"SHA-256 inesperado en {path}. Se requiere QuestInfo de Forever {XP_BUILD}.")
+    return {int(row["ID"]): row["InfoName_lang"] for row in csv.DictReader(raw.decode("utf-8-sig").splitlines())}
+
+
 def _base_xp(entry, table):
     components = entry.get("componentes_xp")
     if not components:
@@ -100,6 +113,8 @@ def _quest_values(row):
               "mascara_racial": mask, **_race_fields(mask)}
     if row["title"].strip():
         result["nombres"] = {"en": row["title"]}
+    if type(row.get("timeLimitSeconds")) is int and row["timeLimitSeconds"] > 0:
+        result["limite_segundos"] = row["timeLimitSeconds"]
     for original, field in (("nextQuestId", "siguiente_sugerida"), ("startItemId", "objeto_entregado"),
                             ("zoneAreaId", "area_mision")):
         if row.get(original):
@@ -126,6 +141,18 @@ def _quest_values(row):
     spells = sorted({item["spellId"] for item in rewards.get("displaySpells", []) if item.get("spellId", 0) > 0})
     if spells or rewards.get("spellId"):
         result["habilidades_recompensa"] = {"mostradas": spells, "aplicada": rewards.get("spellId")}
+    return result
+
+
+def _quest_type(row, table):
+    name = table.get(row.get("questInfoId"))
+    if not name:
+        return {}
+    result = {"tipo_mision": name}
+    if name == "Elite":
+        result["elite"] = True
+    if name in ("Dungeon", "Raid"):
+        result["grupo"] = True
     return result
 
 
@@ -192,12 +219,15 @@ def _import_scan(missions, data, source):
 def import_eg_link(directory):
     missions, npcs, flights = {}, {}, {}
     xp_table = _read_xp_table(directory)
+    quest_info = _read_quest_info(directory)
     for build, dataset in HASHES:
         data, source = _read(directory, build, dataset)
         if dataset == "quests.enUS":
             for quest_id, row in data["quests"].items():
                 missions[quest_id] = {"evidencia": {}}
                 _record(missions, quest_id, _quest_values(row), source)
+                if values := _quest_type(row, quest_info):
+                    _record(missions, quest_id, values, {**source, "tabla": QUEST_INFO_SOURCE})
         elif dataset == "npcs":
             npcs = _import_npcs(missions, data, source)
         elif dataset == "objectives":
