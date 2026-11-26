@@ -63,7 +63,7 @@ La evidencia **confirmada** supera la comprobación de la familia. Los títulos 
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
 | **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,04 % | 56,04 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-26 20:08:28+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 20:13:23+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -85,6 +85,7 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Incorporar la compilación 71139, contrastar los 24 IDs pendientes y completar la ficha de equipo de pícaro 8941.
 - [x] Cruzar los historiales de entregas con las continuaciones sugeridas que coinciden con la base heredada. Aplicar la evidencia a las secuencias A/T de las rutas.
 - [x] Contrastar los requisitos heredados de una sola entrega con las trazas de oferta de mayor confianza.
+- [x] Contrastar los requisitos múltiples de 737 y 1119. Validar la entrega alternativa por facción y la acumulación de dos entregas en 33 pares de misión y ruta.
 - [x] Cruzar objetos auxiliares y exclusiones heredadas con registros de Forever y añadir las marcas expresas de repetición documentadas en el corte.
 - [x] Sustituir los textos genéricos por instrucciones ES/EN en las 17 misiones con objetos auxiliares contrastados que todavía los tenían.
 - [x] Resolver y probar los avisos de orden y acceso de 473, 1840 y 1948. Mantener los índices de los pasos y documentar los desvíos opcionales.

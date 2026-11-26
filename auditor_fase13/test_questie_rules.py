@@ -84,6 +84,35 @@ class QuestieRulesTest(unittest.TestCase):
         self.assertEqual(result["7"]["prerrequisitos_alternativos"], [9])
         self.assertIn(RELATIONS, result["7"]["evidencia"]["prerrequisitos_alternativos"]["fuente"])
 
+    def test_multiple_requirements_keep_the_catalogue_gate_type(self):
+        base = """    ['preQuestGroup'] = 2,
+    ['preQuestSingle'] = 3,
+[7] = {"acumulativa",{11,12},nil},
+[8] = {"alternativa",nil,{11,12}},
+[9] = {"tipo distinto",nil,{11,12}},
+[10] = {"sin coincidencia",{11,12},nil},
+"""
+        traces = "\n".join(
+            f"        -- [{quest}] = {{\n"
+            "            -- already in QuestieDB; Assumption: offered right after 11, 12 was turned in "
+            f"(handoff, offer-set, absence{', cooccurrence' if cooccurrence else ''}; very high; 100+ characters)\n"
+            f"            -- [questKeys.{key}] = {{11,12}},\n        -- }},"
+            for quest, key, cooccurrence in ((7, "preQuestGroup", True), (8, "preQuestSingle", True),
+                                             (9, "preQuestGroup", True), (10, "preQuestGroup", False))
+        )
+        catalog = {"misiones": {str(quest): {"existe": True} for quest in (7, 8, 9, 10)}}
+        sources = {CLASSIC_DB: base, LEGACY_FIXES: "function C:LoadFactionFixes()\n",
+                   BASE: "", FIXES: "", RELATIONS: traces}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            for name, source in sources.items():
+                (directory / (LEGACY_CACHE if name == LEGACY_FIXES else Path(name).name)).write_bytes(source.encode())
+            with patch("questie_rules.HASHES", {name: sha256(source.encode()).hexdigest() for name, source in sources.items()}):
+                result = corroborate_inherited_fields(directory, catalog)["misiones"]
+        self.assertEqual(set(result), {"7", "8"})
+        self.assertEqual(result["7"]["prerrequisitos"], [11, 12])
+        self.assertEqual(result["8"]["prerrequisitos_alternativos"], [11, 12])
+
     def test_inherited_objects_and_exclusions_require_matching_observations(self):
         base = """    ['requiredSourceItems'] = 2,
     ['exclusiveTo'] = 3,

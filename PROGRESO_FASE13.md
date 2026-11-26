@@ -21,13 +21,13 @@
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
 | **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,04 % | 56,04 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-26 20:08:28+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 20:13:23+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Contrastar requisitos de varias entregas. Las trazas y la base heredada distinguen las variantes de 737 y los dos requisitos acumulativos de 1119.
+**Tarea actual** · Contrastar los desbloqueos de habilidades por misión. Quedan por aclarar las diferencias entre el hechizo mostrado, el que aplica la recompensa y la habilidad que aprende el personaje.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -362,17 +362,22 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - **11 misiones** tienen entregas documentadas de ambas facciones con datos de acceso estables. Se reutiliza la evidencia en **498 pares de misión y ruta**. En Gelkis queda por observar 93044 → 93045 con el mismo personaje por la discrepancia de facción entre ambos pasos. [Cadenas de los centauros](auditor_fase13/FUENTES.md#cadenas-de-los-centauros-y-ofertas-relacionadas--26-de-noviembre-de-2026).
 - Pasaron **28 pruebas específicas** y la **regresión de 95 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Las 24 ofertas pendientes y los 395 grupos conservan su estado. El avance efectivo sube a **56,04 %**. El certificado queda en **40,83 %**.
 
-## Último bloque verificado · Oficios y condiciones de oferta
+## Misiones · Oficios y condiciones de oferta
 
 - Se documentaron Herrería 25 y 35 y los materiales de 1578 y 1618 en **24 pasos de 16 rutas**. La auditoría verificó el traslado de su recompensa a la XP opcional. Las cuatro rutas que recogen 91751 muestran su título ES/EN, Desuello 1 y los siete pelambres. [Requisitos y fuentes](auditor_fase13/FUENTES.md#oficios-y-condiciones-de-oferta--26-de-noviembre-de-2026).
 - El auditor comprobó **82 combinaciones de aceptación y perfil** para cinco bloqueos temporales y el orden de 92464 en las diez rutas de Zephras. Las aperturas aproximadas de 92595 y 92596 quedan registradas como indicios.
 - Pasaron **21 pruebas específicas** y la **regresión de 97 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** conocidos. Permanecen **279 grupos de investigación y 116 de cliente**. El certificado queda en **40,83 %** y el efectivo en **56,04 %**.
 
+## Último bloque verificado · Requisitos múltiples
+
+- Las 32 rutas con **737** entregan **735 en Alianza o 736 en Horda**. La ruta de mago Skyborne de Alianza entrega **621 y 1118** antes de aceptar **1119**. El auditor comprobó **33 pares de misión y ruta** y **41 combinaciones con perfil**. [Criterios y trazas](auditor_fase13/FUENTES.md#requisitos-de-varias-entregas--26-de-noviembre-de-2026).
+- Pasaron **19 pruebas específicas** y la **regresión de 98 pruebas**. El auditor registró **0 errores y 56 avisos** conocidos en las 47 rutas. Quedan **279 grupos de investigación y 116 de cliente**. El certificado y el efectivo se muestran en **40,83 %** y **56,04 %**, respectivamente, tras redondear.
+
 ## Comprobaciones que impiden cerrar los criterios
 
 | Bloque | Investigación pendiente | Validación en Forever |
 | --- | --- | --- |
-| Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se prioriza investigar 11 de ellas. Faltan 191 títulos ES observados (189 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.443 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y las restantes cuando los registros externos no acrediten su oferta por fase o perfil. |
+| Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se prioriza investigar 11 de ellas. Faltan 191 títulos ES observados (189 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.442 fichas de prerrequisitos acumulativos y 1.797 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y las restantes cuando los registros externos no acrediten su oferta por fase o perfil. |
 | Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.959 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
 | Cartografía | 3.564 destinos de misión únicos sin una referencia específica o cercana. Otros 2.386 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP de entrega pendiente de observación en 1.383 IDs, nivel inicial y bloqueos por tramo en las 47 rutas. |
@@ -381,11 +386,11 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 
 ## Siguientes tareas
 
-1. Contrastar los requisitos múltiples de 737 y 1119 por tipo y aplicar el resultado a todas sus rutas. Incorporar las ofertas pendientes que aparezcan en nuevas observaciones de Forever.
+1. Contrastar los desbloqueos de habilidades en las rutas de clase. Revisar los efectos asociados a las recompensas de aprendizaje de cazador y pícaro e incorporar las nuevas observaciones de oferta.
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `2d5ec64`.
+La fase sigue abierta. El corte previo es `f5cab60`.
 
 ## Avance individual
 

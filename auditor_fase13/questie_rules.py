@@ -34,9 +34,9 @@ RELATION_FIELDS = {"preQuestGroup", "preQuestSingle", "exclusiveTo", "breadcrumb
 INHERITED_FIELDS = {"preQuestGroup", "preQuestSingle", "nextQuestInChain", "exclusiveTo", "requiredSourceItems"}
 CLASSIC_COLUMN = re.compile(r"^ +\['(\w+)'\] = (\d+),")
 TRACE_ROW = re.compile(r"^ {8}(?:-- )?\[(\d+)\]\s*=\s*\{")
-TRACE_REQUIREMENT = re.compile(r"^ {12}-- \[questKeys\.preQuestSingle\] = \{(\d+)\},\s*$")
+TRACE_REQUIREMENT = re.compile(r"^ {12}-- \[questKeys\.(preQuestSingle|preQuestGroup)\] = (\{[\d, ]+\}),\s*$")
 TRACE_HANDOFF = re.compile(
-    r"^ {12}-- already in QuestieDB; Assumption: offered right after (\d+) was turned in "
+    r"^ {12}-- already in QuestieDB; Assumption: offered right after (\d+(?:, \d+)*) was turned in "
     r"\(([^;]+); very high; 100\+ characters\)\s*$"
 )
 TRACE_EXCLUSION = re.compile(r"^ {12}-- \[questKeys\.exclusiveTo\] = (\{[\d, ]+\}),\s*$")
@@ -229,10 +229,17 @@ def _traced_requirements(lines):
         elif line.strip() in ("},", "-- },"):
             quest = None
         elif quest and (condition := TRACE_REQUIREMENT.fullmatch(line)):
+            field = LIST_FIELDS[condition[1]]
+            required = _decode(condition[1], condition[2]).get(field, [])
             handoff = TRACE_HANDOFF.fullmatch(lines[number - 2])
-            if (handoff and handoff[1] == condition[1]
-                    and {"handoff", "offer-set", "absence"} <= set(handoff[2].split(", "))):
-                yield quest, int(condition[1]), number
+            if not required or not handoff:
+                continue
+            named = {int(item) for item in handoff[1].split(", ")}
+            flags = {"handoff", "offer-set", "absence"}
+            if len(required) > 1:
+                flags.add("cooccurrence")
+            if named == set(required) and flags <= set(handoff[2].split(", ")):
+                yield quest, condition[1], required, number
 
 
 def _traced_exclusions(lines):
@@ -287,7 +294,7 @@ def corroborate_inherited_fields(directory, catalog):
     dynamic_start = next((i for i, line in enumerate(fixes) if ":LoadDynamic(" in line), len(fixes))
     dynamic = set(re.findall(r"\[(\d+)\]\s*=", "\n".join(fixes[dynamic_start:])))
     traces = _read(directory, RELATIONS)
-    for quest, required, number in _traced_requirements(traces):
+    for quest, key, required, number in _traced_requirements(traces):
         entry = missions.get(quest, {})
         if quest in dynamic or any((quest, field) in replaced for field in GATE_FIELDS):
             continue
@@ -295,13 +302,13 @@ def corroborate_inherited_fields(directory, catalog):
             "prerrequisitos", "prerrequisitos_alternativos", "mision_activa", "desactivada_por"
         }:
             continue
-        baseline, source = inherited.get(quest, {}).get("preQuestSingle", ("", ""))
-        field = "prerrequisitos_alternativos"
-        if _decode("preQuestSingle", baseline).get(field) != [required]:
+        baseline, source = inherited.get(quest, {}).get(key, ("", ""))
+        field = LIST_FIELDS[key]
+        if set(_decode(key, baseline).get(field, [])) != set(required):
             continue
         proof = {"estado": "forever", "fuente": f"{SOURCE}{RELATIONS}#L{number}",
                  "metodo": "oferta_tras_entrega_contrastada", "fuentes_adicionales": [source]}
-        register(quest, field, [required], proof)
+        register(quest, field, required, proof)
 
     for quest, excluded, number in _traced_exclusions(traces):
         entry = missions.get(quest, {})
