@@ -2,13 +2,20 @@
 
 import unittest
 
-from eg_link import (_base_xp, _import_npcs, _import_objectives, _import_scan, _import_turn_ins,
-                     _quest_type, _quest_values, _race_fields)
+from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_npcs, _import_objectives,
+                     _import_scan, _import_turn_ins, _quest_type, _quest_values, _race_fields, _source)
 from inventario_misiones import _coordinate_result
 from vuelos_observados import link_flights
 
 
 class EGLinkTests(unittest.TestCase):
+    def test_newer_quest_snapshot_links_to_its_own_revision(self):
+        current = _source(NEW_BUILD, "quests.enUS")
+        previous = _source(XP_BUILD, "quests.enUS")
+        self.assertIn(REVISION_71139, current["fuente"])
+        self.assertNotIn(REVISION_71139, previous["fuente"])
+        self.assertTrue(current["fuente"].endswith(f"/{NEW_BUILD}/quests.enUS.json"))
+
     def test_quest_info_distinguishes_elite_dungeon_and_unclassified_quests(self):
         table = {1: "Elite", 41: "PvP", 62: "Raid", 81: "Dungeon"}
         self.assertEqual(_quest_type({"questInfoId": 1}, table), {"tipo_mision": "Elite", "elite": True})

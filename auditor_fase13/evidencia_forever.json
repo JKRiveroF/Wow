@@ -229,6 +229,20 @@
       "objetos": [12384],
       "evidencia": {"objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/975/"}}
     },
+    "8941": {
+      "nombres": {"es": ["Una compensación justa"]},
+      "clases": ["ROGUE"],
+      "prerrequisitos": [8978],
+      "seguimientos": [8930],
+      "posiciones": {"A": [{"m": 1454, "x": 35, "y": 38.3}], "T": [{"m": 1454, "x": 35, "y": 38.3}]},
+      "evidencia": {
+        "nombre_es": {"estado": "forever", "fuente": "https://www.wowhead.com/forever/es/quest=8941/una-compensaci%C3%B3n-justa", "fecha_consulta": "2026-11-26"},
+        "clases": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/8941/", "fecha_consulta": "2026-11-26"},
+        "prerrequisitos": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/8941/", "fecha_consulta": "2026-11-26"},
+        "seguimientos": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/8941/", "fecha_consulta": "2026-11-26"},
+        "posiciones": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/8941/", "fecha_consulta": "2026-11-26"}
+      }
+    },
     "92551": {
       "facciones": ["Alliance", "Horde"],
       "razas": ["Skyborne"],

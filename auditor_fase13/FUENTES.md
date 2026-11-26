@@ -188,6 +188,12 @@ Se cotejaron los `objectivesText`, `startItemId` e `itemDrops` del registro de F
 
 Las indicaciones especifican el farol y las llaves de El Cubil, la Llama de Uzel, el círculo de Aquementas y el relicario de La Masacre, entre otros. Los dos encargos de mazmorra y las tibias de guerrero quedan fuera del subtotal principal de XP. Se conservan los destinos y el orden de las 47 rutas. [El Cubil](https://questing.wiki/wow-forever/quests/1089/) · [Cadáver fresco](https://senseos.gg/wiki/wow-forever/items/5810/fresh-carcass/) · [Aquementas](https://zephras.com/forever/enUS/quest/4005/) · [Fragmentos de gangrevid](https://zephras.com/forever/enUS/quest/5526/).
 
+## Consultas de la compilación 71139 · 26 de noviembre de 2026
+
+La revisión de Efficient Games publicada el 26 de noviembre añade siete instantáneas de misión. Contiene fichas detalladas de 901 IDs activos. Los campos de nombre, nivel, sucesor sugerido, máscara, objetivos, recompensas y categoría coinciden con las fichas anteriores para los 900 IDs compartidos. Los 24 IDs pendientes siguen sin respuesta positiva. La tabla QuestXP de 71139 coincide byte a byte con la de 71091. [Datos de la compilación 71139](https://github.com/JIVESCORP/eg-link-output-wowf/tree/1339ce5600bbc2b12e8f1081e584f548f62fa57f/data/wowf/1.60.1.71139) · [Tabla QuestXP](https://wago.tools/db2/QuestXP/csv?build=1.60.1.71139).
+
+La ficha 8941 documenta el nivel mínimo 58, la facción Horda y los dos componentes Oficioscuro. Exige entregar 8978 y da acceso a 8930. La tabla asigna 9.950 a la dificultad 7 de nivel 60 y el registro marca multiplicador 2, de donde resultan 19.900 XP base. La guía muestra el canje para pícaros como encargo opcional de equipo. La XP efectiva queda condicionada al nivel y a la sesión del personaje. [Ficha de misión](https://questing.wiki/wow-forever/quests/8941/) · [Textos y objetos ES](https://www.wowhead.com/forever/es/quest=8941/una-compensaci%C3%B3n-justa).
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

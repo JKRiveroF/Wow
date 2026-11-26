@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 13:07:06 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 13:14:24 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar los 24 IDs sin oferta acreditada y los requisitos especiales que todavía dependen de evidencia adicional.
+**Tarea actual** · Contrastar los 24 IDs sin oferta acreditada y sus requisitos especiales con evidencia por fase.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -304,19 +304,25 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - El inventario tiene **43 fichas con objetos auxiliares**, **45 con exclusiones** y **26 con repetición acreditada**. Estos datos se incorporan por ID a todas sus rutas.
 - Pasaron **17 pruebas específicas** y la **regresión de 80 pruebas**. Las 47 rutas mantienen **0 errores y 56 avisos** de Kum’isha, con **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
 
-## Último bloque verificado · Instrucciones de materiales
+## Instrucciones de materiales · corte verificado
 
 - Los **406 pasos** de 17 misiones en las 47 rutas muestran cómo conseguir, usar o combinar los objetos auxiliares. Se añadieron las instrucciones ES/EN de Aquementas, El Cubil, Faucehielo y otros encargos. Hakkar, los fragmentos de La Masacre y las tibias de guerrero quedan como opcionales en la estimación de XP. [Objetivos y fuentes](auditor_fase13/FUENTES.md#instrucciones-de-uso-de-materiales--26-de-noviembre-de-2026).
 - Pasaron **2 pruebas específicas** y la **regresión de 81 pruebas**. La prueba de integridad comprueba que la actualización se limita al texto de los pasos indicados. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos se mantiene en **40,83 %**.
+
+## Último bloque verificado · Consultas 71139
+
+- Se contrastaron **901 fichas activas** en la compilación 71139. Los campos de identidad, nivel, objetivos, recompensas y perfil de las 900 fichas compartidas coinciden con el corte anterior. El inventario incorporó seis seguimientos y pasó a 576 fichas con historial de misiones previas. Los 24 IDs sin oferta acreditada siguen pendientes. [Compilación y fuentes](auditor_fase13/FUENTES.md#consultas-de-la-compilación-71139--26-de-noviembre-de-2026).
+- Se documentaron el título, nivel 58, equipo Oficioscuro, secuencia 8978 → 8941 → 8930 y **19.900 XP base** de Una compensación justa. Las tres rutas de pícaro de la Horda muestran el canje y su etiqueta de mazmorra. El encargo se contabiliza en la XP opcional. Quedan 24 IDs activos sin XP base.
+- Pasaron **8 pruebas específicas** y la **regresión de 83 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance sigue en **40,83 %** por criterios completos.
 
 ## Comprobaciones que impiden cerrar los criterios
 
 | Bloque | Investigación pendiente | Validación en Forever |
 | --- | --- | --- |
-| Misiones y dependencias | Entre 2.468 IDs activos faltan 24 acreditaciones de oferta, 195 títulos ES observados (193 cotejados con la referencia heredada), 25 EN, 25 niveles mínimos, 2.142 seguimientos y 2.444 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Oferta por fase o perfil cuando los registros externos no la acrediten. |
-| Clase, raza y facción | 2.378 fichas sin condición de clase acreditada, 1.985 sin condición racial y 1.971 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
-| Cartografía | 4.743 destinos únicos sin una referencia específica o cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
-| Experiencia | 25 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP efectiva, nivel inicial y bloqueos por tramo en las 47 rutas. |
+| Misiones y dependencias | Entre 2.468 IDs activos faltan 24 acreditaciones de oferta, 194 títulos ES observados (192 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos y 2.443 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Oferta por fase o perfil cuando los registros externos no la acrediten. |
+| Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.970 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
+| Cartografía | 4.734 destinos únicos sin una referencia específica o cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
+| Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP efectiva, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Posiciones, transporte y requisitos de nodos en 44 rutas. | Costes y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
 | Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
 
@@ -326,7 +332,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `71e42e4`.
+La fase sigue abierta. El corte previo es `8168bce`.
 
 ## Avance individual
 

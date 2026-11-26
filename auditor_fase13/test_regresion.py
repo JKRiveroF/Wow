@@ -132,6 +132,8 @@ def _route_without_reviewed_edits(source):
             line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
         if refuerzo and int(refuerzo[1]) in AUXILIARY_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<materiales revisados>"', line, count=1)
+        if refuerzo and int(refuerzo[1]) == 8941:
+            line = re.sub(r't = "[^"]+"', 't = "<compensación revisada>"', line, count=1)
         if refuerzo and int(refuerzo[1]) in OPTIONAL_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<misión opcional revisada>"', line, count=1)
             if int(refuerzo[1]) == 5227:
@@ -495,6 +497,21 @@ class MissionBadgeTest(unittest.TestCase):
 
 
 class MissionPrerequisitesTest(unittest.TestCase):
+    def test_rogue_upgrade_keeps_its_preparation_and_equipment_names(self):
+        from mission_rules import load_mission_badges, load_mission_localization
+        from world_rules import XP_OPCIONAL
+
+        self.assertIn("MAZMORRA", load_mission_badges(ADDON, (8941,))[8941])
+        translation = load_mission_localization(ADDON)["por_nombre"]
+        for file in ("NoMuertoPicaro", "OrcoTrolPicaro", "SkybornePicaro"):
+            route = _source(f"Rutas/{file}.lua")
+            accepted = route.index('q = 8941, a = "A"')
+            self.assertLess(route.index('q = 8978, a = "T"'), accepted)
+            text = re.search(r't = "([^"]+)"[^\n]+-- REFUERZO_97 q=8941$', route, re.M)[1]
+            self.assertTrue(XP_OPCIONAL.match(text))
+            self.assertIn("Shadowcraft Belt", translation[text])
+            self.assertIn("Shadowcraft Gloves", translation[text])
+
     def test_algaz_brutal_armor_and_mage_deliveries_follow_their_requirements(self):
         from lua_routes import load_routes
         from mission_rules import load_mission_localization

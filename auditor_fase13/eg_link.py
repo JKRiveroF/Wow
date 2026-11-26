@@ -8,7 +8,8 @@ from hashlib import sha256
 from questie_rules import RACES
 
 REVISION = "f25e0efde0c8490e4e6f356a68f7a81a703fa21c"
-BASE = f"https://github.com/JIVESCORP/eg-link-output-wowf/blob/{REVISION}/data/wowf/"
+REVISION_71139 = "1339ce5600bbc2b12e8f1081e584f548f62fa57f"
+BASE = "https://github.com/JIVESCORP/eg-link-output-wowf/blob/"
 HASHES = {
     ("70938", "quests.enUS"): "cc038ecb07f37a74b4bde7e6663950288205487b26d11fdd30687e2811b870f7",
     ("70959", "quests.enUS"): "7d462939d968f129ca05346867b668f05d9e9326a0ea57476781058bff60a97f",
@@ -33,6 +34,13 @@ EXTRA_HASHES = {
     ("71091", "npcs"): "634e380c300f3d0fbb46e5bc413b4dc389641d340a96ce5cd5b1068d090b88c1",
     ("71091", "objectives"): "adecc0c1747159750030fa123f28c56ad6058bfa0501c77953b932d3818f482e",
     ("71091", "turn_ins"): "59652ac7ac8de5b928bd6638f2c816b016c9aab50f1169aba271da3014c6159d",
+    ("71139", "quests.enUS"): "67b6338e44ff81e5d587ed36ce8acb56fa1171c939f15902cd598bf1b813eea8",
+    ("71139", "quest_scan"): "051ebed401f45d3ca6595cfaec0af8a85a5fc0c2ed5698bd93bee0689c631c30",
+    ("71139", "npcs"): "dc793783e33545d30e152689a1c3307a223fddb2319a221f6fa136b5cf145521",
+    ("71139", "objectives"): "7ca0ad356113812e5ae5920b947e32f925270ba373cb211f21d4ba5a2eb212b4",
+    ("71139", "turn_ins"): "b96bd91c917f4e37c47137a4e43bd2c1a59add12496d40539aa7d36935dfe8df",
+    ("71139", "quest_prerequisites"): "b57b9cfae9d5471821a308bab7336704763f3f2c1de14119d1086f6df34f530b",
+    ("71139", "item_uses"): "d911a0a8a2788c0051b9aecc50bd75b9e2bd8bab7c0727b2166161f3a3fc79cf",
 }
 EG_FIELDS = (
     "nivel_mision", "mascara_racial", "siguiente_sugerida", "area_mision", "objetivos_servidor",
@@ -43,7 +51,7 @@ EG_FIELDS = (
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
-XP_SOURCE = f"https://wago.tools/db2/QuestXP/csv?build={XP_BUILD}"
+NEW_BUILD = "1.60.1.71139"
 QUEST_INFO_HASH = "06e1f7250d8ad8d042516ebae1fa4a78fa9307cab0fe62daf19a73331518fd4b"
 QUEST_INFO_SOURCE = f"https://wago.tools/db2/QuestInfo/csv?build={XP_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
@@ -51,7 +59,8 @@ RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
 
 
 def _source(build, dataset):
-    return {"estado": "forever", "build": build, "fuente": f"{BASE}{build}/{dataset}.json"}
+    revision = REVISION_71139 if build == NEW_BUILD else REVISION
+    return {"estado": "forever", "build": build, "fuente": f"{BASE}{revision}/data/wowf/{build}/{dataset}.json"}
 
 
 def _read(directory, build_number, dataset):
@@ -59,8 +68,9 @@ def _read(directory, build_number, dataset):
     path = directory / f"eg-{build}-{dataset}.json"
     raw = path.read_bytes()
     key = build_number, dataset
+    source = _source(build, dataset)
     if sha256(raw).hexdigest() != (HASHES.get(key) or EXTRA_HASHES[key]):
-        raise ValueError(f"SHA-256 inesperado en {path}. Se requiere la revisión EG Link {REVISION}.")
+        raise ValueError(f"SHA-256 inesperado en {path}. Consulta {source['fuente']}.")
     data = json.loads(raw)
     meta = data["meta"]
     expected = ("wowf", build, dataset.split(".")[0], 1)
@@ -68,7 +78,7 @@ def _read(directory, build_number, dataset):
         raise ValueError(f"Metadatos inesperados en {path}.")
     if dataset == "quests.enUS" and meta.get("locale") != "enUS":
         raise ValueError(f"Idioma inesperado en {path}.")
-    return data, _source(build, dataset)
+    return data, source
 
 
 def _record(index, key, values, source):
@@ -90,11 +100,14 @@ def _race_fields(value):
 
 
 def _read_xp_table(directory):
-    path = directory / f"QuestXP-{XP_BUILD}.csv"
+    newer = directory / f"QuestXP-{NEW_BUILD}.csv"
+    build = NEW_BUILD if newer.is_file() else XP_BUILD
+    path = directory / f"QuestXP-{build}.csv"
     raw = path.read_bytes()
     if sha256(raw).hexdigest() != XP_HASH:
-        raise ValueError(f"SHA-256 inesperado en {path}. Se requiere QuestXP de Forever {XP_BUILD}.")
-    return {int(row["ID"]): row for row in csv.DictReader(raw.decode("utf-8-sig").splitlines())}
+        raise ValueError(f"SHA-256 inesperado en {path}. Se requiere QuestXP de Forever {build}.")
+    rows = {int(row["ID"]): row for row in csv.DictReader(raw.decode("utf-8-sig").splitlines())}
+    return rows, f"https://wago.tools/db2/QuestXP/csv?build={build}"
 
 
 def _read_quest_info(directory):
@@ -255,7 +268,7 @@ def _import_scan(missions, data, source):
 
 def import_eg_link(directory):
     missions, npcs, flights = {}, {}, {}
-    xp_table = _read_xp_table(directory)
+    xp_table, xp_source = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
     extras = {key for key in EXTRA_HASHES if (directory / f"eg-1.60.1.{key[0]}-{key[1]}.json").is_file()}
     datasets = sorted(HASHES.keys() | extras, key=lambda key: (key[1] != "quests.enUS", *key))
@@ -284,6 +297,6 @@ def import_eg_link(directory):
     for quest_id, entry in missions.items():
         xp = _base_xp(entry, xp_table)
         if xp is not None:
-            source = {**entry["evidencia"]["componentes_xp"], "tabla": XP_SOURCE, "metodo": "calculada"}
+            source = {**entry["evidencia"]["componentes_xp"], "tabla": xp_source, "metodo": "calculada"}
             _record(missions, quest_id, {"xp_calculada": xp}, source)
     return {"misiones": missions, "pnj": npcs, "vuelos_observados": flights}
