@@ -24,6 +24,10 @@ Registra la compilación e interfaz del cliente, idioma del cliente y de la guí
 
 Los resultados de las pruebas simuladas quedan en las pruebas del auditor. El estado de cada comprobación de esta tabla sigue pendiente de observación en el cliente.
 
+## Nodos y conexiones de vuelo
+
+En esES, abre el mapa de vuelo con Shardi, Brakkar y Thalon. Registra el nombre y estado que devuelve el cliente. Comprueba que el paso que verifica Juncobrezo, Sangrevenenosa o Sombraprensa se completa tras guardar el nodo. Verifica el acceso a Gadgetzan y Theramore con Alianza y al Puesto del Veneno con Horda. Para una conexión con escalas, anota sentido, compilación, talento, precios y tiempo. [Nodos, nombres y observaciones](FUENTES.md#nodos-y-conexiones-de-vuelo).
+
 ## Aprendizaje de habilidades por misión
 
 Compara el libro de hechizos antes de aceptar y tras aceptar y entregar el encargo. En cazador, comprueba Llamar y Retirar mascota al entregar la tercera doma, y Alimentar, Revivir y Adiestramiento tras la entrega final. En pícaro, anota el rango inicial de Venenos y la aparición de la receta 8681 al entregar 2359 o 2480.

@@ -81,6 +81,19 @@ class EstadoDeVueloTest(unittest.TestCase):
                 self.assertEqual(step.comprobar.vuelo, alias)
                 self.assertEqual(runtime.globals().estado_paso(step), "hecho")
 
+    def test_reconoce_los_tres_nombres_espanoles_de_taxinodes(self):
+        runtime = _create_runtime("esES", "es")
+        for step_name, stored in (
+            ("Juncobrezo", "Poblado Murohelecho, Marjal Revolcafango"),
+            ("Sangrevenenosa", "Puesto del Veneno"),
+            ("Sombraprensa", "Aldea Cazasombras, Desolace"),
+        ):
+            with self.subTest(step_name=step_name):
+                step = runtime.globals().paso_de_vuelo(step_name)
+                for value, expected in ((True, "hecho"), (False, "manual")):
+                    runtime.globals().GuiaAventureroDB = runtime.table_from({"vuelos": {stored: value}}, recursive=True)
+                    self.assertEqual(runtime.globals().estado_paso(step), expected)
+
     def test_pasos_desconocidos_o_incompletos_siguen_manuales(self):
         runtime = _create_runtime("esMX", "en")
         runtime.globals().GuiaAventureroDB = runtime.table_from({

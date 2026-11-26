@@ -7,10 +7,13 @@ if type(GL) ~= "table" or not GL.AnadirIngles then return end
 GL.AnadirIngles({
   ["Hachazo"]="Splintertree",
   ["Juncobrezo"]="Brackenwall",
+  ["Poblado Murohelecho"]="Brackenwall Village",
   ["Mojache"]="Camp Mojache",
   ["Roca del Sol"]="Sun Rock",
   ["Sangrevenenosa"]="Bloodvenom",
+  ["Puesto del Veneno"]="Bloodvenom Post",
   ["Sombraprensa"]="Shadowprey",
+  ["Aldea Cazasombras"]="Shadowprey Village",
   ["Viento Libre"]="Freewind",
 })
 GL.AnadirIngles([==[

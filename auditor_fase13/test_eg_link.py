@@ -206,3 +206,30 @@ class EGLinkTests(unittest.TestCase):
         alliance = report["conexiones"]["Alliance"]
         self.assertEqual(list(alliance), ["1>2|frequentFlier:1"])
         self.assertEqual(alliance["1>2|frequentFlier:1"]["talento"], "frequentFlier:1")
+
+    def test_flight_table_resolves_the_mill_and_preserves_timings_by_build(self):
+        def step(name, *npcs):
+            return {"comprobar": {"vuelo": name}, "wp": [{"npc": npc} for npc in npcs]}
+
+        route = {"_faccion": "Horde", "secciones": [{"pasos": [
+            step("Molino Tarren", 4551, 2226, 2389), step("Entrañas", 4551), step("Sangrevenenosa", 11900)
+        ]}]}
+        old = {"build": "1.60.1.71037", "fuente": "antes",
+               "maestros": {"4551": {"node": 11, "sources": 1}},
+               "conexiones": {"11>13": {"seconds": {"61": 1}}}}
+        new = {"build": "1.60.1.71139", "fuente": "después",
+               "maestros": {"2226": {"node": 10, "sources": 1}, "2389": {"node": 13, "sources": 1}},
+               "conexiones": {"11>13": {"seconds": {"63": 1}}}}
+        table = {"Molino Tarren": [(13, "Molino Tarren, Trabalomas", 2)],
+                 "Entrañas": [(11, "Entrañas, Claros", 2)], "Puesto del Veneno": [(48, "Puesto del Veneno", 2)]}
+        report = link_flights([route], {**new, "instantaneas": [old, new], "tabla_nodos": table})
+        self.assertEqual(report["nodos"]["Horde"]["Molino Tarren"]["pnj"], 2389)
+        self.assertEqual(report["nodos"]["Horde"]["Entrañas"]["pnj"], 4551)
+        self.assertEqual(report["nodos"]["Horde"]["Sangrevenenosa"]["nodo"], 48)
+        self.assertEqual(report["nodos_sin_observacion_de_maestro"]["Horde"], ["Sangrevenenosa"])
+        connection = report["conexiones"]["Horde"]["11>13"]
+        self.assertEqual(connection["seconds"], {"63": 1})
+        self.assertEqual([(sample["fuente"], sample["seconds"]) for sample in connection["observaciones"]],
+                         [("antes", {"61": 1}), ("después", {"63": 1})])
+        self.assertEqual(link_flights([route], old)["nodos_sin_indicio"]["Horde"],
+                         ["Molino Tarren", "Sangrevenenosa"])

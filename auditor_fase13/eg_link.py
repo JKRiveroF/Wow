@@ -9,6 +9,7 @@ from hashlib import sha256
 
 from questie_rules import RACES
 from recompensas import EFFECT_SOURCE, SKILL_SOURCE, load_learning
+from vuelos_observados import load_taxi_nodes
 
 REVISION = "f25e0efde0c8490e4e6f356a68f7a81a703fa21c"
 REVISION_71139 = "1339ce5600bbc2b12e8f1081e584f548f62fa57f"
@@ -80,6 +81,14 @@ EXTRA_HASHES = {
     ("71139", "turn_ins"): "b96bd91c917f4e37c47137a4e43bd2c1a59add12496d40539aa7d36935dfe8df",
     ("71139", "quest_prerequisites"): "b57b9cfae9d5471821a308bab7336704763f3f2c1de14119d1086f6df34f530b",
     ("71139", "item_uses"): "d911a0a8a2788c0051b9aecc50bd75b9e2bd8bab7c0727b2166161f3a3fc79cf",
+    ("70790", "flights"): "8918141ad93ea1b1a24d867b852d2b6b90e0ca05d3d12041a0d79afb6d8e731a",
+    ("70840", "flights"): "bd7ae1b3910afb82925578ad3aa5e46096edfa7d8fb04514c707a3d41ff0e9dc",
+    ("70862", "flights"): "94c5181c0f5dc9a095d5ad02b8f20c615e5bdc6e068c20b020f0f482c2ee6291",
+    ("70888", "flights"): "438a576ee44a876b807b3f3f42d1138e6a7fcd24c71ea94be84cc854cf1bdeab",
+    ("70938", "flights"): "4a41e20949714627eca7d422bd94210f652a0574529b474f2745335371939cc0",
+    ("70959", "flights"): "392d2016c041717d036951dea839276eb871bd8a6dbbb9476d5cdb8e770553f5",
+    ("71091", "flights"): "9ad388df4ddb4ae472fc86a2b017e85f3c37e6fa4e2b7e8cfaff6b39619d43a2",
+    ("71139", "flights"): "529651f99e22777673dbb4f52213beaf027862669bef81ad9ba4678e6f7cdbb1",
 }
 EG_FIELDS = (
     "nivel_mision", "mascara_racial", "siguiente_sugerida", "area_mision", "objetivos_servidor",
@@ -106,6 +115,8 @@ LOOT_TYPES = {"npc": "pnj", "object": "objeto"}
 
 def _source(build, dataset):
     recent = build in RECENT_REVISION_BUILDS or (build == "1.60.1.70938" and dataset not in ("quests.enUS", "creatures"))
+    if dataset == "flights" and build != "1.60.1.71037":
+        recent = True
     revision = REVISION_71139 if recent else REVISION
     return {"estado": "forever", "build": build, "fuente": f"{BASE}{revision}/data/wowf/{build}/{dataset}.json"}
 
@@ -401,7 +412,7 @@ def _import_access(missions, quest_id, profiles):
 
 
 def import_eg_link(directory):
-    missions, npcs, flights = {}, {}, {}
+    missions, npcs, flights = {}, {}, []
     profiles = {}
     targets = defaultdict(dict)
     loot = defaultdict(dict)
@@ -435,7 +446,7 @@ def import_eg_link(directory):
         elif dataset == "turn_ins":
             _import_turn_ins(missions, data, source)
         elif dataset == "flights":
-            flights = {**source, "maestros": data["masters"], "conexiones": data["routes"]}
+            flights.append({**source, "maestros": data["masters"], "conexiones": data["routes"]})
         elif dataset in ("quest_prerequisites", "item_uses"):
             field = "misiones_previas_observadas" if dataset == "quest_prerequisites" else "usos_objetos_observados"
             for quest_id, row in data["quests"].items():
@@ -460,5 +471,6 @@ def import_eg_link(directory):
     for (kind, entity), points in targets.items():
         if kind in roles:
             contacts[roles[kind]][entity] = list(points.values())
-    return {"misiones": missions, "pnj": npcs, "vuelos_observados": flights, "entidades_interaccion": contacts,
+    flight_data = {**flights[-1], "instantaneas": flights, "tabla_nodos": load_taxi_nodes(directory)} if flights else {}
+    return {"misiones": missions, "pnj": npcs, "vuelos_observados": flight_data, "entidades_interaccion": contacts,
             "botin_observado": {item: list(entities.values()) for item, entities in loot.items()}}

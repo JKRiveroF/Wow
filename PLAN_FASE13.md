@@ -50,7 +50,7 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 56,78 %**
+**Progreso efectivo global · 57,18 %**
 
 `███████████░░░░░░░░░`
 
@@ -58,16 +58,16 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,33 % | 46,34 % | +0,01 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,34 % | 46,34 % | 0 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 50 % | +2,68 pp |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,78 % | 56,78 % | 0 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,78 % | 57,18 % | +0,4 pp |
 
-**Última actualización de la medición · 2026-11-26 23:51:21+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 23:54:16+01:00 (Madrid)**
 
-El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
+El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
 <!-- medicion-fase13:fin -->
 
@@ -83,6 +83,8 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [ ] Completar la evidencia por misión y perfil, especialmente las cadenas, restricciones, objetos, desbloqueos y títulos ES/EN. Validar posiciones, ganancias de XP y alternativas de viaje donde falten observaciones.
 - [x] Resolver las exclusiones `324/526` y `94484/94493` y los requisitos `98221 → 465` y `93680 → 545`.
 - [x] Cruzar el registro de misiones y las observaciones de Efficient Games por ID y compilación con los títulos, requisitos, objetivos, XP y vuelos de las rutas.
+- [x] Identificar los 29 nodos por nombre y facción con TaxiNodes, corregir la asociación de Molino Tarren y verificar los tres nombres que muestra el cliente esES.
+- [ ] Comprobar el acceso a los nodos con los perfiles de ruta. Registrar las conexiones con escalas y las alternativas de transporte en condiciones comparables.
 - [x] Incorporar las observaciones faltantes de objetivos, destinos y entregas de la revisión fijada de Efficient Games. Conservar las muestras por acción y compilación.
 - [x] Incorporar la compilación 71139, contrastar los 24 IDs pendientes y completar la ficha de equipo de pícaro 8941.
 - [x] Cruzar los historiales de entregas con las continuaciones sugeridas que coinciden con la base heredada. Aplicar la evidencia a las secuencias A/T de las rutas.

@@ -6,7 +6,7 @@
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 56,78 %**
+**Progreso efectivo global · 57,18 %**
 
 `███████████░░░░░░░░░`
 
@@ -14,16 +14,16 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,33 % | 46,34 % | +0,01 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,34 % | 46,34 % | 0 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 50 % | +2,68 pp |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,78 % | 56,78 % | 0 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,78 % | 57,18 % | +0,4 pp |
 
-**Última actualización de la medición · 2026-11-26 23:51:21+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 23:54:16+01:00 (Madrid)**
 
-El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
+El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
 <!-- medicion-fase13:fin -->
 
@@ -409,11 +409,17 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Quedan **2.702 destinos de misión sin referencia específica ni cercana**. Otros **3.248** tienen una observación cercana y **84** coinciden con una posición documentada. El botín efectivo con la misión activa y las posiciones exactas siguen abiertos en los contrastes parciales. [Validación en cliente](auditor_fase13/VALIDACION_FOREVER.md#destinos-reubicados-en-mapas-de-zona).
 - Pasaron **31 pruebas específicas** y **113 de regresión completa**. Las 47 rutas registraron **0 errores y 56 avisos conocidos**. El efectivo cartográfico queda en **46,33 %**. El global muestra **56,78 % efectivo** tras redondear y **40,83 % certificado**. [Medición](PLAN_FASE13.md#lectura-automática-del-avance).
 
-## Último bloque verificado · Botín observado en nueve compilaciones
+## Botín observado en nueve compilaciones · Corte verificado
 
 - Los **11 candidatos iniciales** y dos adicionales aportaron contraste parcial para **13 destinos de 12 misiones**, reutilizados en **275 apariciones en rutas**. Los destinos adicionales corresponden a 86 y 385. [Observaciones por ID](auditor_fase13/FUENTES.md#botín-observado-en-efficient-games).
 - El inventario conserva un origen documentado para al menos un objeto de **124 misiones activas**. **63** incluyen una observación de Efficient Games. Hay dos misiones con origen documentado y sin posición asociada. Quedan **2.689 destinos de misión** sin referencia específica ni cercana. [Alcance de los datos](auditor_fase13/README.md#actualizar-la-medición-de-la-fase).
 - Pasaron **30 pruebas específicas** y **115 de regresión completa**. Las 47 rutas registraron **0 errores y 56 avisos conocidos**. El efectivo de cartografía subió a **46,34 %**. El global muestra **56,78 % efectivo** y **40,83 % certificado**. [Medición](PLAN_FASE13.md#lectura-automática-del-avance).
+
+## Último bloque verificado · Nodos y conexiones de vuelo
+
+- Se identificaron los **29 nodos de vuelo** que comprueban las 47 rutas. Molino Tarren corresponde al nodo **13**, con Zarise, y Entrañas al **11**, con Michael Garrett. Nueve instantáneas aportan **228 conexiones por sentido y variante de talento**, con tiempos observados en **99**. Las muestras conservan su compilación. [Fuentes y alcance](auditor_fase13/FUENTES.md#nodos-y-conexiones-de-vuelo).
+- Se corrigió el reconocimiento en esES de **Poblado Murohelecho**, **Puesto del Veneno** y **Aldea Cazasombras**. Se cerraron **44 grupos** de identificación de nodos. Quedan por medir las alternativas y comprobar el acceso y los desbloqueos en Forever.
+- Pasaron **117 pruebas de regresión**. La auditoría de 47 rutas registra **0 errores y 56 avisos conocidos**. Viajes alcanza **50 % efectivo**. El global queda en **40,83 % certificado** y **57,18 % efectivo**, con **235 grupos de investigación y 116 de cliente**.
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -423,7 +429,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 | Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.959 sin condición de facción. Hay contraste parcial para 337 de clase, 878 de raza y 863 de facción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. Ocho pares de misión y hechizo tienen prueba individual. |
 | Cartografía | 2.689 destinos de misión únicos sin una referencia específica o cercana. Otros 3.261 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos los interiores de 1486 y 6563 y los casos de botín del protocolo. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP de entrega pendiente de observación en 1.383 IDs, nivel inicial y bloqueos por tramo en las 47 rutas. |
-| Viajes | Posiciones, transporte y requisitos de nodos en 44 rutas. | Costes y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
+| Viajes | Alternativas de transporte, requisitos de desbloqueo y escalas observadas que difieren por compilación. | Costes, acceso y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
 | Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
 
 ## Siguientes tareas
@@ -432,7 +438,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `8a79f51`.
+La fase sigue abierta. El corte previo es `9dbcdcf`.
 
 ## Avance individual
 

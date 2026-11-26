@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-26T23:51:21+01:00",
+  "actualizado": "2026-11-26T23:54:16+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -28,8 +28,8 @@
         141
       ],
       "efectivo": [
-        1514489,
-        3268704
+        10603477,
+        22880928
       ]
     },
     "4": {
@@ -78,8 +78,8 @@
         120
       ],
       "efectivo": [
-        37835991564689,
-        66634753758720
+        5405312558983,
+        9519250536960
       ]
     }
   },
@@ -749,8 +749,8 @@
           141
         ],
         "efectivo": [
-          53,
-          112
+          1,
+          2
         ],
         "criterios": [
           {
@@ -768,24 +768,24 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              19,
-              112
+              1,
+              4
             ],
             "familias": [
               {
                 "nombre": "Nodos de vuelo por facción",
-                "unidades": 28,
+                "unidades": 29,
                 "estados": {
-                  "confirmada": 19,
+                  "confirmada": 29,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 9,
+                  "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 19,
-                "comprobaciones_aplicables": 28,
+                "comprobaciones_superadas": 29,
+                "comprobaciones_aplicables": 29,
                 "etapas": {
-                  "confirmadas": 19
+                  "confirmadas": 29
                 }
               },
               {
@@ -883,7 +883,7 @@
           }
         ],
         "pendientes_por_via": {
-          "investigacion": 44,
+          "investigacion": 0,
           "cliente": 69
         }
       },
@@ -1074,18 +1074,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 115,
+                "unidades": 117,
                 "estados": {
-                  "confirmada": 115,
+                  "confirmada": 117,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 115,
-                "comprobaciones_aplicables": 115,
+                "comprobaciones_superadas": 117,
+                "comprobaciones_aplicables": 117,
                 "etapas": {
-                  "confirmadas": 115
+                  "confirmadas": 117
                 }
               }
             ]
@@ -1167,13 +1167,13 @@
         120
       ],
       "efectivo": [
-        5405312558983,
-        9519250536960
+        38104916834233,
+        66634753758720
       ]
     },
     "regresion": {
-      "ejecutadas": 115,
-      "superadas": 115,
+      "ejecutadas": 117,
+      "superadas": 117,
       "correcta": true
     },
     "casos_cliente": [
@@ -1201,7 +1201,7 @@
       "[1413,[45.1,22.5,870,\"C\",null],[46.6,39.4,848,\"C\",null],[48,19.1,924,\"C\",null],[52,36.4,845,\"C\",null]]"
     ],
     "pendientes_por_via": {
-      "investigacion": 279,
+      "investigacion": 235,
       "cliente": 116
     },
     "rutas": 47,
@@ -1234,8 +1234,8 @@
         1
       ],
       "efectivo": [
-        13,
-        144816
+        0,
+        1
       ]
     },
     "4": {
@@ -1254,8 +1254,8 @@
         1
       ],
       "efectivo": [
-        0,
-        1
+        3,
+        112
       ]
     },
     "6": {
@@ -1284,8 +1284,8 @@
         1
       ],
       "efectivo": [
-        13,
-        724080
+        9,
+        2240
       ]
     }
   }
