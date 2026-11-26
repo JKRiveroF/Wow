@@ -1,6 +1,15 @@
 {
   "fecha_consulta_cartografia": "2026-11-25",
   "misiones": {
+    "96222": {
+      "posiciones": {"A": [{"m": 1443, "x": 43.5, "y": 79}], "C": [{"m": 1443, "x": 29.6, "y": 52}], "T": [{"m": 1443, "x": 43.5, "y": 79}]},
+      "elite": true,
+      "evidencia": {
+        "posiciones": {"estado": "forever", "fuente": "https://pullcall.com/forever/db/quest/96222-khan-hratha"},
+        "elite": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/96222/"}
+      },
+      "contraste_cartografia": ["https://foreverquestlog.com/npcs/253066/", "https://bindonforever.com/npc/5402"]
+    },
     "93685": {
       "posiciones": {"A": [{"m": 1419, "x": 52, "y": 35.6}], "T": [{"m": 1419, "x": 52, "y": 35.6}]},
       "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/93685/"}}

@@ -6039,6 +6039,7 @@ return {
 [1375]="Khan Shaka",
 [1380]="Khan Hratha",
 [1381]="Khan Hratha",
+[96222]="Khan Hratha",
 [1382]="Strange Alliance",
 [1383]="Nothing But The Truth",
 [1384]="Raid on the Kolkar",

@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 01:39:18 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 01:44:41 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar las variantes de los khanes de Desolace, los requisitos de perfil y los 29 IDs activos sin evidencia de oferta del servidor.
+**Tarea actual** · Colocar la cadena opcional de Kum'isha y contrastar los requisitos de perfil y los 27 IDs activos pendientes de evidencia de oferta.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -198,20 +198,27 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Permanecen abiertos 301 grupos de investigación y 94 de cliente. El avance global por criterios completos es 40,83 %.
 - Pasaron las 60 pruebas locales. La regresión comprobó los textos de los refuerzos y sus traducciones, y cotejó los destinos, el orden y los IDs con la base original.
 
-## Último bloque verificado · Refuerzos restantes
+## Refuerzos restantes · corte verificado
 
 - Se corrigieron las instrucciones ES/EN de los últimos 32 encargos sin XP base, en 444 pasos de las 47 rutas. Los textos identifican las entregas que activan otro paso, los transportes, las recetas, el material de reputación y las actividades de Alterac. [Fuentes y condiciones](auditor_fase13/FUENTES.md#refuerzos-sin-xp-base--26-de-noviembre-de-2026).
 - La auditoría pasó de 536 a **92 avisos y 0 errores**. Quedan 64 avisos de prerrequisitos alternativos y 28 de perfil. Los 301 grupos de investigación y 94 de cliente mantienen el avance en 40,83 % por criterios completos.
 - Pasaron las 60 pruebas locales. La regresión comprobó las instrucciones y traducciones de los encargos revisados y la integridad de sus acciones, IDs y coordenadas.
 
+## Último bloque verificado · Desolace
+
+- Se incorporó el encargo opcional 96222 de Umarak a 34 rutas. Se comprobó el nivel mínimo 35, el fragmento de llave 6077 y los tres destinos por ruta. La instrucción indica usar la boquilla en el cuerno y formar un grupo para el khan de élite. Las rutas conservan 1380 y 1381 en el inventario histórico y mantienen la posición de sus pasos guardados. [Evidencia de Desolace](auditor_fase13/FUENTES.md#khan-hratha-y-ramas-de-desolace--26-de-noviembre-de-2026).
+- Se condicionaron los encargos 1374 y 1375 a la oferta de Gelkis y Magram en 32 y 34 rutas, respectivamente. Las misiones homónimas 93128 y 93196 tienen otros PNJ, objetivos y requisitos, y quedan identificadas en las fuentes.
+- Hay 2.469 fichas y 2.463 IDs activos. Se cotejaron los 2.462 IDs de la base 9.7.9. Hay evidencia de existencia para 2.438 fichas, título español para 2.266, título inglés y XP base para 2.437. De los 27 IDs activos sin evidencia de oferta, 18 tienen fila en QuestV2.
+- Pasaron las **61 pruebas locales**, incluida la verificación de la misión 96222, el orden guardado y las instrucciones en ambos idiomas. La auditoría registró **0 errores, 92 avisos**, 301 grupos de investigación y 94 de cliente. El avance se mantiene en 40,83 % por criterios completos.
+
 ## Siguientes tareas
 
-1. Contrastar los requisitos de perfil en discrepancia y las ramas de Desolace que todavía muestran encargos de khan heredados.
-2. Revisar los 29 IDs activos pendientes de existencia. Priorizar los khanes de Desolace, los nueve IDs sin fila y las condiciones de evento. Colocar el desvío opcional de Kum'isha y ampliar la cobertura de títulos y requisitos mediante los 567 historiales de misiones previas.
+1. Colocar el desvío opcional de Kum'isha en el catálogo y comprobar los requisitos de perfil que siguen en discrepancia.
+2. Contrastar los 27 IDs activos sin evidencia de oferta, incluidos los nueve sin fila en QuestV2, las variantes heredadas y las condiciones de evento. Ampliar la cobertura de títulos y requisitos con los 567 historiales de misiones previas.
 3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `2e29410`.
+La fase sigue abierta. El corte previo es `7c7b2f6`.
 
 ## Avance individual
 

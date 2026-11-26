@@ -37,7 +37,8 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Contrastar los objetos, el temporizador y el riesgo de las tres ventanas de agrupamiento y corregir sus instrucciones.
 - [x] Actualizar los IDs de las dos entregas de Kum'isha y contrastar los pasos previos en Pantano de las Penas y Desolace.
 - [x] Contrastar las fichas con la tabla QuestV2 del cliente y comprobar los casos de oferta sin fila y fila sin oferta observada.
-- [ ] Colocar la cadena opcional de Kum'isha y revisar los 29 IDs activos sin evidencia de oferta.
+- [x] Contrastar el encargo 96222 de Umarak y las variantes de Gelkis y Magram en Desolace.
+- [ ] Colocar la cadena opcional de Kum'isha y revisar los 27 IDs activos sin evidencia de oferta.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
 - [x] Corregir 26 encargos de canje, reputación, eventos y JcJ que aparecían como refuerzos de XP.
 - [x] Contrastar y corregir los 32 refuerzos restantes con XP base cero. Distinguir pasos de cadena, de transporte, de clase y de Alterac.

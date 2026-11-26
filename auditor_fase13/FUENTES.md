@@ -101,6 +101,12 @@ Las misiones 2521 y 2522 de 9.7.9 se sustituyeron por 93685 y 93686 en las 47 ru
 
 La cadena es opcional en el cálculo de XP del recorrido. Lleva del Pantano de las Penas a Desolace y vuelve al Pantano antes de las Tierras Devastadas. Queda pendiente contrastar el coste del desvío y colocarlo como recorrido opcional.
 
+## Khan Hratha y ramas de Desolace · 26 de noviembre de 2026
+
+El encargo 96222 de Umarak pide nivel 35, el fragmento de llave 6077 y el uso de la boquilla en el cuerno de la cima. El PNJ acepta la misión en Desolace (43,5 / 79,0) y el objetivo está en el Valle de las Lanzas (29,6 / 52,0). Se añadió un encargo opcional por ruta donde aparecían 1380 o 1381 y se conservaron los índices antiguos. Las fuentes discrepan sobre su oferta por facción, por lo que la guía indica tomarlo si Umarak lo ofrece. [Ficha de Forever](https://zephras.com/forever/enUS/quest/96222/) · [Destinos y objetivo](https://pullcall.com/forever/db/quest/96222-khan-hratha) · [Umarak](https://foreverquestlog.com/npcs/253066/) · [Khan Hratha](https://bindonforever.com/npc/5402).
+
+Los registros 1374 y 1375 conservan sus títulos y destinos heredados mientras se comprueba su oferta. Los textos indican la rama Gelkis o Magram y permiten continuar si el encargo no está en el diario. Los ID 93128 y 93196 llevan el mismo nombre y tienen objetivos y accesos distintos en la cadena de Shen'dralas. Se mantuvieron como expedientes separados. [Khan Jehn Gelkis](https://zephras.com/forever/enUS/quest/93128/) · [Khan Jehn Magram](https://zephras.com/forever/enUS/quest/93196/) · [Tramas de la zona anunciadas por Blizzard](https://worldofwarcraft.blizzard.com/en-us/news/24315820/world-of-warcraft-forever-now-live).
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

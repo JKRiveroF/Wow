@@ -92,6 +92,11 @@ def _route_without_reviewed_edits(source):
         invasion = re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )(926[34])\s*$", line)
         if invasion:
             line = re.sub(r'\{ t = ".*', f'<paso de invasión revisado {invasion[1]}>', line)
+        hratha = re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )(138[01])\s*$", line)
+        if hratha:
+            line = re.sub(r'\{ t = ".*', f'<paso de Hratha revisado {hratha[1]}>', line)
+        if refuerzo and int(refuerzo[1]) in (1374, 1375):
+            line = re.sub(r't = "[^"]+"', 't = "<rama de centauros revisada>"', line, count=1)
         if refuerzo and int(refuerzo[1]) in (2521, 2522, 93685, 93686):
             line = re.sub(r't = "[^"]+"', 't = "<cadena de Kum\'isha revisada>"', line, count=1)
             line = re.sub(r"(\bq\s*=\s*)9368([56])\b", lambda m: m[1] + ("2521" if m[2] == "5" else "2522"), line)
@@ -232,7 +237,7 @@ class IntegridadTest(unittest.TestCase):
         for name in self.routes:
             text = (ROOT / name).read_text(encoding="utf-8")
             self.assertNotRegex(text, r"\bq = 926[34]\b")
-            removed += text.count("-- Paso conservado")
+            removed += len(re.findall(r"-- Paso conservado 926[34]$", text, re.M))
             alliance = "q = 4101," in text
             first = 5882 if alliance else 5887
             repeat = 4103 if alliance else 4108
@@ -249,6 +254,25 @@ class IntegridadTest(unittest.TestCase):
                 self.assertIn("No base XP" if quest_id < 5882 else "Cenarion Beacon", translation)
             self.assertEqual(entries, expected, name)
         self.assertEqual(removed, 10)
+
+    def test_hratha_uses_the_forever_quest_once_per_affected_route(self):
+        from mission_rules import load_mission_localization
+
+        localized = load_mission_localization(ADDON)
+        self.assertEqual(localized["por_id"][96222], "Khan Hratha")
+        affected = 0
+        for name in self.routes:
+            text = (ROOT / name).read_text(encoding="utf-8")
+            self.assertNotRegex(text, r"\bq = 138[01]\b")
+            steps = [line for line in text.splitlines() if re.search(r"-- Paso conservado 138[01]$", line)]
+            if not steps:
+                continue
+            affected += 1
+            self.assertEqual(re.findall(r'q = 96222, a = "([ACT])"', steps[0]), ["A", "C", "T"])
+            self.assertEqual(steps[0].count('x = 43.5, y = 79.0'), 2)
+            self.assertIn("Maraudine centaur", localized["por_nombre"][re.search(r't = "([^"]+)"', steps[0])[1]])
+            self.assertTrue(all("wp =" not in step for step in steps[1:]))
+        self.assertEqual(affected, 34)
 
     def test_kumisha_steps_use_live_ids_in_all_routes(self):
         from mission_rules import load_mission_localization

@@ -2,6 +2,11 @@
 local _, GL = ...
 if type(GL) ~= "table" or not GL.AnadirIngles then return end
 GL.AnadirIngles({
+  ["Si Uthek te ofrece [Khan Jehn], hazlo solo en la rama Gelkis. Si no lo tienes en el diario, continúa. Los encargos nuevos de Shen'dralas tienen su propia cadena."] = "If Uthek offers [Khan Jehn], do it only on the Gelkis branch. If it is not in your quest log, continue. The new Shen'dralas quests follow their own chain.",
+  ["Si Warug te ofrece [Khan Shaka], hazlo solo en la rama Magram. Si no lo tienes en el diario, continúa con el recorrido."] = "If Warug offers [Khan Shaka], do it only on the Magram branch. If it is not in your quest log, continue with the route.",
+  ["Encargo opcional de Desolace: [El khan Hratha]. Si Umarak te lo ofrece a partir del nivel 35, reúne un grupo. Consigue la boquilla de un centauro Maraudine, úsala en el cuerno de la cima del Valle de las Lanzas y entrega a Umarak el fragmento de llave."] = "Optional Desolace quest: [Khan Hratha]. If Umarak offers it from level 35, bring a group. Get the mouthpiece from a Maraudine centaur, use it at the horn on the peak of the Valley of Spears and bring the key fragment back to Umarak.",
+  ["Si ya entregaste [El khan Hratha] a Umarak o decidiste saltarlo, continúa con el recorrido de Desolace."] = "If you turned in [Khan Hratha] to Umarak or chose to skip it, continue the Desolace route.",
+  ["El khan Hratha"] = "Khan Hratha",
   ["Canje opcional: [Las flechas no valen para nada] (nivel 60). Cambia 200 proyectiles de torio por 200 flechas. Sin XP base."] = "Optional exchange: [Arrows Are For Sissies] (level 60). Trade 200 Thorium Shells for 200 arrows. No base XP.",
   ["Canje opcional: [Mineral de indurio] (nivel 42). Entrega 4 menas de indurio para recibir el pago. Sin XP base."] = "Optional exchange: [Indurium Ore] (level 42). Hand in 4 Indurium Ore for payment. No base XP.",
   ["Canje opcional: [Un trasto de Draenei…] (nivel 55). Entrega un fragmento de draenetista imperfecto a Kum'isha para recibir sus desechos. Sin XP base."] = "Optional exchange: [One Draenei's Junk...] (level 55). Give Kum'isha an Imperfect Draenethyst Fragment for a junk reward. No base XP.",
