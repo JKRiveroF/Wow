@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 01:12:28 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 01:17:36 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar las cadenas de Kum'isha y de los centauros y los 31 IDs sin evidencia de existencia. Revisar los objetivos de las tres ventanas de agrupamiento.
+**Tarea actual** · Contrastar la cadena de Kum'isha, las nuevas variantes de los khanes de Desolace y los 31 IDs sin evidencia de existencia.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -152,7 +152,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - El auditor registró **0 errores y 1.902 avisos**. Se resolvieron 1.136 avisos y quedan 1.139 de refuerzo para 68 IDs. Los 301 grupos de investigación y los 94 de cliente mantienen el avance en **40,83 %**. [Fuentes de los refuerzos](auditor_fase13/FUENTES.md#refuerzos-sin-xp-base--26-de-noviembre-de-2026).
 - Pasaron las 57 pruebas locales. La regresión verificó las traducciones y que los pasos corregidos conservan su orden, destinos e IDs.
 
-## Último bloque verificado · Frondavil e invasión
+## Frondavil e invasión · corte verificado
 
 - Las 47 rutas ya distinguen las primeras entregas de bálsamo de Frondavil de sus canjes repetibles. Se corrigieron 219 primeras entregas y 215 canjes con las variantes de cada facción, sus traducciones y la baliza Cenarion. La XP de estas entregas opcionales se desglosa en el informe.
 - Se retiraron dos encargos de invasión de la Horda de las cinco rutas de elfos de la noche. Los diez espacios de paso conservan su índice. Las dos misiones conservan sus fichas en la auditoría original.
@@ -161,14 +161,22 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Siguen abiertos 301 grupos de investigación y 94 de cliente. El avance global ponderado sigue en 40,83 %.
 - Pasaron las 58 pruebas locales. La regresión ejecutó la carga de las rutas y cotejó el orden de los pasos de Frondavil, los textos ES/EN y los archivos de la distribución original.
 
+## Último bloque verificado · Objetivos y desplazamientos compartidos
+
+- Se repitió el contraste de los 22 avisos de agrupamiento. Abarcan 51 apariciones en tres ventanas. Se documentó una relación adicional en cada ventana y quedaron 21 campos de relación por contrastar. Los recorridos conservan el orden hasta medir el acceso y confirmar las relaciones que faltan. [Resultados de agrupamiento](auditor_fase13/AGRUPAMIENTOS_FASE13.md).
+- Se corrigieron los textos ES/EN de la Mano de Iruxos y la Charca de Lágrimas en 22 rutas, y de la Semilla del Demonio en siete. La guía indica el uso del pico, el cristal, la piedra que dura 30 minutos y el riesgo de las patrullas élite.
+- El cristal de Iruxos respalda 22 apariciones de su destino. La cobertura total de coordenadas documentadas sube a 582 apariciones, más 14.217 cerca de observaciones.
+- La auditoría local de las 47 rutas registró 0 errores, 1.448 avisos y 395 grupos pendientes. Los criterios completos mantienen el avance global en 40,83 %.
+- Pasaron las 58 pruebas locales. La regresión conservó los destinos, las traducciones y el orden de las tres ventanas.
+
 ## Siguientes tareas
 
 1. Contrastar los 58 refuerzos restantes y los requisitos de perfil que siguen en discrepancia.
 2. Revisar los 31 IDs sin evidencia de existencia. Priorizar los encargos antiguos de Kum'isha y los khanes de Desolace, que tienen variantes con otros requisitos e IDs. Revisar nombres ES y los 567 historiales de misiones previas.
-3. Resolver las dependencias, el acceso y los objetos de las tres ventanas de viaje antes de cambiar su orden. La piedra temporal de 924 requiere una medición real hacia el altar.
+3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `f311386`.
+La fase sigue abierta. El corte previo es `bce7b36`.
 
 ## Avance individual
 

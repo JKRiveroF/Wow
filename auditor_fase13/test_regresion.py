@@ -85,6 +85,8 @@ def _route_without_reviewed_edits(source):
             line = re.sub(r"T?ótem de espíritu", "<tótem>", line)
         if ("q = 5386, a = \"C\"" in line and "q = 6142," in line) or (
             "q = 1430, a = \"C\"" in line and "q = 698, a = \"C\"" in line
+        ) or (
+            "q = 924, a = \"A\"" in line or "q = 924, a = \"C\"" in line
         ):
             line = re.sub(r't = "[^"]+"', 't = "<objetivos revisados>"', line, count=1)
         if "q = 3110," in line and 'raza = "Dwarf"' in line:

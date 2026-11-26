@@ -8,7 +8,7 @@ Cada ventana conserva los extremos y permuta sus dos objetivos internos dentro d
 
 Distancia 156.66 → 80.22, diferencia de 76.44 (48.80 %). 22 apariciones.
 
-Pendiente de investigación: 8 campos de relaciones entre misiones sin evidencia suficiente.
+Pendiente de investigación: 7 campos de relaciones entre misiones sin evidencia suficiente.
 
 | Ruta | Archivo y ubicación | Objetivos | Estado |
 | --- | --- | --- | --- |
@@ -39,7 +39,7 @@ Pendiente de investigación: 8 campos de relaciones entre misiones sin evidencia
 
 Distancia 86.01 → 58.40, diferencia de 27.61 (32.10 %). 22 apariciones.
 
-Pendiente de investigación: 8 campos de relaciones entre misiones sin evidencia suficiente.
+Pendiente de investigación: 7 campos de relaciones entre misiones sin evidencia suficiente.
 
 | Ruta | Archivo y ubicación | Objetivos | Estado |
 | --- | --- | --- | --- |
@@ -70,7 +70,7 @@ Pendiente de investigación: 8 campos de relaciones entre misiones sin evidencia
 
 Distancia 55.07 → 30.99, diferencia de 24.08 (43.72 %). 7 apariciones.
 
-Pendiente de investigación: 8 campos de relaciones entre misiones sin evidencia suficiente.
+Pendiente de investigación: 7 campos de relaciones entre misiones sin evidencia suficiente.
 
 | Ruta | Archivo y ubicación | Objetivos | Estado |
 | --- | --- | --- | --- |
@@ -84,6 +84,6 @@ Pendiente de investigación: 8 campos de relaciones entre misiones sin evidencia
 
 ## Condiciones contrastadas
 
-- Los Baldíos, 848 ↔ 924. La piedra que se toma en la mesa para 924 caduca. El orden propuesto adelanta la visita al altar, pero su acceso y tiempo efectivo siguen pendientes. [Ficha 924](https://zephras.com/forever/enUS/quest/924/).
-- Desolace, 5386 ↔ 5381. Una misión usa el canje de mariscos por peces. La otra exige usar el Pico demoníaco junto al cristal para recuperar la caja. [Ficha 5386](https://zephras.com/forever/enUS/quest/5386/) · [Ficha 5381](https://zephras.com/forever/enUS/quest/5381/).
-- Pantano de las Penas, 698 ↔ 1424. Se trata de recursos distintos y 1424 tiene objetivos élite. La distancia entre marcas no refleja el tiempo de combate ni el acceso. [Ficha 698](https://zephras.com/forever/enUS/quest/698/) · [Ficha 1424](https://zephras.com/forever/enUS/quest/1424/).
+- Los Baldíos, 848 ↔ 924. Se documentó la entrega de 809 antes de 924 y la recogida de la piedra 4986 en la mesa. Dura 30 minutos. El orden propuesto adelanta la visita al altar. Falta comparar la subida por la cara norte y el margen restante desde la recogida en cada recorrido. [Ficha 924](https://zephras.com/forever/enUS/quest/924/) · [Piedra de poder imperfecta](https://www.wowhead.com/forever/item=4986/flawed-power-stone).
+- Desolace, 5386 ↔ 5381. Para 5386 se necesitan dos peces y se pueden canjear cinco mariscos por cada uno. Para 5381 se usa el pico 14523 sobre el cristal 176581 de la fortaleza del Hacha de Trueno y se devuelven pico y caja. El cristal coincide con el destino de las 22 apariciones. Falta medir el trayecto entre la costa y la fortaleza con cada orden. [Ficha 5386](https://zephras.com/forever/enUS/quest/5386/) · [Ficha 5381](https://zephras.com/forever/enUS/quest/5381/) · [Cristal](https://outof.games/realms/forever/object/176581-hand-of-iruxos-crystal/).
+- Pantano de las Penas, 698 ↔ 1424. 698 pide ocho flancos de crocolisco y 1424 pide diez artefactos Atal'ai y es de élite. 1424 da acceso a 1429. Falta medir el recorrido con patrullas y la disponibilidad de objetivos. [Ficha 698](https://zephras.com/forever/enUS/quest/698/) · [Ficha 1424](https://zephras.com/forever/enUS/quest/1424/).

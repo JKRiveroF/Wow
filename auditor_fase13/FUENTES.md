@@ -86,4 +86,4 @@ El escaneo confirma la existencia de 8941. Las consultas sin respuesta conservan
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.
 - Duración de Skysight en la compilación en ejecución. Las notas de Blizzard y la extracción del cliente difieren. La guía distingue el efecto breve del beneficio Charged de una hora.
 - Coordenadas exactas de los estriadores reubicados y puntos de objetivo, PNJ o entradas con evidencia parcial.
-- Disponibilidad efectiva, requisitos y tiempos de los viajes, vuelos, piedras de hogar, barcos y zepelines. El agrupamiento geométrico de objetivos solo proporciona candidatos para contrastar en el juego.
+- Disponibilidad efectiva, requisitos y tiempos de los viajes, vuelos, piedras de hogar, barcos y zepelines. Se contrastaron los requisitos y objetos con evidencia disponible para las tres ventanas de [agrupamiento](AGRUPAMIENTOS_FASE13.md). Los tiempos, el terreno y el acceso con objetivos activos se miden en Forever.

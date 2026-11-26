@@ -23,8 +23,15 @@
       "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5386/", "build": "1.60.1.70938"}}
     },
     "5381": {
-      "posiciones": {"A": [{"m": 1443, "x": 25.7, "y": 68.2}], "T": [{"m": 1443, "x": 25.8, "y": 68.3}]},
-      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5381/", "build": "1.60.1.70938"}}
+      "posiciones": {"A": [{"m": 1443, "x": 25.7, "y": 68.2}], "C": [{"m": 1443, "x": 55, "y": 26.7}], "T": [{"m": 1443, "x": 25.8, "y": 68.3}]},
+      "objetos": [14523],
+      "seguimientos": [5581],
+      "evidencia": {
+        "posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5381/"},
+        "objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5381/"},
+        "seguimientos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5381/"}
+      },
+      "contraste_cartografia": ["https://outof.games/realms/forever/object/176581-hand-of-iruxos-crystal/"]
     },
     "6142": {
       "posiciones": {"A": [{"m": 1443, "x": 22.7, "y": 72.1}], "T": [{"m": 1443, "x": 22.7, "y": 72}]},
@@ -41,7 +48,13 @@
     },
     "1424": {
       "posiciones": {"A": [{"m": 1435, "x": 47.9, "y": 54.8}], "T": [{"m": 1435, "x": 47.9, "y": 54.8}]},
-      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/1424/", "build": "1.60.1.70938"}}
+      "elite": true,
+      "seguimientos": [1429],
+      "evidencia": {
+        "posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/1424/", "build": "1.60.1.70938"},
+        "elite": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/1424/"},
+        "seguimientos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/1424/"}
+      }
     },
     "848": {
       "posiciones": {"A": [{"m": 1413, "x": 51.5, "y": 30.2}], "T": [{"m": 1413, "x": 51.5, "y": 30.2}]},
@@ -49,7 +62,13 @@
     },
     "924": {
       "posiciones": {"A": [{"m": 1413, "x": 62.3, "y": 20.1}], "T": [{"m": 1413, "x": 62.3, "y": 20.1}]},
-      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/924/", "build": "1.60.1.70938"}}
+      "prerrequisitos": [809],
+      "objetos": [4986],
+      "evidencia": {
+        "posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/924/", "build": "1.60.1.70938"},
+        "prerrequisitos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/924/"},
+        "objetos": {"estado": "forever", "fuente": "https://www.wowhead.com/forever/item=4986/flawed-power-stone"}
+      }
     }
   },
   "vuelos": {
