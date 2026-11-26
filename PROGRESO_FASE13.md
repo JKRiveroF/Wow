@@ -4,7 +4,7 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 12:49:23 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 12:53:58 +01:00 (Madrid)**
 
 **Tarea actual** · Contrastar las misiones con oferta pendiente y aprovechar las fichas disponibles para repetición, objetos y exclusiones.
 
@@ -286,11 +286,17 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Se detectaron **33 avisos nuevos**. Las rutas afectadas deben entregar 455 antes de 473, 1848 antes de 1840 y 1947 antes de 1948. Los 56 avisos anteriores corresponden a la cadena opcional previa a Kum’isha.
 - Pasaron **16 pruebas específicas** y la **regresión de 77 pruebas**. Las 47 rutas registran **0 errores y 89 avisos**. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
 
-## Último bloque verificado · Algaz, Armadura brutal y Tabetha
+## Algaz, Armadura brutal y Tabetha · corte verificado
 
 - Se corrigieron **31 rutas**. Las 25 de la Alianza muestran 455 antes de 473, con los objetivos de Dun Algaz y los niveles 19 y 23. Ocho pasan por Rockgar o ya incluían el asedio. Las demás presentan el desvío como opcional si se llega por mar.
 - Las cuatro rutas de guerrero de la Horda entregan 1848 antes de recoger el encargo de Orm. Las dos rutas de mago de la Horda recogen 1947 con Deino en Orgrimmar, entregan a Tabetha y detallan los materiales de 1948 y su carga en Arathi. Se conservan los índices de paso y se añadieron textos ES/EN. [Puntos, cadenas y materiales](auditor_fase13/FUENTES.md#algaz-armadura-brutal-y-tabetha--26-de-noviembre-de-2026).
 - Pasaron **2 pruebas específicas** y la **regresión de 78 pruebas**. Desaparecieron los **33 avisos de orden y acceso**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. El inventario conserva los 2.462 IDs originales. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos permanece en **40,83 %**.
+
+## Último bloque verificado · Observaciones de posición y entrega
+
+- Se incorporaron siete instantáneas de Efficient Games. Hay **520 destinos únicos adicionales** cerca de una posición observada, en 11.545 combinaciones de destino y ruta. Las fichas con entregas observadas pasan de 274 a **492**, diferenciadas por compilación y efecto Legacy. [Fuentes y alcance](auditor_fase13/FUENTES.md#observaciones-de-posiciones-y-entregas--26-de-noviembre-de-2026).
+- El corte mantiene **24 IDs activos** sin evidencia positiva de oferta. Se conserva la comprobación directa de los casos estacionales y de banda cuando se habiliten. La cercanía de un destino y la XP efectiva de una entrega quedan en campos separados de la posición exacta y la XP base.
+- Pasaron **14 pruebas específicas** y la **regresión de 79 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -298,7 +304,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 | --- | --- | --- |
 | Misiones y dependencias | Entre 2.468 IDs activos faltan 24 acreditaciones de oferta, 195 títulos ES observados (193 cotejados con la referencia heredada), 25 EN, 25 niveles mínimos, 2.142 seguimientos y 2.444 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Oferta por fase o perfil cuando los registros externos no la acrediten. |
 | Clase, raza y facción | 2.378 fichas sin condición de clase acreditada, 1.985 sin condición racial y 1.971 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
-| Cartografía | Posiciones por acción y misión en las 47 rutas, incluidas entradas y puntos de PNJ. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
+| Cartografía | 4.743 destinos únicos sin una referencia específica o cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
 | Experiencia | 25 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP efectiva, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Posiciones, transporte y requisitos de nodos en 44 rutas. | Costes y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
 | Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
@@ -309,7 +315,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `09eeaa6`.
+La fase sigue abierta. El corte previo es `a27e63f`.
 
 ## Avance individual
 

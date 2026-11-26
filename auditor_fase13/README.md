@@ -31,6 +31,8 @@ auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/agrupamientos.py --tra
 
 Añade `--datos-eg auditor_fase13/cache_fuentes` cuando tengas la revisión de Efficient Games y la tabla de XP.
 
+Puedes añadir las instantáneas de observación indicadas en `EXTRA_HASHES` de `eg_link.py`. El auditor conserva las coordenadas distintas por acción y las filas de entrega por compilación. Identifica las filas que la fuente registra en `withLegacy`. El cálculo de XP base usa los campos de dificultad y multiplicador. El informe conserva las referencias de cada compilación utilizada.
+
 El [CSV QuestInfo de Forever 1.60.1.71091](https://wago.tools/db2/QuestInfo/csv?build=1.60.1.71091) es opcional. Guárdalo como `QuestInfo-1.60.1.71091.csv` junto a los JSON de Efficient Games. Con él, el auditor identifica las categorías expresas de élite, mazmorra, banda y JcJ. Los límites de tiempo se leen de las consultas de misión cuando incluyen ese dato.
 
 Con `--datos-questie` y `--datos-eg`, puedes añadir dos fuentes opcionales para el contraste de relaciones. Guarda la [base Classic de QuestieDB 1.1.6](https://raw.githubusercontent.com/Questie/QuestieDB/v1.1.6/data/Classic/classicQuestDB.lua) como `classicQuestDB.lua` y las [correcciones heredadas por Forever](https://raw.githubusercontent.com/Questie/QuestieDB/v1.1.6/src/corrections/Forever/legacy/classicQuestFixes.lua) como `legacyForeverClassicQuestFixes.lua` en `cache_fuentes/`. El auditor verifica ambos hashes. Para los seguimientos cruza el enlace heredado, la sugerencia del servidor y el historial del sucesor. Para los requisitos de una sola entrega cruza la lista heredada con la observación de oferta en las trazas de QuestieDB.

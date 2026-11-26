@@ -32,6 +32,7 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [ ] Completar la evidencia por misión y perfil, especialmente las cadenas, restricciones, objetos, desbloqueos y títulos ES/EN. Validar posiciones, ganancias de XP y alternativas de viaje donde falten observaciones.
 - [x] Resolver las exclusiones `324/526` y `94484/94493` y los requisitos `98221 → 465` y `93680 → 545`.
 - [x] Cruzar el registro de misiones y las observaciones de Efficient Games por ID y compilación con los títulos, requisitos, objetivos, XP y vuelos de las rutas.
+- [x] Incorporar las observaciones faltantes de objetivos, destinos y entregas de la revisión fijada de Efficient Games. Conservar las muestras por acción y compilación.
 - [x] Cruzar los historiales de entregas con las continuaciones sugeridas que coinciden con la base heredada. Aplicar la evidencia a las secuencias A/T de las rutas.
 - [x] Contrastar los requisitos heredados de una sola entrega con las trazas de oferta de mayor confianza.
 - [x] Resolver y probar los avisos de orden y acceso de 473, 1840 y 1948. Mantener los índices de los pasos y documentar los desvíos opcionales.

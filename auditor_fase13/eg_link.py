@@ -25,12 +25,21 @@ HASHES = {
     ("71037", "item_uses"): "3e16f56d3435cc974cfec2052dcffe8fad90a2976f65e87393d4c05eb89ae75a",
     ("71037", "flights"): "a1406e02cc1124769f7297cf6a0e96b91fc9dde61eac5af2c155349db63bc7e3",
 }
+EXTRA_HASHES = {
+    ("70959", "quest_scan"): "d765048784e3c9a2259869982a2da0fce7a2913712fc1aa618315f6647d429a2",
+    ("71037", "npcs"): "25cbc37150af015aae0c0406c2485d1c26e2f35b622c0963e2b830b683e7b8b0",
+    ("71037", "objectives"): "724e5c3263d78da807cb09e59fcdd87367e77306ba5a4a6ec4d3a91d054fc903",
+    ("71037", "turn_ins"): "c467fbfa634783dc16c1ea3f3e911e4375771da222047bcd93a851cb77a510ec",
+    ("71091", "npcs"): "634e380c300f3d0fbb46e5bc413b4dc389641d340a96ce5cd5b1068d090b88c1",
+    ("71091", "objectives"): "adecc0c1747159750030fa123f28c56ad6058bfa0501c77953b932d3818f482e",
+    ("71091", "turn_ins"): "59652ac7ac8de5b928bd6638f2c816b016c9aab50f1169aba271da3014c6159d",
+}
 EG_FIELDS = (
     "nivel_mision", "mascara_racial", "siguiente_sugerida", "area_mision", "objetivos_servidor",
     "objetos_por_botin", "habilidades_recompensa", "componentes_xp", "entregas_observadas",
     "misiones_previas_observadas", "escaneo_faccion", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
-    "tipo_mision", "limite_segundos",
+    "tipo_mision", "limite_segundos", "posiciones_observadas", "progreso_observado",
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
@@ -49,7 +58,8 @@ def _read(directory, build_number, dataset):
     build = f"1.60.1.{build_number}"
     path = directory / f"eg-{build}-{dataset}.json"
     raw = path.read_bytes()
-    if sha256(raw).hexdigest() != HASHES[build_number, dataset]:
+    key = build_number, dataset
+    if sha256(raw).hexdigest() != (HASHES.get(key) or EXTRA_HASHES[key]):
         raise ValueError(f"SHA-256 inesperado en {path}. Se requiere la revisión EG Link {REVISION}.")
     data = json.loads(raw)
     meta = data["meta"]
@@ -163,19 +173,44 @@ def _positions(rows):
             and (row["mapX"] or row["mapY"])]
 
 
-def _import_npcs(missions, data, source):
-    npcs, linked = {}, {}
+def _record_observations(index, key, field, current, source):
+    """Conserva muestras de todas las compilaciones sin sumar contadores solapados."""
+    entry = index.get(key, {})
+    old = entry.get("evidencia", {}).get(field, {})
+    links = list(dict.fromkeys([*old.get("fuentes_adicionales", []), old.get("fuente")]))
+    sources = [link for link in links if link and link != source["fuente"]]
+    if isinstance(current, dict):
+        previous = entry.get(field, {})
+        merged = {**previous, **{action: _unique_rows(previous.get(action, []), rows)
+                                  for action, rows in current.items()}}
+    else:
+        merged = _unique_rows(entry.get(field, []), current)
+    evidence = {**source, "fuentes_adicionales": sources} if sources else source
+    _record(index, key, {field: merged}, evidence)
+
+
+def _unique_rows(previous, samples):
+    rows = list(previous)
+    for sample in samples:
+        if sample not in rows:
+            rows.append(sample)
+    return rows
+
+
+def _import_npcs(missions, data, source, npcs=None):
+    npcs = {} if npcs is None else npcs
+    linked = {}
     for section in ("npcs", "objects"):
         for key, row in data[section].items():
             if not row.get("sources") or not (positions := _positions(row.get("positions", []))):
                 continue
             if section == "npcs":
-                _record(npcs, key, {"posiciones_observadas": positions}, source)
+                _record_observations(npcs, key, "posiciones_observadas", positions, source)
             for field, action in (("offers", "A"), ("takes", "T")):
                 for quest_id in row.get(field, {}):
                     linked.setdefault(quest_id, {}).setdefault(action, []).extend(positions)
     for quest_id, actions in linked.items():
-        _record(missions, quest_id, {"posiciones_observadas": actions}, source)
+        _record_observations(missions, quest_id, "posiciones_observadas", actions, source)
     return npcs
 
 
@@ -188,17 +223,19 @@ def _import_objectives(missions, data, source):
         if completed.get("sources") and completed.get("times"):
             positions.extend(_positions(completed.get("positions", [])))
         if positions:
-            _record(missions, quest_id, {"progreso_observado": {"C": positions}}, source)
+            _record_observations(missions, quest_id, "progreso_observado", {"C": positions}, source)
     for quest_id, row in data["gossip"].items():
         _record(missions, quest_id, {"opciones_dialogo_observadas": row}, source)
 
 
 def _import_turn_ins(missions, data, source):
     for quest_id in data["quests"].keys() | data["withLegacy"].keys():
-        observations = [{key: row[key] for key in ("level", "race", "faction", "xp", "maxLevel",
-                                                  "xpDisabled", "diplomat", "sources") if key in row}
+        observations = [{**{key: row[key] for key in ("level", "race", "faction", "xp", "maxLevel",
+                                                       "xpDisabled", "diplomat", "sources") if key in row},
+                         "con_legacy": section == "withLegacy", "build": source.get("build")}
                         for section in ("quests", "withLegacy") for row in data[section].get(quest_id, [])]
-        _record(missions, quest_id, {"entregas_observadas": observations}, source)
+        if observations:
+            _record_observations(missions, quest_id, "entregas_observadas", observations, source)
 
 
 def _import_scan(missions, data, source):
@@ -220,7 +257,9 @@ def import_eg_link(directory):
     missions, npcs, flights = {}, {}, {}
     xp_table = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
-    for build, dataset in HASHES:
+    extras = {key for key in EXTRA_HASHES if (directory / f"eg-1.60.1.{key[0]}-{key[1]}.json").is_file()}
+    datasets = sorted(HASHES.keys() | extras, key=lambda key: (key[1] != "quests.enUS", *key))
+    for build, dataset in datasets:
         data, source = _read(directory, build, dataset)
         if dataset == "quests.enUS":
             for quest_id, row in data["quests"].items():
@@ -229,7 +268,7 @@ def import_eg_link(directory):
                 if values := _quest_type(row, quest_info):
                     _record(missions, quest_id, values, {**source, "tabla": QUEST_INFO_SOURCE})
         elif dataset == "npcs":
-            npcs = _import_npcs(missions, data, source)
+            _import_npcs(missions, data, source, npcs)
         elif dataset == "objectives":
             _import_objectives(missions, data, source)
         elif dataset == "turn_ins":

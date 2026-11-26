@@ -63,6 +63,28 @@ class EGLinkTests(unittest.TestCase):
         self.assertEqual(_coordinate_result(mission, "T", (2521, 45.2, 45.2)), "investigacion")
         self.assertEqual(_coordinate_result(mission, "C", (2522, 45.2, 45.2)), "investigacion")
 
+    def test_multiple_snapshots_preserve_actions_positions_and_turn_in_context(self):
+        older = {"estado": "forever", "fuente": "primera", "build": "1.60.1.70959"}
+        newer = {"estado": "forever", "fuente": "segunda", "build": "1.60.1.71037"}
+        there = {"uiMap": 2521, "mapX": 0.45, "mapY": 0.45}
+        here = {"uiMap": 2521, "mapX": 0.55, "mapY": 0.45}
+        missions = {}
+        npcs = _import_npcs(missions, {"npcs": {"1": {"offers": {"2": {}}, "sources": 1,
+                                                     "positions": [there]}}, "objects": {}}, older)
+        _import_npcs(missions, {"npcs": {"1": {"takes": {"2": {}}, "sources": 1,
+                                               "positions": [there, here]}}, "objects": {}}, newer, npcs)
+        mission = missions["2"]
+        self.assertEqual({a: len(points) for a, points in mission["posiciones_observadas"].items()}, {"A": 1, "T": 2})
+        self.assertEqual(len(npcs["1"]["posiciones_observadas"]), 2)
+        self.assertEqual(mission["evidencia"]["posiciones_observadas"]["fuentes_adicionales"], ["primera"])
+
+        sample = {"xp": 525, "level": 9, "sources": 1}
+        _import_turn_ins(missions, {"quests": {"2": [sample]}, "withLegacy": {}}, older)
+        _import_turn_ins(missions, {"quests": {}, "withLegacy": {"2": [sample]}}, newer)
+        self.assertEqual([(row["build"], row["con_legacy"], row["sources"])
+                          for row in mission["entregas_observadas"]],
+                         [("1.60.1.70959", False, 1), ("1.60.1.71037", True, 1)])
+
     def test_flights_match_npc_and_keep_talent_and_direction(self):
         def steps(names):
             return [{"wp": [{"npc": npc}], "comprobar": {"vuelo": name}} for name, npc in names]
