@@ -56,14 +56,14 @@ La evidencia **confirmada** supera la comprobación de la familia. Los títulos 
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,04 % | 45,37 % | +0,33 pp |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 51,58 % | 53,58 % | +2 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,37 % | 45,37 % | 0 pp |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,74 % | 68,76 % | +0,02 pp |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,76 % | 68,76 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 55,67 % | 56,04 % | +0,37 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,04 % | 56,04 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-26 19:58:41+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 20:08:28+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -110,6 +110,8 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Contrastar los umbrales heredados de 5201 y 9266 y distinguir 6848 de 6847 y 8319 de 8324. Registrar las pruebas que distinguen las ofertas.
 - [x] Cruzar las doce instantáneas adicionales de lanzamiento con las fichas de las rutas. Acreditar el acceso de ambas facciones mediante entregas con una ficha de acceso estable y conservar las observaciones de XP y posición.
 - [x] Contrastar las cadenas de Forever que se relacionan con 1374 y 1375. Distinguir sus condiciones de las heredadas y registrar el salto 93044 → 93045 para validación con un mismo personaje.
+- [x] Auditar el estado de oferta según las misiones activas y entregadas. Verificar los cinco bloqueos temporales y la oferta de Disturbios elementales en las diez rutas Skyborne.
+- [x] Contrastar los requisitos de profesión y objetivos de 1578, 1618 y 91751. Corregir las instrucciones ES/EN y separar las dos entregas de Herrería de la XP principal.
 - [ ] Buscar evidencia de iniciador, variante y requisitos para las 11 ofertas investigables, con prioridad para 5201, 6848, 8319 y 9266, que carecen de fila en QuestV2. Usar las tablas y trazas ya archivadas.
 - [ ] Verificar las cinco ofertas estacionales y los ocho casos vinculados a botín de banda cuando haya cliente y se cumplan las condiciones de contenido. Confirmar las cantidades heredadas de los siete canjes de Ahn'Qiraj.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.

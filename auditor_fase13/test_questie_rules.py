@@ -141,7 +141,12 @@ class QuestieRulesTest(unittest.TestCase):
     def test_static_priority_and_inferred_separation(self):
         rows = {
             BASE: '        [7] = {\n            [questKeys.requiredClasses] = classIDs.WARRIOR,\n        },\n',
-            FIXES: '        [7] = {\n            [questKeys.requiredClasses] = classIDs.HUNTER,\n        },\n',
+            FIXES: ('        [7] = {\n'
+                    '            [questKeys.requiredClasses] = classIDs.HUNTER,\n'
+                    '            [questKeys.availableUntilCompleted] = 31,\n'
+                    '            [questKeys.availableStartingWith] = 30, -- this is next best thing\n'
+                    '            [questKeys.requiredSkill] = {profKeys.BLACKSMITHING, 25},\n'
+                    '        },\n'),
             RELATIONS: '        [7] = {\n            [questKeys.preQuestSingle] = {10,20},\n        },\n',
         }
         with tempfile.TemporaryDirectory() as temporary:
@@ -152,8 +157,12 @@ class QuestieRulesTest(unittest.TestCase):
             with patch("questie_rules.HASHES", hashes):
                 result = import_quest_rules(directory)
         self.assertEqual(result["misiones"]["7"]["clases"], ["HUNTER"])
+        self.assertEqual(result["misiones"]["7"]["disponible_hasta_entrega"], [31])
+        self.assertEqual(result["misiones"]["7"]["oficio_minimo"], {"oficio": "BLACKSMITHING", "minimo": 25})
         self.assertNotIn("prerrequisitos_alternativos", result["misiones"]["7"])
-        self.assertEqual(result["candidatos_por_mision"]["7"][0]["valor"], [10, 20])
+        self.assertNotIn("disponible_desde", result["misiones"]["7"])
+        candidates = {entry["campo"]: entry["valor"] for entry in result["candidatos_por_mision"]["7"]}
+        self.assertEqual(candidates, {"prerrequisitos_alternativos": [10, 20], "disponible_desde": [30]})
 
     def test_alternative_prerequisite_and_racial_profiles(self):
         self.assertEqual(_decode("preQuestGroup", "{1, 2}"), {"prerrequisitos": [1, 2]})

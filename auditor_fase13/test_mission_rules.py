@@ -63,6 +63,18 @@ class MissionRulesTest(unittest.TestCase):
         self.assertEqual(set(findings(audit_missions(candidate, catalog))),
                          {"MISION_REQUISITO_ORDEN", "MISION_SEGUIMIENTO_ORDEN", "MISION_NIVEL_FUERA_DEL_TRAMO"})
 
+    def test_offer_conditions_distinguish_active_and_completed_quests(self):
+        candidate = route(step(waypoint(17, "A"), waypoint(19, "A"), waypoint(20, "A"), waypoint(17, "T"),
+                               waypoint(21, "A"), waypoint(22, "A"), waypoint(23, "A"), waypoint(24, "A")))
+        catalog = {"misiones": {"19": documented(mision_activa=[17]), "20": documented(desactivada_por=[17]),
+                                "21": documented(mision_activa=[17]), "22": documented(disponible_desde=[17]),
+                                "23": documented(disponible_hasta_entrega=[17]),
+                                "24": documented(disponible_desde=[18])}}
+        issues = [item for item in audit_missions(candidate, catalog) if item["gravedad"] == "aviso"]
+        self.assertEqual([item["codigo"] for item in issues], ["MISION_DISPONIBILIDAD_ORDEN"] * 4)
+        self.assertEqual([item["detalle"].split(":")[0] for item in issues],
+                         ["Misión 20", "Misión 21", "Misión 23", "Misión 24"])
+
     def test_group_warning_checks_guide_text(self):
         catalog = {"misiones": {"17": documented(grupo=True)}}
         points = waypoint(17, "A"), waypoint(17, "T")

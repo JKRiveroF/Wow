@@ -14,20 +14,20 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,04 % | 45,37 % | +0,33 pp |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 51,58 % | 53,58 % | +2 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,37 % | 45,37 % | 0 pp |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,74 % | 68,76 % | +0,02 pp |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,76 % | 68,76 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 55,67 % | 56,04 % | +0,37 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,04 % | 56,04 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-26 19:58:41+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 20:08:28+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Contrastar requisitos y desbloqueos compartidos por ID. La matriz de ofertas identifica los datos que faltan para cada uno de los 24 casos.
+**Tarea actual** · Contrastar requisitos de varias entregas. Las trazas y la base heredada distinguen las variantes de 737 y los dos requisitos acumulativos de 1119.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -356,11 +356,17 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 
 - Se incorporaron los títulos observados de 2972, 4222 y 6609. Coinciden con las etiquetas existentes en 97 pares de misión y ruta. Quedan 191 IDs activos sin título esES observado. [Trazas por ID](auditor_fase13/FUENTES.md#títulos-eses-de-questiedb--26-de-noviembre-de-2026).
 
-## Último bloque verificado · Entregas y acceso de facción
+## Misiones y perfiles · Entregas y acceso de facción
 
 - Se incorporaron **12 instantáneas** adicionales de lanzamiento. Las misiones con entrega y XP observadas pasan de **493 a 1.085**. **273 destinos** adicionales tienen una muestra cercana del mismo mapa y acción. [Instantáneas y alcance](auditor_fase13/FUENTES.md#entregas-y-facciones-de-las-compilaciones-iniciales--26-de-noviembre-de-2026).
 - **11 misiones** tienen entregas documentadas de ambas facciones con datos de acceso estables. Se reutiliza la evidencia en **498 pares de misión y ruta**. En Gelkis queda por observar 93044 → 93045 con el mismo personaje por la discrepancia de facción entre ambos pasos. [Cadenas de los centauros](auditor_fase13/FUENTES.md#cadenas-de-los-centauros-y-ofertas-relacionadas--26-de-noviembre-de-2026).
 - Pasaron **28 pruebas específicas** y la **regresión de 95 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Las 24 ofertas pendientes y los 395 grupos conservan su estado. El avance efectivo sube a **56,04 %**. El certificado queda en **40,83 %**.
+
+## Último bloque verificado · Oficios y condiciones de oferta
+
+- Se documentaron Herrería 25 y 35 y los materiales de 1578 y 1618 en **24 pasos de 16 rutas**. La auditoría verificó el traslado de su recompensa a la XP opcional. Las cuatro rutas que recogen 91751 muestran su título ES/EN, Desuello 1 y los siete pelambres. [Requisitos y fuentes](auditor_fase13/FUENTES.md#oficios-y-condiciones-de-oferta--26-de-noviembre-de-2026).
+- El auditor comprobó **82 combinaciones de aceptación y perfil** para cinco bloqueos temporales y el orden de 92464 en las diez rutas de Zephras. Las aperturas aproximadas de 92595 y 92596 quedan registradas como indicios.
+- Pasaron **21 pruebas específicas** y la **regresión de 97 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** conocidos. Permanecen **279 grupos de investigación y 116 de cliente**. El certificado queda en **40,83 %** y el efectivo en **56,04 %**.
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -375,11 +381,11 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 
 ## Siguientes tareas
 
-1. Cruzar requisitos, objetos de desbloqueo y repetición por misión. Incorporar las ofertas pendientes que aparezcan en nuevas observaciones de Forever.
+1. Contrastar los requisitos múltiples de 737 y 1119 por tipo y aplicar el resultado a todas sus rutas. Incorporar las ofertas pendientes que aparezcan en nuevas observaciones de Forever.
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `a433a8a`.
+La fase sigue abierta. El corte previo es `2d5ec64`.
 
 ## Avance individual
 

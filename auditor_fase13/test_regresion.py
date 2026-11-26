@@ -40,7 +40,7 @@ NO_XP_TEXT_QUESTS = {
 }
 SALVE_QUESTS = set(range(4103, 4113)) | set(range(5882, 5892))
 OPTIONAL_TEXT_QUESTS = {
-    2358, 5201, 5227, 6804, 6805, 6821, 6848, 7622, 8319, 8353, 8355, 8356,
+    1578, 1618, 2358, 5201, 5227, 6804, 6805, 6821, 6848, 7622, 8319, 8353, 8355, 8356,
     8556, 8689, 8691, 8692, 8693, 8694, 8696, 8788, 8863, 9266,
 }
 AUXILIARY_TEXT_QUESTS = {
@@ -92,6 +92,11 @@ def _route_without_reviewed_edits(source):
 
     lines = []
     for line in source.splitlines(keepends=True):
+        line = line.replace("Pelambres de lobo toscas", "Pieles de lobo bastas")
+        line = line.replace(
+            "Con Desuello 1, acepta [Pieles de lobo bastas] con Helene Desollapelambres y reúne 7 pelambres de los lobos del este.",
+            "Helene Desollapelambres, a su lado, te da [Pieles de lobo bastas]: desuella los lobos del este.",
+        )
         if skyborne_druid and re.search(r'^  \{ n = 16, id = 1066, origen = "mision", mision = (31|5061),', line):
             continue
         if skyborne_druid and 'nota = "Forma acuática opcional, desde nivel 16:' in line:
@@ -311,11 +316,35 @@ class IntegridadTest(unittest.TestCase):
                     if quest == 8319:
                         self.assertIn("después de Mensajes secretos", match[1])
                         self.assertIn("after Secret Communication", localized[match[1]])
+                    if quest == 1578:
+                        self.assertIn("Herrería 25", match[1])
+                        self.assertIn("6 Copper Axes and 6 Copper Chain Belts", localized[match[1]])
+                    if quest == 1618:
+                        self.assertIn("Herrería 35", match[1])
+                        self.assertIn("4 Runed Copper Belts and 4 Heavy Copper Mauls", localized[match[1]])
                 found.add(quest)
                 count += 1
         self.assertEqual(found, OPTIONAL_TEXT_QUESTS)
-        self.assertEqual(count, 307)
+        self.assertEqual(count, 331)
         self.assertEqual(gifts, 6)
+
+    def test_skinning_quest_uses_current_names_and_profession_requirement(self):
+        from mission_rules import load_mission_localization
+
+        localization = load_mission_localization(ADDON)
+        self.assertEqual(localization["por_id"][91751], "Rough Wolf Pelts")
+        self.assertEqual(localization["por_nombre"]["Pelambres de lobo toscas"], "Rough Wolf Pelts")
+        acceptances = 0
+        for name in self.routes:
+            for line in (ROOT / name).read_text(encoding="utf-8").splitlines():
+                if 'q = 91751, a = "A"' not in line:
+                    continue
+                sentence = re.search(r't = "((?:[^"\\]|\\.)*)"', line)[1].replace(r'\"', '"')
+                self.assertIn("Con Desuello 1", sentence)
+                self.assertIn("reúne 7 pelambres", sentence)
+                self.assertIn("With 1 Skinning, accept [Rough Wolf Pelts]", localization["por_nombre"][sentence])
+                acceptances += 1
+        self.assertEqual(acceptances, 4)
 
     def test_auxiliary_item_instructions_are_shared_and_bilingual(self):
         from mission_rules import load_mission_localization

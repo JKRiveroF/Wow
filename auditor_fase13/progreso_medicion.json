@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-26T19:58:41+01:00",
+  "actualizado": "2026-11-26T20:08:28+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -28,8 +28,8 @@
         141
       ],
       "efectivo": [
-        1717405,
-        3813488
+        10380751,
+        22880928
       ]
     },
     "4": {
@@ -38,7 +38,7 @@
         141
       ],
       "efectivo": [
-        15277,
+        15869,
         29616
       ]
     },
@@ -58,8 +58,8 @@
         141
       ],
       "efectivo": [
-        11875,
-        17276
+        8909,
+        12957
       ]
     },
     "7": {
@@ -78,8 +78,8 @@
         120
       ],
       "efectivo": [
-        41918792757,
-        75293507072
+        210981893369,
+        376467535360
       ]
     }
   },
@@ -1053,18 +1053,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 95,
+                "unidades": 97,
                 "estados": {
-                  "confirmada": 95,
+                  "confirmada": 97,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 95,
-                "comprobaciones_aplicables": 95,
+                "comprobaciones_superadas": 97,
+                "comprobaciones_aplicables": 97,
                 "etapas": {
-                  "confirmadas": 95
+                  "confirmadas": 97
                 }
               }
             ]
@@ -1151,8 +1151,8 @@
       ]
     },
     "regresion": {
-      "ejecutadas": 95,
-      "superadas": 95,
+      "ejecutadas": 97,
+      "superadas": 97,
       "correcta": true
     },
     "casos_cliente": [
@@ -1213,8 +1213,8 @@
         1
       ],
       "efectivo": [
-        10903,
-        3268704
+        0,
+        1
       ]
     },
     "4": {
@@ -1223,8 +1223,8 @@
         1
       ],
       "efectivo": [
-        37,
-        1851
+        0,
+        1
       ]
     },
     "5": {
@@ -1243,8 +1243,8 @@
         1
       ],
       "efectivo": [
-        11,
-        51828
+        0,
+        1
       ]
     },
     "7": {
@@ -1263,8 +1263,8 @@
         1
       ],
       "efectivo": [
-        86745599,
-        23529220960
+        0,
+        1
       ]
     }
   }

@@ -8,7 +8,8 @@ from mission_rules import (PHASE_SIX_FIELDS, PHASE_TWO_FIELDS, _collect, _confir
 from world_rules import _matches_observation, _matches_positions, _position, _positions_by_action, _source
 
 FIELDS = (*PHASE_TWO_FIELDS, *PHASE_SIX_FIELDS, "prerrequisitos_alternativos", "objeto_entregado",
-          "objetos_objetivo", "cantidades_objetivo", "mision_activa", "desactivada_por", "xp")
+          "objetos_objetivo", "cantidades_objetivo", "mision_activa", "desactivada_por", "disponible_desde",
+          "disponible_hasta_entrega", "oficio_minimo", "xp")
 
 
 def _coordinate_result(entry, action, position):

@@ -216,10 +216,26 @@ def _coverage_issue(route, block, code, coverage, total):
     return item
 
 
+def _availability_issues(route, point, entry, active, turned_in, variant):
+    conditions = (
+        ("mision_activa", "debe estar activa", lambda other: other not in active),
+        ("disponible_desde", "debe estar activa o entregada", lambda other: other not in active and other not in turned_in),
+        ("desactivada_por", "la bloquea mientras está activa", lambda other: other in active),
+        ("disponible_hasta_entrega", "ya se entregó y cierra la oferta", lambda other: other in turned_in),
+    )
+    for field, reason, invalid in conditions:
+        if source := _confirmed(entry, field):
+            for value in _list(entry.get(field)):
+                if (other := _id(value)) is not None and invalid(other):
+                    yield _issue(route, 2, "aviso", "MISION_DISPONIBILIDAD_ORDEN", (
+                        f"Misión {point.quest}: la misión {other} {reason}{variant}."
+                    ), point.location, source)
+
+
 def _point_sequence(route, events, race, catalog):
     issues = []
     seen = set()
-    accepted, turned_in = set(), set()
+    accepted, turned_in, active = set(), set(), set()
     planned_acceptances = {point.quest for point in events if point.action == "A"}
     planned_turn_ins = {point.quest for point in events if point.action == "T"}
     first_acceptance = {}
@@ -256,8 +272,11 @@ def _point_sequence(route, events, race, catalog):
                 ), point.location))
             if point.action == "T":
                 turned_in.add(quest)
+                active.discard(quest)
             continue
 
+        issues.extend(_availability_issues(route, point, entry, active, turned_in, variant))
+        active.add(quest)
         if quest in accepted:
             continue
         accepted.add(quest)

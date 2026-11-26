@@ -27,7 +27,9 @@ NUMBERS = re.compile(r"\{\s*(?:[0-9]+(?:\s*,\s*[0-9]+)*)?\s*\}")
 NUMBER_FIELDS = {"requiredLevel": "nivel_minimo", "questLevel": "nivel_mision", "sourceItemId": "objeto_entregado"}
 LIST_FIELDS = {"preQuestGroup": "prerrequisitos", "preQuestSingle": "prerrequisitos_alternativos",
                "exclusiveTo": "excluyentes", "breadcrumbs": "introductorias", "requiredSourceItems": "objetos"}
-LINK_FIELDS = {"nextQuestInChain": "seguimientos", "disabledByQuest": "desactivada_por", "parentQuest": "mision_activa"}
+LINK_FIELDS = {"nextQuestInChain": "seguimientos", "disabledByQuest": "desactivada_por", "parentQuest": "mision_activa",
+               "availableStartingWith": "disponible_desde", "availableUntilCompleted": "disponible_hasta_entrega"}
+PROFESSION = re.compile(r"\{\s*profKeys\.([A-Z_]+)\s*,\s*([1-9]\d*)\s*\}")
 RELATION_FIELDS = {"preQuestGroup", "preQuestSingle", "exclusiveTo", "breadcrumbs", "nextQuestInChain"}
 INHERITED_FIELDS = {"preQuestGroup", "preQuestSingle", "nextQuestInChain", "exclusiveTo", "requiredSourceItems"}
 CLASSIC_COLUMN = re.compile(r"^ +\['(\w+)'\] = (\d+),")
@@ -42,7 +44,7 @@ TRACE_EXCLUDED_OFFERS = re.compile(
     r"^ {12}-- already in QuestieDB; Assumption: offer lists show it and ([\d, ]+) exclude each other "
     r"\(([^;]+); very high; 100\+ characters\)\s*$"
 )
-GATE_FIELDS = {"preQuestSingle", "preQuestGroup", "parentQuest", "availableStartingWith", "disabledByQuest"}
+GATE_FIELDS = {"preQuestSingle", "preQuestGroup", "parentQuest", "availableStartingWith", "availableUntilCompleted", "disabledByQuest"}
 RACES = {
     "HUMAN": ("Alliance", "Human"), "DWARF": ("Alliance", "Dwarf"), "NIGHT_ELF": ("Alliance", "NightElf"),
     "GNOME": ("Alliance", "Gnome"), "SKYBORNE_ALLIANCE": ("Alliance", "Skyborne"),
@@ -103,6 +105,8 @@ def _decode(field, value):
         return {LIST_FIELDS[field]: [int(item) for item in re.findall(r"\d+", value)]}
     if field in LINK_FIELDS and value.isdecimal():
         return {LINK_FIELDS[field]: [int(value)] if value != "0" else []}
+    if field == "requiredSkill" and (skill := PROFESSION.fullmatch(value)):
+        return {"oficio_minimo": {"oficio": skill[1], "minimo": int(skill[2])}}
     if field == "objectives" and re.fullmatch(r"(?:[{} ,\d-]|nil)+", value):
         try:
             goals = json.loads(value.replace("{", "[").replace("}", "]").replace("nil", "null"))
@@ -157,7 +161,7 @@ def import_quest_rules(directory):
             if not columns:
                 continue
             source = SOURCE + filename + f"#L{line}"
-            uncertain = re.search(r"unverified|assumption:", note, re.I) or quest in dynamic_ids
+            uncertain = (re.search(r"unverified|assumption:|next best thing", note, re.I) or quest in dynamic_ids)
             if filename == RELATIONS or uncertain:
                 for key, item in columns.items():
                     relation_candidates.setdefault(quest, []).append({"campo": key, "valor": item, "fuente": source})
