@@ -251,6 +251,7 @@ GL.AnadirIngles({
   [" zonas para tu tramo)"] = " zones for your stretch)",
   [" |cff69ccf0GRUPO"] = " |cff69ccf0GROUP",
   [" |cffa335eeMAZMORRA|r"] = " |cffa335eeDUNGEON|r",
+  [" |cffa335eeBANDA|r"] = " |cffa335eeRAID|r",
   [" |cffc7c7c7p|r"] = " |cffc7c7c7s|r",
   [" |cffeda55fc|r"] = " |cffeda55fc|r",
   [" |cffff8040ÉLITE|r"] = " |cffff8040ELITE|r",

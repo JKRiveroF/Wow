@@ -30,20 +30,57 @@ local function Hecha(q) return GL.MisionCompletada and GL.MisionCompletada(q) en
 local function EnDiario(q) return GL.MisionEnDiario and GL.MisionEnDiario(q) end
 
 ------------------------------------------------------------------------
--- ÉLITE / GRUPO: lo dice el juego (etiqueta de la misión); si no lo sabe, GL.WH.grupo[q] = n jugadores
+-- Se muestra la etiqueta del juego o la categoría de referencia mientras llega la ficha.
 ------------------------------------------------------------------------
+-- Categorías de los encargos de ruta según las consultas Forever y QuestInfo 1.60.1.71091.
+local TIPOS_MISION = {
+  [19] = 1, [99] = 1, [115] = 1, [166] = 81, [167] = 81, [168] = 81, [169] = 1,
+  [176] = 1, [193] = 1, [197] = 1, [202] = 1, [206] = 1, [208] = 1, [211] = 1,
+  [248] = 1, [253] = 1, [255] = 1, [256] = 1, [271] = 1, [304] = 1, [314] = 1,
+  [377] = 81, [386] = 81, [388] = 81, [450] = 1, [452] = 1, [474] = 1, [517] = 1,
+  [531] = 1, [543] = 1, [547] = 1, [611] = 1, [613] = 1, [628] = 1, [629] = 1,
+  [631] = 1, [639] = 1, [640] = 1, [643] = 1, [644] = 1, [645] = 1, [646] = 1,
+  [652] = 1, [656] = 1, [673] = 1, [680] = 1, [682] = 1, [684] = 1, [685] = 1,
+  [694] = 1, [705] = 1, [706] = 1, [709] = 81, [721] = 81, [722] = 81, [735] = 1,
+  [736] = 1, [762] = 1, [793] = 1, [914] = 81, [959] = 81, [962] = 81, [969] = 1,
+  [971] = 81, [1013] = 81, [1014] = 81, [1049] = 81, [1050] = 81, [1089] = 1, [1090] = 1,
+  [1102] = 81, [1107] = 1, [1109] = 81, [1113] = 81, [1139] = 81, [1151] = 1, [1160] = 81,
+  [1166] = 1, [1172] = 1, [1173] = 1, [1199] = 81, [1221] = 81, [1275] = 81, [1360] = 81,
+  [1424] = 1, [1445] = 81, [1446] = 81, [1448] = 1, [1475] = 81, [1486] = 81, [1489] = 81,
+  [1490] = 81, [1491] = 81, [1701] = 1, [1713] = 1, [1740] = 81, [1951] = 81, [2040] = 81,
+  [2202] = 81, [2203] = 1, [2283] = 81, [2342] = 81, [2359] = 1, [2418] = 81, [2478] = 1,
+  [2499] = 1, [2768] = 81, [2769] = 81, [2770] = 81, [2841] = 81, [2846] = 81, [2861] = 81,
+  [2864] = 81, [2865] = 81, [2922] = 81, [2923] = 81, [2924] = 81, [2927] = 81, [2928] = 81,
+  [2930] = 81, [2944] = 1, [2991] = 81, [2993] = 1, [2994] = 1, [3042] = 81, [3062] = 1,
+  [3127] = 1, [3341] = 81, [3372] = 1, [3380] = 81, [3452] = 1, [3463] = 1, [3527] = 81,
+  [3528] = 81, [3566] = 1, [4023] = 1, [4024] = 81, [4123] = 81, [4128] = 81, [4136] = 81,
+  [4143] = 81, [4146] = 81, [4148] = 81, [4286] = 81, [4324] = 81, [4729] = 81, [4734] = 81,
+  [4735] = 81, [4787] = 1, [4788] = 81, [4862] = 81, [4866] = 81, [5065] = 1, [5088] = 1,
+  [5127] = 81, [5151] = 1, [5153] = 1, [5156] = 1, [5168] = 1, [5212] = 81, [5213] = 81,
+  [5214] = 81, [5243] = 81, [5247] = 1, [5281] = 81, [5282] = 81, [5305] = 81, [5306] = 81,
+  [5307] = 81, [5341] = 81, [5343] = 81, [5522] = 81, [5526] = 81, [5529] = 81, [5725] = 81,
+  [5761] = 81, [5848] = 81, [6025] = 1, [6041] = 1, [6135] = 1, [6163] = 81, [6182] = 1,
+  [6183] = 1, [6184] = 1, [6185] = 1, [6186] = 1, [6283] = 1, [6284] = 1, [6562] = 81,
+  [6563] = 81, [6921] = 81, [7068] = 81, [7070] = 81, [7494] = 81, [7701] = 1, [7816] = 1,
+  [7845] = 1, [7846] = 1, [7847] = 1, [7849] = 1, [7850] = 1, [8181] = 62, [8182] = 62,
+  [8232] = 81, [8236] = 81, [8253] = 81, [8257] = 81, [8258] = 81, [8283] = 1, [8413] = 81,
+  [8418] = 81, [8422] = 81, [8425] = 81, [8481] = 1, [8551] = 1, [8868] = 62, [8913] = 81,
+  [8914] = 81, [8915] = 81, [8916] = 81, [8917] = 81, [8918] = 81, [8919] = 81, [8920] = 81,
+  [8927] = 81, [8928] = 1, [8938] = 81, [8939] = 81, [8940] = 81, [8942] = 81, [8943] = 81,
+  [8944] = 81, [9023] = 62, [9051] = 1, [9053] = 81, [91752] = 1, [91775] = 1, [93318] = 1,
+  [96222] = 1, [98427] = 1,
+}
+
 local cacheEtiqueta = {}
 local function EtiquetaMision(q)
   if not q then return "", nil end
   if cacheEtiqueta[q] then return cacheEtiqueta[q][1], cacheEtiqueta[q][2] end
-  local elite, grupo, mazmorra = false, nil, false
+  local elite, grupo = false, nil
   local ok, info = pcall(function() return C_QuestLog and C_QuestLog.GetQuestTagInfo and C_QuestLog.GetQuestTagInfo(q) end)
   local sabe = ok and type(info) == "table"
-  if sabe then
-    if info.isElite then elite = true end
-    if info.tagID == 1 then grupo = 0; elite = true end     -- 1 = Grupo
-    if info.tagID == 81 then mazmorra = true end            -- 81 = Mazmorra
-  end
+  local tipo = (sabe and info.tagID) or TIPOS_MISION[q]
+  if sabe and info.isElite then elite = true end
+  if tipo == 1 then grupo = 0; elite = true end
   local okN, n = pcall(function() return C_QuestLog and C_QuestLog.GetSuggestedGroupSize and C_QuestLog.GetSuggestedGroupSize(q) end)
   if okN and type(n) == "number" and n > 1 then grupo = n end
   local tabla = GL.WH and GL.WH.grupo
@@ -51,9 +88,10 @@ local function EtiquetaMision(q)
   local t = ""
   if elite then t = t .. L" |cffff8040ÉLITE|r" end
   if grupo then t = t .. L" |cff69ccf0GRUPO" .. ((grupo > 1) and (" " .. grupo) or "") .. "|r" end
-  if mazmorra then t = t .. L" |cffa335eeMAZMORRA|r" end
-  -- solo se guarda cuando el juego ya ha contestado (si no, se vuelve a preguntar)
-  if sabe or t ~= "" then cacheEtiqueta[q] = { t, grupo } end
+  if tipo == 62 then t = t .. L" |cffa335eeBANDA|r" end
+  if tipo == 81 then t = t .. L" |cffa335eeMAZMORRA|r" end
+  -- Una vista previa sigue consultando la ficha y el tamaño ofrecidos por el juego.
+  if sabe and info.tagID ~= nil and okN and type(n) == "number" then cacheEtiqueta[q] = { t, grupo } end
   return t, grupo
 end
 GL.EtiquetaMision = EtiquetaMision
@@ -384,7 +422,9 @@ local function TarjetaOpcionales(panel, y, ancho)
     if i <= n then
       local etiqueta = EtiquetaMision(c.q)
       if c.mazmorra then
-        f.texto:SetText(C.AMARILLO .. "[" .. c.mq.n .. "]" .. C.FIN .. L" |cffa335eeMAZMORRA|r" .. etiqueta)
+        local marca = L" |cffa335eeMAZMORRA|r"
+        if not etiqueta:find(marca, 1, true) then etiqueta = marca .. etiqueta end
+        f.texto:SetText(C.AMARILLO .. "[" .. c.mq.n .. "]" .. C.FIN .. etiqueta)
         f.det:SetText(C.GRIS .. c.mazmorra.n .. " (" .. c.mazmorra.min .. "-" .. c.mazmorra.max .. ") · " .. (c.mq.d or "") .. C.FIN)
         f.si.texto:SetText(L"Ver")
         if GL.BotonIcono then GL.BotonIcono(f.si, "ver", L"Ver", L"Abre la ficha de la mazmorra.") end

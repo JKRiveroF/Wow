@@ -158,6 +158,8 @@ Se cotejaron las etiquetas de recogida y entrega de los IDs sin título observad
 
 Se cruzó `questInfoId` de las consultas de Efficient Games con la tabla QuestInfo de la compilación 1.60.1.71091. La tabla define 1 como élite, 41 como JcJ, 62 como banda y 81 como mazmorra. La categoría describe el encargo. El tamaño de grupo recomendado se consulta aparte. Se importaron los temporizadores expresos de las consultas, separados de la duración de objetos como la piedra de 924. [Tabla QuestInfo](https://wago.tools/db2/QuestInfo/csv?build=1.60.1.71091) · [Consultas de Efficient Games](https://github.com/JIVESCORP/eg-link-output-wowf/tree/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf).
 
+Las 240 misiones de ruta de élite, mazmorra o banda comparten las categorías guardadas en `Opcionales.lua`. La guía muestra el dato de referencia en la fila de destino mientras consulta el cliente. La ficha y el tamaño recomendado que devuelva el juego tienen prioridad. El auditor ejecuta la función Lua con una ficha aún sin datos y contrasta por ID el texto o la etiqueta prevista. [Etiquetas de destino](../GuiaAventurero/Opcionales.lua).
+
 Se contrastó la oferta pendiente con el CSV de EverlookDB. De los 24 IDs pendientes, 18 aparecen con iniciadores y entregas procedentes de ClassicDB y seis carecen de fila. Las 18 fichas sirven de referencia heredada y no aportan una observación nueva de oferta en Forever. [Exportación EverlookDB](https://everlookdb.com/data.html) · [Procedencia de datos](https://everlookdb.com/credits.html).
 
 ## Pendiente de verificación

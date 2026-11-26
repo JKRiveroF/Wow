@@ -68,6 +68,11 @@ class MissionRulesTest(unittest.TestCase):
         points = waypoint(17, "A"), waypoint(17, "T")
         self.assertEqual(findings(audit_missions(route(step(*points)), catalog)), ["MISION_GRUPO_SIN_AVISO"])
         self.assertEqual(findings(audit_missions(route(step(*points, text="Busca un grupo.")), catalog)), [])
+        catalog["misiones"]["17"]["tipo_mision"] = "Dungeon"
+        catalog["_etiquetas_addon"] = {17: "ÉLITE"}
+        self.assertEqual(findings(audit_missions(route(step(*points)), catalog)), ["MISION_GRUPO_SIN_AVISO"])
+        catalog["_etiquetas_addon"][17] = " |cffa335eeMAZMORRA|r"
+        self.assertEqual(findings(audit_missions(route(step(*points)), catalog)), [])
 
     def test_unreachable_race_and_sourced_class_restriction(self):
         candidate = route(step(waypoint(17, "A", raza="Dwarf"), waypoint(19, "A")))

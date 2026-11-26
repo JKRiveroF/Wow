@@ -432,6 +432,36 @@ class IntegridadTest(unittest.TestCase):
         self.assertEqual(count, 22)
 
 
+class MissionBadgeTest(unittest.TestCase):
+    def test_badge_uses_localized_category_then_the_live_tag_and_group_size(self):
+        from mission_rules import load_mission_badges, load_mission_localization
+
+        tags = load_mission_badges(ADDON, (193, 1102, 8181, 1))
+        self.assertIn("ÉLITE", tags[193])
+        self.assertIn("MAZMORRA", tags[1102])
+        self.assertIn("BANDA", tags[8181])
+        self.assertEqual(tags[1], "")
+
+        lua = LuaRuntime(unpack_returned_tuples=True)
+        localized = load_mission_localization(ADDON)["por_nombre"]
+        lua.globals().translations = lua.table_from(localized)
+        lua.execute("GL = {L = function(text) return translations[text] or text end, tarjetasGuia = {}}")
+        _load(lua, "Opcionales.lua")
+        badge = lua.globals().GL.EtiquetaMision
+        self.assertIn("ELITE", badge(193)[0])
+        self.assertIn("DUNGEON", badge(1102)[0])
+        self.assertIn("RAID", badge(8181)[0])
+        lua.execute('''C_QuestLog = {
+            GetQuestTagInfo = function() return {tagID = 81} end,
+            GetSuggestedGroupSize = function() return 5 end,
+        }''')
+        label, size = badge(8181)
+        self.assertIn("DUNGEON", label)
+        self.assertIn("GROUP 5", label)
+        self.assertNotIn("RAID", label)
+        self.assertEqual(size, 5)
+
+
 class GuardadosTest(unittest.TestCase):
     def test_migracion_legacy_preserva_identidad_progreso_y_preferencias(self):
         runtime = LuaRuntime(register_eval=False, register_builtins=False)

@@ -17,6 +17,7 @@ Registra la compilación e interfaz del cliente, idioma del cliente y de la guí
 | Forma acuática de Skyborne | Empieza a nivel 16 como druida de cada facción. Confirma los plazos del lago y del adorno, la posición de los arcones, el desbloqueo del hechizo y el coste de recoger las mitades en viajes de la ruta. |
 | Traición en Azshara | Comprueba la oferta de la carta 3504, la entrega en el tomo kaldorei y las tres patrullas. Registra cómo se activan los cristales y la secuencia de entrega 91500 y 91531. |
 | Oferta y eventos | Registra el caldero 5227 tras completar su cadena, la primera XP y la XP de un canje posterior. Durante cada evento, comprueba sus encargos con un personaje de cada facción y la variante de regalo para paladín y Skyborne. Cuando se abra el contenido correspondiente, verifica la oferta de Hydraxis, la prueba de Eris, los canjes de clase de Ahn'Qiraj y el encargo de Ryson en Alterac. |
+| Etiquetas de destino | Antes y después de aceptar una misión de élite, mazmorra o banda, revisa las etiquetas ES/EN y el tamaño recomendado cuando responda el cliente. Comprueba también una misión normal y una tarjeta de mazmorra opcional. |
 | Comportamiento anterior | Abre guía, talentos, equipo, misiones, profesiones y secciones de mapas con datos previos de 9.7.9. Verifica los textos ES/EN y registra cualquier error de arranque, selección o traducción. |
 
 Los resultados de las pruebas simuladas quedan en las pruebas del auditor. El estado de cada comprobación de esta tabla sigue pendiente de observación en el cliente.

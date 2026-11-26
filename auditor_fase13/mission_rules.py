@@ -14,6 +14,7 @@ PHASE_TWO_FIELDS = (
     "seguimientos", "repetible", "objetos", "desbloqueos", "grupo", "elite",
 )
 PHASE_SIX_FIELDS = ("clases", "razas", "facciones")
+QUEST_TAGS = {"Elite": "ÉLITE", "Dungeon": "MAZMORRA", "Raid": "BANDA"}
 
 
 @dataclass(frozen=True)
@@ -335,6 +336,7 @@ def audit_missions(route: dict, catalog: dict) -> list[dict]:
 
     untranslated = []
     localization = catalog.get("_localizacion_addon", {})
+    badges = catalog.get("_etiquetas_addon", {})
     for quest, points in by_quest.items():
         entry = _entry(catalog, quest)
         first = points[0]
@@ -350,11 +352,15 @@ def audit_missions(route: dict, catalog: dict) -> list[dict]:
 
         group = ("grupo" if entry.get("grupo") is True and _confirmed(entry, "grupo") else
                  "elite" if entry.get("elite") is True and _confirmed(entry, "elite") else None)
-        if group and not any(re.search(r"grupo|[eé]lite|mazmorra|banda", point.guide_text, re.I)
-                             for point in points):
+        category = QUEST_TAGS.get(entry.get("tipo_mision"))
+        badge = badges.get(quest, "")
+        label_matches = category in badge if category else bool(re.search(r"GRUPO|ÉLITE|MAZMORRA|BANDA", badge))
+        if group and not label_matches and not any(
+            re.search(r"grupo|[eé]lite|mazmorra|banda", point.guide_text, re.I) for point in points
+        ):
             issues.append(_issue(route, 2, "aviso", "MISION_GRUPO_SIN_AVISO", (
                 f"Misión {quest}: la fuente la marca como {'de grupo' if group == 'grupo' else 'de élite'} "
-                "y los pasos asociados no lo indican expresamente."
+                "y la guía no muestra una etiqueta o indicación correspondiente."
             ), first.location, _confirmed(entry, group)))
             issues[-1]["mision"] = quest
 
@@ -521,3 +527,25 @@ def load_mission_localization(addon: Path) -> dict:
     result = load(runtime.table_from(files))
     return {"por_id": dict(result["por_id"]), "por_nombre": dict(result["por_nombre"]),
             "errores": errors + list(result["errores"].values())}
+
+
+def load_mission_badges(addon: Path, quests) -> dict:
+    """Ejecuta la función del addon con una ficha de misión aún sin datos."""
+    from lupa.lua51 import LuaError, LuaRuntime
+
+    toc = (addon / "GuiaAventurero.toc").read_text(encoding="utf-8-sig").splitlines()
+    if "Opcionales.lua" not in {line.strip() for line in toc}:
+        return {}
+    runtime = LuaRuntime(register_eval=False, register_builtins=False, unpack_returned_tuples=True)
+    run = runtime.eval('''function(source)
+        local chunk = assert(loadstring(source, "@Opcionales.lua"))
+        setfenv(chunk, {type = type, ipairs = ipairs, pcall = pcall, table = {insert = table.insert}})
+        local addon = {L = function(text) return text end, tarjetasGuia = {}}
+        chunk("GuiaAventurero", addon)
+        return addon.EtiquetaMision
+    end''')
+    try:
+        badge = run((addon / "Opcionales.lua").read_text(encoding="utf-8-sig"))
+        return {quest: badge(quest)[0] for quest in quests} if badge else {}
+    except LuaError as error:
+        raise ValueError(f"No se pudo comprobar la etiqueta de misión de Opcionales.lua: {error}") from error

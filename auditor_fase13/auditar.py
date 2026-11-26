@@ -58,9 +58,14 @@ def audit(addon, blocks, catalog, flight_reports=None):
         if flight_reports is not None:
             flight_reports.update(flights)
     if 2 in blocks or 6 in blocks:
-        from mission_rules import audit_missions, audit_profile_matrix, audit_specializations, load_mission_localization
+        from mission_rules import (audit_missions, audit_profile_matrix, audit_specializations,
+                                   load_mission_badges, load_mission_localization)
 
         catalog = {**catalog, "_localizacion_addon": load_mission_localization(addon)}
+        if 2 in blocks:
+            groups = {int(quest) for quest, entry in catalog.get("misiones", {}).items()
+                      if str(quest).isdigit() and (entry.get("elite") is True or entry.get("grupo") is True)}
+            catalog["_etiquetas_addon"] = load_mission_badges(addon, groups) if groups else {}
         for route in eligible:
             if 2 in blocks:
                 findings.extend(audit_missions(route, catalog))

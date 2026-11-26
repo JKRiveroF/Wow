@@ -34,7 +34,7 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Cruzar el registro de misiones y las observaciones de Efficient Games por ID y compilación con los títulos, requisitos, objetivos, XP y vuelos de las rutas.
 - [x] Cruzar los historiales de entregas con las continuaciones sugeridas que coinciden con la base heredada. Aplicar la evidencia a las secuencias A/T de las rutas.
 - [x] Contrastar las categorías de misión y los temporizadores expresos con la extracción de Forever.
-- [ ] Mostrar las categorías verificadas mediante las etiquetas que ya usa la guía y verificar su comportamiento antes de contar los avisos de grupo como resueltos.
+- [x] Mostrar las categorías verificadas mediante las etiquetas de destino. Probar con Lua el caso sin datos de la misión, la respuesta posterior y los textos ES/EN.
 - [x] Corregir los textos de 30 refuerzos sin XP base y conservar el historial de respuestas del servidor por ID.
 - [x] Corregir las variantes de Frondavil y los pasos de invasión que llevaban a ciudades de la otra facción.
 - [x] Contrastar los objetos, el temporizador y el riesgo de las tres ventanas de agrupamiento y corregir sus instrucciones.
