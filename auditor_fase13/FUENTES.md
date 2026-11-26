@@ -64,6 +64,18 @@ Datos de Efficient Games, [CC BY 4.0](https://creativecommons.org/licenses/by/4.
 
 La misión 92551 figura en recorridos de ambas facciones. La entrega observada por un Skyborne Horda corrige la restricción de Alianza que indicaban los datos estáticos previos. El mismo conjunto registra la recogida y entrega junto a Danarii Bellowveil. [Entregas en 70959](https://github.com/JIVESCORP/eg-link-output-wowf/blob/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf/1.60.1.70959/turn_ins.json) · [Ficha de Stolen Supplies](https://wow-forever.gg/db/quests/92551-stolen-supplies/).
 
+## Refuerzos sin XP base · 26 de noviembre de 2026
+
+| Misiones corregidas | Qué ofrece el paso |
+| --- | --- |
+| 2582, 2584, 2586, 2602, 2604 | Canjes de ingredientes por consumibles de los magos de sangre. La primera entrega de cada cadena tiene su propio ID. [Ejemplo del Espíritu del jabalí](https://zephras.com/forever/enUS/quest/2584/). |
+| 4381–4386 y 5150 | Los pilones canjean diez cristales de cada uno de dos colores. Dadanga entrega un paquete por 15 brotes. [Canje de cristal](https://zephras.com/forever/enUS/quest/4381/) · [Dadanga](https://zephras.com/forever/enUS/quest/5150/). |
+| 4463 y 4481–4484 | Cada tratado cuesta 30 de oro y sus materiales y entrega un arcano. [Tratado de tenacidad](https://zephras.com/forever/enUS/quest/4482/). |
+| 975 y 4801–4807 | El alijo 12384 debe ir en las bolsas para que aparezca e'ko. Mau'ari canjea tres e'ko del mismo tipo por tres jujus. [Alijo](https://zephras.com/forever/enUS/quest/975/) · [Canje de e'ko](https://zephras.com/forever/enUS/quest/4806/). |
+| 734, 777, 1191, 2662 y 3503 | Pasos de cadena, distracción, elixires y transporte. También hay observaciones de entrega con cero XP. [Lo tienes crudo](https://zephras.com/forever/enUS/quest/734/) · [Zamek](https://zephras.com/forever/enUS/quest/1191/) · [Tragonublo](https://zephras.com/forever/enUS/quest/2662/) · [Xylem](https://zephras.com/forever/enUS/quest/3503/) · [Entregas observadas](https://github.com/JIVESCORP/eg-link-output-wowf/blob/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf/1.60.1.70959/turn_ins.json). |
+
+El escaneo confirma la existencia de 8941. Las consultas sin respuesta conservan su compilación y permiten priorizar los IDs heredados. Para decidir si un ID fue sustituido o depende de un evento se exige evidencia adicional de la cadena o disponibilidad. [Escaneo 71037](https://github.com/JIVESCORP/eg-link-output-wowf/blob/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf/1.60.1.71037/quest_scan.json).
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

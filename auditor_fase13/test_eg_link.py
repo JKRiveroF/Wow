@@ -2,12 +2,22 @@
 
 import unittest
 
-from eg_link import _base_xp, _import_npcs, _import_objectives, _import_turn_ins, _quest_values, _race_fields
+from eg_link import _base_xp, _import_npcs, _import_objectives, _import_scan, _import_turn_ins, _quest_values, _race_fields
 from inventario_misiones import _coordinate_result
 from vuelos_observados import link_flights
 
 
 class EGLinkTests(unittest.TestCase):
+    def test_missing_scan_reply_does_not_erase_identity(self):
+        missions = {}
+        _import_scan(missions, {"described": {"1": {"sources": 1}}, "noData": [2], "repeatable": {}},
+                     {"estado": "forever", "fuente": "71037"})
+        _import_scan(missions, {"described": {}, "noData": [1, 2], "repeatable": {}},
+                     {"estado": "forever", "fuente": "71091"})
+        self.assertTrue(missions["1"]["existe"])
+        self.assertNotIn("existe", missions["2"])
+        self.assertEqual([row["fuente"] for row in missions["2"]["consultas_sin_respuesta"]], ["71037", "71091"])
+
     def test_records_are_not_interpreted_as_prerequisites_or_effective_xp(self):
         entry = _quest_values({
             "title": "Key to the City", "minLevel": 30, "level": 33, "raceMask": "aa2aaaaa4e0ab3b2",

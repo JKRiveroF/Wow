@@ -29,7 +29,7 @@ EG_FIELDS = (
     "nivel_mision", "mascara_racial", "siguiente_sugerida", "area_mision", "objetivos_servidor",
     "objetos_por_botin", "habilidades_recompensa", "componentes_xp", "entregas_observadas",
     "misiones_previas_observadas", "escaneo_faccion", "opciones_dialogo_observadas", "usos_objetos_observados",
-    "xp_calculada",
+    "xp_calculada", "consultas_sin_respuesta",
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
@@ -174,6 +174,21 @@ def _import_turn_ins(missions, data, source):
         _record(missions, quest_id, {"entregas_observadas": observations}, source)
 
 
+def _import_scan(missions, data, source):
+    for quest_id, row in data["described"].items():
+        if row.get("sources"):
+            counts = {key: row[key] for key in ("factions", "noDataFactions", "sources") if key in row}
+            _record(missions, quest_id, {"escaneo_faccion": counts}, source)
+            if "existe" not in missions[quest_id]:
+                _record(missions, quest_id, {"existe": True}, source)
+    for quest_id in data["noData"]:
+        key = str(quest_id)
+        recorded = missions.get(key, {}).get("consultas_sin_respuesta", [])
+        _record(missions, key, {"consultas_sin_respuesta": [*recorded, source]}, source)
+    for quest_id in data["repeatable"]:
+        _record(missions, quest_id, {"repetible": True}, source)
+
+
 def import_eg_link(directory):
     missions, npcs, flights = {}, {}, {}
     xp_table = _read_xp_table(directory)
@@ -196,11 +211,7 @@ def import_eg_link(directory):
             for quest_id, row in data["quests"].items():
                 _record(missions, quest_id, {field: row}, source)
         elif dataset == "quest_scan":
-            for quest_id, row in data["described"].items():
-                counts = {key: row[key] for key in ("factions", "noDataFactions", "sources") if key in row}
-                _record(missions, quest_id, {"escaneo_faccion": counts}, source)
-            for quest_id in data["repeatable"]:
-                _record(missions, quest_id, {"repetible": True}, source)
+            _import_scan(missions, data, source)
     for quest_id, entry in missions.items():
         xp = _base_xp(entry, xp_table)
         if xp is not None:

@@ -26,6 +26,10 @@ ALLOWED_MODULES = {
     "GuiaAventurero/OpcionalesOtras.lua",
     "GuiaAventurero/OpcionalesReinos.lua",
 }
+NO_XP_TEXT_QUESTS = {
+    734, 777, 975, 1191, 2582, 2584, 2586, 2602, 2604, 2662, 3503, 4463, 5150,
+    *range(4381, 4387), *range(4481, 4485), *range(4801, 4808),
+}
 
 
 def _source(name):
@@ -53,6 +57,9 @@ def _route_without_reviewed_edits(source):
     obsolete_objective = r'\{ m = 1444, z = "Feralas", x = 44\.7, y = 37\.6, n = "[^"]+", q = 3520, a = "C" \}, '
     lines = []
     for line in source.splitlines(keepends=True):
+        refuerzo = re.search(r"-- REFUERZO_97 q=(\d+)\s*$", line)
+        if refuerzo and int(refuerzo[1]) in NO_XP_TEXT_QUESTS:
+            line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
         line = re.sub(original_alterac, 'm = 1459, z = "<etiqueta revisada>"', line)
         if line.rstrip().endswith(("-- REFUERZO_97 q=3520", "-- REFUERZO_97 q=1878",
                                    "-- REFUERZO_97 q=5301", "-- REFUERZO_97 q=5283")):
@@ -157,6 +164,24 @@ class IntegridadTest(unittest.TestCase):
             for name in sorted(assets):
                 with self.subTest(asset=name):
                     self.assertEqual(_sha(ROOT / name), self.originals[name])
+
+    def test_refuerzos_sin_xp_have_matching_english_for_reviewed_steps(self):
+        from mission_rules import load_mission_localization
+
+        localized = load_mission_localization(ADDON)["por_nombre"]
+        found = set()
+        total = 0
+        for name in self.routes:
+            for line in (ROOT / name).read_text(encoding="utf-8").splitlines():
+                if "Sin XP base" not in line:
+                    continue
+                quest = int(re.search(r"-- REFUERZO_97 q=(\d+)$", line)[1])
+                text = re.search(r't = "([^"]+)"', line)[1]
+                self.assertIn("No base XP", localized.get(text, ""))
+                found.add(quest)
+                total += 1
+        self.assertEqual(found, NO_XP_TEXT_QUESTS)
+        self.assertEqual(total, 1136)
 
 
 class GuardadosTest(unittest.TestCase):

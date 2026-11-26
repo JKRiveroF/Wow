@@ -13,6 +13,34 @@
         }
       }
     },
+    "4801": {
+      "objetos": [12384],
+      "evidencia": {"objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/975/"}}
+    },
+    "4802": {
+      "objetos": [12384],
+      "evidencia": {"objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/975/"}}
+    },
+    "4803": {
+      "objetos": [12384],
+      "evidencia": {"objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/975/"}}
+    },
+    "4804": {
+      "objetos": [12384],
+      "evidencia": {"objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/975/"}}
+    },
+    "4805": {
+      "objetos": [12384],
+      "evidencia": {"objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/975/"}}
+    },
+    "4806": {
+      "objetos": [12384],
+      "evidencia": {"objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/975/"}}
+    },
+    "4807": {
+      "objetos": [12384],
+      "evidencia": {"objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/975/"}}
+    },
     "92551": {
       "facciones": ["Alliance", "Horde"],
       "razas": ["Skyborne"],
