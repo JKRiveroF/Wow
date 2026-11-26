@@ -14,6 +14,7 @@ Registra la compilación e interfaz del cliente, idioma del cliente y de la guí
 | Ivar y formas de druida | Comprueba el avance de 91920 con y sin los tres ojos en el inventario, la entrega de la poción y la oferta de Ivar. Verifica 26 para el elfo de la noche y 27 para el tauren. Recorre la entrega de 98393 antes de los pasos de Forma felina para el elfo y el Skyborne de Alianza. |
 | Herrería y guerrero | Registra qué variante ofrece Okothos a cada clase Horda y el nivel de Herrería al aceptarla. Con enano y gnomo, comprueba la entrega de las notas a Klockmort antes de visitar Menethil, la ubicación de los depósitos y la entrega de 1709. |
 | Forma acuática de Skyborne | Empieza a nivel 16 como druida de cada facción. Confirma los plazos del lago y del adorno, la posición de los arcones, el desbloqueo del hechizo y el coste de recoger las mitades en viajes de la ruta. |
+| Traición en Azshara | Comprueba la oferta de la carta 3504, la entrega en el tomo kaldorei y las tres patrullas. Registra cómo se activan los cristales y la secuencia de entrega 91500 y 91531. |
 | Comportamiento anterior | Abre guía, talentos, equipo, misiones, profesiones y secciones de mapas con datos previos de 9.7.9. Verifica los textos ES/EN y registra cualquier error de arranque, selección o traducción. |
 
 Los resultados de las pruebas simuladas quedan en las pruebas del auditor. El estado de cada comprobación de esta tabla sigue pendiente de observación en el cliente.

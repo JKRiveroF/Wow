@@ -1,6 +1,35 @@
 {
   "fecha_consulta_cartografia": "2026-11-25",
   "misiones": {
+    "3505": {
+      "posiciones": {"A": [{"m": 1447, "x": 22.3, "y": 51.5}], "T": [{"m": 1447, "x": 59.5, "y": 31.3}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/3505/", "fecha_consulta": "2026-11-26"}}
+    },
+    "91497": {
+      "posiciones": {"A": [{"m": 1447, "x": 59.5, "y": 31.3}], "C": [{"m": 1447, "x": 56.5, "y": 26.8}, {"m": 1447, "x": 66.5, "y": 29.1}, {"m": 1447, "x": 69.6, "y": 27.9}], "T": [{"m": 1447, "x": 59.5, "y": 31.3}]},
+      "prerrequisitos": [3505],
+      "evidencia": {
+        "posiciones": {"estado": "forever", "fuente": "https://foreverquestlog.com/quests/91497/", "fecha_consulta": "2026-11-26"},
+        "prerrequisitos": {"estado": "forever", "fuente": "https://polestar.guide/guides/horde/50-60/02-felwood", "fecha_consulta": "2026-11-26"}
+      },
+      "contraste_cartografia": ["https://www.wowhead.com/forever/quest=91497/seals-of-the-sindorei"]
+    },
+    "91500": {
+      "posiciones": {"A": [{"m": 1447, "x": 59.5, "y": 31.3}], "T": [{"m": 1447, "x": 22.3, "y": 51.5}]},
+      "prerrequisitos": [91497],
+      "evidencia": {
+        "posiciones": {"estado": "forever", "fuente": "https://bindonforever.com/quest/91500", "fecha_consulta": "2026-11-26"},
+        "prerrequisitos": {"estado": "forever", "fuente": "https://polestar.guide/guides/horde/50-60/02-felwood", "fecha_consulta": "2026-11-26"}
+      }
+    },
+    "91531": {
+      "posiciones": {"A": [{"m": 1447, "x": 22.3, "y": 51.5}], "T": [{"m": 1454, "x": 75.2, "y": 34.2}]},
+      "prerrequisitos": [91500],
+      "evidencia": {
+        "posiciones": {"estado": "forever", "fuente": "https://bindonforever.com/quest/91531", "fecha_consulta": "2026-11-26"},
+        "prerrequisitos": {"estado": "forever", "fuente": "https://polestar.guide/guides/horde/50-60/02-felwood", "fecha_consulta": "2026-11-26"}
+      }
+    },
     "1704": {
       "posiciones": {"A": [{"m": 1453, "x": 64.6, "y": 37.2}], "T": [{"m": 1455, "x": 67.9, "y": 46.1}]},
       "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/1704/", "fecha_consulta": "2026-11-26"}}

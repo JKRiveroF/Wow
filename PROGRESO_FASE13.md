@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 08:02:50 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 08:08:48 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar y actualizar la cadena de Traición en Azshara y revisar la oferta de los demás IDs pendientes.
+**Tarea actual** · Contrastar los 25 IDs activos pendientes, con prioridad para los encargos de banda, eventos y repetibles.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -232,20 +232,27 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Pasaron las **67 pruebas locales**. Las 47 rutas registraron **0 errores y 56 avisos**, 24 menos que en el corte anterior. Todos corresponden al requisito opcional de Kum'isha. Quedan 301 grupos de investigación y 94 de cliente. El avance global por criterios completos sigue en **40,83 %**.
 - El inventario tiene 2.473 fichas, 2.467 IDs activos y los 2.462 IDs de 9.7.9. Hay evidencia de existencia para 2.442 IDs y título inglés y XP base para 2.441. La prioridad siguiente incluye los 27 IDs activos sin evidencia de oferta.
 
-## Último bloque verificado · Forma acuática de Skyborne
+## Forma acuática de Skyborne · corte verificado
 
 - Las dos rutas Skyborne de druida muestran cómo iniciar Forma acuática desde nivel 16. Cada facción tiene sus cuatro misiones en el catálogo opcional. El requisito del paso anterior se comprueba antes de ofrecer el siguiente. La habilidad figura en ambas listas de hechizos.
 - Las notas ES/EN indican dónde recoger las dos mitades del colgante durante el recorrido. Los puntos de Argénteos son aproximados. Queda por probar en Forever la oferta, la duración del adorno y el tiempo de los desvíos. [Máscaras, cadenas y arcones](auditor_fase13/FUENTES.md#forma-acuática-de-skyborne--26-de-noviembre-de-2026).
 - Pasaron las **68 pruebas locales**, con una prueba nueva de nivel, clase, raza, facción, orden de las entregas y traducciones. Se repitió la auditoría de las 47 rutas con **0 errores, 56 avisos**, 301 grupos de investigación y 94 de cliente. El avance global por criterios completos sigue en **40,83 %**.
 
+## Último bloque verificado · Traición en Azshara
+
+- Las 22 rutas Horda siguen 3505 → 91497 → 91500 → 91531. Se corrigieron las cantidades de la primera tarea, se añadieron los tres sellos con sus ubicaciones de búsqueda y se detalló el uso de los cristales. El último encargo aprovecha el regreso a Orgrimmar.
+- Se conservaron los índices de paso y los IDs 3506 y 3507 en el inventario histórico. La carta 3504 sigue condicionada a la oferta de Belgrom. El auditor reutiliza los destinos contrastados en 242 apariciones de ruta. [Dependencias, objetos y fuentes](auditor_fase13/FUENTES.md#traición-en-azshara--26-de-noviembre-de-2026).
+- Pasaron las **69 pruebas locales**. Las 47 rutas registran **0 errores y 56 avisos**, todos por el requisito opcional de Kum'isha. Quedan 301 grupos de investigación y 94 de cliente. El global por criterios completos sigue en **40,83 %**.
+- El inventario contiene 2.476 fichas y 2.468 IDs activos. Se cotejó la presencia de los 2.462 IDs de 9.7.9. Hay 2.445 IDs con evidencia de existencia, 2.272 con título español y 2.444 con título inglés y XP base. Los pendientes de oferta bajan de 27 a 25 al sustituir los dos pasos heredados.
+
 ## Siguientes tareas
 
-1. Verificar la continuación de Traición en Azshara. Las consultas 71037 enlazan 3505 → 91497 → 91500 → 91531. Contrastar objetivos y destinos antes de actualizar las 22 rutas Horda.
-2. Contrastar los 27 IDs activos sin evidencia de oferta, incluidos los nueve sin fila en QuestV2, las variantes heredadas y las condiciones de evento. Ampliar la cobertura de títulos y requisitos con los 569 historiales de misiones previas.
+1. Revisar la procedencia, los requisitos de banda y los calendarios de los 25 IDs activos sin evidencia de oferta.
+2. Verificar las variantes de Desolace y los repetibles, incluidos los nueve IDs sin fila en QuestV2. Ampliar la cobertura de títulos y requisitos mediante los 569 historiales de misiones previas.
 3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `a372262`.
+La fase sigue abierta. El corte previo es `de539ab`.
 
 ## Avance individual
 

@@ -103,6 +103,15 @@ def _route_without_reviewed_edits(source):
         hratha = re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )(138[01])\s*$", line)
         if hratha:
             line = re.sub(r'\{ t = ".*', f'<paso de Hratha revisado {hratha[1]}>', line)
+        azshara = re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )(350[4-7])\s*$", line)
+        if azshara:
+            line = re.sub(r't = "[^"]+"', 't = "<Traición revisada>"', line, count=1)
+            line = re.sub(r', \{ [^{}]+q = 91497, a = "[ACT]" \}', "", line)
+            if azshara[1] in ("3506", "3507"):
+                line = re.sub(r'\bq = (91500|91531)\b', f"q = {azshara[1]}", line)
+                line = line.replace(f"Paso conservado {azshara[1]}", f"REFUERZO_97 q={azshara[1]}")
+                line = line.replace("Escrito de invocación sin'dorei", "Tomo de invocación Kaldorei")
+                line = re.sub(r'(n = "(?:Recoger|Entregar): )(?:Una jugada explosiva|Venganza cobrada)', r'\1Traición', line)
         if refuerzo and int(refuerzo[1]) in (1374, 1375):
             line = re.sub(r't = "[^"]+"', 't = "<rama de centauros revisada>"', line, count=1)
         if refuerzo and int(refuerzo[1]) in (2521, 2522, 93685, 93686):
@@ -360,6 +369,30 @@ class IntegridadTest(unittest.TestCase):
             self.assertEqual(points, [(str(expected), "A"), (str(expected), "T")])
             counts[expected] += 1
         self.assertEqual(counts, {5301: 5, 85712: 17})
+
+    def test_azshara_betrayed_uses_live_follow_ups_in_all_horde_routes(self):
+        count = 0
+        expected = [
+            [("3504", "A"), ("3504", "T")],
+            [("3505", "A"), ("3505", "C"), ("3505", "T"),
+             ("91497", "A"), ("91497", "C"), ("91497", "C"), ("91497", "C"), ("91497", "T")],
+            [("91500", "A"), ("91500", "T")],
+            [("91531", "A"), ("91531", "T")],
+        ]
+        for route in (ADDON / "Rutas").glob("*.lua"):
+            text = route.read_text(encoding="utf-8")
+            self.assertNotRegex(text, r'\bq = 350[67],')
+            stages = [line for line in text.splitlines()
+                      if re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )350[4-7]$", line)]
+            if not stages:
+                continue
+            with self.subTest(route=route.name):
+                count += 1
+                self.assertEqual([re.findall(r'q = (\d+), a = "([ACT])"', line) for line in stages], expected)
+                self.assertIn("6 reivindicadores y 6 peritos", stages[1])
+                self.assertIn("Desmonta dentro del círculo", stages[2])
+                self.assertIn("x = 75.2, y = 34.2", stages[3])
+        self.assertEqual(count, 22)
 
 
 class GuardadosTest(unittest.TestCase):

@@ -202,6 +202,65 @@
     }
   },
   "misiones_originales_retiradas": {
+    "3506": {
+      "rutas": [
+        "nomuerto_brujo",
+        "nomuerto_guerrero",
+        "nomuerto_mago",
+        "nomuerto_paladin",
+        "nomuerto_picaro",
+        "nomuerto_sacerdote",
+        "orco_trol_brujo",
+        "orco_trol_cazador",
+        "orco_trol_chaman",
+        "orco_trol_guerrero",
+        "orco_trol_mago",
+        "orco_trol_picaro",
+        "skyborne_cazador",
+        "skyborne_chaman",
+        "skyborne_druida",
+        "skyborne_guerrero",
+        "skyborne_picaro",
+        "tauren_cazador",
+        "tauren_chaman",
+        "tauren_druida",
+        "tauren_guerrero",
+        "trol_sacerdote"
+      ],
+      "sustitutas": [
+        91497,
+        91500
+      ],
+      "fuente": "https://zephras.com/forever/enUS/quest/91497/"
+    },
+    "3507": {
+      "rutas": [
+        "nomuerto_brujo",
+        "nomuerto_guerrero",
+        "nomuerto_mago",
+        "nomuerto_paladin",
+        "nomuerto_picaro",
+        "nomuerto_sacerdote",
+        "orco_trol_brujo",
+        "orco_trol_cazador",
+        "orco_trol_chaman",
+        "orco_trol_guerrero",
+        "orco_trol_mago",
+        "orco_trol_picaro",
+        "skyborne_cazador",
+        "skyborne_chaman",
+        "skyborne_druida",
+        "skyborne_guerrero",
+        "skyborne_picaro",
+        "tauren_cazador",
+        "tauren_chaman",
+        "tauren_druida",
+        "tauren_guerrero",
+        "trol_sacerdote"
+      ],
+      "sustituta": 91531,
+      "fuente": "https://zephras.com/forever/enUS/quest/91531/"
+    },
     "1380": {
       "rutas": [
         "elfo_cazador",
