@@ -1,4 +1,4 @@
-"""Pruebas de los perfiles Skyborne con el cargador y la localización del addon."""
+"""Pruebas del cargador, la localización y las opcionales por perfil."""
 
 from pathlib import Path
 import unittest
@@ -83,6 +83,72 @@ class ForeverProfilesTest(unittest.TestCase):
                                  [("A", 2521, 41.7, 44.8), ("C", 2521, 43, 43.6), ("T", 2521, 43, 43.6)])
                 self.assertTrue(destinations[0]["n"].endswith("(Raan Wildwind)"))
                 self.assertTrue(destinations[2]["n"].endswith("(Halassa Fernbreeze)"))
+
+    def test_kumisha_optionals_follow_level_and_turn_ins_across_continents(self):
+        chain = [
+            (1389, 30, [1435, 1435, 1435]),
+            (93464, 30, [1435, 1443]),
+            (93465, 30, [1443, 1443, 1443]),
+            (93678, 30, [1443, 1435]),
+            (93679, 45, [1435, 1435, 1435]),
+            (93684, 45, [1435, 1419]),
+        ]
+        for faction, locale, index in (("Alliance", "esES", "opcionalesNuevas"),
+                                       ("Horde", "enUS", "opcionalesNuevasH")):
+            with self.subTest(faction=faction):
+                lua, module, load = lua_for_addon(faction)
+                lua.globals()["locale"] = locale
+                lua.execute("""
+                    GuiaAventureroDB = { estiloRuta = "completa" }
+                    completadas = {}
+                    function GetLocale() return locale end
+                    function UnitLevel() return nivel end
+                """)
+                module["tarjetasGuia"] = lua.table()
+                module["PosicionJugador"] = lua.eval("function() return mapa end")
+                module["MisionCompletada"] = lua.eval("function(q) return completadas[q] end")
+                module["MisionEnDiario"] = lua.eval("function(q) return activa == q end")
+                module["DestinoHecho"] = lua.eval(
+                    'function(w) return (w.a == "A" and activa == w.q) or (w.a == "C" and objetivo) end'
+                )
+                for name in ("Idioma.lua", "Idioma/enUS_Datos.lua", "OpcionalesOtras.lua",
+                             "OpcionalesReinos.lua", "Continentes.lua", "Opcionales.lua"):
+                    load(name)
+                self.assertTrue(module["CargarContinente"]("Otras"))
+                optional = module["WH"][index]
+                crystal_quest = optional[1389]
+                self.assertTrue(module["CargarContinente"]("Reinos"))
+                self.assertEqual(optional[1389]["nivelMinimo"], crystal_quest["nivelMinimo"])
+
+                def candidate(quest):
+                    return next((row for row in module["_opcionales"]().values() if row["q"] == quest), None)
+
+                previous = None
+                for quest, minimum, maps in chain:
+                    with self.subTest(quest=quest):
+                        self.assertEqual([point["m"] for point in optional[quest]["wp"].values()], maps)
+                        lua.globals()["mapa"] = maps[0]
+                        lua.globals()["nivel"] = minimum
+                        if previous:
+                            lua.globals()["activa"] = previous
+                            self.assertIsNone(candidate(quest))
+                            lua.globals()["activa"] = None
+                            lua.globals()["completadas"][previous] = True
+                        lua.globals()["nivel"] = minimum - 1
+                        self.assertIsNone(candidate(quest))
+                        lua.globals()["nivel"] = minimum
+                        self.assertIsNotNone(candidate(quest))
+                        previous = quest
+
+                lua.globals()["mapa"] = 1419
+                lua.globals()["activa"] = 93684
+                landing = candidate(93684)["w"]
+                self.assertEqual((landing["a"], landing["m"], landing["x"], landing["y"]), ("T", 1419, 52, 35.6))
+                expected = ("Turn in: The Found One (Kum'isha the Collector)" if locale == "enUS"
+                            else "Entregar: El Encontrado (Kum'isha el Coleccionista)")
+                self.assertEqual(landing["n"], expected)
+                lua.globals()["GuiaAventureroDB"]["estiloRuta"] = "rapida"
+                self.assertIsNone(candidate(93684))
 
 
 if __name__ == "__main__":

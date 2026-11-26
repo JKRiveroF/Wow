@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 01:44:41 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 07:34:33 +01:00 (Madrid)**
 
-**Tarea actual** · Colocar la cadena opcional de Kum'isha y contrastar los requisitos de perfil y los 27 IDs activos pendientes de evidencia de oferta.
+**Tarea actual** · Corregir las dos variantes de druida intercambiadas y contrastar las restricciones de especialización y las dependencias de Ivar y del espíritu felino.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -204,21 +204,28 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - La auditoría pasó de 536 a **92 avisos y 0 errores**. Quedan 64 avisos de prerrequisitos alternativos y 28 de perfil. Los 301 grupos de investigación y 94 de cliente mantienen el avance en 40,83 % por criterios completos.
 - Pasaron las 60 pruebas locales. La regresión comprobó las instrucciones y traducciones de los encargos revisados y la integridad de sus acciones, IDs y coordenadas.
 
-## Último bloque verificado · Desolace
+## Desolace · corte verificado
 
 - Se incorporó el encargo opcional 96222 de Umarak a 34 rutas. Se comprobó el nivel mínimo 35, el fragmento de llave 6077 y los tres destinos por ruta. La instrucción indica usar la boquilla en el cuerno y formar un grupo para el khan de élite. Las rutas conservan 1380 y 1381 en el inventario histórico y mantienen la posición de sus pasos guardados. [Evidencia de Desolace](auditor_fase13/FUENTES.md#khan-hratha-y-ramas-de-desolace--26-de-noviembre-de-2026).
 - Se condicionaron los encargos 1374 y 1375 a la oferta de Gelkis y Magram en 32 y 34 rutas, respectivamente. Las misiones homónimas 93128 y 93196 tienen otros PNJ, objetivos y requisitos, y quedan identificadas en las fuentes.
 - Hay 2.469 fichas y 2.463 IDs activos. Se cotejaron los 2.462 IDs de la base 9.7.9. Hay evidencia de existencia para 2.438 fichas, título español para 2.266, título inglés y XP base para 2.437. De los 27 IDs activos sin evidencia de oferta, 18 tienen fila en QuestV2.
 - Pasaron las **61 pruebas locales**, incluida la verificación de la misión 96222, el orden guardado y las instrucciones en ambos idiomas. La auditoría registró **0 errores, 92 avisos**, 301 grupos de investigación y 94 de cliente. El avance se mantiene en 40,83 % por criterios completos.
 
+## Último bloque verificado · Kum'isha
+
+- El catálogo opcional de Alianza y Horda incorpora los seis pasos de Magtoor y Azore hasta El Encontrado, con sus destinos e instrucciones ES/EN. Los pasos se desbloquean al entregar el anterior y respetan los niveles mínimos de 30 y 45. Las misiones de la cadena son legibles al reconectar en otro continente. [Cadena, objetos y coordenadas](auditor_fase13/FUENTES.md#cadena-opcional-de-kumisha--26-de-noviembre-de-2026).
+- Pasaron las **62 pruebas locales**. La nueva prueba ejecuta la carga en Lua y comprueba requisitos, destinos, traducciones y el modo Solo ruta en ambas facciones. Se compararon los resultados de cada una de las 47 rutas con la tabla individual.
+- La auditoría mantiene **0 errores, 92 avisos**, 301 grupos de investigación y 94 de cliente. De los 64 avisos de prerrequisitos alternativos, 56 identifican que la ruta principal no entrega El Encontrado. El requisito queda accesible por el catálogo opcional. El global por criterios completos sigue en **40,83 %**.
+- Queda por observar la oferta efectiva de la cadena en Forever para cada facción y medir el tiempo del desvío. [Comprobación en cliente](auditor_fase13/VALIDACION_FOREVER.md).
+
 ## Siguientes tareas
 
-1. Colocar el desvío opcional de Kum'isha en el catálogo y comprobar los requisitos de perfil que siguen en discrepancia.
+1. Corregir los IDs 26 y 27 de la cadena acuática de druida y contrastar los perfiles de herrería y guerrero. Revisar los requisitos de apertura de Ivar y del espíritu felino.
 2. Contrastar los 27 IDs activos sin evidencia de oferta, incluidos los nueve sin fila en QuestV2, las variantes heredadas y las condiciones de evento. Ampliar la cobertura de títulos y requisitos con los 567 historiales de misiones previas.
 3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `7c7b2f6`.
+La fase sigue abierta. El corte previo es `f64daf9`.
 
 ## Avance individual
 

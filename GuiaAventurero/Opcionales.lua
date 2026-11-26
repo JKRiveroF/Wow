@@ -151,6 +151,7 @@ local function Candidatas()
   for _, tabla in ipairs(tablas) do
     for q, o in pairs(tabla) do
       local deNivel = (o.nivel or 1) <= nivel + 2 and (o.nivel or 1) >= nivel - 8
+      if o.nivelMinimo then deNivel = nivel >= o.nivelMinimo end
       local pedida = anadidas[q]
       -- filtro barato primero: de tu nivel y en tu mapa (o añadida por ti)
       if (pedida or (deNivel and EnMapa(o, mapa))) and not mias[q] and not no[q] and not Hecha(q) and not YaEnsenada(q, mias) then

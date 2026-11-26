@@ -23,6 +23,7 @@ ALLOWED_MODULES = {
     "GuiaAventurero/Idioma/enUS_Interfaz.lua",
     "GuiaAventurero/Idioma/enUS_Refuerzos97.lua",
     "GuiaAventurero/Idioma/enUS_Rutas.lua",
+    "GuiaAventurero/Opcionales.lua",
     "GuiaAventurero/OpcionalesKalimdor.lua",
     "GuiaAventurero/OpcionalesOtras.lua",
     "GuiaAventurero/OpcionalesReinos.lua",

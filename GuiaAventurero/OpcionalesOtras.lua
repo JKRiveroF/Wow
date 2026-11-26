@@ -1,11 +1,43 @@
 -- OpcionalesOtras.lua (9.2): misiones opcionales de las zonas fuera de los dos continentes (Isla Zephras). Generado con gen-9.2/partir.py a partir de
 -- OpcionalesDatos.lua y OpcionalesHorda.lua de la 9.0: no editar a mano. Creado por JKRiveroF.
 -- Cada facción va en un texto: Continentes.lua suelta al entrar el de la otra facción y convierte el tuyo en tabla
--- solo cuando estás en las zonas fuera de los dos continentes (Isla Zephras) (o vas allí). Un texto ocupa mucho menos que la tabla ya hecha.
+-- al iniciar. También contiene las cadenas opcionales que cruzan continentes.
+local kumisha = [=[
+    [1389] = { n = "Cristales draenetistas", nivel = 35, nivelMinimo = 30, nueva = true, wp = {
+      { a = "A", m = 1435, n = "Recoger: Cristales draenetistas (Magtoor)", x = 26, y = 31.4, z = "Pantano de las Penas" },
+      { a = "C", m = 1435, n = "Recoge 6 cristales draenetistas entre las chozas del este", x = 62.4, y = 22.7, z = "Pantano de las Penas" },
+      { a = "T", m = 1435, n = "Entregar: Cristales draenetistas (Magtoor)", x = 26, y = 31.4, z = "Pantano de las Penas" },
+    } },
+    [93464] = { n = "El mago visitante", nivel = 38, nivelMinimo = 30, nueva = true, preT = { 1389 }, wp = {
+      { a = "A", m = 1435, n = "Recoger: El mago visitante (Magtoor)", x = 26, y = 31.4, z = "Pantano de las Penas" },
+      { a = "T", m = 1443, n = "Entregar: El mago visitante (Azore Aldamort)", x = 39, y = 27.1, z = "Desolace" },
+    } },
+    [93465] = { n = "Notas sobre la draenetista", nivel = 40, nivelMinimo = 30, nueva = true, preT = { 93464 }, wp = {
+      { a = "A", m = 1443, n = "Recoger: Notas sobre la draenetista (Azore Aldamort)", x = 39, y = 27.1, z = "Desolace" },
+      { a = "C", m = 1443, n = "Recupera las notas de Gimashi en lo alto de la torre", x = 80.9, y = 76.5, z = "Desolace" },
+      { a = "T", m = 1443, n = "Entregar: Notas sobre la draenetista (Azore Aldamort)", x = 39, y = 27.1, z = "Desolace" },
+    } },
+    [93678] = { n = "Notas resumidas sobre la draenetista", nivel = 40, nivelMinimo = 30, nueva = true, preT = { 93465 }, wp = {
+      { a = "A", m = 1443, n = "Recoger: Notas resumidas sobre la draenetista (Azore Aldamort)", x = 39, y = 27.1, z = "Desolace" },
+      { a = "T", m = 1435, n = "Entregar: Notas resumidas sobre la draenetista (Magtoor)", x = 26, y = 31.4, z = "Pantano de las Penas" },
+    } },
+    [93679] = { n = "Visiones de otro", nivel = 55, nivelMinimo = 45, nueva = true, preT = { 93678 }, wp = {
+      { a = "A", m = 1435, n = "Recoger: Visiones de otro (Magtoor)", x = 26, y = 31.4, z = "Pantano de las Penas" },
+      { a = "C", m = 1435, n = "Contempla la visión de Onku con Magtoor", x = 26, y = 31.4, z = "Pantano de las Penas" },
+      { a = "T", m = 1435, n = "Entregar: Visiones de otro (Magtoor)", x = 26, y = 31.4, z = "Pantano de las Penas" },
+    } },
+    [93684] = { n = "El Encontrado", nivel = 55, nivelMinimo = 45, nueva = true, preT = { 93679 }, wp = {
+      { a = "A", m = 1435, n = "Recoger: El Encontrado (Magtoor)", x = 26, y = 31.4, z = "Pantano de las Penas" },
+      { a = "T", m = 1419, n = "Entregar: El Encontrado (Kum'isha el Coleccionista)", x = 52, y = 35.6, z = "Las Tierras Devastadas" },
+    } },
+]=]
 GuiaAventurero_Datos = GuiaAventurero_Datos or {}
 GuiaAventurero_Datos.Otras = {
   Alliance = [=[
 return {
+  opcionalesNuevas = {
+]=] .. kumisha .. [=[
+  },
 }
 ]=],
   Horde = [=[
@@ -98,6 +130,7 @@ return {
     [98512] = { clases = 5, n = "Asesinos Al'Aketh", nivel = 8, wp = { { a = "A", m = 2521, n = "Recoger: Asesinos Al'Aketh (Fendaal Windstone)", x = 56.8, y = 61.1, z = "Isla Zephras" }, { a = "C", m = 2521, n = "Objetivo: Asesinos Al'Aketh", x = 55.9, y = 60.6, z = "Isla Zephras" }, { a = "T", m = 2521, n = "Entregar: Asesinos Al'Aketh (Fendaal Windstone)", x = 56.8, y = 61.1, z = "Isla Zephras" } } },
   },
   opcionalesNuevasH = {
+]=] .. kumisha .. [=[
     [93159] = { n = "The Strange Hermit", nivel = 13, nueva = true, wp = { { a = "A", m = 2521, n = "Recoger: The Strange Hermit (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" }, { a = "T", m = 2521, n = "Entregar: The Strange Hermit (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" } } },
     [93160] = { n = "The Forest's Bounty", nivel = 13, nueva = true, pre1 = { 93159 }, wp = { { a = "A", m = 2521, n = "Recoger: The Forest's Bounty (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" }, { a = "C", m = 2521, n = "Objetivo: The Forest's Bounty", x = 58.6, y = 38.8, z = "Isla Zephras" }, { a = "T", m = 2521, n = "Entregar: The Forest's Bounty (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" } } },
     [93172] = { n = "Free the Hollows", nivel = 13, nueva = true, pre1 = { 93159 }, wp = { { a = "A", m = 2521, n = "Recoger: Free the Hollows (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" }, { a = "C", m = 2521, n = "Objetivo: Free the Hollows", x = 58.2, y = 32.1, z = "Isla Zephras" }, { a = "T", m = 2521, n = "Entregar: Free the Hollows (Strange Hermit)", x = 54, y = 38.9, z = "Isla Zephras" } } },
