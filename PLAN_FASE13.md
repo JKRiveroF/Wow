@@ -43,7 +43,8 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Ajustar la rama de Klockmort para enano y gnomo, y distinguir las dos variantes documentadas de Forja de armaduras de la Horda.
 - [x] Incorporar de forma opcional las dos cadenas de Forma acuática de Skyborne y señalar las visitas de ruta donde recoger las mitades.
 - [x] Contrastar la rama actual de Traición en Azshara y aplicar sus tres encargos de Forever en las 22 rutas Horda.
-- [ ] Revisar los 25 IDs activos sin evidencia de oferta.
+- [x] Revisar los 25 IDs activos sin evidencia de oferta, acreditar el canje 5227 y corregir los pasos y destinos de los encargos opcionales.
+- [ ] Resolver los campos investigables de los 24 IDs restantes, con prioridad para los ocho sin fila en QuestV2. Verificar la oferta estacional y de banda con observaciones de la fase correspondiente.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
 - [x] Corregir 26 encargos de canje, reputación, eventos y JcJ que aparecían como refuerzos de XP.
 - [x] Contrastar y corregir los 32 refuerzos restantes con XP base cero. Distinguir pasos de cadena, de transporte, de clase y de Alterac.

@@ -7,7 +7,8 @@ import re
 
 XP_REFUERZO = re.compile(r"no quedarte corto de nivel|refuerzo de (?:xp|experiencia)", re.IGNORECASE)
 XP_OPCIONAL = re.compile(
-    r"^(?:Misión opcional de (?:especialización\b|Kum'isha:)|Bálsamo de Frondavil:|Encargo opcional de Desolace:)"
+    r"^(?:Misión opcional:|Misión opcional de (?:especialización\b|Kum'isha:)|"
+    r"Bálsamo de Frondavil:|Encargo opcional de Desolace:)"
 )
 
 

@@ -66,6 +66,31 @@
       "facciones": ["Horde"],
       "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4112/"}}
     },
+    "5227": {
+      "existe": true,
+      "nombres": {"es": ["El caldero de la Gangrena de Gahrron"], "en": "Gahrron's Withering Cauldron"},
+      "nivel_minimo": 50,
+      "xp": 620,
+      "repetible": true,
+      "objetos_objetivo": [13320, 13354, 14047],
+      "cantidades_objetivo": {"13320": 1, "13354": 4, "14047": 4},
+      "posiciones": {
+        "A": [{"m": 1422, "x": 62.5, "y": 58.5}],
+        "T": [{"m": 1422, "x": 62.5, "y": 58.5}]
+      },
+      "fecha_consulta": "2026-11-26",
+      "evidencia": {
+        "existe": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5227/", "build": "1.60.1.70938"},
+        "nombre_es": {"estado": "forever", "fuente": "https://www.wowhead.com/forever/es/quest=5227/el-caldero-de-la-gangrena-de-gahrron"},
+        "nombre_en": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5227/"},
+        "nivel_minimo": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5227/"},
+        "xp": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5227/"},
+        "repetible": {"estado": "forever", "fuente": "https://www.wowhead.com/forever/es/quest=5227/el-caldero-de-la-gangrena-de-gahrron"},
+        "objetos_objetivo": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5227/"},
+        "cantidades_objetivo": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5227/"},
+        "posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/5227/"}
+      }
+    },
     "5882": {
       "facciones": ["Alliance"],
       "prerrequisitos": [4101],

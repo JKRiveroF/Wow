@@ -39,6 +39,10 @@ NO_XP_TEXT_QUESTS = {
     7342, 7386, 7601, 8249, 9415,
 }
 SALVE_QUESTS = set(range(4103, 4113)) | set(range(5882, 5892))
+OPTIONAL_TEXT_QUESTS = {
+    2358, 5201, 5227, 6804, 6805, 6821, 6848, 7622, 8319, 8353, 8355, 8356,
+    8556, 8689, 8691, 8692, 8693, 8694, 8696, 8788, 8863, 9266,
+}
 SALVE_ORIGINALS = {
     **{quest: quest - 1779 for quest in range(5882, 5887)},
     **{quest: quest - 5 for quest in range(5887, 5892)},
@@ -119,6 +123,13 @@ def _route_without_reviewed_edits(source):
             line = re.sub(r"(\bq\s*=\s*)9368([56])\b", lambda m: m[1] + ("2521" if m[2] == "5" else "2522"), line)
         if refuerzo and int(refuerzo[1]) in NO_XP_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
+        if refuerzo and int(refuerzo[1]) in OPTIONAL_TEXT_QUESTS:
+            line = re.sub(r't = "[^"]+"', 't = "<misión opcional revisada>"', line, count=1)
+            if int(refuerzo[1]) == 5227:
+                line = re.sub(r', \{ [^{}]+q = 5227, a = "C" \}', "", line)
+            if int(refuerzo[1]) == 8788:
+                line = line.replace('m = 1454, z = "Orgrimmar", x = 52.3, y = 69.4',
+                                    'm = 1455, z = "Forjaz", x = 33.5, y = 65.6')
         line = re.sub(original_alterac, 'm = 1459, z = "<etiqueta revisada>"', line)
         if line.rstrip().endswith(("-- REFUERZO_97 q=3520", "-- REFUERZO_97 q=1878",
                                    "-- REFUERZO_97 q=5301", "-- REFUERZO_97 q=85712", "-- REFUERZO_97 q=5283")):
@@ -264,6 +275,32 @@ class IntegridadTest(unittest.TestCase):
                 total += 1
         self.assertEqual(found, NO_XP_TEXT_QUESTS)
         self.assertEqual(total, 2061)
+
+    def test_optional_turn_ins_keep_english_and_use_the_correct_seasonal_city(self):
+        from mission_rules import load_mission_localization
+        from world_rules import XP_OPCIONAL
+
+        localized = load_mission_localization(ADDON)["por_nombre"]
+        found = set()
+        count = gifts = 0
+        for name in self.routes:
+            for line in (ROOT / name).read_text(encoding="utf-8").splitlines():
+                match = re.search(r' t = "([^"]+)".*-- REFUERZO_97 q=(\d+)$', line)
+                if not match or (quest := int(match[2])) not in OPTIONAL_TEXT_QUESTS:
+                    continue
+                with self.subTest(route=name, quest=quest):
+                    self.assertTrue(XP_OPCIONAL.match(match[1]))
+                    self.assertTrue(localized.get(match[1], "").startswith("Optional quest:"))
+                    if quest == 8788:
+                        self.assertEqual(line.count('m = 1454, z = "Orgrimmar", x = 52.3, y = 69.4'), 2)
+                        gifts += 1
+                    if quest == 5227:
+                        self.assertEqual(re.findall(r'q = 5227, a = "([ACT])"', line), ["A", "T"])
+                found.add(quest)
+                count += 1
+        self.assertEqual(found, OPTIONAL_TEXT_QUESTS)
+        self.assertEqual(count, 307)
+        self.assertEqual(gifts, 6)
 
     def test_felwood_first_turn_ins_and_repeatables_follow_the_right_faction(self):
         from mission_rules import load_mission_localization

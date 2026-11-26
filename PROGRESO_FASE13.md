@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 08:08:48 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 08:21:00 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar los 25 IDs activos pendientes, con prioridad para los encargos de banda, eventos y repetibles.
+**Tarea actual** · Cerrar las relaciones de las tres ventanas de agrupamiento con la evidencia compartida y contrastar los campos pendientes de los 24 IDs activos.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -238,21 +238,27 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Las notas ES/EN indican dónde recoger las dos mitades del colgante durante el recorrido. Los puntos de Argénteos son aproximados. Queda por probar en Forever la oferta, la duración del adorno y el tiempo de los desvíos. [Máscaras, cadenas y arcones](auditor_fase13/FUENTES.md#forma-acuática-de-skyborne--26-de-noviembre-de-2026).
 - Pasaron las **68 pruebas locales**, con una prueba nueva de nivel, clase, raza, facción, orden de las entregas y traducciones. Se repitió la auditoría de las 47 rutas con **0 errores, 56 avisos**, 301 grupos de investigación y 94 de cliente. El avance global por criterios completos sigue en **40,83 %**.
 
-## Último bloque verificado · Traición en Azshara
+## Traición en Azshara · corte verificado
 
 - Las 22 rutas Horda siguen 3505 → 91497 → 91500 → 91531. Se corrigieron las cantidades de la primera tarea, se añadieron los tres sellos con sus ubicaciones de búsqueda y se detalló el uso de los cristales. El último encargo aprovecha el regreso a Orgrimmar.
 - Se conservaron los índices de paso y los IDs 3506 y 3507 en el inventario histórico. La carta 3504 sigue condicionada a la oferta de Belgrom. El auditor reutiliza los destinos contrastados en 242 apariciones de ruta. [Dependencias, objetos y fuentes](auditor_fase13/FUENTES.md#traición-en-azshara--26-de-noviembre-de-2026).
 - Pasaron las **69 pruebas locales**. Las 47 rutas registran **0 errores y 56 avisos**, todos por el requisito opcional de Kum'isha. Quedan 301 grupos de investigación y 94 de cliente. El global por criterios completos sigue en **40,83 %**.
 - El inventario contiene 2.476 fichas y 2.468 IDs activos. Se cotejó la presencia de los 2.462 IDs de 9.7.9. Hay 2.445 IDs con evidencia de existencia, 2.272 con título español y 2.444 con título inglés y XP base. Los pendientes de oferta bajan de 27 a 25 al sustituir los dos pasos heredados.
 
+## Último bloque verificado · Oferta, canjes y eventos
+
+- Se contrastaron los 25 IDs activos sin observación de oferta y se actualizaron **307 pasos de las 47 rutas** para 22 IDs con instrucciones opcionales en ES/EN. Las seis rutas Horda que señalaban Forjaz para el regalo 8788 apuntan ahora al árbol de Orgrimmar.
+- Se acreditó el canje 5227 en la compilación 1.60.1.70938, con nivel mínimo 50, 620 XP base, tres materiales y el caldero como destino de oferta y entrega. La XP del canje se calcula por separado del recorrido principal. Quedan **24 IDs activos** con oferta pendiente de acreditar, de los que 16 tienen fila en QuestV2 y ocho carecen de ella. La oferta de banda, estacional y de Alterac queda condicionada al contenido habilitado. [Fuentes por ID](auditor_fase13/FUENTES.md#oferta-canjes-y-eventos--26-de-noviembre-de-2026).
+- Pasaron **2 pruebas específicas** y la **regresión de 70 pruebas**. El auditor comprobó 2.476 fichas, 2.468 IDs activos y los 2.462 IDs de 9.7.9. Hay 2.446 fichas con evidencia de existencia, 2.273 con título español y 2.445 con título inglés y XP base.
+- Las 47 rutas registran **0 errores y 56 avisos** por el requisito opcional de Kum'isha. Quedan **301 grupos de investigación y 94 de cliente**. El avance global por criterios completos sigue en **40,83 %**.
+
 ## Siguientes tareas
 
-1. Revisar la procedencia, los requisitos de banda y los calendarios de los 25 IDs activos sin evidencia de oferta.
-2. Verificar las variantes de Desolace y los repetibles, incluidos los nueve IDs sin fila en QuestV2. Ampliar la cobertura de títulos y requisitos mediante los 569 historiales de misiones previas.
-3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
-4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
+1. Cerrar los 21 campos de relaciones pendientes de las tres ventanas de viaje y verificar los requisitos que puedan resolverse con las fuentes ya descargadas.
+2. Contrastar los campos de los 24 IDs activos aún sin observación de oferta, con prioridad para los ocho sin fila en QuestV2. Ampliar títulos y requisitos mediante los 569 historiales de misiones previas.
+3. Medir en Forever el terreno, los tiempos, el margen restante de la piedra de 924 y la XP efectiva. Observar las variantes de banda, campo de batalla y eventos al estar habilitadas. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `de539ab`.
+La fase sigue abierta. El corte previo es `d2fa8c4`.
 
 ## Avance individual
 
