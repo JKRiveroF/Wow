@@ -6,7 +6,7 @@ import re
 
 
 XP_REFUERZO = re.compile(r"no quedarte corto de nivel|refuerzo de (?:xp|experiencia)", re.IGNORECASE)
-XP_OPCIONAL = re.compile(r"^Misión opcional de especialización\b")
+XP_OPCIONAL = re.compile(r"^(?:Misión opcional de especialización\b|Bálsamo de Frondavil:)")
 
 
 def _dict(value):
@@ -302,7 +302,7 @@ class WorldAudit:
             if known or combat_xp or optional_xp:
                 detail = f"{race or 'ruta'}: {race_xp} XP de misión registrada ({known}/{len(counted) - optional_count} entregas)"
                 if optional_count:
-                    detail += f", {optional_xp} XP documentada aparte en misiones opcionales de especialización"
+                    detail += f", {optional_xp} XP documentada aparte en misiones opcionales"
                 if combat_xp:
                     detail += f", {combat_xp} XP de combate estimada en los tramos documentados"
                 if thresholds:

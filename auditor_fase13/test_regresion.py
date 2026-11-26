@@ -30,6 +30,13 @@ NO_XP_TEXT_QUESTS = {
     734, 777, 975, 1191, 2582, 2584, 2586, 2602, 2604, 2662, 3503, 4463, 5150,
     *range(4381, 4387), *range(4481, 4485), *range(4801, 4808),
 }
+SALVE_QUESTS = set(range(4103, 4113)) | set(range(5882, 5892))
+SALVE_ORIGINALS = {
+    **{quest: quest - 1779 for quest in range(5882, 5887)},
+    **{quest: quest - 5 for quest in range(5887, 5892)},
+    **{quest: quest + 5 for quest in range(4103, 4108)},
+    **{quest: quest + 1779 for quest in range(4108, 4113)},
+}
 
 
 def _source(name):
@@ -58,6 +65,13 @@ def _route_without_reviewed_edits(source):
     lines = []
     for line in source.splitlines(keepends=True):
         refuerzo = re.search(r"-- REFUERZO_97 q=(\d+)\s*$", line)
+        if refuerzo and (quest := int(refuerzo[1])) in SALVE_QUESTS:
+            if 't = "Bálsamo de Frondavil:' in line or 't = "Canje opcional:' in line:
+                line = re.sub(rf"(\bq\s*=\s*){quest}\b", lambda match: match[1] + str(SALVE_ORIGINALS[quest]), line)
+            line = re.sub(r't = "[^"]+"', 't = "<bálsamo revisado>"', line, count=1)
+        invasion = re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )(926[34])\s*$", line)
+        if invasion:
+            line = re.sub(r'\{ t = ".*', f'<paso de invasión revisado {invasion[1]}>', line)
         if refuerzo and int(refuerzo[1]) in NO_XP_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
         line = re.sub(original_alterac, 'm = 1459, z = "<etiqueta revisada>"', line)
@@ -176,12 +190,40 @@ class IntegridadTest(unittest.TestCase):
                 if "Sin XP base" not in line:
                     continue
                 quest = int(re.search(r"-- REFUERZO_97 q=(\d+)$", line)[1])
+                if quest in SALVE_QUESTS:
+                    continue
                 text = re.search(r't = "([^"]+)"', line)[1]
                 self.assertIn("No base XP", localized.get(text, ""))
                 found.add(quest)
                 total += 1
         self.assertEqual(found, NO_XP_TEXT_QUESTS)
         self.assertEqual(total, 1136)
+
+    def test_felwood_first_turn_ins_and_repeatables_follow_the_right_faction(self):
+        from mission_rules import load_mission_localization
+
+        localized = load_mission_localization(ADDON)["por_nombre"]
+        removed = 0
+        for name in self.routes:
+            text = (ROOT / name).read_text(encoding="utf-8")
+            self.assertNotRegex(text, r"\bq = 926[34]\b")
+            removed += text.count("-- Paso conservado")
+            alliance = "q = 4101," in text
+            first = 5882 if alliance else 5887
+            repeat = 4103 if alliance else 4108
+            expected = list(range(first, first + 5)) + list(range(repeat, repeat + 5))
+            if alliance and Path(name).stem in ("EnanoChaman", "GnomoMago", "HumanoMago", "SkyborneAMago"):
+                expected = [first]
+            entries = []
+            for quest in re.finditer(r't = "([^"]+)".*-- REFUERZO_97 q=(\d+)$', text, re.M):
+                quest_id = int(quest[2])
+                if quest_id not in SALVE_QUESTS:
+                    continue
+                entries.append(quest_id)
+                translation = localized.get(quest[1], "")
+                self.assertIn("No base XP" if quest_id < 5882 else "Cenarion Beacon", translation)
+            self.assertEqual(entries, expected, name)
+        self.assertEqual(removed, 10)
 
 
 class GuardadosTest(unittest.TestCase):

@@ -76,6 +76,11 @@ La misión 92551 figura en recorridos de ambas facciones. La entrega observada p
 
 El escaneo confirma la existencia de 8941. Las consultas sin respuesta conservan su compilación y permiten priorizar los IDs heredados. Para decidir si un ID fue sustituido o depende de un evento se exige evidencia adicional de la cadena o disponibilidad. [Escaneo 71037](https://github.com/JIVESCORP/eg-link-output-wowf/blob/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf/1.60.1.71037/quest_scan.json).
 
+## Variantes de Frondavil e invasión · 26 de noviembre de 2026
+
+- Frondavil. La Alianza hace 4101 con Arathandris Cielargente y sigue con las primeras entregas 5882–5886 y los canjes 4103–4107. La Horda hace 4102 con Maybess Brisafluvial y sigue con 5887–5891 y 4108–4112. Las primeras entregas tienen 4.200 XP base según QuestXP y el registro del servidor. Los canjes entregan dos bálsamos y tienen XP base cero. La baliza Cenarion (11511) permite obtener los materiales. [Primera entrega Alianza](https://zephras.com/forever/enUS/quest/5882/) · [Primera entrega Horda](https://zephras.com/forever/enUS/quest/5887/) · [Canje Alianza](https://questing.wiki/wow-forever/quests/4103/) · [Canje Horda](https://zephras.com/forever/enUS/quest/4108/).
+- Invasión de la Plaga. 9263 y 9264 se ofrecen a la Horda en Orgrimmar y Cima del Trueno. Se retiraron sus destinos de las cinco rutas de elfos de la noche y se mantuvieron los dos espacios de paso para los guardados. La verificación individual conserva ambos IDs con las rutas originales de 9.7.9. [Orgrimmar](https://questing.wiki/wow-forever/quests/9263/) · [Cima del Trueno](https://questing.wiki/wow-forever/quests/9264/) · [Darnassus](https://questing.wiki/wow-forever/quests/9262/).
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

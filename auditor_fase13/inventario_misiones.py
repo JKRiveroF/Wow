@@ -33,11 +33,16 @@ def inventory_missions(routes, catalog):
             if location := _position(point.waypoint):
                 mission["posiciones"][point.action, *location].add(route_id)
 
+    active_count = len(missions)
+    retired = catalog.get("misiones_originales_retiradas", {})
+    quest_ids = missions.keys() | {int(quest) for quest in retired}
+
     coverage = Counter()
     reports = []
     fields_to_check = (*FIELDS, *EG_FIELDS) if "vuelos_observados" in catalog else FIELDS
     candidates = catalog.get("candidatos_por_mision", {})
-    for quest, lookup in sorted(missions.items()):
+    for quest in sorted(quest_ids):
+        lookup = missions[quest]
         entry = _entry(catalog, quest)
         fields = {}
         for field in fields_to_check:
@@ -54,9 +59,13 @@ def inventory_missions(routes, catalog):
             result = _coordinate_result(entry, action, (map_id, x, y))
             positions.append({"accion": action, "mapa": map_id, "x": x, "y": y,
                               "rutas": len(shared), "estado": result})
-        reports.append({"id": quest, "rutas": sorted(lookup["rutas"]), "acciones": dict(lookup["acciones"]),
-                        "evidencia": fields, "pendientes_de_fuente": [field for field in FIELDS if field not in fields],
-                        "posiciones": positions, "indicios": candidates.get(str(quest), [])})
+        record = {"id": quest, "rutas": sorted(lookup["rutas"]), "acciones": dict(lookup["acciones"]),
+                  "evidencia": fields, "pendientes_de_fuente": [field for field in FIELDS if field not in fields],
+                  "posiciones": positions, "indicios": candidates.get(str(quest), [])}
+        if str(quest) in retired:
+            record["retirada_de_rutas_originales"] = retired[str(quest)]
+        reports.append(record)
 
-    return {"total": len(reports), "cobertura": {field: coverage[field] for field in fields_to_check},
+    return {"total": len(reports), "total_en_rutas": active_count,
+            "cobertura": {field: coverage[field] for field in fields_to_check},
             "misiones": reports}

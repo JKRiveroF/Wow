@@ -33,7 +33,8 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Resolver las exclusiones `324/526` y `94484/94493` y los requisitos `98221 → 465` y `93680 → 545`.
 - [x] Cruzar el registro de misiones y las observaciones de Efficient Games por ID y compilación con los títulos, requisitos, objetivos, XP y vuelos de las rutas.
 - [x] Corregir los textos de 30 refuerzos sin XP base y conservar el historial de respuestas del servidor por ID.
-- [ ] Revisar los 68 refuerzos restantes, los avisos de facción, los títulos ES discrepantes y los 31 IDs sin identidad confirmada en el catálogo.
+- [x] Corregir las variantes de Frondavil y los pasos de invasión que llevaban a ciudades de la otra facción.
+- [ ] Revisar los 58 refuerzos restantes, los requisitos de perfil, los títulos ES discrepantes y los 31 IDs sin identidad confirmada en el catálogo.
 - [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.
 - [ ] Actualizar las novedades ES/EN y preparar el ZIP definitivo con los archivos distribuibles, tras superar los criterios de cierre local.
 - [ ] Verificar la sincronización del cierre únicamente en la rama de desarrollo con `origin`. La fusión y las Releases quedan pendientes de autorización expresa.
