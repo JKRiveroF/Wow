@@ -7,7 +7,7 @@ from unittest.mock import patch
 from lupa.lua51 import LuaRuntime
 
 from catalogo import read_catalog
-from contactos import NPC_TRACES, OBJECT_TRACES, QUESTS, link_contacts
+from contactos import ITEM_FIXES, ITEM_TRACES, NPC_TRACES, OBJECT_TRACES, QUESTS, _loot_sources, link_contacts
 from inventario_misiones import _coordinate_result
 from lua_routes import load_routes
 from mission_rules import load_mission_localization
@@ -31,7 +31,8 @@ class MapRegressionTest(unittest.TestCase):
         }
         catalog = {"mapas": {"1429": {"area": 12, "existe": True}, "1": {"area": 99, "existe": True},
                              "2": {"area": 99, "existe": True}}, "misiones": {"100": {}}}
-        with patch("contactos._lines", side_effect=lambda _, name: sources[name].splitlines()), patch("contactos._read", return_value=[]):
+        with patch("contactos._lines", side_effect=lambda _, name: sources.get(name, "").splitlines()), \
+                patch("contactos._read", return_value=[]):
             result = link_contacts(ADDON.parent, catalog)
         mission = result["misiones"]["100"]
         accept, = mission["referencias_interaccion"]["A"]
@@ -60,7 +61,7 @@ function C:LoadDynamic()
                                   "evidencia": {"nombre_en": evidence}} for quest in range(100, 105)}
         position = {"m": 1429, "x": 42.1, "y": 41.1, "fuente": "posición de Forever", "build": "1.60.1.71139"}
         catalog = {"misiones": missions, "entidades_interaccion": {"pnj": {7: [position], 8: [position]}}}
-        with patch("contactos._lines", side_effect=lambda _, name: sources[name].splitlines()), \
+        with patch("contactos._lines", side_effect=lambda _, name: sources.get(name, "").splitlines()), \
                 patch("contactos._read", return_value=corrections.splitlines()):
             result = link_contacts(ADDON.parent, catalog)["misiones"]
         self.assertNotIn("104", result)
@@ -69,6 +70,49 @@ function C:LoadDynamic()
         accepted, = result["102"]["referencias_interaccion"]["A"]
         self.assertEqual((accepted["id"], accepted["metodo_interaccion"]), (8, "catalogo_estatico"))
         self.assertIn("foreverQuestFixes.lua", accepted["fuente_interaccion"])
+
+    def test_loot_requires_a_confirmed_item_objective_and_an_observed_source_position(self):
+        traces = """        [90] = {
+            [itemKeys.npcDrops_add] = {7,8},
+            [itemKeys.objectDrops_add] = {7},
+        },"""
+        fixes = """        [90] = {
+            [itemKeys.npcDrops_remove] = {7},
+        },"""
+        sources = {ITEM_TRACES: traces, ITEM_FIXES: fixes}
+        sample = {"m": 1429, "x": 41, "y": 42, "fuente": "observación", "build": "1.60.1.71139"}
+        objectives = {"objetos_objetivo": [90, 90], "evidencia": {
+            "objetos_objetivo": {"estado": "forever", "fuente": "objetivo del servidor"}}}
+        catalog = {"misiones": {"100": objectives, "101": {"objetos_objetivo": [90]}},
+                   "entidades_interaccion": {"criatura": {7: [sample], 8: [sample, sample]},
+                                            "objeto": {7: [{**sample, "x": 80}]}}}
+        with patch("contactos._lines", side_effect=lambda _, name: sources.get(name, "").splitlines()), \
+                patch("contactos._read", return_value=[]):
+            result = link_contacts(ADDON.parent, catalog)["misiones"]
+        self.assertEqual(set(result), {"100"})
+        locations = result["100"]["referencias_botin"]["C"]
+        self.assertEqual({(row["item"], row["tipo"], row["id"]) for row in locations}, {(90, "pnj", 8), (90, "objeto", 7)})
+        self.assertEqual(len(locations), 2)
+        self.assertIn("foreverItemTraces.lua", locations[0]["fuente_botin"])
+        self.assertEqual(_coordinate_result(result["100"], "C", (1429, 41, 42)), "cerca_de_observacion")
+        self.assertEqual(_coordinate_result(result["100"], "A", (1429, 41, 42)), "investigacion")
+        self.assertEqual(_coordinate_result(result["100"], "C", (1430, 41, 42)), "investigacion")
+
+    def test_loot_replacements_preserve_the_other_entity_type_and_keep_corrected_source(self):
+        traces = """        [90] = {
+            [itemKeys.npcDrops_add] = {7,8},
+            [itemKeys.objectDrops_add] = {7},
+        },"""
+        fixes = """        [90] = {
+            [itemKeys.npcDrops] = {}, -- only show vendors
+            [itemKeys.objectDrops_add] = {9},
+        },"""
+        with patch("contactos._lines", side_effect=[traces.splitlines(), fixes.splitlines()]):
+            result = _loot_sources(ADDON.parent)[90]
+        self.assertEqual(set(result), {("objeto", 7), ("objeto", 9)})
+        self.assertIn("foreverItemFixes.lua", result["objeto", 9])
+        with patch("contactos._lines", side_effect=[traces.splitlines(), []]):
+            self.assertEqual(_loot_sources(ADDON.parent), {})
 
     def test_reprojected_points_provide_partial_evidence_for_the_documented_action(self):
         records = read_catalog(ADDON.parent / "auditor_fase13" / "cartografia_forever.json")["misiones"]

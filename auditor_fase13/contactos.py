@@ -1,4 +1,4 @@
-"""Cruza los iniciadores y receptores con posiciones observadas de la misma entidad."""
+"""Cruza los interlocutores y las fuentes de botín con posiciones de la misma entidad."""
 
 from collections import defaultdict
 from hashlib import sha256
@@ -7,19 +7,24 @@ import re
 
 from catalogo import TRACE_BASE
 from eg_link import _source
-from mission_rules import _confirmed, _norm, _variants
+from mission_rules import _confirmed, _list, _norm, _variants
 from questie_rules import FIXES, NUMBERS, SOURCE, _classic_columns, _fields, _read
 
 
 NPC_TRACES = "src/corrections/Forever/traces/foreverNpcTraces.lua"
 OBJECT_TRACES = "src/corrections/Forever/traces/foreverObjectTraces.lua"
+ITEM_TRACES = "src/corrections/Forever/traces/foreverItemTraces.lua"
+ITEM_FIXES = "src/corrections/Forever/foreverItemFixes.lua"
 QUESTS = "data/Forever/foreverQuestDB.lua"
 HASHES = {
     NPC_TRACES: "f7aa667257db11ea8f65bd2cb0c88a418bd95286367a97a10e6de3155b94e196",
     OBJECT_TRACES: "4527c06d8e7db60ec112ea18b7e4382f696f95aa1abd30b70cb0ddeb6a571331",
+    ITEM_TRACES: "faea71b9238f54f6de0e49d7dc2baae3333fc32577201efb54d2495200da307c",
+    ITEM_FIXES: "de031dfed1a79d92b6eee6a4b5270f2a25d1e3d946e6efd46484d9a5f7062bfc",
     QUESTS: "621d4a1670232c047e7d171d8f1fdbd31581458935ee59dd70836016838dc942",
 }
 STATIC_ROLES = {"startedBy": "A", "finishedBy": "T"}
+DROP_KINDS = {"npcDrops": "pnj", "objectDrops": "objeto"}
 ENTITY_ROW = re.compile(r"^ {8}\[(\d+)\] = \{")
 ENTITY_FIELD = re.compile(r"^ {12}\[(?:npc|object)Keys\.(spawns|questStarts_add|questEnds_add)\] = (.*),$")
 SPAWN_AREA = re.compile(r"\[(\d+)\]\s*=\s*\{((?:\{\s*[\d., -]+\s*\},?\s*)+)\}")
@@ -108,6 +113,44 @@ def _apply_corrections(lines, static, traced):
             static.pop((quest, STATIC_ROLES[key]), None)
 
 
+def _loot_sources(directory):
+    traces = _lines(directory, ITEM_TRACES)
+    fixes = _lines(directory, ITEM_FIXES)
+    if not fixes:
+        return {}
+    sources = defaultdict(dict)
+    for reference, lines in ((ITEM_TRACES, traces), (ITEM_FIXES, fixes)):
+        for item, line, field, raw, _ in _fields(lines, "item"):
+            key, _, operation = field.partition("_")
+            if key not in DROP_KINDS or not NUMBERS.fullmatch(raw):
+                continue
+            kind = DROP_KINDS[key]
+            entities = {(kind, int(entity)) for entity in re.findall(r"\d+", raw)}
+            record = sources[int(item)]
+            if operation == "remove":
+                for entity in entities:
+                    record.pop(entity, None)
+            elif operation in ("", "add"):
+                if not operation:
+                    sources[int(item)] = record = {entity: link for entity, link in record.items()
+                                                    if entity[0] != kind}
+                link = f"{TRACE_BASE}{reference}#L{line}"
+                record.update(dict.fromkeys(sorted(entities), link))
+    return sources
+
+
+def _loot_positions(item, sources, trace_points, eg_points):
+    points = {}
+    for (kind, entity), loot in sources.items():
+        samples = (*trace_points.get((kind, entity), ()), *eg_points.get(kind, {}).get(entity, ()))
+        if kind == "pnj":
+            samples = (*samples, *eg_points.get("criatura", {}).get(entity, ()))
+        for sample in samples:
+            key = kind, entity, sample["m"], sample["x"], sample["y"]
+            points[key] = {**sample, "tipo": kind, "id": entity, "item": item, "fuente_botin": loot}
+    return list(points.values())
+
+
 def link_contacts(directory, catalog):
     missions = catalog.get("misiones", {})
     traced, trace_points, maps_by_area = defaultdict(dict), defaultdict(list), defaultdict(set)
@@ -120,6 +163,8 @@ def link_contacts(directory, catalog):
     static = _static_contacts(_lines(directory, QUESTS), missions)
     _apply_corrections(_read(directory, FIXES), static, traced)
     eg_points = catalog.get("entidades_interaccion", {})
+    loot = _loot_sources(directory)
+    loot_positions = {}
     matched = {}
     for quest, entry in missions.items():
         actions = {}
@@ -141,6 +186,18 @@ def link_contacts(directory, catalog):
             source = next(iter(actions.values()))[0]["fuente_interaccion"]
             matched[quest] = {"referencias_interaccion": actions, "evidencia": {"referencias_interaccion": {
                 "estado": "forever", "fuente": source, "metodo": "posicion_de_interlocutor"}}}
+        if source := _confirmed(entry, "objetos_objetivo"):
+            items = {item for item in _list(entry.get("objetos_objetivo")) if type(item) is int and item > 0}
+            points = []
+            for item in sorted(items & loot.keys()):
+                if item not in loot_positions:
+                    loot_positions[item] = _loot_positions(item, loot[item], trace_points, eg_points)
+                points.extend(loot_positions[item])
+            if points:
+                record = matched.setdefault(quest, {"evidencia": {}})
+                record["referencias_botin"] = {"C": points}
+                record["evidencia"]["referencias_botin"] = {"estado": "forever", "fuente": source,
+                                                           "metodo": "botin_vinculado_a_objetivo"}
     npcs = {str(entity): {"posiciones_trazas": samples, "evidencia": {"posiciones_trazas": {
         "estado": "forever", "fuente": samples[0]["fuente"]}}}
             for (kind, entity), samples in trace_points.items() if kind == "pnj" and samples}

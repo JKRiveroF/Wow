@@ -51,6 +51,8 @@ Para 1486, registra el UiMapID y la posición al encontrar a Nalpak en las Cueva
 
 En los destinos con `referencias_interaccion`, registra por separado el ID de la entidad, la posición que muestra el mapa y el ID de la misión ofrecida o entregada. En los vínculos de catálogo que sigan sin oferta documentada, comprueba 977 con el PNJ 10305 y 3503 con el PNJ 8395 como casos compartidos por las rutas. Conserva la distinción entre la interacción de cada misión y la mera presencia de la entidad. [Fuentes de los vínculos](FUENTES.md#coordenadas-de-iniciadores-y-receptores).
 
+Para 92553, registra el botín de la criatura 251291 cerca de 39,9 / 54,3, el avance del contador del objeto 6889 con la misión activa y el origen del 5469 por separado. [Evidencia de partida](FUENTES.md#botín-y-posiciones-de-obtención).
+
 ## Matriz de oferta pendiente por misión
 
 Los 24 ID carecen de oferta acreditada en el inventario. Las condiciones de partida y los materiales proceden de las fichas de referencia y de la base heredada. Registra el ID que ofrece el iniciador, el perfil y los requisitos cumplidos. [Evidencia disponible y límites](FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).

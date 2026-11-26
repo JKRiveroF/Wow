@@ -24,7 +24,7 @@ HASHES = {
 }
 
 ROW = re.compile(r"^ {8}\[(\d+)\]\s*=\s*\{")
-FIELD = re.compile(r"^ {12}\[questKeys\.(\w+)\]\s*=\s*(.+?),\s*(--.*)?$")
+FIELD = re.compile(r"^ {12}\[(quest|item)Keys\.(\w+)\]\s*=\s*(.+?),\s*(--.*)?$")
 NUMBERS = re.compile(r"\{\s*(?:[0-9]+(?:\s*,\s*[0-9]+)*)?\s*\}")
 NUMBER_FIELDS = {"requiredLevel": "nivel_minimo", "questLevel": "nivel_mision", "sourceItemId": "objeto_entregado"}
 LIST_FIELDS = {"preQuestGroup": "prerrequisitos", "preQuestSingle": "prerrequisitos_alternativos",
@@ -64,7 +64,7 @@ def _read(directory, name, cache_name=None):
     return raw.decode("utf-8-sig").splitlines()
 
 
-def _fields(lines):
+def _fields(lines, namespace="quest"):
     current = None
     for number, line in enumerate(lines, 1):
         if line.startswith("function ") and ":LoadDynamic(" in line:
@@ -73,8 +73,8 @@ def _fields(lines):
             current = row[1]
         elif line.lstrip() in ("},", "}") and len(line) - len(line.lstrip()) <= 8:
             current = None
-        elif current and (field := FIELD.fullmatch(line)):
-            yield current, number, field[1], field[2], field[3] or ""
+        elif current and (field := FIELD.fullmatch(line)) and field[1] == namespace:
+            yield current, number, field[2], field[3], field[4] or ""
 
 
 def _mask(value, prefix, groups):
