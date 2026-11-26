@@ -72,6 +72,9 @@ def _route_without_reviewed_edits(source):
         invasion = re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )(926[34])\s*$", line)
         if invasion:
             line = re.sub(r'\{ t = ".*', f'<paso de invasión revisado {invasion[1]}>', line)
+        if refuerzo and int(refuerzo[1]) in (2521, 2522, 93685, 93686):
+            line = re.sub(r't = "[^"]+"', 't = "<cadena de Kum\'isha revisada>"', line, count=1)
+            line = re.sub(r"(\bq\s*=\s*)9368([56])\b", lambda m: m[1] + ("2521" if m[2] == "5" else "2522"), line)
         if refuerzo and int(refuerzo[1]) in NO_XP_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
         line = re.sub(original_alterac, 'm = 1459, z = "<etiqueta revisada>"', line)
@@ -226,6 +229,20 @@ class IntegridadTest(unittest.TestCase):
                 self.assertIn("No base XP" if quest_id < 5882 else "Cenarion Beacon", translation)
             self.assertEqual(entries, expected, name)
         self.assertEqual(removed, 10)
+
+    def test_kumisha_steps_use_live_ids_in_all_routes(self):
+        from mission_rules import load_mission_localization
+
+        localized = load_mission_localization(ADDON)
+        self.assertEqual(localized["por_id"][93685], "To Serve Kum'isha")
+        self.assertEqual(localized["por_id"][93686], "Kum'isha's Endeavors")
+        for name in self.routes:
+            text = (ROOT / name).read_text(encoding="utf-8")
+            self.assertNotRegex(text, r"\bq = 252[12]\b")
+            entries = re.findall(r't = "([^"]+)".*-- REFUERZO_97 q=(9368[56])$', text, re.M)
+            self.assertEqual([q for _, q in entries], ["93685", "93686"])
+            self.assertIn("The Found One", localized["por_nombre"][entries[0][0]])
+            self.assertIn("Flawless Draenethyst Sphere", localized["por_nombre"][entries[1][0]])
 
 
 class GuardadosTest(unittest.TestCase):

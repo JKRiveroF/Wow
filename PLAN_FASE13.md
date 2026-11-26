@@ -35,7 +35,9 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Corregir los textos de 30 refuerzos sin XP base y conservar el historial de respuestas del servidor por ID.
 - [x] Corregir las variantes de Frondavil y los pasos de invasión que llevaban a ciudades de la otra facción.
 - [x] Contrastar los objetos, el temporizador y el riesgo de las tres ventanas de agrupamiento y corregir sus instrucciones.
-- [ ] Revisar los 58 refuerzos restantes, los requisitos de perfil, los títulos ES discrepantes y los 31 IDs sin identidad confirmada en el catálogo.
+- [x] Actualizar los IDs de las dos entregas de Kum'isha y contrastar los pasos previos en Pantano de las Penas y Desolace.
+- [ ] Colocar la cadena opcional de Kum'isha y revisar los 29 IDs activos sin evidencia de oferta.
+- [ ] Revisar los 58 refuerzos restantes, los requisitos de perfil y los títulos ES discrepantes.
 - [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.
 - [ ] Actualizar las novedades ES/EN y preparar el ZIP definitivo con los archivos distribuibles, tras superar los criterios de cierre local.
 - [ ] Verificar la sincronización del cierre únicamente en la rama de desarrollo con `origin`. La fusión y las Releases quedan pendientes de autorización expresa.

@@ -141,6 +141,22 @@
         }
       }
     },
+    "93686": {
+      "existe": true,
+      "nivel_minimo": 45,
+      "nombres": {"en": "Kum'isha's Endeavors"},
+      "prerrequisitos": [93685],
+      "objetos_objetivo": [8244],
+      "cantidades_objetivo": {"8244": 1},
+      "evidencia": {
+        "existe": {"estado": "forever", "fuente": "https://db.icy-veins.com/wow-forever/quests/93686"},
+        "nivel_minimo": {"estado": "forever", "fuente": "https://db.icy-veins.com/wow-forever/quests/93686"},
+        "nombres": {"estado": "forever", "fuente": "https://db.icy-veins.com/wow-forever/quests/93686"},
+        "prerrequisitos": {"estado": "forever", "fuente": "https://github.com/ATTWoWAddon/AllTheThings/commit/b64273eaef81293d6bca69a66d266ad493b6ac1b"},
+        "objetos_objetivo": {"estado": "forever", "fuente": "https://db.icy-veins.com/wow-forever/quests/93686"},
+        "cantidades_objetivo": {"estado": "forever", "fuente": "https://db.icy-veins.com/wow-forever/quests/93686"}
+      }
+    },
     "98387": {
       "existe": true,
       "nivel_minimo": 18,
@@ -177,6 +193,16 @@
     }
   },
   "misiones_originales_retiradas": {
+    "2521": {
+      "todas_las_rutas": true,
+      "motivo": "Sustituida en Forever por 93685, al final de la cadena de Draenetista.",
+      "fuente": "https://github.com/ATTWoWAddon/AllTheThings/commit/b64273eaef81293d6bca69a66d266ad493b6ac1b"
+    },
+    "2522": {
+      "todas_las_rutas": true,
+      "motivo": "Sustituida en Forever por 93686, después de la primera esfera.",
+      "fuente": "https://github.com/ATTWoWAddon/AllTheThings/commit/b64273eaef81293d6bca69a66d266ad493b6ac1b"
+    },
     "9263": {
       "rutas": ["elfo_cazador", "elfo_druida", "elfo_guerrero", "elfo_picaro", "elfo_sacerdote"],
       "motivo": "Encargo de invasión de la Horda en Orgrimmar.",

@@ -81,6 +81,22 @@ El escaneo confirma la existencia de 8941. Las consultas sin respuesta conservan
 - Frondavil. La Alianza hace 4101 con Arathandris Cielargente y sigue con las primeras entregas 5882–5886 y los canjes 4103–4107. La Horda hace 4102 con Maybess Brisafluvial y sigue con 5887–5891 y 4108–4112. Las primeras entregas tienen 4.200 XP base según QuestXP y el registro del servidor. Los canjes entregan dos bálsamos y tienen XP base cero. La baliza Cenarion (11511) permite obtener los materiales. [Primera entrega Alianza](https://zephras.com/forever/enUS/quest/5882/) · [Primera entrega Horda](https://zephras.com/forever/enUS/quest/5887/) · [Canje Alianza](https://questing.wiki/wow-forever/quests/4103/) · [Canje Horda](https://zephras.com/forever/enUS/quest/4108/).
 - Invasión de la Plaga. 9263 y 9264 se ofrecen a la Horda en Orgrimmar y Cima del Trueno. Se retiraron sus destinos de las cinco rutas de elfos de la noche y se mantuvieron los dos espacios de paso para los guardados. La verificación individual conserva ambos IDs con las rutas originales de 9.7.9. [Orgrimmar](https://questing.wiki/wow-forever/quests/9263/) · [Cima del Trueno](https://questing.wiki/wow-forever/quests/9264/) · [Darnassus](https://questing.wiki/wow-forever/quests/9262/).
 
+## Cadena opcional de Kum'isha · 26 de noviembre de 2026
+
+Las misiones 2521 y 2522 de 9.7.9 se sustituyeron por 93685 y 93686 en las 47 rutas. Se conservaron los índices y el inventario histórico. Ambas entregas piden una esfera de draenetista perfecta (8244). La primera requiere completar El Encontrado. La segunda pide otra esfera después de la primera. Las fuentes discrepan sobre la repetición de 93686 y la guía la ofrece cuando el coleccionista la tenga disponible. [Cambio en Forever](https://github.com/ATTWoWAddon/AllTheThings/commit/b64273eaef81293d6bca69a66d266ad493b6ac1b) · [Al servicio de Kum'isha](https://zephras.com/forever/enUS/quest/93685/) · [Los esfuerzos de Kum'isha](https://db.icy-veins.com/wow-forever/quests/93686) · [Ubicación de 93686](https://pd.zroot.it/forever/quests/93686).
+
+| ID | Hito | Recogida → entrega |
+| ---: | --- | --- |
+| 1389 | Cristales draenetistas. Reúne seis cristales. | Magtoor (Pantano de las Penas, 26,0 / 31,4) → Magtoor. [Ficha 1389](https://zephras.com/forever/enUS/quest/1389/). |
+| 93464 | El mago visitante. | Magtoor → Azore Aldamort (Desolace, 39,0 / 27,1). [Ficha 93464](https://zephras.com/forever/enUS/quest/93464/). |
+| 93465 | Notas sobre la draenetista. Recupera las notas. | Azore → Azore. [Ficha 93465](https://zephras.com/forever/enUS/quest/93465/). |
+| 93678 | Notas resumidas sobre la draenetista. Lleva la transcripción. | Azore → Magtoor. [Ficha 93678](https://zephras.com/forever/enUS/quest/93678/). |
+| 93679 | Visiones de otro. Nivel mínimo 45. | Magtoor → Magtoor. [Ficha 93679](https://zephras.com/forever/enUS/quest/93679/). |
+| 93684 | El Encontrado. Nivel mínimo 45. | Magtoor → Kum'isha (Tierras Devastadas, 52,0 / 35,6). [Ficha 93684](https://zephras.com/forever/enUS/quest/93684/). |
+| 93685 y 93686 | Cada entrega usa una esfera. | Kum'isha → Kum'isha. [Primera entrega](https://zephras.com/forever/enUS/quest/93685/) · [Siguiente entrega](https://db.icy-veins.com/wow-forever/quests/93686). |
+
+La cadena es opcional en el cálculo de XP del recorrido. Lleva del Pantano de las Penas a Desolace y vuelve al Pantano antes de las Tierras Devastadas. Queda pendiente contrastar el coste del desvío y colocarlo como recorrido opcional.
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

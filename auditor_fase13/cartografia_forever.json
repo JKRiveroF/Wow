@@ -1,6 +1,15 @@
 {
   "fecha_consulta_cartografia": "2026-11-25",
   "misiones": {
+    "93685": {
+      "posiciones": {"A": [{"m": 1419, "x": 52, "y": 35.6}], "T": [{"m": 1419, "x": 52, "y": 35.6}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/93685/"}}
+    },
+    "93686": {
+      "posiciones": {"A": [{"m": 1419, "x": 52, "y": 35.6}], "T": [{"m": 1419, "x": 52, "y": 35.6}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://pd.zroot.it/forever/quests/93686"}},
+      "contraste_cartografia": ["https://db.icy-veins.com/wow-forever/quests/93686"]
+    },
     "98221": {
       "posiciones": {"A": [{"m": 1437, "x": 9.9, "y": 57.5}], "T": [{"m": 1437, "x": 9.9, "y": 57.5}]},
       "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/98221/", "build": "1.60.1.70938", "fecha_consulta": "2026-11-26"}}

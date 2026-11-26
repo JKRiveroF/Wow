@@ -29,7 +29,7 @@ auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/agrupamientos.py --tra
 
 Añade `--datos-eg auditor_fase13/cache_fuentes` cuando tengas la revisión de Efficient Games y la tabla de XP.
 
-El informe de experiencia compara un subtotal de entregas registradas con la curva documentada de `curva_xp_forever.json`. Un catálogo adicional puede incluir estimaciones de combate por ruta y tramo en `xp_combates.<id de ruta>.tramos.<número de tramo>`, con `xp`, `estado` y `fuente`. Los tramos sin evidencia quedan pendientes y los subtotales se muestran como escenario, con el número de entregas cubiertas. El escenario cuenta una opción por grupo de misiones excluyentes en el orden de la ruta y desglosa la XP opcional de especialización de herrería y del bálsamo de Frondavil.
+El informe de experiencia compara un subtotal de entregas registradas con la curva documentada de `curva_xp_forever.json`. Un catálogo adicional puede incluir estimaciones de combate por ruta y tramo en `xp_combates.<id de ruta>.tramos.<número de tramo>`, con `xp`, `estado` y `fuente`. Los tramos sin evidencia quedan pendientes y los subtotales se muestran como escenario, con el número de entregas cubiertas. El escenario cuenta una opción por grupo de misiones excluyentes en el orden de la ruta y desglosa la XP opcional de especialización de herrería, del bálsamo de Frondavil y de Kum'isha.
 
 El manifiesto `SHA256_ORIGINALES.sha256` identifica los 219 archivos del commit de restauración 9.7.9. Sus rutas parten de la raíz del repositorio.
 

@@ -6306,6 +6306,8 @@ return {
 [2519]="The Temple of the Moon",
 [2521]="To Serve Kum'isha",
 [2522]="Kum'isha's Endeavors",
+[93685]="To Serve Kum'isha",
+[93686]="Kum'isha's Endeavors",
 [2523]="Corrupted Songflower",
 [2541]="The Sleeping Druid",
 [2561]="Druid of the Claw",
