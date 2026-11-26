@@ -5,6 +5,7 @@ from collections import Counter, defaultdict
 from eg_link import EG_FIELDS
 from mission_rules import (PHASE_SIX_FIELDS, PHASE_TWO_FIELDS, _collect, _confirmed, _entry,
                            _evidence, _mission_title, _norm)
+from recompensas import audit_learning
 from world_rules import _matches_observation, _matches_positions, _position, _positions_by_action, _source
 
 FIELDS = (*PHASE_TWO_FIELDS, *PHASE_SIX_FIELDS, "prerrequisitos_alternativos", "objeto_entregado",
@@ -92,7 +93,7 @@ def inventory_missions(routes, catalog, quest_v2=None):
 
     result = {"total": len(reports), "total_en_rutas": active_count,
               "cobertura": {field: coverage[field] for field in fields_to_check},
-              "misiones": reports}
+              "misiones": reports, "aprendizaje_en_rutas": audit_learning(routes, catalog)}
     if quest_v2 is not None:
         result["questv2"] = {"build": quest_v2["build"], "fuente": quest_v2["fuente"],
                              "recuentos": dict(table)}

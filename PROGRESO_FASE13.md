@@ -21,13 +21,13 @@
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
 | **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,04 % | 56,04 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-26 20:13:23+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 20:24:15+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Contrastar los desbloqueos de habilidades por misión. Quedan por aclarar las diferencias entre el hechizo mostrado, el que aplica la recompensa y la habilidad que aprende el personaje.
+**Tarea actual** · Continuar el contraste de acceso por clase, raza y facción. Las ocho comprobaciones de aprendizaje que requieren el libro de hechizos quedan detalladas en el protocolo de Forever.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -368,10 +368,16 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - El auditor comprobó **82 combinaciones de aceptación y perfil** para cinco bloqueos temporales y el orden de 92464 en las diez rutas de Zephras. Las aperturas aproximadas de 92595 y 92596 quedan registradas como indicios.
 - Pasaron **21 pruebas específicas** y la **regresión de 97 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** conocidos. Permanecen **279 grupos de investigación y 116 de cliente**. El certificado queda en **40,83 %** y el efectivo en **56,04 %**.
 
-## Último bloque verificado · Requisitos múltiples
+## Misiones · Requisitos múltiples
 
 - Las 32 rutas con **737** entregan **735 en Alianza o 736 en Horda**. La ruta de mago Skyborne de Alianza entrega **621 y 1118** antes de aceptar **1119**. El auditor comprobó **33 pares de misión y ruta** y **41 combinaciones con perfil**. [Criterios y trazas](auditor_fase13/FUENTES.md#requisitos-de-varias-entregas--26-de-noviembre-de-2026).
 - Pasaron **19 pruebas específicas** y la **regresión de 98 pruebas**. El auditor registró **0 errores y 56 avisos** conocidos en las 47 rutas. Quedan **279 grupos de investigación y 116 de cliente**. El certificado y el efectivo se muestran en **40,83 %** y **56,04 %**, respectivamente, tras redondear.
+
+## Último bloque verificado · Aprendizaje de habilidades
+
+- Se contrastaron **118 pares únicos de misión y habilidad**. Los datos acreditan **108 efectos directos** y **dos aprendizajes por habilidad**. Quedan **cuatro indicios de recompensa** y **cuatro casos sin origen acreditado**. Para las dos recompensas de mago se identificaron los efectos de aprendizaje y se dejó pendiente confirmar su destino. [Efectos y consultas](auditor_fase13/FUENTES.md#aprendizaje-por-misión--26-de-noviembre-de-2026).
+- Las **siete rutas de cazador** sitúan Llamar y Retirar mascota tras la tercera doma y explican la entrega posterior en español e inglés. Para pícaro, se acreditó la receta inicial de Veneno instantáneo mediante el primer escalón de Venenos.
+- Pasaron **101 pruebas de regresión**. Las 47 rutas registraron **0 errores y 56 avisos conocidos**. El certificado queda en **40,83 %** y el efectivo en **56,04 %**. [Criterios](PLAN_FASE13.md#criterios-de-medición).
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -386,11 +392,11 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 
 ## Siguientes tareas
 
-1. Contrastar los desbloqueos de habilidades en las rutas de clase. Revisar los efectos asociados a las recompensas de aprendizaje de cazador y pícaro e incorporar las nuevas observaciones de oferta.
+1. Contrastar las restricciones de clase, raza y facción con las observaciones de oferta y entrega disponibles.
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `f5cab60`.
+La fase sigue abierta. El corte previo es `364dd0a`.
 
 ## Avance individual
 

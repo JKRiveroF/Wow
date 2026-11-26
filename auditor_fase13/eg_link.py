@@ -6,6 +6,7 @@ from decimal import Decimal
 from hashlib import sha256
 
 from questie_rules import RACES
+from recompensas import EFFECT_SOURCE, SKILL_SOURCE, load_learning
 
 REVISION = "f25e0efde0c8490e4e6f356a68f7a81a703fa21c"
 REVISION_71139 = "1339ce5600bbc2b12e8f1081e584f548f62fa57f"
@@ -62,7 +63,7 @@ EXTRA_HASHES = {
 }
 EG_FIELDS = (
     "nivel_mision", "mascara_racial", "siguiente_sugerida", "area_mision", "objetivos_servidor",
-    "objetos_por_botin", "habilidades_recompensa", "componentes_xp", "entregas_observadas",
+    "objetos_por_botin", "habilidades_recompensa", "aprendizaje_recompensa", "componentes_xp", "entregas_observadas",
     "misiones_previas_observadas", "escaneo_faccion", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
     "tipo_mision", "limite_segundos", "interlocutores_observados", "posiciones_observadas", "progreso_observado",
@@ -319,6 +320,7 @@ def import_eg_link(directory):
     profiles = {}
     xp_table, xp_source = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
+    learning = load_learning(directory)
     extras = {key for key in EXTRA_HASHES if (directory / f"eg-1.60.1.{key[0]}-{key[1]}.json").is_file()}
     datasets = sorted(HASHES.keys() | extras, key=lambda key: (key[1] != "quests.enUS", *key))
     for build, dataset in datasets:
@@ -347,6 +349,11 @@ def import_eg_link(directory):
     for quest_id, entry in missions.items():
         if qualified := _observed_factions(entry, profiles.get(quest_id)):
             _record(missions, quest_id, {"facciones": ["Alliance", "Horde"]}, qualified)
+        if processes := learning.get(entry.get("habilidades_recompensa", {}).get("aplicada")):
+            source = {**entry["evidencia"]["habilidades_recompensa"], "tabla": EFFECT_SOURCE}
+            if processes["por_habilidad"]:
+                source["fuentes_adicionales"] = [SKILL_SOURCE]
+            _record(missions, quest_id, {"aprendizaje_recompensa": processes}, source)
         xp = _base_xp(entry, xp_table)
         if xp is not None:
             source = {**entry["evidencia"]["componentes_xp"], "tabla": xp_source, "metodo": "calculada"}

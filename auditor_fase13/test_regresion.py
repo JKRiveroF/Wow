@@ -15,6 +15,11 @@ ROOT = Path(__file__).resolve().parents[1]
 ADDON = ROOT / "GuiaAventurero"
 BASE = "592d887a021ec136696e460895630982737fec95"
 BASE_ZIP = "GuiaAventurero-9.7.9.zip"
+HUNTER_STAGES = {
+    "ElfoCazador.lua": (6102, 6103), "EnanoCazador.lua": (6085, 6086), "HumanoCazador.lua": (94864, 94793),
+    "OrcoTrolCazador.lua": (6082, 6081), "SkyborneACazador.lua": (94013, 94050),
+    "SkyborneCazador.lua": (94013, 94050), "TaurenCazador.lua": (6088, 6089),
+}
 MANIFEST = Path(__file__).with_name("SHA256_ORIGINALES.sha256")
 ALLOWED_MODULES = {
     "GuiaAventurero/Datos94.lua",
@@ -82,6 +87,7 @@ def _route_without_reviewed_edits(source):
     obsolete_objective = r'\{ m = 1444, z = "Feralas", x = 44\.7, y = 37\.6, n = "[^"]+", q = 3520, a = "C" \}, '
     klockmort_route = 'id = "enano_gnomo_guerrero"' in source
     skyborne_druid = bool(re.search(r'id = "skyborne_(?:a_)?druida"', source))
+    hunter = 'clase = "HUNTER"' in source
 
     def restore_title(match):
         changed = ES_TITLES.get(match[1])
@@ -92,6 +98,13 @@ def _route_without_reviewed_edits(source):
 
     lines = []
     for line in source.splitlines(keepends=True):
+        if hunter:
+            if any(f'q = {quest}, a = "T"' in line for pair in HUNTER_STAGES.values() for quest in pair):
+                line = re.sub(r't = "[^"]+"', 't = "<entrega de cazador revisada>"', line, count=1)
+            if ('entrenar = "' in line and ('doma tres bestias de Durotar' in line or 'doma tres bestias de Mulgore' in line)):
+                line = re.sub(r'entrenar = "[^"]+"', 'entrenar = "<nota de cazador revisada>"', line, count=1)
+            line = re.sub(r'(id = (?:883|2641), origen = "mision", mision = )\d+, misionNombre = "[^"]+"',
+                          r'\1<tercera doma>', line)
         line = line.replace("Pelambres de lobo toscas", "Pieles de lobo bastas")
         line = line.replace(
             "Con Desuello 1, acepta [Pieles de lobo bastas] con Helene Desollapelambres y reúne 7 pelambres de los lobos del este.",
@@ -345,6 +358,27 @@ class IntegridadTest(unittest.TestCase):
                 self.assertIn("With 1 Skinning, accept [Rough Wolf Pelts]", localization["por_nombre"][sentence])
                 acceptances += 1
         self.assertEqual(acceptances, 4)
+
+    def test_hunter_skill_sources_match_the_two_quest_rewards(self):
+        from mission_rules import load_mission_localization
+
+        localized = load_mission_localization(ADDON)["por_nombre"]
+        for filename, (taming, training) in HUNTER_STAGES.items():
+            with self.subTest(route=filename):
+                text = _source("Rutas/" + filename)
+                rewards = {int(spell): int(quest) for spell, quest in re.findall(
+                    r'id = (883|982|1515|2641|5149|6991), origen = "mision", mision = (\d+)', text
+                )}
+                self.assertEqual(rewards, {883: taming, 1515: taming, 2641: taming,
+                                           982: training, 5149: training, 6991: training})
+                for quest, spanish, english in ((taming, "Llamar a mascota y Retirar mascota", "Call Pet and Dismiss Pet"),
+                                                (training, "Alimentar mascota, Revivir mascota", "Feed Pet, Revive Pet")):
+                    line = next(line for line in text.splitlines() if f'q = {quest}, a = "T"' in line)
+                    self.assertIn(spanish, line)
+                    label = re.search(r't = "([^"]+)"', line)[1]
+                    self.assertIn(english, localized[label])
+                    if quest == training and taming != 94013:
+                        self.assertNotIn("Call Pet", localized[label])
 
     def test_auxiliary_item_instructions_are_shared_and_bilingual(self):
         from mission_rules import load_mission_localization

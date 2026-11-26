@@ -24,6 +24,12 @@ Registra la compilación e interfaz del cliente, idioma del cliente y de la guí
 
 Los resultados de las pruebas simuladas quedan en las pruebas del auditor. El estado de cada comprobación de esta tabla sigue pendiente de observación en el cliente.
 
+## Aprendizaje de habilidades por misión
+
+Compara el libro de hechizos antes de aceptar y tras aceptar y entregar el encargo. En cazador, comprueba Llamar y Retirar mascota al entregar la tercera doma, y Alimentar, Revivir y Adiestramiento tras la entrega final. En pícaro, anota el rango inicial de Venenos y la aparición de la receta 8681 al entregar 2359 o 2480.
+
+Para Teletransporte a Claro de la Luna (18960), observa el libro antes y después de hablar con el instructor, tras entregar el encargo previo y tras aceptar 5921, 5922, 94913 o 94914. En 90902 comprueba Luz Sagrada (635) tras aceptar, antes de empezar a curar, y de nuevo tras la entrega. En 7463, 9364 y 94505 anota qué habilidad aparece tras la entrega y su ID. [Distinción y fuentes](FUENTES.md#aprendizaje-por-misión--26-de-noviembre-de-2026).
+
 ## Matriz de oferta pendiente por misión
 
 Los 24 ID carecen de oferta acreditada en el inventario. Las condiciones de partida y los materiales proceden de las fichas de referencia y de la base heredada. Registra el ID que ofrece el iniciador, el perfil y los requisitos cumplidos. [Evidencia disponible y límites](FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).
