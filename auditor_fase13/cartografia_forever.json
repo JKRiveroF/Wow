@@ -18,6 +18,32 @@
     }
   },
   "misiones": {
+    "1486": {
+      "posiciones_reproyectadas": {
+        "A": [{"m": 1413, "x": 45.9742, "y": 35.7343}, {"m": 1413, "x": 45.9643, "y": 35.721}],
+        "T": [{"m": 1413, "x": 45.9742, "y": 35.7343}]
+      },
+      "evidencia": {
+        "posiciones_reproyectadas": {
+          "estado": "forever", "metodo": "coordenadas_mundo_en_mapa_hijo", "build": "1.60.1.70790",
+          "fuente": "https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/data/wowf/1.60.1.70790/npcs.json",
+          "tabla": "https://wago.tools/db2/UiMapAssignment/csv?build=1.60.1.71139",
+          "fuentes_adicionales": ["https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/data/wowf/1.60.1.70862/npcs.json"]
+        }
+      }
+    },
+    "6563": {
+      "posiciones_reproyectadas": {
+        "C": [{"m": 1440, "x": 13.2312, "y": 13.3234}, {"m": 1440, "x": 13.5988, "y": 13.2557}, {"m": 1440, "x": 13.4046, "y": 12.4388}, {"m": 1440, "x": 13.5711, "y": 12.2775}]
+      },
+      "evidencia": {
+        "posiciones_reproyectadas": {
+          "estado": "forever", "metodo": "coordenadas_mundo_en_mapa_hijo", "build": "1.60.1.70959",
+          "fuente": "https://github.com/JIVESCORP/eg-link-output-wowf/blob/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf/1.60.1.70959/objectives.json",
+          "tabla": "https://wago.tools/db2/UiMapAssignment/csv?build=1.60.1.71139"
+        }
+      }
+    },
     "455": {
       "facciones": ["Alliance"],
       "posiciones": {

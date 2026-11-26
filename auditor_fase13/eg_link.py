@@ -1,5 +1,6 @@
 """Lee instantáneas de Forever y conserva su alcance por campo y compilación."""
 
+from collections import defaultdict
 import csv
 import json
 from decimal import Decimal
@@ -28,6 +29,15 @@ HASHES = {
     ("71037", "flights"): "a1406e02cc1124769f7297cf6a0e96b91fc9dde61eac5af2c155349db63bc7e3",
 }
 EXTRA_HASHES = {
+    ("70790", "creatures"): "53a792c56a04d81ec1b0c649a3be8a2729f7f235fe208d25bc6d063ef4bf70a6",
+    ("70840", "creatures"): "88d70d4da4d28b4a2c8a1292e8bfd9b7a63a154f7ce03357c752eecd6b1091a6",
+    ("70862", "creatures"): "950d90482d3990b0d6444219de01ce79976a57ba93bf7a4d33ebbf72a87c4f58",
+    ("70888", "creatures"): "5eb4de9246d15f2109586786502672e875b1da2f005534ac4a8a9293754a9b97",
+    ("70938", "creatures"): "679d1f39aabbafe1fcde53742f864e414a8a27ded7ebe503d9c16803c35dcfeb",
+    ("70959", "creatures"): "0edcb3ac45c26bdf5c11f0d6b9885da8571e5aef39c6f38fd6ffff452715f0d6",
+    ("71037", "creatures"): "ba32e6e22cff3622fa67108939e397c003fa613a0b8d16caf615fc10d5afa916",
+    ("71091", "creatures"): "fee795f9a767ecd3e343c43359399c1e8853854b290ec0553132c138b8c2c869",
+    ("71139", "creatures"): "4ef408881dbef79e307ba6f40eaaf61ef879e914d2bb8e76333258f384af632f",
     ("70790", "quests.enUS"): "1d338604744f0100ec58ea14c904f1b1c676b826d832bc747c90eae27b569bc7",
     ("70790", "turn_ins"): "a462e92603a2a64a420dfbc383a3c62196da14f83fb2771ffd759fce8be9d795",
     ("70790", "quest_scan"): "61dcbb4de5f9b08fe65c091080bb3af8eeff0c4a4ced8f31b27ef0e449f17e56",
@@ -67,6 +77,7 @@ EG_FIELDS = (
     "misiones_previas_observadas", "escaneo_faccion", "acceso_observado", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
     "tipo_mision", "categoria_mision", "limite_segundos", "interlocutores_observados", "posiciones_observadas", "progreso_observado",
+    "referencias_objetivo", "posiciones_reproyectadas",
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
@@ -82,7 +93,7 @@ PLAYABLE_PROFILES = frozenset(RACES.values())
 
 
 def _source(build, dataset):
-    recent = build in RECENT_REVISION_BUILDS or (build == "1.60.1.70938" and dataset != "quests.enUS")
+    recent = build in RECENT_REVISION_BUILDS or (build == "1.60.1.70938" and dataset not in ("quests.enUS", "creatures"))
     revision = REVISION_71139 if recent else REVISION
     return {"estado": "forever", "build": build, "fuente": f"{BASE}{revision}/data/wowf/{build}/{dataset}.json"}
 
@@ -238,7 +249,14 @@ def _unique_rows(previous, samples):
     return rows
 
 
-def _import_npcs(missions, data, source, npcs=None):
+def _index_target(index, kind, target_id, positions, source):
+    samples = index[kind, int(target_id)]
+    for point in positions:
+        key = point["m"], point["x"], point["y"]
+        samples[key] = {**point, "tipo": kind, "id": int(target_id), "build": source["build"], "fuente": source["fuente"]}
+
+
+def _import_npcs(missions, data, source, npcs=None, targets=None):
     npcs = {} if npcs is None else npcs
     linked_positions, linked_contacts = {}, {}
     for section, kind in (("npcs", "pnj"), ("objects", "objeto")):
@@ -248,6 +266,8 @@ def _import_npcs(missions, data, source, npcs=None):
             positions = _positions(row.get("positions", []))
             if section == "npcs" and positions:
                 _record_observations(npcs, key, "posiciones_observadas", positions, source)
+            if targets is not None and positions:
+                _index_target(targets, "talkTo" if section == "npcs" else "gameObject", key, positions, source)
             contact = {"tipo": kind, "id": int(key), "nombre": row.get("name"), "build": source.get("build")}
             for field, action in (("offers", "A"), ("takes", "T")):
                 for quest_id in row.get(field, {}):
@@ -258,7 +278,28 @@ def _import_npcs(missions, data, source, npcs=None):
         _record_observations(missions, quest_id, "interlocutores_observados", actions, source)
     for quest_id, actions in linked_positions.items():
         _record_observations(missions, quest_id, "posiciones_observadas", actions, source)
+    if targets is not None:
+        for key, row in data.get("approached", {}).items():
+            if row.get("sources") and row.get("times") and (positions := _positions(row.get("positions", []))):
+                _index_target(targets, "gameObject", key, positions, source)
     return npcs
+
+
+def _import_creatures(targets, data, source):
+    for key, row in data["creatures"].items():
+        if (row.get("sources") and row.get("deaths")
+                and (positions := _positions(row.get("positions", [])))):
+            _index_target(targets, "monster", key, positions, source)
+
+
+def _link_objective_positions(missions, quest_id, entry, targets):
+    required = {(row.get("type", ""), row.get("objectId", 0)) for row in entry.get("objetivos_servidor", [])}
+    points = [point for key in sorted(required & targets.keys()) for point in targets[key].values()]
+    if points:
+        source = entry["evidencia"]["objetivos_servidor"]
+        links = list(dict.fromkeys(point["fuente"] for point in points))
+        _record(missions, quest_id, {"referencias_objetivo": {"C": points}},
+                {**source, "metodo": "posicion_de_entidad_objetivo", "fuentes_adicionales": links})
 
 
 def _import_objectives(missions, data, source):
@@ -334,6 +375,7 @@ def _import_access(missions, quest_id, profiles):
 def import_eg_link(directory):
     missions, npcs, flights = {}, {}, {}
     profiles = {}
+    targets = defaultdict(dict)
     xp_table, xp_source = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
     quest_sort = _read_optional_table(directory, "QuestSort", NEW_BUILD, QUEST_SORT_HASH, "SortName_lang")
@@ -354,7 +396,9 @@ def import_eg_link(directory):
                     _record(missions, quest_id, {"categoria_mision": {"id": category, "nombre": name, "titulo_en": row["title"]}},
                             {**source, "tabla": QUEST_SORT_SOURCE})
         elif dataset == "npcs":
-            _import_npcs(missions, data, source, npcs)
+            _import_npcs(missions, data, source, npcs, targets)
+        elif dataset == "creatures":
+            _import_creatures(targets, data, source)
         elif dataset == "objectives":
             _import_objectives(missions, data, source)
         elif dataset == "turn_ins":
@@ -369,6 +413,7 @@ def import_eg_link(directory):
             _import_scan(missions, data, source)
     for quest_id, entry in missions.items():
         _import_access(missions, quest_id, profiles.get(quest_id))
+        _link_objective_positions(missions, quest_id, entry, targets)
         if processes := learning.get(entry.get("habilidades_recompensa", {}).get("aplicada")):
             source = {**entry["evidencia"]["habilidades_recompensa"], "tabla": EFFECT_SOURCE}
             if processes["por_habilidad"]:

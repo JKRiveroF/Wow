@@ -5,6 +5,8 @@ from pathlib import Path
 
 from lupa.lua51 import LuaRuntime
 
+from catalogo import read_catalog
+from inventario_misiones import _coordinate_result
 from lua_routes import load_routes
 from mission_rules import load_mission_localization
 
@@ -13,6 +15,12 @@ ADDON = Path(__file__).resolve().parent.parent / "GuiaAventurero"
 
 
 class MapRegressionTest(unittest.TestCase):
+    def test_reprojected_points_provide_partial_evidence_for_the_documented_action(self):
+        records = read_catalog(ADDON.parent / "auditor_fase13" / "cartografia_forever.json")["misiones"]
+        self.assertEqual(_coordinate_result(records["1486"], "T", (1413, 46, 35.7)), "cerca_de_observacion")
+        self.assertEqual(_coordinate_result(records["6563"], "C", (1440, 13.5, 12.3)), "cerca_de_observacion")
+        self.assertEqual(_coordinate_result(records["6563"], "T", (1440, 13.5, 12.3)), "investigacion")
+
     def test_alterac_keeps_map_points_and_both_names(self):
         routes, errors = load_routes(ADDON)
         self.assertEqual(errors, [])

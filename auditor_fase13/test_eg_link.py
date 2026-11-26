@@ -1,14 +1,41 @@
 """Comprueba la interpretación de los datos públicos de Forever."""
 
+from collections import defaultdict
 import unittest
 
-from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_access, _import_npcs, _import_objectives,
-                     _import_scan, _import_turn_ins, _quest_type, _quest_values, _race_fields, _source)
+from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_access, _import_creatures, _import_npcs,
+                     _import_objectives, _import_scan, _import_turn_ins, _link_objective_positions,
+                     _quest_type, _quest_values, _race_fields, _source)
 from inventario_misiones import _coordinate_result
 from vuelos_observados import link_flights
 
 
 class EGLinkTests(unittest.TestCase):
+    def test_objective_positions_require_matching_entity_type_and_positive_sample(self):
+        build = "1.60.1.71139"
+        presence = _source(build, "creatures")
+        npcs_source = _source(build, "npcs")
+        near = {"uiMap": 1413, "mapX": 0.421, "mapY": 0.411}
+        far = {"uiMap": 1413, "mapX": 0.8, "mapY": 0.8}
+        targets = defaultdict(dict)
+        _import_creatures(targets, {"creatures": {"1": {"sources": 1, "deaths": 2, "positions": [near, near]},
+                                                 "2": {"sources": 1, "seen": 1, "positions": [near]}}}, presence)
+        _import_npcs({}, {"npcs": {}, "objects": {}, "approached": {
+            "1": {"sources": 1, "times": 1, "positions": [far]},
+            "3": {"sources": 0, "times": 2, "positions": [near]}}}, npcs_source, targets=targets)
+        quest_source = _source(build, "quests.enUS")
+        mission = {"objetivos_servidor": [{"type": kind, "objectId": target}
+                                        for kind, target in [("monster", 1), ("monster", 1), ("monster", 2),
+                                                             ("gameObject", 1), ("gameObject", 3), ("item", 1)]],
+                   "evidencia": {"objetivos_servidor": quest_source}}
+        _link_objective_positions({"7": mission}, "7", mission, targets)
+        self.assertEqual([(row["tipo"], row["id"], row["x"])
+                          for row in mission["referencias_objetivo"]["C"]], [("gameObject", 1, 80), ("monster", 1, 42.1)])
+        self.assertIn(presence["fuente"], mission["evidencia"]["referencias_objetivo"]["fuentes_adicionales"])
+        self.assertEqual(_coordinate_result(mission, "C", (1413, 42, 41)), "cerca_de_observacion")
+        self.assertEqual(_coordinate_result(mission, "A", (1413, 42, 41)), "investigacion")
+        self.assertEqual(_coordinate_result(mission, "C", (1414, 42, 41)), "investigacion")
+
     def test_newer_quest_snapshot_links_to_its_own_revision(self):
         current = _source(NEW_BUILD, "quests.enUS")
         previous = _source(XP_BUILD, "quests.enUS")

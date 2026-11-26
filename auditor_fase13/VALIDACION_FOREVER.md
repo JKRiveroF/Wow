@@ -45,6 +45,10 @@ Registra el momento del aprendizaje y el ID observado. [Distinción y fuentes](F
 
 Compara personajes de igual facción y nivel que cumplan los mismos requisitos de raza, profesión, objetos y entregas previas. Registra el ID que ofrece el iniciador a cada clase. Para 8249, lleva cinco cajas de trastos pesadas (16885) con pícaro y con otra clase a partir de nivel 50 cuando el canje esté disponible. Para 5126, parte de nivel 55 y compara herreros con Herrería 270 o superior en una de las tres clases de la referencia heredada y en otra clase. Para 98341 y 98738, registra la oferta con druida Skyborne de cada facción antes y después de la etapa anterior. Mantén separada la variante estacional 8767/8788. [Contraste y fuentes](FUENTES.md#categorías-y-máscaras-de-clase--26-de-noviembre-de-2026).
 
+## Destinos reubicados en mapas de zona
+
+Para 1486, registra el UiMapID y la posición al encontrar a Nalpak en las Cuevas de los Lamentos y comprueba la entrada, la aceptación y la entrega. Para 6563, registra la entrada a Cavernas de Brazanegra, el UiMapID activo dentro de la cueva y el punto donde aumenta el contador del objetivo. [Origen y conversión de las muestras](FUENTES.md#posiciones-de-entidades-de-objetivo--26-de-noviembre-de-2026).
+
 ## Matriz de oferta pendiente por misión
 
 Los 24 ID carecen de oferta acreditada en el inventario. Las condiciones de partida y los materiales proceden de las fichas de referencia y de la base heredada. Registra el ID que ofrece el iniciador, el perfil y los requisitos cumplidos. [Evidencia disponible y límites](FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).

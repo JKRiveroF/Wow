@@ -68,7 +68,7 @@ def _matches_positions(position, references, tolerance):
 def _matches_observation(entry, action, position, tolerance):
     return any(_source(entry, field)
                and _matches_positions(position, _positions_by_action(entry, field, action), tolerance)
-               for field in ("posiciones_observadas", "progreso_observado"))
+               for field in ("posiciones_observadas", "progreso_observado", "referencias_objetivo", "posiciones_reproyectadas"))
 
 
 class WorldAudit:

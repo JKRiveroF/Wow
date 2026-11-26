@@ -6,7 +6,7 @@
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 56,59 %**
+**Progreso efectivo global · 56,6 %**
 
 `███████████░░░░░░░░░`
 
@@ -14,20 +14,20 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,37 % | 45,37 % | 0 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,37 % | 45,42 % | +0,05 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 73,92 % | 74,21 % | +0,28 pp |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,56 % | 56,59 % | +0,03 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,59 % | 56,6 % | +0,01 pp |
 
-**Última actualización de la medición · 2026-11-26 23:08:07+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 23:27:26+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Buscar evidencia explícita de oferta por clase para las fichas contrastadas y ampliar el contraste cartográfico de los destinos de PNJ y objetivos.
+**Tarea actual** · Priorizar posiciones de iniciadores y receptores compartidos. Revisar las fuentes de botín que vinculen cada objeto con un punto de obtención.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -385,11 +385,17 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - El efectivo incorpora **118 pares únicos de misión y hechizo**. Hay **110 confirmados** en las fuentes locales, **4 con evidencia parcial** y **4 sin origen acreditado**. Los ocho abiertos quedan separados para comprobar el libro de hechizos en el cliente. [Matriz de aprendizaje](auditor_fase13/VALIDACION_FOREVER.md#aprendizaje-de-habilidades-por-misión).
 - Pasaron **25 pruebas específicas** y **105 de regresión completa**. Coincidieron los hallazgos de las 47 rutas con el corte previo, con **0 errores y 56 avisos conocidos**. El **56,56 % efectivo** incorpora cobertura medida por primera vez. El **40,83 % certificado** conserva los mismos numeradores y denominadores por bloque. [Fórmula](PLAN_FASE13.md#progreso-efectivo).
 
-## Último bloque verificado · Categorías y máscaras de clase
+## Categorías y máscaras de clase · Corte verificado
 
 - Se acreditó un contraste parcial para **337 misiones**, con **678 apariciones por misión y ruta** en **45 rutas**. Otras **33** conservan una inferencia heredada. La condición de clase confirmada se mantiene en **91 de 2.468 misiones activas**. [Categorías, criterios y fuentes](auditor_fase13/FUENTES.md#categorías-y-máscaras-de-clase--26-de-noviembre-de-2026).
 - Se detallaron pruebas de oferta por clase para el canje 8249, el encargo 5126, las dos misiones de druida Skyborne y las variantes 8767/8788 del Festival de Invierno. [Escenarios en el cliente](auditor_fase13/VALIDACION_FOREVER.md#ofertas-y-restricciones-de-clase).
 - Pasaron **35 pruebas específicas** y **107 de regresión completa**. La auditoría de 47 rutas volvió a dar **0 errores y 56 avisos conocidos**. El efectivo global queda en **56,59 %** y el certificado en **40,83 %**. [Medición](PLAN_FASE13.md#lectura-automática-del-avance).
+
+## Último bloque verificado · Cartografía de los objetivos
+
+- Se acreditó cercanía para **76 destinos únicos de 74 misiones**, reutilizados en **1.400 combinaciones de destino y ruta**. El cruce de las entidades y objetivos explica 73 destinos. Tres proceden de las muestras de 1486 y 6563 convertidas del mapa continental al de zona. [Fuentes y conversión](auditor_fase13/FUENTES.md#posiciones-de-entidades-de-objetivo--26-de-noviembre-de-2026).
+- Quedan **3.488 destinos de misión sin referencia específica ni cercana**. Otros **2.462** tienen observación cercana y **84** coinciden con una posición documentada. El acceso interior de 1486 y 6563 queda para Forever. [Protocolo](auditor_fase13/VALIDACION_FOREVER.md#destinos-reubicados-en-mapas-de-zona).
+- Pasaron **24 pruebas específicas** y **109 de regresión completa**. Las 47 rutas registraron **0 errores y 56 avisos conocidos**. El efectivo cartográfico sube a **45,42 %**. El avance global queda en **56,60 % efectivo** y **40,83 % certificado**. [Medición](PLAN_FASE13.md#lectura-automática-del-avance).
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -397,18 +403,18 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 | --- | --- | --- |
 | Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se prioriza investigar 11 de ellas. Faltan 191 títulos ES observados (189 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.442 fichas de prerrequisitos acumulativos y 1.797 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y las restantes cuando los registros externos no acrediten su oferta por fase o perfil. |
 | Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.959 sin condición de facción. Hay contraste parcial para 337 de clase, 878 de raza y 863 de facción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. Ocho pares de misión y hechizo tienen prueba individual. |
-| Cartografía | 3.564 destinos de misión únicos sin una referencia específica o cercana. Otros 2.386 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
+| Cartografía | 3.488 destinos de misión únicos sin una referencia específica o cercana. Otros 2.462 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos los interiores de 1486 y 6563. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP de entrega pendiente de observación en 1.383 IDs, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Posiciones, transporte y requisitos de nodos en 44 rutas. | Costes y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
 | Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
 
 ## Siguientes tareas
 
-1. Buscar condiciones explícitas para los contrastes de clase abiertos y reutilizar las posiciones observadas de PNJ y objetivos en cartografía.
+1. Reutilizar por ID las posiciones de iniciadores, receptores y objetivos de botín. Seguir buscando fuentes con condiciones explícitas para los contrastes de clase abiertos.
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `935ca37`.
+La fase sigue abierta. El corte previo es `35b5854`.
 
 ## Avance individual
 
