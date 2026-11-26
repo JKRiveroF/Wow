@@ -44,7 +44,8 @@ OPTIONAL_TEXT_QUESTS = {
     8556, 8689, 8691, 8692, 8693, 8694, 8696, 8788, 8863, 9266,
 }
 AUXILIARY_TEXT_QUESTS = {
-    498, 1016, 1026, 1089, 1126, 1136, 1195, 1846, 3062, 3528, 3924, 4005, 4293, 4294, 5051, 5149, 5526,
+    498, 1016, 1026, 1089, 1126, 1136, 1195, 1371, 1373, 1846, 3062, 3528, 3924, 4005, 4293, 4294,
+    5051, 5149, 5526, 8318,
 }
 SALVE_ORIGINALS = {
     **{quest: quest - 1779 for quest in range(5882, 5887)},
@@ -307,6 +308,9 @@ class IntegridadTest(unittest.TestCase):
                         gifts += 1
                     if quest == 5227:
                         self.assertEqual(re.findall(r'q = 5227, a = "([ACT])"', line), ["A", "T"])
+                    if quest == 8319:
+                        self.assertIn("después de Mensajes secretos", match[1])
+                        self.assertIn("after Secret Communication", localized[match[1]])
                 found.add(quest)
                 count += 1
         self.assertEqual(found, OPTIONAL_TEXT_QUESTS)
@@ -331,10 +335,18 @@ class IntegridadTest(unittest.TestCase):
                 self.assertNotIn("Recógela, cumple los objetivos y entrégala", text)
                 total += 1
         self.assertEqual(set(found), AUXILIARY_TEXT_QUESTS)
-        self.assertEqual(total, 406)
+        self.assertEqual(total, 519)
         self.assertIn("Flame of Uzel", localized[found[1136]])
         self.assertIn("stay there until the totem forms", localized[found[4005]])
         self.assertIn("seal it in the reliquary", localized[found[5526]])
+        self.assertIn("Advanced Target Dummy", localized[found[1371]])
+        self.assertIn("Lágrimas rotas", found[1371])
+        self.assertIn("3.000 de reputación", found[1371])
+        self.assertIn("Draenethyst Shard", localized[found[1373]])
+        self.assertIn("El Valle de los Huesos", found[1373])
+        self.assertIn("3.000 de reputación", found[1373])
+        self.assertIn("ten Encrypted Twilight Texts", localized[found[8318]])
+        self.assertIn("Bor Bravacrín", found[8318])
 
     def test_felwood_first_turn_ins_and_repeatables_follow_the_right_faction(self):
         from mission_rules import load_mission_localization
