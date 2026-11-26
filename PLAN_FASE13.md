@@ -38,7 +38,8 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Actualizar los IDs de las dos entregas de Kum'isha y contrastar los pasos previos en Pantano de las Penas y Desolace.
 - [x] Contrastar las fichas con la tabla QuestV2 del cliente y comprobar los casos de oferta sin fila y fila sin oferta observada.
 - [ ] Colocar la cadena opcional de Kum'isha y revisar los 29 IDs activos sin evidencia de oferta.
-- [ ] Revisar los 58 refuerzos restantes, los requisitos de perfil y los títulos ES discrepantes.
+- [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
+- [ ] Revisar los 58 refuerzos restantes y los requisitos de perfil. Buscar evidencia de traducción para los títulos que siguen sin fuente.
 - [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.
 - [ ] Actualizar las novedades ES/EN y preparar el ZIP definitivo con los archivos distribuibles, tras superar los criterios de cierre local.
 - [ ] Verificar la sincronización del cierre únicamente en la rama de desarrollo con `origin`. La fusión y las Releases quedan pendientes de autorización expresa.

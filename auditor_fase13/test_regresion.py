@@ -1,6 +1,7 @@
 """Integridad de la base y regresiones locales de guardados y Questie."""
 
 import hashlib
+import json
 import re
 import subprocess
 import unittest
@@ -37,6 +38,8 @@ SALVE_ORIGINALS = {
     **{quest: quest + 5 for quest in range(4103, 4108)},
     **{quest: quest + 1779 for quest in range(4108, 4113)},
 }
+ES_TITLES = json.loads(Path(__file__).with_name("titulos_es_revisados.json").read_text(encoding="utf-8"))
+ROUTE_QUEST_WAYPOINT = re.compile(r'\{[^{}]*?\bq = (\d+)\s*,\s*a = "[ACT]"[^{}]*?\}')
 
 
 def _source(name):
@@ -62,8 +65,20 @@ def _sha(path):
 def _route_without_reviewed_edits(source):
     original_alterac = r'm = 1459, z = "(?:|Alterac Valley|Valle de Alterac)"'
     obsolete_objective = r'\{ m = 1444, z = "Feralas", x = 44\.7, y = 37\.6, n = "[^"]+", q = 3520, a = "C" \}, '
+
+    def restore_title(match):
+        changed = ES_TITLES.get(match[1])
+        if not changed:
+            return match[0]
+        return re.sub(r'(\bn = "(?:Recoger: |Objetivo: |Entregar: )?)' + re.escape(changed["titulo"])
+                      + r'(?=[ "(])', lambda name: name[1] + changed["anterior"], match[0], count=1)
+
     lines = []
     for line in source.splitlines(keepends=True):
+        for quest in set(ROUTE_QUEST_WAYPOINT.findall(line)).intersection(ES_TITLES):
+            title = ES_TITLES[quest]
+            line = line.replace(f"[{title['titulo']}]", f"[{title['anterior']}]")
+        line = ROUTE_QUEST_WAYPOINT.sub(restore_title, line)
         refuerzo = re.search(r"-- REFUERZO_97 q=(\d+)\s*$", line)
         if refuerzo and (quest := int(refuerzo[1])) in SALVE_QUESTS:
             if 't = "Bálsamo de Frondavil:' in line or 't = "Canje opcional:' in line:

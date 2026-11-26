@@ -1,0 +1,142 @@
+{
+  "555": {
+    "anterior": "Sopa de tortuga calmante",
+    "titulo": "Sopa de tortuga reconfortante",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L533"
+  },
+  "684": {
+    "anterior": "Se busca: Marez Cowl",
+    "titulo": "SE BUSCA: Marez Cogulla",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L655"
+  },
+  "944": {
+    "anterior": "El Glaive del Maestro",
+    "titulo": "La Espada del Maestro",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L885"
+  },
+  "952": {
+    "anterior": "El Páramo de los Ancestros",
+    "titulo": "El Páramo de los Ancianos",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L892"
+  },
+  "1031": {
+    "anterior": "La Rama de Cenario",
+    "titulo": "La Rama de Cenarius",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L960"
+  },
+  "1087": {
+    "anterior": "El legado de Cenario",
+    "titulo": "El legado de Cenarius",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L1015"
+  },
+  "1425": {
+    "anterior": "Envío de suministros",
+    "titulo": "Entregar el primer envío",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L1211"
+  },
+  "1516": {
+    "anterior": "Clamor de Tierra",
+    "titulo": "La llamada de la tierra",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esMX.lua#L1280"
+  },
+  "1758": {
+    "anterior": "El Libro del Conciliábulo",
+    "titulo": "Libro del Conciliábulo",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L1375"
+  },
+  "1801": {
+    "anterior": "El Libro del Conciliábulo",
+    "titulo": "Libro del Conciliábulo",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L1397"
+  },
+  "3089": {
+    "anterior": "Pergamino inscrito con runas",
+    "titulo": "El papiro con runas grabadas",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esMX.lua#L1694"
+  },
+  "3518": {
+    "anterior": "Entrega a Magatha",
+    "titulo": "Un envío para Magatha Tótem Siniestro",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L1816"
+  },
+  "4542": {
+    "anterior": "Mensaje al Poblado Viento Libre",
+    "titulo": "Mensaje para el Poblado Viento Libre",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2042"
+  },
+  "4802": {
+    "anterior": "E'ko de los Nevada",
+    "titulo": "E'ko Nevada",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esMX.lua#L2023"
+  },
+  "4803": {
+    "anterior": "E'ko de los dentoesquirla",
+    "titulo": "E'ko Dentoesquirla",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esMX.lua#L2024"
+  },
+  "4804": {
+    "anterior": "E'ko de los venfresco",
+    "titulo": "E'ko Orvallo",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esMX.lua#L2025"
+  },
+  "5168": {
+    "anterior": "Los héroes de Villa Darrow",
+    "titulo": "Los héroes de Villa Dorrow",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2200"
+  },
+  "5181": {
+    "anterior": "Los villanos de Villa Darrow",
+    "titulo": "Los villanos de Villa Dorrow",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2201"
+  },
+  "5249": {
+    "anterior": "¡A la Cuna del Invierno!",
+    "titulo": "¡A Cuna del Invierno!",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esMX.lua#L2140"
+  },
+  "5529": {
+    "anterior": "Crías de dragón apestadas",
+    "titulo": "Crías infestadas",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2277"
+  },
+  "5672": {
+    "anterior": "La Gracia de Elune",
+    "titulo": "Gracia de Elune",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2315"
+  },
+  "5821": {
+    "anterior": "El guardaespaldas",
+    "titulo": "Guardaespaldas de alquiler",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2341"
+  },
+  "5848": {
+    "anterior": "Del amor y la familia",
+    "titulo": "De amor y familia",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2344"
+  },
+  "6103": {
+    "anterior": "Entrenar a la bestia",
+    "titulo": "Domesticar la bestia",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2406"
+  },
+  "7026": {
+    "anterior": "Arneses para carneros de montar",
+    "titulo": "Arneses de pellejo de carnero",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esMX.lua#L2384"
+  },
+  "7223": {
+    "anterior": "Los restos de armadura",
+    "titulo": "Los trocitos de armadura",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esMX.lua#L2407"
+  },
+  "8415": {
+    "anterior": "Campamento del Orvallo",
+    "titulo": "Alto del Orvallo",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2735"
+  },
+  "8418": {
+    "anterior": "La forja de la piedra de poderío",
+    "titulo": "La forja de la piedra del poderío",
+    "fuente": "https://github.com/Questie/QuestieDB/blob/4377c981ac368d1593ec92788218e0a689a6a02b/l10n/Forever/traces/lookupQuests/esES.lua#L2738"
+  }
+}

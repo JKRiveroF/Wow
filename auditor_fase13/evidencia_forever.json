@@ -13,6 +13,15 @@
         }
       }
     },
+    "2584": {
+      "alias_es_guia": ["El espíritu del jabalí"],
+      "evidencia": {
+        "alias_es_guia": {
+          "estado": "forever",
+          "fuente": "https://www.wowhead.com/forever/es/quest=2584/el-esp%C3%ADritud-del-jabal%C3%AD"
+        }
+      }
+    },
     "4103": {
       "facciones": ["Alliance"],
       "prerrequisitos": [5882],

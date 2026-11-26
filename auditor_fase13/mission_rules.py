@@ -164,7 +164,8 @@ def _titles(route, first, points, entry, localization):
     known_en = _variants(names.get("en"))
     own_names = route.get("nombresPropios", {})
     aliases = own_names.get(first.quest, own_names.get(str(first.quest), [])) if isinstance(own_names, dict) else []
-    allowed = {_norm(name) for name in [*known_es, *known_en, *_variants(aliases)]}
+    guide_aliases = _variants(entry.get("alias_es_guia"))
+    allowed = {_norm(name) for name in [*known_es, *known_en, *_variants(aliases), *guide_aliases]}
 
     local_by_id = localization.get("por_id", {})
     local_by_name = localization.get("por_nombre", {})
