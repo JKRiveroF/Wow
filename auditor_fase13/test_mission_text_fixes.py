@@ -10,8 +10,8 @@ from mission_rules import load_mission_localization
 ROOT = Path(__file__).resolve().parents[1]
 ADDON = ROOT / "GuiaAventurero"
 TITLE_FIXES = {"3481": ("Abalarios...", "Abalorios..."), "8412": ("ótem de espíritu", "Tótem de espíritu")}
-ARMSMITH_QUESTS = {"5283", "5301"}
-QUEST_MARKER = re.compile(r"-- REFUERZO_97 q=(3481|8412|5283|5301)$")
+ARMSMITH_QUESTS = {"5283", "5301", "85712"}
+QUEST_MARKER = re.compile(r"-- REFUERZO_97 q=(3481|8412|5283|5301|85712)$")
 
 
 def marked_steps(source):
@@ -64,7 +64,8 @@ class MissionTextFixesTest(unittest.TestCase):
             for path in sorted((ADDON / "Rutas").glob("*.lua")):
                 original = marked_steps(baseline.read(path.relative_to(ROOT).as_posix()).decode("utf-8"))
                 current = marked_steps(path.read_text(encoding="utf-8"))
-                self.assertEqual(set(original), set(current))
+                original_ids = {"5301" if quest_id == "85712" else quest_id for quest_id in current}
+                self.assertEqual(set(original), original_ids)
                 counts.update(current.keys())
                 for quest_id, line in current.items():
                     with self.subTest(ruta=path.stem, mision=quest_id):
@@ -73,19 +74,25 @@ class MissionTextFixesTest(unittest.TestCase):
                             self.assertEqual(line, original[quest_id].replace(old, new))
                         else:
                             self.assertIn(quest_id, ARMSMITH_QUESTS)
-                            self.assertEqual(line.split(', wp = ', 1)[1], original[quest_id].split(', wp = ', 1)[1])
+                            baseline_quest = "5301" if quest_id == "85712" else quest_id
+                            expected = original[baseline_quest].split(', wp = ', 1)[1]
+                            self.assertEqual(line.split(', wp = ', 1)[1], expected.replace(baseline_quest, quest_id))
                             self.assertIn("Misión opcional de especialización", line)
-                            self.assertIn("nivel 40 y Herrería 200", line)
                             self.assertIn("4 yelmos de mitril ornamentados", line)
                             self.assertIn("2 botas de mitril ornamentadas", line)
                             self.assertIn("1 pechera de mitril ornamentada", line)
-                            self.assertIn("Omite este paso", line)
                             sentence = line.split('t = "', 1)[1].split('", wp = ', 1)[0]
                             translated = localized["por_nombre"][sentence]
                             self.assertIn("Optional specialization quest", translated)
-                            self.assertIn("level 40 and 200 Blacksmithing", translated)
                             self.assertIn("4 Ornate Mithril Helms, 2 Ornate Mithril Boots and 1 Ornate Mithril Breastplate",
                                           translated)
-                            self.assertIn("Skip this step", translated)
+                            if quest_id == "85712":
+                                self.assertIn("nivel 40", line)
+                                self.assertIn("Okothos offers", translated)
+                            else:
+                                self.assertIn("nivel 40 y Herrería 200", line)
+                                self.assertIn("Omite este paso", line)
+                                self.assertIn("level 40 and 200 Blacksmithing", translated)
+                                self.assertIn("Skip this step", translated)
 
-        self.assertEqual(counts, {"3481": 23, "8412": 3, "5283": 19, "5301": 22})
+        self.assertEqual(counts, {"3481": 23, "8412": 3, "5283": 19, "5301": 5, "85712": 17})

@@ -1,6 +1,18 @@
 {
   "fecha_consulta_cartografia": "2026-11-25",
   "misiones": {
+    "1704": {
+      "posiciones": {"A": [{"m": 1453, "x": 64.6, "y": 37.2}], "T": [{"m": 1455, "x": 67.9, "y": 46.1}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/1704/", "fecha_consulta": "2026-11-26"}}
+    },
+    "5301": {
+      "posiciones": {"A": [{"m": 1454, "x": 79.8, "y": 24.1}], "T": [{"m": 1454, "x": 79.8, "y": 24.1}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://pd.zroot.it/forever/quests/5301", "fecha_consulta": "2026-11-26"}}
+    },
+    "85712": {
+      "posiciones": {"A": [{"m": 1454, "x": 79.8, "y": 24.1}], "T": [{"m": 1454, "x": 79.8, "y": 24.1}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://pd.zroot.it/forever/quests/85712", "fecha_consulta": "2026-11-26"}}
+    },
     "26": {
       "posiciones": {"A": [{"m": 1457, "x": 35.4, "y": 8.4}], "T": [{"m": 1450, "x": 56.2, "y": 30.6}]},
       "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/26/", "fecha_consulta": "2026-11-26"}}

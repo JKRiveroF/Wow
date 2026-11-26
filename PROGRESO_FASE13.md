@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 07:42:58 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 07:55:23 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar los avisos de herrería y guerrero y la oferta de los 27 IDs pendientes.
+**Tarea actual** · Contrastar los 27 IDs sin oferta confirmada y preparar el seguimiento de Forma acuática en las dos rutas Skyborne.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -218,21 +218,28 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - La auditoría mantiene **0 errores, 92 avisos**, 301 grupos de investigación y 94 de cliente. De los 64 avisos de prerrequisitos alternativos, 56 identifican que la ruta principal no entrega El Encontrado. El requisito queda accesible por el catálogo opcional. El global por criterios completos sigue en **40,83 %**.
 - Queda por observar la oferta efectiva de la cadena en Forever para cada facción y medir el tiempo del desvío. [Comprobación en cliente](auditor_fase13/VALIDACION_FOREVER.md).
 
-## Último bloque verificado · Ivar y formas de druida
+## Ivar y formas de druida · corte verificado
 
 - Se corrigieron los IDs 26 y 27 de Forma acuática para el elfo de la noche y el tauren. El elfo y el Skyborne de Alianza recogen el encargo 98393 en Darnassus y lo entregan antes de seguir con Forma felina.
 - Las seis rutas de no-muertos añaden 91920 y 91921 antes de Ivar. Los pasos conservan su índice y los tres destinos de Ivar mantienen su posición dentro del paso. Se comprobaron la costa de Lordamere, los tres ojos de múrloc, la poción, los niveles y los títulos ES/EN. [Variantes, dependencias y destinos](auditor_fase13/FUENTES.md#dependencias-de-ivar-y-de-druida--26-de-noviembre-de-2026).
 - Pasaron las **65 pruebas locales**. La auditoría de las 47 rutas quedó en **0 errores y 80 avisos**, 12 menos que en el corte anterior. Quedan 56 avisos de la entrega opcional previa a Kum'isha y 24 de perfil. Hay 301 grupos de investigación y 94 de cliente. El global por criterios completos sigue en **40,83 %**.
 - El inventario tiene 2.472 fichas y 2.466 IDs activos e incluye los 2.462 IDs originales. Hay evidencia de existencia para 2.441 IDs, título español para 2.269 y título inglés y XP base para 2.440.
 
+## Último bloque verificado · Herrería y rama de Klockmort
+
+- La ruta de enano y gnomo guerrero toma las notas de Furen, las entrega en Forjaz y marca dónde reunir el coral al pasar por Menethil. El encargo final de Klockmort da los guanteletes de mallas. La ruta humana conserva la cadena de Grimand.
+- Se eligió 85712 como variante opcional de Forja de armaduras en 17 rutas Horda. Cinco rutas de Guerrero y Paladín conservan 5301. Ambas variantes comparten PNJ, materiales y hechizo de recompensa. Quedan por comprobar la oferta efectiva y el requisito profesional de 85712. [Máscaras, datos y ubicaciones](auditor_fase13/FUENTES.md#herrería-y-rama-de-klockmort--26-de-noviembre-de-2026).
+- Pasaron las **67 pruebas locales**. Las 47 rutas registraron **0 errores y 56 avisos**, 24 menos que en el corte anterior. Todos corresponden al requisito opcional de Kum'isha. Quedan 301 grupos de investigación y 94 de cliente. El avance global por criterios completos sigue en **40,83 %**.
+- El inventario tiene 2.473 fichas, 2.467 IDs activos y los 2.462 IDs de 9.7.9. Hay evidencia de existencia para 2.442 IDs y título inglés y XP base para 2.441. La prioridad siguiente incluye los 27 IDs activos sin evidencia de oferta.
+
 ## Siguientes tareas
 
-1. Contrastar las variantes de Forja de armaduras (5301 y 85712) y el encargo de guerrero 1700. Comprobar el desbloqueo de Forma acuática en las rutas Skyborne.
+1. Contrastar el desbloqueo de Forma acuática en ambas rutas Skyborne y cómo aprovechar los trayectos existentes.
 2. Contrastar los 27 IDs activos sin evidencia de oferta, incluidos los nueve sin fila en QuestV2, las variantes heredadas y las condiciones de evento. Ampliar la cobertura de títulos y requisitos con los 569 historiales de misiones previas.
 3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `45be9db`.
+La fase sigue abierta. El corte previo es `4ef7bc4`.
 
 ## Avance individual
 
@@ -242,7 +249,7 @@ Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criter
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | `gnomo_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
 | `enano_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
-| `enano_gnomo_guerrero` | Revisada localmente | 6/6 | 8/18 | 4 | 6 | 2 |
+| `enano_gnomo_guerrero` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 2 |
 | `enano_paladin` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `enano_gnomo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 2 |
 | `enano_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
@@ -261,27 +268,27 @@ Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criter
 | `elfo_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `elfo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `orco_trol_guerrero` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `orco_trol_cazador` | Revisada localmente | 6/6 | 8/18 | 4 | 7 | 2 |
-| `orco_trol_picaro` | Revisada localmente | 6/6 | 8/18 | 4 | 7 | 2 |
-| `orco_trol_chaman` | Revisada localmente | 6/6 | 8/18 | 4 | 7 | 2 |
-| `orco_trol_brujo` | Revisada localmente | 6/6 | 8/18 | 4 | 7 | 2 |
-| `orco_trol_mago` | Revisada localmente | 6/6 | 8/18 | 4 | 7 | 2 |
-| `trol_sacerdote` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `orco_trol_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `orco_trol_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `orco_trol_chaman` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `orco_trol_brujo` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `orco_trol_mago` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `trol_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
 | `tauren_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
 | `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
 | `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
 | `skyborne_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `skyborne_chaman` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `skyborne_druida` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `skyborne_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `skyborne_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
 | `skyborne_a_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `skyborne_a_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `skyborne_a_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |

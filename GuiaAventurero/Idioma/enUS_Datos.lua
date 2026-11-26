@@ -8208,6 +8208,7 @@ return {
 [86585]="Banner of the Fallen",
 [86758]="Twisting the Knife",
 [87288]="Soft Saber Pelts",
+[85712]="The Art of the Armorsmith",
 [90902]="Rediscovering the Light",
 [91208]="Coming to Terms",
 [91209]="Continue Your Training",

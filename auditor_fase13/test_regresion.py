@@ -72,6 +72,7 @@ def _sha(path):
 def _route_without_reviewed_edits(source):
     original_alterac = r'm = 1459, z = "(?:|Alterac Valley|Valle de Alterac)"'
     obsolete_objective = r'\{ m = 1444, z = "Feralas", x = 44\.7, y = 37\.6, n = "[^"]+", q = 3520, a = "C" \}, '
+    klockmort_route = 'id = "enano_gnomo_guerrero"' in source
 
     def restore_title(match):
         changed = ES_TITLES.get(match[1])
@@ -106,9 +107,14 @@ def _route_without_reviewed_edits(source):
             line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
         line = re.sub(original_alterac, 'm = 1459, z = "<etiqueta revisada>"', line)
         if line.rstrip().endswith(("-- REFUERZO_97 q=3520", "-- REFUERZO_97 q=1878",
-                                   "-- REFUERZO_97 q=5301", "-- REFUERZO_97 q=5283")):
+                                   "-- REFUERZO_97 q=5301", "-- REFUERZO_97 q=85712", "-- REFUERZO_97 q=5283")):
             line = re.sub(r't = "[^"]+"', 't = "<instrucciones revisadas>"', line, count=1)
             line = re.sub(obsolete_objective, "", line)
+        if line.rstrip().endswith("-- REFUERZO_97 q=85712"):
+            line = re.sub(r'q=85712\b', "q=5301", re.sub(r'q = 85712\b', "q = 5301", line))
+        warrior_branch = re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )(170[045689])\s*$", line)
+        if klockmort_route and warrior_branch and line.lstrip().startswith('{ t = "'):
+            line = re.sub(r'\{ t = ".*', f'<rama de la armadura revisada {warrior_branch[1]}>', line)
         if line.rstrip().endswith("-- REFUERZO_97 q=3481"):
             line = line.replace("Abalarios...", "Abalorios...")
         if line.rstrip().endswith("-- REFUERZO_97 q=8412"):
@@ -323,6 +329,32 @@ class IntegridadTest(unittest.TestCase):
         for route, next_quest in ((elf, 98394), (_source("Rutas/SkyborneADruida.lua"), 98341)):
             self.assertLess(route.index('q = 98393, a = "A"'), route.index('q = 98393, a = "T"'))
             self.assertLess(route.index('q = 98393, a = "T"'), route.index(f'q = {next_quest}, a = "A"'))
+
+    def test_klockmort_branch_reuses_menethil_and_leaves_grimand_for_humans(self):
+        dwarf_gnome_route = _source("Rutas/EnanoGnomoGuerrero.lua")
+        human_route = _source("Rutas/HumanoGuerrero.lua")
+        self.assertNotRegex(dwarf_gnome_route, r'\bq = 170[056],')
+        self.assertEqual(set(re.findall(r'\bq = (170[056]),', human_route)), {"1700", "1705", "1706"})
+        self.assertEqual(re.findall(r'\bq = (170[489]), a = "([ACT])"', dwarf_gnome_route),
+                         [("1704", "A"), ("1704", "T"), ("1708", "A"), ("1708", "C"),
+                          ("1708", "T"), ("1709", "A"), ("1709", "T")])
+        self.assertRegex(dwarf_gnome_route, r'm = 1437, [^\n]*x = 11\.7, y = 65, n = "Objetivo: Coral férreo", q = 1708')
+        harbor = next(line for line in dwarf_gnome_route.splitlines() if "En el Castillo de Menethil acepta" in line)
+        self.assertIn("Si llevas [Coral férreo]", harbor)
+        self.assertNotIn("q = 1708", harbor)
+
+    def test_armorsmith_route_variant_matches_profile_and_keeps_waypoints(self):
+        counts = {5301: 0, 85712: 0}
+        for path in (ADDON / "Rutas").glob("*.lua"):
+            source = path.read_text(encoding="utf-8")
+            points = re.findall(r'\{ m = 1454, [^{}]+x = 79\.8, y = 24\.1, [^{}]+q = (5301|85712), a = "([AT])" \}', source)
+            if not points:
+                continue
+            character_class = re.search(r'\bclase = "([A-Z]+)"', source)[1]
+            expected = 5301 if character_class in {"WARRIOR", "PALADIN"} else 85712
+            self.assertEqual(points, [(str(expected), "A"), (str(expected), "T")])
+            counts[expected] += 1
+        self.assertEqual(counts, {5301: 5, 85712: 17})
 
 
 class GuardadosTest(unittest.TestCase):
