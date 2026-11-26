@@ -97,6 +97,10 @@ def _route_without_reviewed_edits(source):
             line = line.replace(f"[{title['titulo']}]", f"[{title['anterior']}]")
         line = ROUTE_QUEST_WAYPOINT.sub(restore_title, line)
         refuerzo = re.search(r"-- REFUERZO_97 q=(\d+)\s*$", line)
+        gate = re.search(r"-- (?:REFUERZO_97 q=|Paso conservado )(455|468|473|1838|1840|1848|1947|1948)\s*$", line)
+        if gate:
+            line = re.sub(r'\{ t = ".*', f"<dependencia revisada {gate[1]}>", line)
+        line = line.replace(" Si quieres la cadena de varitas, acepta [Viaje al pantano] con Deino junto al instructor antes de ir al Marjal.", "")
         if refuerzo and (quest := int(refuerzo[1])) in SALVE_QUESTS:
             if 't = "Bálsamo de Frondavil:' in line or 't = "Canje opcional:' in line:
                 line = re.sub(rf"(\bq\s*=\s*){quest}\b", lambda match: match[1] + str(SALVE_ORIGINALS[quest]), line)
@@ -460,6 +464,51 @@ class MissionBadgeTest(unittest.TestCase):
         self.assertIn("GROUP 5", label)
         self.assertNotIn("RAID", label)
         self.assertEqual(size, 5)
+
+
+class MissionPrerequisitesTest(unittest.TestCase):
+    def test_algaz_brutal_armor_and_mage_deliveries_follow_their_requirements(self):
+        from lua_routes import load_routes
+        from mission_rules import load_mission_localization
+        from world_rules import XP_OPCIONAL
+
+        routes, findings = load_routes(ADDON)
+        self.assertFalse(findings)
+        localized = load_mission_localization(ADDON)["por_nombre"]
+        alliance = warriors = mages = 0
+        for route in routes:
+            steps = [step for section in route["secciones"] for step in section["pasos"]]
+            points = [point for step in steps for point in step.get("wp", []) if point.get("q")]
+            actions = [(point["q"], point["a"]) for point in points]
+            if (473, "A") in actions:
+                self.assertEqual(route["_faccion"], "Alliance")
+                self.assertLess(actions.index((455, "T")), actions.index((473, "A")))
+                self.assertEqual([a for q, a in actions if q == 455], ["A", "C", "T"])
+                steps_to_check = [step for step in steps if any(p.get("q") in (455, 473) for p in step.get("wp", []))]
+                alliance += 1
+            elif (1840, "A") in actions:
+                self.assertEqual(route["clase"], "WARRIOR")
+                self.assertEqual([p for p in actions if p[0] in (1838, 1848, 1840)],
+                                 [(1838, "A"), (1838, "T"), (1848, "A"), (1848, "T"), (1840, "A"), (1840, "T")])
+                steps_to_check = [step for step in steps if any(p.get("q") in (1838, 1840) for p in step.get("wp", []))]
+                warriors += 1
+            elif route["_faccion"] == "Horde" and (1947, "A") in actions:
+                self.assertEqual(route["clase"], "MAGE")
+                self.assertEqual([p for p in actions if p[0] in (1947, 1948)],
+                                 [(1947, "A"), (1947, "T"), (1948, "A"), (1948, "C"), (1948, "C"), (1948, "T")])
+                self.assertEqual([p["m"] for p in points if p["q"] in (1947, 1948)],
+                                 [1454, 1445, 1445, 1417, 1417, 1445])
+                trainer, = [step for step in steps if "acepta [Viaje al pantano] con Deino junto al instructor" in step["t"]]
+                self.assertTrue(trainer["comprobar"]["hechizos"])
+                self.assertIn("Deino", localized[trainer["t"]])
+                steps_to_check = [step for step in steps if any(p.get("q") in (1947, 1948) for p in step.get("wp", []))]
+                mages += 1
+            else:
+                continue
+            for step in steps_to_check:
+                self.assertTrue(XP_OPCIONAL.match(step["t"]))
+                self.assertTrue(localized[step["t"]].startswith("Optional"))
+        self.assertEqual((alliance, warriors, mages), (25, 4, 2))
 
 
 class GuardadosTest(unittest.TestCase):

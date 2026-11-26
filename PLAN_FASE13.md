@@ -34,7 +34,7 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Cruzar el registro de misiones y las observaciones de Efficient Games por ID y compilación con los títulos, requisitos, objetivos, XP y vuelos de las rutas.
 - [x] Cruzar los historiales de entregas con las continuaciones sugeridas que coinciden con la base heredada. Aplicar la evidencia a las secuencias A/T de las rutas.
 - [x] Contrastar los requisitos heredados de una sola entrega con las trazas de oferta de mayor confianza.
-- [ ] Resolver los avisos de orden y acceso de 473, 1840 y 1948 en las rutas afectadas.
+- [x] Resolver y probar los avisos de orden y acceso de 473, 1840 y 1948. Mantener los índices de los pasos y documentar los desvíos opcionales.
 - [x] Contrastar las categorías de misión y los temporizadores expresos con la extracción de Forever.
 - [x] Mostrar las categorías verificadas mediante las etiquetas de destino. Probar con Lua el caso sin datos de la misión, la respuesta posterior y los textos ES/EN.
 - [x] Corregir los textos de 30 refuerzos sin XP base y conservar el historial de respuestas del servidor por ID.
