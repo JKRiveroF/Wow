@@ -53,6 +53,10 @@ En los destinos con `referencias_interaccion`, registra por separado el ID de la
 
 Para 92553, registra el botín de la criatura 251291 cerca de 39,9 / 54,3, el avance del contador del objeto 6889 con la misión activa y el origen del 5469 por separado. [Evidencia de partida](FUENTES.md#botín-y-posiciones-de-obtención).
 
+Para 2781, registra el botín de 8723 al derrotar a 7847 en Tanaris y la posición del encuentro. En 8466 y 8467, registra la obtención de 21377 con cada misión activa, el punto de botín y cualquier cambio tras la primera entrega. [Observaciones de origen y posición](FUENTES.md#botín-observado-en-efficient-games).
+
+Para 86 y 385, registra por separado los objetos obtenidos y la posición real de la criatura. En 385, comprueba el origen de 2925 con la misión activa después de verificar 2924. [Referencias por entidad](FUENTES.md#botín-observado-en-efficient-games).
+
 ## Matriz de oferta pendiente por misión
 
 Los 24 ID carecen de oferta acreditada en el inventario. Las condiciones de partida y los materiales proceden de las fichas de referencia y de la base heredada. Registra el ID que ofrece el iniciador, el perfil y los requisitos cumplidos. [Evidencia disponible y límites](FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).

@@ -107,12 +107,25 @@ function C:LoadDynamic()
             [itemKeys.npcDrops] = {}, -- only show vendors
             [itemKeys.objectDrops_add] = {9},
         },"""
+        observed = {90: [{"tipo": "pnj", "id": 10, "fuente": "botín antiguo"}]}
         with patch("contactos._lines", side_effect=[traces.splitlines(), fixes.splitlines()]):
-            result = _loot_sources(ADDON.parent)[90]
+            result = _loot_sources(ADDON.parent, observed)[90]
         self.assertEqual(set(result), {("objeto", 7), ("objeto", 9)})
         self.assertIn("foreverItemFixes.lua", result["objeto", 9])
         with patch("contactos._lines", side_effect=[traces.splitlines(), []]):
             self.assertEqual(_loot_sources(ADDON.parent), {})
+
+    def test_observed_loot_without_coordinates_registers_only_the_origin(self):
+        missions = {"100": {"objetos_objetivo": [90], "evidencia": {"objetos_objetivo": {
+            "estado": "forever", "fuente": "objetivo del servidor"}}}}
+        observed = {90: [{"tipo": "objeto", "id": 9, "fuente": "botín observado"}]}
+        catalog = {"misiones": missions, "botin_observado": observed}
+        with patch("contactos._lines", side_effect=lambda _, src: ["-- correcciones"] if src == ITEM_FIXES else []), \
+                patch("contactos._read", return_value=[]):
+            result = link_contacts(ADDON.parent, catalog)["misiones"]["100"]
+        self.assertEqual(result["origenes_botin"], {"90": observed[90]})
+        self.assertNotIn("referencias_botin", result)
+        self.assertEqual(_coordinate_result(result, "C", (1429, 41, 42)), "investigacion")
 
     def test_reprojected_points_provide_partial_evidence_for_the_documented_action(self):
         records = read_catalog(ADDON.parent / "auditor_fase13" / "cartografia_forever.json")["misiones"]

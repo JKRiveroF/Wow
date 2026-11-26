@@ -58,14 +58,14 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,31 % | 46,33 % | +0,03 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,33 % | 46,34 % | +0,01 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,78 % | 56,78 % | +0,01 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,78 % | 56,78 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-26 23:43:53+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 23:51:21+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -95,7 +95,8 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Cruzar por tipo e ID los objetivos del servidor con observaciones de criaturas y objetos de Forever. Reproyectar tres destinos a partir de sus coordenadas de mundo y conservarlos como contraste parcial.
 - [x] Contrastar por acción las posiciones de recogida y entrega con las trazas de entidades, las observaciones de Forever y el catálogo estático de QuestieDB. Conservar la procedencia del vínculo y de cada posición.
 - [x] Aplicar las correcciones de botín de QuestieDB, contrastar los 39 candidatos del cruce por objeto y entidad e incorporar el destino adicional de 92553.
-- [ ] Comprobar los 11 candidatos preliminares de botín que proceden de las instantáneas de Efficient Games. Verificar el origen por ID y conservar la distinción entre la observación del botín y la de la posición.
+- [x] Contrastar los 11 candidatos preliminares de botín de Efficient Games y ampliar la comprobación a nueve instantáneas. Conservar por separado el vínculo al origen y la posición observada de la entidad.
+- [ ] Contrastar los 151 destinos donde el catálogo heredado propone una fuente de botín cerca de una posición observada. Priorizar los siete destinos compartidos por las 47 rutas y buscar evidencia del vínculo con el objeto en Forever.
 - [ ] Verificar el punto exacto y el acceso a los destinos con contraste parcial. Para los puntos aún sin observación cercana, priorizar posiciones documentadas de iniciadores, receptores y objetivos compartidos.
 - [ ] Verificar en Forever los ocho pares de aprendizaje pendientes o parciales, con prioridad para el desbloqueo de 18960 y los efectos de recompensa de mago, paladín y chamán.
 - [x] Cruzar objetos auxiliares y exclusiones heredadas con registros de Forever y añadir las marcas expresas de repetición documentadas en el corte.

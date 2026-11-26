@@ -3,6 +3,7 @@
 from collections import defaultdict
 import csv
 import json
+import re
 from decimal import Decimal
 from hashlib import sha256
 
@@ -29,6 +30,15 @@ HASHES = {
     ("71037", "flights"): "a1406e02cc1124769f7297cf6a0e96b91fc9dde61eac5af2c155349db63bc7e3",
 }
 EXTRA_HASHES = {
+    ("70790", "loot"): "34e139f15333c0ac12fbdb0d65f2b297f764ccff70969d12c1823f1ed9be06fc",
+    ("70840", "loot"): "74e369fea75bdaf976877015802280411566e73da000fb8108643b35cf0addd6",
+    ("70862", "loot"): "4cc7fdbfe691b20b029d4417a5d6354637ac3890647b700f45046e5576cb6585",
+    ("70888", "loot"): "abe9293f45806c82d9c483aa97566a3c70ae47824a2aaaaf8b5d49387e737e71",
+    ("70938", "loot"): "d4878eadaa1a33daeab2425ff5a7d8808e33b53686d82ec842403c9b6f1e8ea0",
+    ("70959", "loot"): "e7dde9dd20be29b9eac3b67adb9c3ba885aee40f244644ac67e51e4e98b370a0",
+    ("71037", "loot"): "353093fabfd7c44eecfdf7f5f36b0fcf85b98c021c71ae2c52e59ed4c87ea746",
+    ("71091", "loot"): "cd7033a9cbc50d1641783b7cc8b8dbcd625dffa1a1868a4c1f65b2c5d29a4caf",
+    ("71139", "loot"): "36e069461caef576094ebd4cd9e3b6fd0a25e2768d9baeeddf49ebe31ccf32b0",
     ("70790", "creatures"): "53a792c56a04d81ec1b0c649a3be8a2729f7f235fe208d25bc6d063ef4bf70a6",
     ("70840", "creatures"): "88d70d4da4d28b4a2c8a1292e8bfd9b7a63a154f7ce03357c752eecd6b1091a6",
     ("70862", "creatures"): "950d90482d3990b0d6444219de01ce79976a57ba93bf7a4d33ebbf72a87c4f58",
@@ -77,7 +87,7 @@ EG_FIELDS = (
     "misiones_previas_observadas", "escaneo_faccion", "acceso_observado", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
     "tipo_mision", "categoria_mision", "limite_segundos", "interlocutores_observados", "posiciones_observadas", "progreso_observado",
-    "referencias_objetivo", "posiciones_reproyectadas", "referencias_interaccion", "referencias_botin",
+    "referencias_objetivo", "posiciones_reproyectadas", "referencias_interaccion", "referencias_botin", "origenes_botin",
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
@@ -90,6 +100,8 @@ QUEST_SORT_SOURCE = f"https://wago.tools/db2/QuestSort/csv?build={NEW_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
 RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
 PLAYABLE_PROFILES = frozenset(RACES.values())
+LOOT_ENTITY = re.compile(r"(npc|object):([1-9]\d*)")
+LOOT_TYPES = {"npc": "pnj", "object": "objeto"}
 
 
 def _source(build, dataset):
@@ -292,6 +304,22 @@ def _import_creatures(targets, data, source):
             _index_target(targets, "monster", key, positions, source)
 
 
+def _import_loot(items, targets, data, source):
+    for key, row in data["sources"].items():
+        if not (match := LOOT_ENTITY.fullmatch(key)) or not row.get("sources"):
+            continue
+        kind, entity = LOOT_TYPES[match[1]], int(match[2])
+        windows = row.get("windows")
+        if type(windows) is not int or windows <= 0:
+            continue
+        for item, result in row.get("items", {}).items():
+            drops = result.get("drops")
+            if item.isdecimal() and int(item) > 0 and type(drops) is int and 0 < drops <= windows:
+                items[int(item)][kind, entity] = {"tipo": kind, "id": entity, "fuente": source["fuente"]}
+        if positions := _positions(row.get("positions", [])):
+            _index_target(targets, f"botin_{kind}", entity, positions, source)
+
+
 def _link_objective_positions(missions, quest_id, entry, targets):
     required = {(row.get("type", ""), row.get("objectId", 0)) for row in entry.get("objetivos_servidor", [])}
     points = [point for key in sorted(required & targets.keys()) for point in targets[key].values()]
@@ -376,6 +404,7 @@ def import_eg_link(directory):
     missions, npcs, flights = {}, {}, {}
     profiles = {}
     targets = defaultdict(dict)
+    loot = defaultdict(dict)
     xp_table, xp_source = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
     quest_sort = _read_optional_table(directory, "QuestSort", NEW_BUILD, QUEST_SORT_HASH, "SortName_lang")
@@ -399,6 +428,8 @@ def import_eg_link(directory):
             _import_npcs(missions, data, source, npcs, targets)
         elif dataset == "creatures":
             _import_creatures(targets, data, source)
+        elif dataset == "loot":
+            _import_loot(loot, targets, data, source)
         elif dataset == "objectives":
             _import_objectives(missions, data, source)
         elif dataset == "turn_ins":
@@ -423,9 +454,11 @@ def import_eg_link(directory):
         if xp is not None:
             source = {**entry["evidencia"]["componentes_xp"], "tabla": xp_source, "metodo": "calculada"}
             _record(missions, quest_id, {"xp_calculada": xp}, source)
-    roles = {"talkTo": "pnj", "gameObject": "objeto", "monster": "criatura"}
+    roles = {"talkTo": "pnj", "gameObject": "objeto", "monster": "criatura",
+             "botin_pnj": "botin_pnj", "botin_objeto": "botin_objeto"}
     contacts = {role: {} for role in roles.values()}
     for (kind, entity), points in targets.items():
         if kind in roles:
             contacts[roles[kind]][entity] = list(points.values())
-    return {"misiones": missions, "pnj": npcs, "vuelos_observados": flights, "entidades_interaccion": contacts}
+    return {"misiones": missions, "pnj": npcs, "vuelos_observados": flights, "entidades_interaccion": contacts,
+            "botin_observado": {item: list(entities.values()) for item, entities in loot.items()}}

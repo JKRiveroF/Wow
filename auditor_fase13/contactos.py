@@ -113,29 +113,34 @@ def _apply_corrections(lines, static, traced):
             static.pop((quest, STATIC_ROLES[key]), None)
 
 
-def _loot_sources(directory):
+def _apply_loot_rules(sources, reference, lines):
+    for item, line, field, raw, _ in _fields(lines, "item"):
+        key, _, operation = field.partition("_")
+        if key not in DROP_KINDS or not NUMBERS.fullmatch(raw):
+            continue
+        kind = DROP_KINDS[key]
+        entities = {(kind, int(entity)) for entity in re.findall(r"\d+", raw)}
+        record = sources[int(item)]
+        if operation == "remove":
+            for entity in entities:
+                record.pop(entity, None)
+        elif operation in ("", "add"):
+            if not operation:
+                sources[int(item)] = record = {entity: link for entity, link in record.items() if entity[0] != kind}
+            link = f"{TRACE_BASE}{reference}#L{line}"
+            record.update(dict.fromkeys(sorted(entities), link))
+
+
+def _loot_sources(directory, observed=None):
     traces = _lines(directory, ITEM_TRACES)
     fixes = _lines(directory, ITEM_FIXES)
     if not fixes:
         return {}
     sources = defaultdict(dict)
-    for reference, lines in ((ITEM_TRACES, traces), (ITEM_FIXES, fixes)):
-        for item, line, field, raw, _ in _fields(lines, "item"):
-            key, _, operation = field.partition("_")
-            if key not in DROP_KINDS or not NUMBERS.fullmatch(raw):
-                continue
-            kind = DROP_KINDS[key]
-            entities = {(kind, int(entity)) for entity in re.findall(r"\d+", raw)}
-            record = sources[int(item)]
-            if operation == "remove":
-                for entity in entities:
-                    record.pop(entity, None)
-            elif operation in ("", "add"):
-                if not operation:
-                    sources[int(item)] = record = {entity: link for entity, link in record.items()
-                                                    if entity[0] != kind}
-                link = f"{TRACE_BASE}{reference}#L{line}"
-                record.update(dict.fromkeys(sorted(entities), link))
+    _apply_loot_rules(sources, ITEM_TRACES, traces)
+    for item, samples in (observed or {}).items():
+        sources[item].update({(sample["tipo"], sample["id"]): sample["fuente"] for sample in samples})
+    _apply_loot_rules(sources, ITEM_FIXES, fixes)
     return sources
 
 
@@ -145,7 +150,7 @@ def _loot_positions(item, sources, trace_points, eg_points):
         samples = (*trace_points.get((kind, entity), ()), *eg_points.get(kind, {}).get(entity, ()))
         if kind == "pnj":
             samples = (*samples, *eg_points.get("criatura", {}).get(entity, ()))
-        for sample in samples:
+        for sample in (*samples, *eg_points.get(f"botin_{kind}", {}).get(entity, ())):
             key = kind, entity, sample["m"], sample["x"], sample["y"]
             points[key] = {**sample, "tipo": kind, "id": entity, "item": item, "fuente_botin": loot}
     return list(points.values())
@@ -163,7 +168,10 @@ def link_contacts(directory, catalog):
     static = _static_contacts(_lines(directory, QUESTS), missions)
     _apply_corrections(_read(directory, FIXES), static, traced)
     eg_points = catalog.get("entidades_interaccion", {})
-    loot = _loot_sources(directory)
+    loot = _loot_sources(directory, catalog.get("botin_observado"))
+    loot_origins = {item: [{"tipo": kind, "id": entity, "fuente": link}
+                           for (kind, entity), link in sorted(entities.items())]
+                    for item, entities in loot.items() if entities}
     loot_positions = {}
     matched = {}
     for quest, entry in missions.items():
@@ -189,15 +197,21 @@ def link_contacts(directory, catalog):
         if source := _confirmed(entry, "objetos_objetivo"):
             items = {item for item in _list(entry.get("objetos_objetivo")) if type(item) is int and item > 0}
             points = []
-            for item in sorted(items & loot.keys()):
+            origins = {}
+            for item in sorted(items & loot_origins.keys()):
+                origins[str(item)] = loot_origins[item]
                 if item not in loot_positions:
                     loot_positions[item] = _loot_positions(item, loot[item], trace_points, eg_points)
                 points.extend(loot_positions[item])
-            if points:
+            if origins:
                 record = matched.setdefault(quest, {"evidencia": {}})
-                record["referencias_botin"] = {"C": points}
-                record["evidencia"]["referencias_botin"] = {"estado": "forever", "fuente": source,
-                                                           "metodo": "botin_vinculado_a_objetivo"}
+                record["origenes_botin"] = origins
+                record["evidencia"]["origenes_botin"] = {"estado": "forever", "fuente": source,
+                                                       "metodo": "origen_de_objeto_objetivo"}
+                if points:
+                    record["referencias_botin"] = {"C": points}
+                    record["evidencia"]["referencias_botin"] = {"estado": "forever", "fuente": source,
+                                                               "metodo": "botin_vinculado_a_objetivo"}
     npcs = {str(entity): {"posiciones_trazas": samples, "evidencia": {"posiciones_trazas": {
         "estado": "forever", "fuente": samples[0]["fuente"]}}}
             for (kind, entity), samples in trace_points.items() if kind == "pnj" and samples}

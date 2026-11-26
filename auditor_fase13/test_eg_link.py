@@ -3,7 +3,7 @@
 from collections import defaultdict
 import unittest
 
-from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_access, _import_creatures, _import_npcs,
+from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_access, _import_creatures, _import_loot, _import_npcs,
                      _import_objectives, _import_scan, _import_turn_ins, _link_objective_positions,
                      _quest_type, _quest_values, _race_fields, _source)
 from inventario_misiones import _coordinate_result
@@ -11,6 +11,22 @@ from vuelos_observados import link_flights
 
 
 class EGLinkTests(unittest.TestCase):
+    def test_loot_keeps_exact_sources_and_preserves_unlocated_items(self):
+        observed, targets = defaultdict(dict), defaultdict(dict)
+        source = _source(NEW_BUILD, "loot")
+        point = {"uiMap": 1429, "mapX": 0.45, "mapY": 0.44}
+        row = {"sources": 1, "windows": 2, "positions": [point],
+               "items": {"100": {"drops": 1}, "101": {"drops": 0}, "102": {"drops": 3}}}
+        data = {"sources": {"npc:7": row, "npc:8|group": row, "object:7": {**row, "positions": []},
+                            "object:9": {**row, "sources": 0}, "npc:9": {**row, "windows": None},
+                            "fishing:1429": row}}
+        _import_loot(observed, targets, data, source)
+        self.assertEqual(set(observed), {100})
+        self.assertEqual(set(observed[100]), {("pnj", 7), ("objeto", 7)})
+        self.assertEqual(observed[100]["objeto", 7]["fuente"], source["fuente"])
+        self.assertEqual(set(targets), {("botin_pnj", 7)})
+        self.assertEqual(targets["botin_pnj", 7][1429, 45, 44]["build"], NEW_BUILD)
+
     def test_objective_positions_require_matching_entity_type_and_positive_sample(self):
         build = "1.60.1.71139"
         presence = _source(build, "creatures")
