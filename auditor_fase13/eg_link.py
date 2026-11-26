@@ -77,7 +77,7 @@ EG_FIELDS = (
     "misiones_previas_observadas", "escaneo_faccion", "acceso_observado", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
     "tipo_mision", "categoria_mision", "limite_segundos", "interlocutores_observados", "posiciones_observadas", "progreso_observado",
-    "referencias_objetivo", "posiciones_reproyectadas",
+    "referencias_objetivo", "posiciones_reproyectadas", "referencias_interaccion",
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
@@ -423,4 +423,9 @@ def import_eg_link(directory):
         if xp is not None:
             source = {**entry["evidencia"]["componentes_xp"], "tabla": xp_source, "metodo": "calculada"}
             _record(missions, quest_id, {"xp_calculada": xp}, source)
-    return {"misiones": missions, "pnj": npcs, "vuelos_observados": flights}
+    roles = {"talkTo": "pnj", "gameObject": "objeto"}
+    contacts = {role: {} for role in roles.values()}
+    for (kind, entity), points in targets.items():
+        if kind in roles:
+            contacts[roles[kind]][entity] = list(points.values())
+    return {"misiones": missions, "pnj": npcs, "vuelos_observados": flights, "entidades_interaccion": contacts}

@@ -83,7 +83,7 @@ def import_traces(directory):
         elif in_canonical_table and line == "}]]":
             break
         elif in_canonical_table and (row := MAP_ROW.fullmatch(line)):
-            maps[row[1]] = {"existe": True, "estado": "forever", "build": "1.60.1.69893",
+            maps[row[1]] = {"existe": True, "area": int(row[2]), "estado": "forever", "build": "1.60.1.69893",
                             "fuente": TRACE_BASE + TRACE_MAPS + f"#L{line_number}"}
     if len(maps) != 54:
         raise ValueError("No se pudieron extraer los 54 mapas canónicos de QuestieDB 1.1.6.")
@@ -171,7 +171,9 @@ def load_catalog(path=None, trace_directory=None, quest_directory=None, eg_direc
     catalog = _merge_catalog(catalog, read_catalog(HERE / "arranques_forever.json"))
     catalog = _merge_catalog(catalog, read_catalog(HERE / "cartografia_forever.json"))
     if quest_directory is not None and eg_directory is not None:
+        from contactos import link_contacts
         from questie_rules import corroborate_inherited_fields
 
         catalog = _merge_catalog(catalog, corroborate_inherited_fields(quest_directory, catalog))
+        catalog = _merge_catalog(catalog, link_contacts(quest_directory, catalog))
     return _merge_catalog(catalog, read_catalog(path)) if path is not None else catalog

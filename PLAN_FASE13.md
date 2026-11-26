@@ -50,7 +50,7 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 56,6 %**
+**Progreso efectivo global · 56,78 %**
 
 `███████████░░░░░░░░░`
 
@@ -58,14 +58,14 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,37 % | 45,42 % | +0,05 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,42 % | 46,31 % | +0,88 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,59 % | 56,6 % | +0,01 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,6 % | 56,78 % | +0,18 pp |
 
-**Última actualización de la medición · 2026-11-26 23:27:26+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 23:37:05+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -93,6 +93,8 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Contrastar las máscaras de clase heredadas con las categorías y los títulos de las consultas de Forever. Conservar en el inventario las coincidencias y las inferencias por separado.
 - [ ] Confirmar las restricciones de clase que tienen contraste parcial mediante una ficha con requisito explícito o una oferta observada en los perfiles pertinentes. Priorizar los cambios de categoría y los casos con máscaras de varias clases.
 - [x] Cruzar por tipo e ID los objetivos del servidor con observaciones de criaturas y objetos de Forever. Reproyectar tres destinos a partir de sus coordenadas de mundo y conservarlos como contraste parcial.
+- [x] Contrastar por acción las posiciones de recogida y entrega con las trazas de entidades, las observaciones de Forever y el catálogo estático de QuestieDB. Conservar la procedencia del vínculo y de cada posición.
+- [ ] Revisar las correcciones de botín de QuestieDB y contrastar los 39 destinos candidatos identificados en el cruce preliminar por ID de objeto y entidad.
 - [ ] Verificar el punto exacto y el acceso a los destinos con contraste parcial. Para los puntos aún sin observación cercana, priorizar posiciones documentadas de iniciadores, receptores y objetivos compartidos.
 - [ ] Verificar en Forever los ocho pares de aprendizaje pendientes o parciales, con prioridad para el desbloqueo de 18960 y los efectos de recompensa de mago, paladín y chamán.
 - [x] Cruzar objetos auxiliares y exclusiones heredadas con registros de Forever y añadir las marcas expresas de repetición documentadas en el corte.
