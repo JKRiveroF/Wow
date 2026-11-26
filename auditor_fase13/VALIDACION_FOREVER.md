@@ -34,10 +34,10 @@ El calendario extraído sitúa el Festival de Invierno del 15 de diciembre de 20
 
 | ID | Rutas | Vía prioritaria | Comprobación pendiente |
 | ---: | ---: | --- | --- |
-| 1374 | 32 | Investigar oferta | Con Uthek y la rama Gelkis tras 1373, distingue la oferta heredada de los pasos de la variante 93128. Registra las condiciones de reputación y el ID mostrado. |
+| 1374 | 32 | Investigar oferta | Uthek ofrece 1373 y el servidor propone 93034 como continuación. Tras entregar 1373, registra si ofrece 1374 además de 93034, el ID mostrado y las condiciones de reputación. |
 | 1375 | 34 | Investigar oferta | Con Warug y la rama Magram tras 1371, distingue la oferta heredada de los pasos de la variante 93196. Registra las condiciones de reputación y el ID mostrado. |
 | 2358 | 4 | Investigar oferta | Busca la oferta de la Sombra de Arantir en Villa del Lago con pícaro y confirma si pide los cuernos 7906. |
-| 3504 | 22 | Investigar oferta | Busca la carta de Belgrom con Horda antes de 3505. Registra si sigue siendo la entrada a la cadena 3505 → 91497 → 91500 → 91531. |
+| 3504 | 22 | Investigar oferta | Ag'tor ofrece 3505 en dos muestras. Busca la carta con Belgrom y prueba la oferta de Ag'tor con y sin 3504 entregada. Registra si la carta sigue dando acceso a la cadena. |
 | 5201 | 24 | Investigar oferta | Comprueba a Rivern con Alianza desde nivel 58 y reputación con los Instructores de Sableinvernales. Registra si ofrece 5201 tras el primer encargo, su umbral y si se repite. |
 | 6804 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 55. Si la ofrece, registra cuándo entrega el Aspecto de Neptulon (17310) y si conserva el objetivo de 12 brazales (17309). |
 | 6805 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 55, con y sin 6804 aceptada o entregada. Registra si ofrece 6805 y pide 15 elementales de cada tipo. |

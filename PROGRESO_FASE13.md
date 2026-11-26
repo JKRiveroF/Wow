@@ -4,7 +4,7 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 13:23:37 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 13:27:26 +01:00 (Madrid)**
 
 **Tarea actual** · Verificar iniciadores y desbloqueos de 11 ofertas investigables, empezando por las cuatro sin fila en QuestV2.
 
@@ -315,11 +315,17 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Se documentaron el título, nivel 58, equipo Oficioscuro, secuencia 8978 → 8941 → 8930 y **19.900 XP base** de Una compensación justa. Las tres rutas de pícaro de la Horda muestran el canje y su etiqueta de mazmorra. El encargo se contabiliza en la XP opcional. Quedan 24 IDs activos sin XP base.
 - Pasaron **8 pruebas específicas** y la **regresión de 83 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance sigue en **40,83 %** por criterios completos.
 
-## Último bloque verificado · Ofertas y posiciones de las primeras compilaciones
+## Misiones y cartografía · Ofertas y posiciones de las primeras compilaciones
 
 - Se contrastaron **seis instantáneas** de consulta y de PNJ. Entre los 24 IDs sin oferta acreditada, 16 tienen consultas sin respuesta en los tres escaneos y ocho carecen de registro. Cada ID tiene ahora una comprobación asociada, con **11 ofertas investigables**, **cinco estacionales** y **ocho vinculadas a botín de banda**. Los requisitos de partida incluyen cantidades e IDs de los siete canjes de Ahn'Qiraj. [Matriz de oferta pendiente](auditor_fase13/VALIDACION_FOREVER.md#matriz-de-oferta-pendiente-por-misión).
 - **450 fichas** incorporaron muestras de oferta o entrega. **897 destinos** adicionales tienen una observación cercana del mismo mapa y acción. Quedan 3.837 destinos sin observación cercana o específica. Los puntos cercanos siguen pendientes de confirmación exacta. [Instantáneas y método](auditor_fase13/FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).
 - Pasaron **8 pruebas específicas** y la **regresión de 84 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
+
+## Último bloque verificado · Iniciadores y receptores
+
+- El auditor registra el PNJ u objeto por misión y compilación. **1.054 misiones activas** tienen iniciador observado y **983** tienen receptor observado. **939** tienen ambos. Las fichas sirven a todas las rutas que usan el mismo ID. [Método y evidencia](auditor_fase13/FUENTES.md#iniciadores-y-entregas-observados--26-de-noviembre-de-2026).
+- Se comprobó que Uthek ofrece 1373 y que la continuación registrada es 93034. Ag'tor aparece como iniciador de 3505 en dos compilaciones. Siguen pendientes la oferta de 1374 y la función de la carta 3504 en el acceso a la cadena. [Comprobaciones por ID](auditor_fase13/VALIDACION_FOREVER.md#matriz-de-oferta-pendiente-por-misión).
+- Pasaron **9 pruebas específicas** y la **regresión de 85 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -338,7 +344,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `c24308c`.
+La fase sigue abierta. El corte previo es `80f937a`.
 
 ## Avance individual
 

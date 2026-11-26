@@ -56,6 +56,7 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Contrastar la rama actual de Traición en Azshara y aplicar sus tres encargos de Forever en las 22 rutas Horda.
 - [x] Revisar los 25 IDs activos sin evidencia de oferta, acreditar el canje 5227 y corregir los pasos y destinos de los encargos opcionales.
 - [x] Contrastar los 24 IDs pendientes en las seis instantáneas iniciales y documentar los requisitos de prueba y las rutas afectadas por ID.
+- [x] Inventariar las interacciones de oferta y entrega por PNJ u objeto. Contrastar con ellas el inicio de Ongeku y de la cadena de Ag'tor.
 - [ ] Buscar evidencia de iniciador, variante y requisitos para las 11 ofertas investigables, con prioridad para 5201, 6848, 8319 y 9266, que carecen de fila en QuestV2. Usar las tablas y trazas ya archivadas.
 - [ ] Verificar las cinco ofertas estacionales y los ocho casos vinculados a botín de banda cuando haya cliente y se cumplan las condiciones de contenido. Confirmar las cantidades heredadas de los siete canjes de Ahn'Qiraj.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.

@@ -37,6 +37,8 @@ Las siete instantáneas de misión de la [revisión 71139 de Efficient Games](ht
 
 Los archivos `quest_scan` y `npcs` de 70790, 70862 y 70888 son opcionales y usan el mismo patrón. Amplían las muestras de PNJ y el historial de consultas sin respuesta. [Instantáneas y alcance](FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).
 
+`interlocutores_observados` reúne iniciadores (`A`) y receptores (`T`) por misión, con el tipo de entidad, su ID y la compilación. Las coordenadas y los requisitos de la misión se consultan en sus propios campos. [Iniciadores y entregas](FUENTES.md#iniciadores-y-entregas-observados--26-de-noviembre-de-2026).
+
 El [CSV QuestInfo de Forever 1.60.1.71091](https://wago.tools/db2/QuestInfo/csv?build=1.60.1.71091) es opcional. Guárdalo como `QuestInfo-1.60.1.71091.csv` junto a los JSON de Efficient Games. Con él, el auditor identifica las categorías expresas de élite, mazmorra, banda y JcJ. Los límites de tiempo se leen de las consultas de misión cuando incluyen ese dato.
 
 Con `--datos-questie` y `--datos-eg`, puedes añadir dos fuentes opcionales para el contraste de relaciones. Guarda la [base Classic de QuestieDB 1.1.6](https://raw.githubusercontent.com/Questie/QuestieDB/v1.1.6/data/Classic/classicQuestDB.lua) como `classicQuestDB.lua` y las [correcciones heredadas por Forever](https://raw.githubusercontent.com/Questie/QuestieDB/v1.1.6/src/corrections/Forever/legacy/classicQuestFixes.lua) como `legacyForeverClassicQuestFixes.lua` en `cache_fuentes/`. El auditor verifica ambos hashes. Para los seguimientos cruza el enlace heredado, la sugerencia del servidor y el historial del sucesor. Para los requisitos de una sola entrega cruza la lista heredada con la observación de oferta en las trazas de QuestieDB.

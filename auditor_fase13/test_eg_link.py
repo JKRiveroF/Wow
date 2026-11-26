@@ -77,6 +77,19 @@ class EGLinkTests(unittest.TestCase):
         self.assertEqual(_coordinate_result(mission, "T", (2521, 45.2, 45.2)), "investigacion")
         self.assertEqual(_coordinate_result(mission, "C", (2522, 45.2, 45.2)), "investigacion")
 
+    def test_observed_offer_and_turn_in_keep_entities_without_coordinates(self):
+        source = {"estado": "forever", "fuente": "interacciones", "build": "1.60.1.70888"}
+        missions = {}
+        _import_npcs(missions, {"npcs": {"100": {"sources": 1, "offers": {"7": {}}, "name": "NPC"}},
+                                "objects": {"100": {"sources": 1, "takes": {"7": {}}, "name": "Chest"}}}, source)
+        mission = missions["7"]
+        self.assertEqual(mission["interlocutores_observados"], {
+            "A": [{"tipo": "pnj", "id": 100, "nombre": "NPC", "build": "1.60.1.70888"}],
+            "T": [{"tipo": "objeto", "id": 100, "nombre": "Chest", "build": "1.60.1.70888"}],
+        })
+        self.assertNotIn("posiciones_observadas", mission)
+        self.assertNotIn("facciones", mission)
+
     def test_multiple_snapshots_preserve_actions_positions_and_turn_in_context(self):
         older = {"estado": "forever", "fuente": "primera", "build": "1.60.1.70959"}
         newer = {"estado": "forever", "fuente": "segunda", "build": "1.60.1.71037"}

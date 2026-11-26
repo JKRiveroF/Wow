@@ -53,7 +53,7 @@ EG_FIELDS = (
     "objetos_por_botin", "habilidades_recompensa", "componentes_xp", "entregas_observadas",
     "misiones_previas_observadas", "escaneo_faccion", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
-    "tipo_mision", "limite_segundos", "posiciones_observadas", "progreso_observado",
+    "tipo_mision", "limite_segundos", "interlocutores_observados", "posiciones_observadas", "progreso_observado",
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
@@ -219,17 +219,23 @@ def _unique_rows(previous, samples):
 
 def _import_npcs(missions, data, source, npcs=None):
     npcs = {} if npcs is None else npcs
-    linked = {}
-    for section in ("npcs", "objects"):
+    linked_positions, linked_contacts = {}, {}
+    for section, kind in (("npcs", "pnj"), ("objects", "objeto")):
         for key, row in data[section].items():
-            if not row.get("sources") or not (positions := _positions(row.get("positions", []))):
+            if not row.get("sources"):
                 continue
-            if section == "npcs":
+            positions = _positions(row.get("positions", []))
+            if section == "npcs" and positions:
                 _record_observations(npcs, key, "posiciones_observadas", positions, source)
+            contact = {"tipo": kind, "id": int(key), "nombre": row.get("name"), "build": source.get("build")}
             for field, action in (("offers", "A"), ("takes", "T")):
                 for quest_id in row.get(field, {}):
-                    linked.setdefault(quest_id, {}).setdefault(action, []).extend(positions)
-    for quest_id, actions in linked.items():
+                    linked_contacts.setdefault(quest_id, {}).setdefault(action, []).append(contact)
+                    if positions:
+                        linked_positions.setdefault(quest_id, {}).setdefault(action, []).extend(positions)
+    for quest_id, actions in linked_contacts.items():
+        _record_observations(missions, quest_id, "interlocutores_observados", actions, source)
+    for quest_id, actions in linked_positions.items():
         _record_observations(missions, quest_id, "posiciones_observadas", actions, source)
     return npcs
 
