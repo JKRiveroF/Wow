@@ -32,6 +32,9 @@ NO_XP_TEXT_QUESTS = {
     *range(4381, 4387), *range(4481, 4485), *range(4801, 4808),
     117, 2881, 3375, 3644, 3645, 4467, 4970, 6546, 6547, 6581, 7942, 8324,
     8428, 8433, 8437, 8441, 8492, 8767, 8768, 8769, 8846, 8851, 8852, 8853, 8854, 8867,
+    349, 410, 431, 619, 779, 841, 1130, 1192, 1422, 1559, 1789, 2607, 3421, 3502,
+    4041, 4324, 5059, 5892, 6781, 6846, 6881, 6941, 6942, 6943, 6982, 7026, 7027,
+    7342, 7386, 7601, 8249, 9415,
 }
 SALVE_QUESTS = set(range(4103, 4113)) | set(range(5882, 5892))
 SALVE_ORIGINALS = {
@@ -219,7 +222,7 @@ class IntegridadTest(unittest.TestCase):
                 found.add(quest)
                 total += 1
         self.assertEqual(found, NO_XP_TEXT_QUESTS)
-        self.assertEqual(total, 1617)
+        self.assertEqual(total, 2061)
 
     def test_felwood_first_turn_ins_and_repeatables_follow_the_right_faction(self):
         from mission_rules import load_mission_localization

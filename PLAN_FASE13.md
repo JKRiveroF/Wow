@@ -40,7 +40,8 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [ ] Colocar la cadena opcional de Kum'isha y revisar los 29 IDs activos sin evidencia de oferta.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
 - [x] Corregir 26 encargos de canje, reputación, eventos y JcJ que aparecían como refuerzos de XP.
-- [ ] Revisar los 32 refuerzos restantes y los requisitos de perfil. Buscar evidencia de traducción para los títulos que siguen sin fuente.
+- [x] Contrastar y corregir los 32 refuerzos restantes con XP base cero. Distinguir pasos de cadena, de transporte, de clase y de Alterac.
+- [ ] Revisar los requisitos de perfil y buscar evidencia para los títulos que siguen sin fuente.
 - [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.
 - [ ] Actualizar las novedades ES/EN y preparar el ZIP definitivo con los archivos distribuibles, tras superar los criterios de cierre local.
 - [ ] Verificar la sincronización del cierre únicamente en la rama de desarrollo con `origin`. La fusión y las Releases quedan pendientes de autorización expresa.
