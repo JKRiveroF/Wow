@@ -66,7 +66,7 @@ EG_FIELDS = (
     "objetos_por_botin", "habilidades_recompensa", "aprendizaje_recompensa", "componentes_xp", "entregas_observadas",
     "misiones_previas_observadas", "escaneo_faccion", "acceso_observado", "opciones_dialogo_observadas", "usos_objetos_observados",
     "xp_calculada", "consultas_sin_respuesta",
-    "tipo_mision", "limite_segundos", "interlocutores_observados", "posiciones_observadas", "progreso_observado",
+    "tipo_mision", "categoria_mision", "limite_segundos", "interlocutores_observados", "posiciones_observadas", "progreso_observado",
 )
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
@@ -74,6 +74,8 @@ NEW_BUILD = "1.60.1.71139"
 RECENT_REVISION_BUILDS = {"1.60.1.70790", "1.60.1.70840", "1.60.1.70862", "1.60.1.70888", NEW_BUILD}
 QUEST_INFO_HASH = "06e1f7250d8ad8d042516ebae1fa4a78fa9307cab0fe62daf19a73331518fd4b"
 QUEST_INFO_SOURCE = f"https://wago.tools/db2/QuestInfo/csv?build={XP_BUILD}"
+QUEST_SORT_HASH = "9cc9cbe418ab27ecc218e4699180520471eb3521514fe0b6b25e591e86a94a3f"
+QUEST_SORT_SOURCE = f"https://wago.tools/db2/QuestSort/csv?build={NEW_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
 RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
 PLAYABLE_PROFILES = frozenset(RACES.values())
@@ -133,13 +135,17 @@ def _read_xp_table(directory):
 
 
 def _read_quest_info(directory):
-    path = directory / f"QuestInfo-{XP_BUILD}.csv"
+    return _read_optional_table(directory, "QuestInfo", XP_BUILD, QUEST_INFO_HASH, "InfoName_lang")
+
+
+def _read_optional_table(directory, table, build, checksum, field):
+    path = directory / f"{table}-{build}.csv"
     if not path.is_file():
         return {}
     raw = path.read_bytes()
-    if sha256(raw).hexdigest() != QUEST_INFO_HASH:
-        raise ValueError(f"SHA-256 inesperado en {path}. Se requiere QuestInfo de Forever {XP_BUILD}.")
-    return {int(row["ID"]): row["InfoName_lang"] for row in csv.DictReader(raw.decode("utf-8-sig").splitlines())}
+    if sha256(raw).hexdigest() != checksum:
+        raise ValueError(f"SHA-256 inesperado en {path}. Se requiere {table} de Forever {build}.")
+    return {int(row["ID"]): row[field] for row in csv.DictReader(raw.decode("utf-8-sig").splitlines())}
 
 
 def _base_xp(entry, table):
@@ -330,6 +336,7 @@ def import_eg_link(directory):
     profiles = {}
     xp_table, xp_source = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
+    quest_sort = _read_optional_table(directory, "QuestSort", NEW_BUILD, QUEST_SORT_HASH, "SortName_lang")
     learning = load_learning(directory)
     extras = {key for key in EXTRA_HASHES if (directory / f"eg-1.60.1.{key[0]}-{key[1]}.json").is_file()}
     datasets = sorted(HASHES.keys() | extras, key=lambda key: (key[1] != "quests.enUS", *key))
@@ -342,6 +349,10 @@ def import_eg_link(directory):
                 _record(missions, quest_id, _quest_values(row), source)
                 if values := _quest_type(row, quest_info):
                     _record(missions, quest_id, values, {**source, "tabla": QUEST_INFO_SOURCE})
+                category = row.get("categoryId")
+                if name := quest_sort.get(category):
+                    _record(missions, quest_id, {"categoria_mision": {"id": category, "nombre": name, "titulo_en": row["title"]}},
+                            {**source, "tabla": QUEST_SORT_SOURCE})
         elif dataset == "npcs":
             _import_npcs(missions, data, source, npcs)
         elif dataset == "objectives":

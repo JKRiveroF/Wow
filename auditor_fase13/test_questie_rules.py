@@ -16,6 +16,46 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 class QuestieRulesTest(unittest.TestCase):
+    def test_class_contrast_needs_matching_category_and_quest_identity_and_never_sets_a_gate(self):
+        base = """    ['name'] = 1,
+    ['requiredClasses'] = 2,
+[7] = {"The Mage's Task",128},
+[8] = {"Another Task",128},
+[9] = {"The Mage's Task",129},
+[10] = {"The Mage's Task",16384},
+[11] = {"The Mage's Task",128},
+[12] = {"The Mage's Task",128},
+[13] = {"The Mage's Task",0},
+"""
+        files = {CLASSIC_DB: base, LEGACY_FIXES: """        [13] = {
+            [questKeys.requiredClasses] = classIDs.NONE,
+        },
+function C:LoadFactionFixes()
+""", BASE: "", RELATIONS: "", FIXES: """function C:LoadDynamic()
+        [11] = {
+            [questKeys.requiredClasses] = classIDs.WARRIOR,
+        },
+"""}
+        entry = {"categoria_mision": {"id": 161, "nombre": "Mage", "titulo_en": "The Mage’s Task"},
+                 "evidencia": {"categoria_mision": {"estado": "forever", "build": "1.60.1.71139",
+                                                    "fuente": "consulta", "tabla": "QuestSort"}}}
+        catalog = {"misiones": {str(quest): entry for quest in range(7, 14)}}
+        catalog["misiones"]["12"] = {**entry, "clases": ["MAGE"]}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            for name, content in files.items():
+                (directory / (LEGACY_CACHE if name == LEGACY_FIXES else Path(name).name)).write_bytes(content.encode())
+            with patch("questie_rules.HASHES", {name: sha256(value.encode()).hexdigest() for name, value in files.items()}):
+                result = corroborate_inherited_fields(directory, catalog)
+        partial = result["contraste_clases"]["7"]
+        self.assertEqual(partial["estado"], "parcial")
+        self.assertEqual(partial["clases_heredadas"], ["MAGE"])
+        self.assertEqual(partial["fuentes_adicionales"], ["consulta", "QuestSort"])
+        self.assertEqual({quest: proof["estado"] for quest, proof in result["contraste_clases"].items()},
+                         {"7": "parcial", "8": "inferencia", "9": "inferencia", "13": "inferencia"})
+        self.assertEqual(result["contraste_clases"]["13"]["clases_heredadas"], [])
+        self.assertEqual(result["misiones"], {})
+
     def test_inherited_spanish_compares_labels_without_counting_as_a_live_title(self):
         data = '[7] = {"Misión de la costa", {}},\n'.encode()
         with tempfile.TemporaryDirectory() as temporary:

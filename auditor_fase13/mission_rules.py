@@ -9,6 +9,8 @@ import unicodedata
 
 PREFIXES = {"Recoger": "A", "Objetivo": "C", "Entregar": "T"}
 CONFIRMED = {"forever", "cliente"}
+CLASS_MASKS = {"WARRIOR": 1, "PALADIN": 2, "HUNTER": 4, "ROGUE": 8, "PRIEST": 16,
+               "SHAMAN": 64, "MAGE": 128, "WARLOCK": 256, "DRUID": 1024}
 PHASE_TWO_FIELDS = (
     "existe", "nombre_es", "nombre_en", "nivel_minimo", "prerrequisitos", "excluyentes",
     "seguimientos", "repetible", "objetos", "desbloqueos", "grupo", "elite",

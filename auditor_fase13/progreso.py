@@ -32,7 +32,7 @@ CLIENT_TASKS = {
     "6.cliente": ("6.acceso", "6.desbloqueos", "6.traducciones"),
 }
 CLIENT_REVIEWS = {"5.ahorro", "6.aprendizaje", "7.caso_cliente"} | {part for parts in CLIENT_TASKS.values() for part in parts}
-TWO_STAGE_FIELDS = {"nombre_es", "nombre_en", "razas", "facciones"}
+TWO_STAGE_FIELDS = {"nombre_es", "nombre_en", "clases", "razas", "facciones"}
 LEARNING_CONFIRMED = {"efecto_de_aprendizaje", "aprendizaje_por_habilidad"}
 LEARNING_CONTRASTED = LEARNING_CONFIRMED | {"indicio_de_recompensa", "destino_de_aprendizaje_pendiente"}
 
@@ -109,6 +109,8 @@ def _field_state(mission, field, conditional):
         token = "raza" if field == "razas" else "faccion"
         if any(row.get(token) for row in samples):
             return "parcial"
+    if field == "clases" and (contrast := mission.get("contraste_clase_heredada")):
+        return contrast["estado"]
     related = {"prerrequisitos": "misiones_previas_observadas", "seguimientos": "siguiente_sugerida"}
     if related.get(field) in evidence or any(row.get("campo") == field for row in mission["indicios"]):
         return "inferencia"

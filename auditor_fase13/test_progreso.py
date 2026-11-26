@@ -39,6 +39,14 @@ class ProgressTests(unittest.TestCase):
         mission["evidencia"]["razas"] = {"valor": ["Skyborne"]}
         self.assertEqual(_field_state(mission, "razas", False), "confirmada")
 
+    def test_class_contrast_is_partial_until_direct_evidence_exists(self):
+        mission = {"evidencia": {}, "indicios": [], "contraste_clase_heredada": {"estado": "inferencia"}}
+        self.assertEqual(_field_state(mission, "clases", False), "inferencia")
+        mission["contraste_clase_heredada"]["estado"] = "parcial"
+        self.assertEqual(_field_state(mission, "clases", False), "parcial")
+        mission["evidencia"]["clases"] = {"valor": ["MAGE"]}
+        self.assertEqual(_field_state(mission, "clases", False), "confirmada")
+
     def test_learning_keeps_one_pair_open_until_all_its_route_profiles_are_resolved(self):
         claim = {"mision": 1, "hechizo": 2, "rutas_por_estado": {"pendiente": ["a", "b"]}}
         self.assertEqual(_learning_state(claim, set(), set()), "investigacion")

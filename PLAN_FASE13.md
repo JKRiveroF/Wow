@@ -38,7 +38,7 @@ Cada bloque pondera el efectivo de sus criterios por la misma cantidad de unidad
 | Clase, raza y facción | Evidencia de clase, raza y facción por misión, aprendizajes por par único de misión y hechizo, verificación de la matriz y arranques, y pruebas por ruta de acceso, desbloqueos y traducciones. |
 | Regresión y preparación | Pruebas locales ejecutadas y superadas, casos del protocolo de cliente, borradores ES/EN y protocolo, validación del paquete y sincronización del cierre. |
 
-La evidencia **confirmada** supera todas las etapas de la unidad. Los títulos ES/EN, las coordenadas, el acceso por raza y facción y el aprendizaje tienen dos comprobaciones por unidad, una de contraste y otra de confirmación. Un cotejo heredado que coincide, un título de Forever con una discrepancia visible, una posición cercana, una entrega observada con el perfil documentado o un indicio de recompensa supera solo el contraste. Las entregas observadas acreditan únicamente la raza y facción que constan en la muestra. La confirmación exige evidencia del alcance de la condición o del aprendizaje. Una inferencia o una comprobación pendiente queda registrada sin superar ninguna etapa. Las correcciones se reflejan en la concordancia acreditada y las pruebas superadas. Los datos compartidos se contabilizan una vez por campo y unidad, aunque aparezcan en varias rutas. Los pendientes agrupados del auditor y las unidades específicas del protocolo se presentan por separado.
+La evidencia **confirmada** supera todas las etapas de la unidad. Los títulos ES/EN, las coordenadas, el acceso por clase, raza y facción y el aprendizaje tienen dos comprobaciones por unidad, una de contraste y otra de confirmación. Superan el contraste un cotejo heredado de título, una posición cercana, una entrega observada con el perfil documentado o un indicio de recompensa. En clase se exige una máscara heredada de una única clase que coincida con la categoría de Forever y el título de la misma misión. Las entregas observadas acreditan únicamente la raza y facción que constan en la muestra. La confirmación exige evidencia del alcance de la condición o del aprendizaje. Una inferencia o una comprobación pendiente queda registrada sin superar ninguna etapa. Las correcciones se reflejan en la concordancia acreditada y las pruebas superadas. Los datos compartidos se contabilizan una vez por campo y unidad, aunque aparezcan en varias rutas. Los pendientes agrupados del auditor y las unidades específicas del protocolo se presentan por separado.
 
 El corte que incorpora perfiles de entrega y aprendizaje conserva la comparación con el último corte publicado. Su variación efectiva incluye la ampliación de la medición. El certificado mantiene sus unidades y sus criterios.
 
@@ -50,7 +50,7 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 56,56 %**
+**Progreso efectivo global · 56,59 %**
 
 `███████████░░░░░░░░░`
 
@@ -61,11 +61,11 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 | Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,37 % | 45,37 % | 0 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,76 % | 73,92 % | +5,16 pp |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 73,92 % | 74,21 % | +0,28 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,04 % | 56,56 % | +0,52 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,56 % | 56,59 % | +0,03 pp |
 
-**Última actualización de la medición · 2026-11-26 22:59:35+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 23:08:07+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -90,6 +90,8 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Contrastar los requisitos múltiples de 737 y 1119. Validar la entrega alternativa por facción y la acumulación de dos entregas en 33 pares de misión y ruta.
 - [x] Contrastar los 118 pares de misión y habilidad de las rutas con los efectos de la recompensa. Corregir los orígenes y los textos de las siete rutas de cazador.
 - [x] Incorporar al efectivo las entregas contrastadas por raza y facción y los pares de aprendizaje. Separar en el protocolo las confirmaciones de aprendizaje que requieren Forever.
+- [x] Contrastar las máscaras de clase heredadas con las categorías y los títulos de las consultas de Forever. Conservar en el inventario las coincidencias y las inferencias por separado.
+- [ ] Confirmar las restricciones de clase que tienen contraste parcial mediante una ficha con requisito explícito o una oferta observada en los perfiles pertinentes. Priorizar los cambios de categoría y los casos con máscaras de varias clases.
 - [ ] Verificar en Forever los ocho pares de aprendizaje pendientes o parciales, con prioridad para el desbloqueo de 18960 y los efectos de recompensa de mago, paladín y chamán.
 - [x] Cruzar objetos auxiliares y exclusiones heredadas con registros de Forever y añadir las marcas expresas de repetición documentadas en el corte.
 - [x] Sustituir los textos genéricos por instrucciones ES/EN en las 17 misiones con objetos auxiliares contrastados que todavía los tenían.

@@ -4,7 +4,7 @@ from collections import Counter, defaultdict
 import csv
 from hashlib import sha256
 
-from mission_rules import _confirmed, _entry, _id, _list
+from mission_rules import CLASS_MASKS, _confirmed, _entry, _id, _list
 
 
 BUILD = "1.60.1.71139"
@@ -14,8 +14,6 @@ TABLES = {
 }
 EFFECT_SOURCE = f"https://wago.tools/db2/SpellEffect/csv?build={BUILD}"
 SKILL_SOURCE = f"https://wago.tools/db2/SkillLineAbility/csv?build={BUILD}"
-CLASS_MASKS = {"WARRIOR": 1, "PALADIN": 2, "HUNTER": 4, "ROGUE": 8, "PRIEST": 16,
-               "SHAMAN": 64, "MAGE": 128, "WARLOCK": 256, "DRUID": 1024}
 
 
 def _rows(directory, table):

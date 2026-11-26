@@ -5,6 +5,8 @@ import re
 from hashlib import sha256
 from pathlib import Path
 
+from mission_rules import CLASS_MASKS, _norm
+
 SOURCE = "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/"
 BASE = "generated/foreverBaseQuest.lua"
 FIXES = "foreverQuestFixes.lua"
@@ -31,7 +33,8 @@ LINK_FIELDS = {"nextQuestInChain": "seguimientos", "disabledByQuest": "desactiva
                "availableStartingWith": "disponible_desde", "availableUntilCompleted": "disponible_hasta_entrega"}
 PROFESSION = re.compile(r"\{\s*profKeys\.([A-Z_]+)\s*,\s*([1-9]\d*)\s*\}")
 RELATION_FIELDS = {"preQuestGroup", "preQuestSingle", "exclusiveTo", "breadcrumbs", "nextQuestInChain"}
-INHERITED_FIELDS = {"preQuestGroup", "preQuestSingle", "nextQuestInChain", "exclusiveTo", "requiredSourceItems"}
+INHERITED_FIELDS = {"preQuestGroup", "preQuestSingle", "nextQuestInChain", "exclusiveTo", "requiredSourceItems",
+                    "name", "requiredClasses"}
 CLASSIC_COLUMN = re.compile(r"^ +\['(\w+)'\] = (\d+),")
 TRACE_ROW = re.compile(r"^ {8}(?:-- )?\[(\d+)\]\s*=\s*\{")
 TRACE_REQUIREMENT = re.compile(r"^ {12}-- \[questKeys\.(preQuestSingle|preQuestGroup)\] = (\{[\d, ]+\}),\s*$")
@@ -51,7 +54,6 @@ RACES = {
     "ORC": ("Horde", "Orc"), "UNDEAD": ("Horde", "Scourge"), "TAUREN": ("Horde", "Tauren"),
     "TROLL": ("Horde", "Troll"), "SKYBORNE_HORDE": ("Horde", "Skyborne"),
 }
-CLASSES = {"DRUID", "HUNTER", "MAGE", "PALADIN", "PRIEST", "ROGUE", "SHAMAN", "WARLOCK", "WARRIOR"}
 
 
 def _read(directory, name, cache_name=None):
@@ -119,7 +121,7 @@ def _decode(field, value):
     if field == "specialFlags" and value in ("0", "specialFlags.NONE", "specialFlags.REPEATABLE"):
         return {"repetible": value == "specialFlags.REPEATABLE"}
     if field == "requiredClasses":
-        classes = _mask(value, "classIDs.", {name: {name} for name in CLASSES} | {"NONE": set()})
+        classes = _mask(value, "classIDs.", {name: {name} for name in CLASS_MASKS} | {"NONE": set()})
         return {"clases": sorted(classes)} if classes is not None else {}
     if field == "requiredRaces":
         groups = {name: {profile} for name, profile in RACES.items()}
@@ -257,6 +259,29 @@ def _traced_exclusions(lines):
                     yield quest, sorted(ids), number
 
 
+def _class_contrast(fields, entry):
+    mask, source = fields.get("requiredClasses", ("", ""))
+    if mask.isdecimal():
+        bits = int(mask)
+        if not bits or bits & ~sum(CLASS_MASKS.values()):
+            return None
+        classes = sorted(name for name, bit in CLASS_MASKS.items() if bits & bit)
+    else:
+        classes = _decode("requiredClasses", mask).get("clases")
+        if classes is None:
+            return None
+    result = {"estado": "inferencia", "clases_heredadas": classes, "fuente": source}
+    category = entry.get("categoria_mision", {})
+    proof = entry.get("evidencia", {}).get("categoria_mision", {})
+    if proof.get("estado") != "forever" or not category:
+        return result
+    result.update(categoria=category, build=proof["build"], fuentes_adicionales=[proof["fuente"], proof["tabla"]])
+    original_title = _decode("name", fields.get("name", ("", ""))[0]).get("nombres", {}).get("en")
+    if original_title and _norm(category["titulo_en"]) == _norm(original_title) and classes == [category["nombre"].upper()]:
+        result["estado"] = "parcial"
+    return result
+
+
 def corroborate_inherited_fields(directory, catalog):
     """Contrasta los campos heredados con observaciones equivalentes de Forever."""
     if not all((directory / name).is_file() for name in (Path(CLASSIC_DB).name, LEGACY_CACHE)):
@@ -264,6 +289,7 @@ def corroborate_inherited_fields(directory, catalog):
     missions = catalog.get("misiones", {})
     inherited = _classic_fields(directory)
     confirmed = {}
+    class_contrasts = {}
 
     def register(quest, field, value, proof):
         record = confirmed.setdefault(quest, {"evidencia": {}})
@@ -323,6 +349,9 @@ def corroborate_inherited_fields(directory, catalog):
 
     for quest, fields in inherited.items():
         entry = missions.get(quest, {})
+        if quest not in dynamic and (quest, "requiredClasses") not in replaced and "clases" not in entry:
+            if contrast := _class_contrast(fields, entry):
+                class_contrasts[quest] = contrast
         if quest in dynamic or (quest, "requiredSourceItems") in replaced or "objetos" in entry:
             continue
         baseline, source = fields.get("requiredSourceItems", ("", ""))
@@ -344,4 +373,4 @@ def corroborate_inherited_fields(directory, catalog):
                                                 if proofs[item]["fuente"] != first["fuente"])]))
         proof = {**first, "metodo": "objetos_auxiliares_contrastados", "fuentes_adicionales": sources}
         register(quest, "objetos", items, proof)
-    return {"misiones": confirmed}
+    return {"misiones": confirmed, "contraste_clases": class_contrasts}

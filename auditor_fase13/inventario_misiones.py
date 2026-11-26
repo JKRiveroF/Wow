@@ -49,6 +49,7 @@ def inventory_missions(routes, catalog, quest_v2=None):
     fields_to_check = (*FIELDS, *EG_FIELDS) if "vuelos_observados" in catalog else FIELDS
     candidates = catalog.get("candidatos_por_mision", {})
     inherited = catalog.get("titulos_es_heredados", {})
+    class_contrasts = catalog.get("contraste_clases", {})
     for quest in sorted(quest_ids):
         lookup = missions[quest]
         entry = _entry(catalog, quest)
@@ -70,6 +71,8 @@ def inventory_missions(routes, catalog, quest_v2=None):
         record = {"id": quest, "rutas": sorted(lookup["rutas"]), "acciones": dict(lookup["acciones"]),
                   "evidencia": fields, "pendientes_de_fuente": [field for field in FIELDS if field not in fields],
                   "posiciones": positions, "indicios": candidates.get(str(quest), [])}
+        if "clases" not in fields and (contrast := class_contrasts.get(str(quest))):
+            record["contraste_clase_heredada"] = contrast
         if "nombre_es" not in fields and (title := inherited.get(str(quest))):
             labels = lookup["titulos_guia"]
             different = sorted(label for label in labels if _norm(label) != _norm(title["valor"]))
