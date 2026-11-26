@@ -43,6 +43,9 @@ OPTIONAL_TEXT_QUESTS = {
     2358, 5201, 5227, 6804, 6805, 6821, 6848, 7622, 8319, 8353, 8355, 8356,
     8556, 8689, 8691, 8692, 8693, 8694, 8696, 8788, 8863, 9266,
 }
+AUXILIARY_TEXT_QUESTS = {
+    498, 1016, 1026, 1089, 1126, 1136, 1195, 1846, 3062, 3528, 3924, 4005, 4293, 4294, 5051, 5149, 5526,
+}
 SALVE_ORIGINALS = {
     **{quest: quest - 1779 for quest in range(5882, 5887)},
     **{quest: quest - 5 for quest in range(5887, 5892)},
@@ -127,6 +130,8 @@ def _route_without_reviewed_edits(source):
             line = re.sub(r"(\bq\s*=\s*)9368([56])\b", lambda m: m[1] + ("2521" if m[2] == "5" else "2522"), line)
         if refuerzo and int(refuerzo[1]) in NO_XP_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
+        if refuerzo and int(refuerzo[1]) in AUXILIARY_TEXT_QUESTS:
+            line = re.sub(r't = "[^"]+"', 't = "<materiales revisados>"', line, count=1)
         if refuerzo and int(refuerzo[1]) in OPTIONAL_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<misión opcional revisada>"', line, count=1)
             if int(refuerzo[1]) == 5227:
@@ -305,6 +310,29 @@ class IntegridadTest(unittest.TestCase):
         self.assertEqual(found, OPTIONAL_TEXT_QUESTS)
         self.assertEqual(count, 307)
         self.assertEqual(gifts, 6)
+
+    def test_auxiliary_item_instructions_are_shared_and_bilingual(self):
+        from mission_rules import load_mission_localization
+        from world_rules import XP_OPCIONAL
+
+        localized = load_mission_localization(ADDON)["por_nombre"]
+        found = {}
+        total = 0
+        for file in self.routes:
+            for text, value in re.findall(r't = "([^"]+)".*-- REFUERZO_97 q=(\d+)$', _source(file.split("/", 1)[1]), re.M):
+                quest = int(value)
+                if quest not in AUXILIARY_TEXT_QUESTS:
+                    continue
+                self.assertEqual(text, found.setdefault(quest, text))
+                self.assertEqual(bool(XP_OPCIONAL.match(text)), quest in (1846, 3528, 5526))
+                self.assertIn(text, localized)
+                self.assertNotIn("Recógela, cumple los objetivos y entrégala", text)
+                total += 1
+        self.assertEqual(set(found), AUXILIARY_TEXT_QUESTS)
+        self.assertEqual(total, 406)
+        self.assertIn("Flame of Uzel", localized[found[1136]])
+        self.assertIn("stay there until the totem forms", localized[found[4005]])
+        self.assertIn("seal it in the reliquary", localized[found[5526]])
 
     def test_felwood_first_turn_ins_and_repeatables_follow_the_right_faction(self):
         from mission_rules import load_mission_localization

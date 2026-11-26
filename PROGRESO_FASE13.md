@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 13:01:17 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 13:07:06 +01:00 (Madrid)**
 
-**Tarea actual** · Revisar las condiciones de los 24 IDs sin oferta acreditada y las instrucciones sobre los objetos auxiliares confirmados.
+**Tarea actual** · Contrastar los 24 IDs sin oferta acreditada y los requisitos especiales que todavía dependen de evidencia adicional.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -298,11 +298,16 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - El corte mantiene **24 IDs activos** sin evidencia positiva de oferta. Se conserva la comprobación directa de los casos estacionales y de banda cuando se habiliten. La cercanía de un destino y la XP efectiva de una entrega quedan en campos separados de la posición exacta y la XP base.
 - Pasaron **14 pruebas específicas** y la **regresión de 79 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
 
-## Último bloque verificado · Objetos auxiliares, canjes y exclusiones
+## Objetos auxiliares, canjes y exclusiones · corte verificado
 
 - Se documentaron objetos auxiliares en **28 misiones** mediante coincidencia con los campos de entrega o botín del servidor. Se acreditó la exclusión de las ofertas 3681 y 2998 de Libro de la Divinidad. También se registraron **24 misiones repetibles** con indicador explícito, incluidos los diez canjes de Frondavil. [Método y fuentes](auditor_fase13/FUENTES.md#objetos-auxiliares-canjes-y-exclusiones--26-de-noviembre-de-2026).
 - El inventario tiene **43 fichas con objetos auxiliares**, **45 con exclusiones** y **26 con repetición acreditada**. Estos datos se incorporan por ID a todas sus rutas.
 - Pasaron **17 pruebas específicas** y la **regresión de 80 pruebas**. Las 47 rutas mantienen **0 errores y 56 avisos** de Kum’isha, con **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
+
+## Último bloque verificado · Instrucciones de materiales
+
+- Los **406 pasos** de 17 misiones en las 47 rutas muestran cómo conseguir, usar o combinar los objetos auxiliares. Se añadieron las instrucciones ES/EN de Aquementas, El Cubil, Faucehielo y otros encargos. Hakkar, los fragmentos de La Masacre y las tibias de guerrero quedan como opcionales en la estimación de XP. [Objetivos y fuentes](auditor_fase13/FUENTES.md#instrucciones-de-uso-de-materiales--26-de-noviembre-de-2026).
+- Pasaron **2 pruebas específicas** y la **regresión de 81 pruebas**. La prueba de integridad comprueba que la actualización se limita al texto de los pasos indicados. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos se mantiene en **40,83 %**.
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -321,7 +326,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `ae1eb64`.
+La fase sigue abierta. El corte previo es `71e42e4`.
 
 ## Avance individual
 
