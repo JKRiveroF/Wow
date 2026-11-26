@@ -1,5 +1,22 @@
 {
   "fecha_consulta_cartografia": "2026-11-25",
+  "relaciones_agrupamiento": {
+    "5381:5386": {
+      "fecha_consulta": "2026-11-26",
+      "detalle": "Las capas de QuestieDB consultadas mantienen por separado el encargo del cristal y el del pescado. La entrega de la caja abre 5581. El canje 5421 proporciona el pescado y no usa ni entrega el pico de 5381.",
+      "fuentes": ["https://github.com/Questie/QuestieDB/blob/v1.1.6/data/Classic/classicQuestDB.lua#L2501-L2514", "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/legacy/classicQuestFixes.lua#L3405-L3443", "https://zephras.com/forever/enUS/quest/5381/", "https://zephras.com/forever/enUS/quest/5386/"]
+    },
+    "698:1424": {
+      "fecha_consulta": "2026-11-26",
+      "detalle": "Los dos encargos tienen iniciadores, objetos y cadenas separados en los datos consultados. Los flancos se entregan para abrir 699 y los artefactos para abrir 1429.",
+      "fuentes": ["https://github.com/Questie/QuestieDB/blob/v1.1.6/data/Classic/classicQuestDB.lua#L724-L725", "https://github.com/Questie/QuestieDB/blob/v1.1.6/data/Classic/classicQuestDB.lua#L1285-L1290", "https://github.com/JIVESCORP/eg-link-output-wowf/blob/f25e0efde0c8490e4e6f356a68f7a81a703fa21c/data/wowf/1.60.1.70959/quests.enUS.json"]
+    },
+    "848:924": {
+      "fecha_consulta": "2026-11-26",
+      "detalle": "848 se enlaza con 853 y 924 se abre tras 809. La piedra de 924 pertenece a la rama de Ak'Zeloth. El objetivo de esporas se recoge para Helbrim y no consume esa piedra. Queda por medir el tiempo restante al llegar al altar.",
+      "fuentes": ["https://github.com/Questie/QuestieDB/blob/v1.1.6/data/Classic/classicQuestDB.lua#L853-L862", "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/legacy/classicQuestFixes.lua#L695-L697", "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/legacy/classicQuestFixes.lua#L779-L781", "https://zephras.com/forever/enUS/quest/924/"]
+    }
+  },
   "misiones": {
     "3505": {
       "posiciones": {"A": [{"m": 1447, "x": 22.3, "y": 51.5}], "T": [{"m": 1447, "x": 59.5, "y": 31.3}]},

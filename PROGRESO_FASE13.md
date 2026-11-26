@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 08:21:00 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 08:27:50 +01:00 (Madrid)**
 
-**Tarea actual** · Cerrar las relaciones de las tres ventanas de agrupamiento con la evidencia compartida y contrastar los campos pendientes de los 24 IDs activos.
+**Tarea actual** · Resolver los campos investigables de los 24 IDs activos pendientes y reutilizar la evidencia de cadenas y requisitos por ID.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -245,20 +245,26 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Pasaron las **69 pruebas locales**. Las 47 rutas registran **0 errores y 56 avisos**, todos por el requisito opcional de Kum'isha. Quedan 301 grupos de investigación y 94 de cliente. El global por criterios completos sigue en **40,83 %**.
 - El inventario contiene 2.476 fichas y 2.468 IDs activos. Se cotejó la presencia de los 2.462 IDs de 9.7.9. Hay 2.445 IDs con evidencia de existencia, 2.272 con título español y 2.444 con título inglés y XP base. Los pendientes de oferta bajan de 27 a 25 al sustituir los dos pasos heredados.
 
-## Último bloque verificado · Oferta, canjes y eventos
+## Oferta, canjes y eventos · corte verificado
 
 - Se contrastaron los 25 IDs activos sin observación de oferta y se actualizaron **307 pasos de las 47 rutas** para 22 IDs con instrucciones opcionales en ES/EN. Las seis rutas Horda que señalaban Forjaz para el regalo 8788 apuntan ahora al árbol de Orgrimmar.
 - Se acreditó el canje 5227 en la compilación 1.60.1.70938, con nivel mínimo 50, 620 XP base, tres materiales y el caldero como destino de oferta y entrega. La XP del canje se calcula por separado del recorrido principal. Quedan **24 IDs activos** con oferta pendiente de acreditar, de los que 16 tienen fila en QuestV2 y ocho carecen de ella. La oferta de banda, estacional y de Alterac queda condicionada al contenido habilitado. [Fuentes por ID](auditor_fase13/FUENTES.md#oferta-canjes-y-eventos--26-de-noviembre-de-2026).
 - Pasaron **2 pruebas específicas** y la **regresión de 70 pruebas**. El auditor comprobó 2.476 fichas, 2.468 IDs activos y los 2.462 IDs de 9.7.9. Hay 2.446 fichas con evidencia de existencia, 2.273 con título español y 2.445 con título inglés y XP base.
 - Las 47 rutas registran **0 errores y 56 avisos** por el requisito opcional de Kum'isha. Quedan **301 grupos de investigación y 94 de cliente**. El avance global por criterios completos sigue en **40,83 %**.
 
+## Último bloque verificado · Relaciones de los agrupamientos
+
+- Se contrastaron los tres pares en las bases de QuestieDB y con las consultas de servidor ya disponibles. Los 51 casos de las 22 rutas contemplan ambas aceptaciones antes de los objetivos. El auditor revisa también los enlaces inferidos y las condiciones por perfil.
+- Los 22 grupos pasan a **validación en el cliente**. La comparación local conserva ambos órdenes. Falta medir el terreno, las esperas, las patrullas y el tiempo de la piedra en Los Baldíos. Los huecos generales de relaciones siguen registrados por misión. [Ventanas, resultados y fuentes](auditor_fase13/AGRUPAMIENTOS_FASE13.md).
+- Pasaron **16 pruebas específicas** y la **regresión de 72 pruebas**. El auditor registró **0 errores y 56 avisos**. Quedan **279 grupos de investigación y 116 de cliente**. El global sigue en **40,83 %** por criterios completos.
+
 ## Siguientes tareas
 
-1. Cerrar los 21 campos de relaciones pendientes de las tres ventanas de viaje y verificar los requisitos que puedan resolverse con las fuentes ya descargadas.
-2. Contrastar los campos de los 24 IDs activos aún sin observación de oferta, con prioridad para los ocho sin fila en QuestV2. Ampliar títulos y requisitos mediante los 569 historiales de misiones previas.
-3. Medir en Forever el terreno, los tiempos, el margen restante de la piedra de 924 y la XP efectiva. Observar las variantes de banda, campo de batalla y eventos al estar habilitadas. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
+1. Contrastar los campos de los 24 IDs activos aún sin observación de oferta, con prioridad para los ocho sin fila en QuestV2.
+2. Ampliar títulos y requisitos con los 569 historiales de misiones previas y la evidencia versionada del servidor.
+3. Medir en Forever las tres ventanas, el margen de la piedra de 924 y la XP efectiva. Observar encargos de banda, campo de batalla y eventos al estar habilitados. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `d2fa8c4`.
+La fase sigue abierta. El corte previo es `75e85b1`.
 
 ## Avance individual
 
@@ -286,28 +292,28 @@ Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criter
 | `elfo_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `elfo_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `elfo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
-| `orco_trol_guerrero` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `orco_trol_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `orco_trol_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `orco_trol_chaman` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `orco_trol_brujo` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `orco_trol_mago` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `trol_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `tauren_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `skyborne_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `skyborne_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
-| `skyborne_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `orco_trol_guerrero` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 3 |
+| `orco_trol_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 3 |
+| `orco_trol_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 3 |
+| `orco_trol_chaman` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 3 |
+| `orco_trol_brujo` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 3 |
+| `orco_trol_mago` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 3 |
+| `trol_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `tauren_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `skyborne_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `skyborne_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
+| `skyborne_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 3 |
 | `skyborne_a_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `skyborne_a_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `skyborne_a_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |

@@ -81,7 +81,6 @@ class WorldAudit:
         self.unverified_positions = Counter()
         self.flight_checks = set()
         self.legs = []
-        self.cluster_options = []
         self.checks_xp = set()
         self.turn_ins = []
 
@@ -186,13 +185,11 @@ class WorldAudit:
                 location = f"línea {lines[step_index - 1]}, {location}"
             self.check_section_step(step, level_range, location)
             optional = isinstance(step.get("t"), str) and bool(XP_OPCIONAL.match(step["t"]))
-            points = []
             for index, point in enumerate(_list(step.get("wp")), 1):
                 if not isinstance(point, dict):
                     continue
                 waypoint_location = f"{location}, destino {index}"
                 position = self.check_waypoint(point, waypoint_location)
-                points.append((point, position))
                 quest_id = point.get("q")
                 if point.get("a") == "T" and _id(quest_id):
                     self.check_turn_in(quest_id, step, waypoint_location)
@@ -201,7 +198,6 @@ class WorldAudit:
                 if position and not point.get("raza"):
                     if not self.legs or position[0] != self.legs[-1]:
                         self.legs.append(position[0])
-            self.check_clustering(points, location)
         self.turn_ins.append(section_turn_ins)
 
     def check_turn_in(self, quest_id, step, location):
@@ -317,26 +313,6 @@ class WorldAudit:
                      "que toma la primera alternativa de cada par. "
                      "Requiere validar la XP efectiva, las actividades adicionales y el nivel inicial de cada tramo.")
 
-    def check_clustering(self, points, location):
-        for previous, first, second, following in zip(points, points[1:], points[2:], points[3:]):
-            waypoints = (previous, first, second, following)
-            if any(position is None or point.get("raza") for point, position in waypoints):
-                continue
-            first_quest, second_quest = (item[0].get("q") for item in (first, second))
-            if not (_id(first_quest) and _id(second_quest) and first_quest != second_quest):
-                continue
-            if first[0].get("a") != "C" or second[0].get("a") != "C":
-                continue
-            start, a, b, stop = [position for _, position in waypoints]
-            if len({position[0] for position in (start, a, b, stop)}) != 1:
-                continue
-            original = _proximity(start, a) + _proximity(b, stop)
-            alternate = _proximity(start, b) + _proximity(a, stop)
-            saved = original - alternate
-            total = original + _proximity(a, b)
-            if saved > 10 and saved > total * 0.2:
-                self.cluster_options.append((saved, location))
-
     def check_travel(self):
         flight_index = _dict(self.catalog.get("vuelos"))
         faction = self.route.get("_faccion")
@@ -356,11 +332,6 @@ class WorldAudit:
                 self.add(5, "error", "vuelo_no_disponible",
                          f"El nodo {name!r} no está disponible para {faction}. Fuente: {source}.")
         returns = sum(first == last for first, last in zip(self.legs, self.legs[2:]))
-        if self.cluster_options:
-            sample = max(self.cluster_options)[1]
-            self.add(5, "pendiente", "objetivos_agrupables",
-                     f"{len(self.cluster_options)} pares candidatos a agrupar dentro del mismo paso. "
-                     "La comparación en línea recta no mide accesibilidad ni dependencias.", sample)
         if unverified:
             self.add(5, "pendiente", "viajes_fuente_pendiente",
                      f"{len(unverified)} nodos de vuelo sin evidencia suficiente: {', '.join(unverified)}. "

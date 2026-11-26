@@ -1,6 +1,7 @@
 """Prioriza el contraste de pares de objetivos dentro de un mismo paso."""
 
 import argparse
+from collections import defaultdict
 import json
 from pathlib import Path
 
@@ -10,6 +11,7 @@ from world_rules import _catalog_entry, _dict, _id, _list, _position, _proximity
 
 HERE = Path(__file__).resolve().parent
 RELATIONS = ("prerrequisitos", "desbloqueos", "seguimientos", "excluyentes")
+CHECKED_RELATIONS = (*RELATIONS, "prerrequisitos_alternativos", "mision_activa", "desactivada_por")
 
 
 def _geometry(points):
@@ -34,16 +36,23 @@ def _geometry(points):
 def _relations(quest_pair, catalog):
     missing = []
     conflicts = []
+    candidates = []
     for quest, other in (quest_pair, quest_pair[::-1]):
         entry = _catalog_entry(catalog.get("misiones"), quest)
-        for field in RELATIONS:
+        for field in CHECKED_RELATIONS:
             source = _confirmed(entry, field)
             value = entry.get(field)
-            if not source or not isinstance(value, list):
+            if field in RELATIONS and (not source or not isinstance(value, list)):
                 missing.append({"mision": quest, "campo": field})
-            elif other in value:
+            if source and (value == other or other in _list(value)):
                 conflicts.append({"mision": quest, "relacionada": other, "campo": field, "fuente": source})
-    return missing, conflicts
+        for candidate in _list(_dict(catalog.get("candidatos_por_mision")).get(str(quest))):
+            candidate = _dict(candidate)
+            value = candidate.get("valor")
+            if candidate.get("campo") in CHECKED_RELATIONS and (value == other or other in _list(value)):
+                candidates.append({"mision": quest, "relacionada": other, "campo": candidate["campo"],
+                                   "fuente": candidate.get("fuente")})
+    return missing, conflicts, candidates
 
 
 def _record_acceptances(active, point):
@@ -98,7 +107,12 @@ def analyze_clustering(routes, catalog):
     for route in routes:
         for quest_pair, (key, original, alternative), occurrence in _route_windows(route):
             if key not in candidates:
-                missing, conflicts = _relations(quest_pair, catalog)
+                missing, conflicts, inferred = _relations(quest_pair, catalog)
+                pair = ":".join(map(str, sorted(quest_pair)))
+                contrast = _dict(_dict(catalog.get("relaciones_agrupamiento")).get(pair))
+                if not all(isinstance(contrast.get(field), str) and contrast[field]
+                           for field in ("fecha_consulta", "detalle")) or not _list(contrast.get("fuentes")):
+                    contrast = {}
                 candidates[key] = {
                     "mapa": key[0][0][0], "misiones_intercambiadas": list(quest_pair),
                     "destinos": [{"x": position[1], "y": position[2], "mision": quest,
@@ -107,10 +121,14 @@ def analyze_clustering(routes, catalog):
                     "ahorro_geometrico": round(original - alternative, 3),
                     "reduccion_pct": round((original - alternative) * 100 / original, 2),
                     "relaciones_sin_evidencia": missing, "relaciones_que_bloquean": conflicts,
+                    "relaciones_por_contrastar": inferred,
+                    "contraste_relaciones": contrast,
                     "apariciones": [],
                 }
             candidate = candidates[key]
-            if candidate["relaciones_que_bloquean"] or candidate["relaciones_sin_evidencia"] or any(
+            if candidate["relaciones_que_bloquean"] or candidate["relaciones_por_contrastar"] or (
+                candidate["relaciones_sin_evidencia"] and not candidate["contraste_relaciones"]
+            ) or any(
                 occurrence[field] for field in ("aceptaciones_no_demostradas", "paso_con_comprobacion",
                                                 "paso_con_variantes_raciales")
             ):
@@ -123,6 +141,29 @@ def analyze_clustering(routes, catalog):
     appearances = [occurrence for candidate in groups for occurrence in candidate["apariciones"]]
     return {"rutas_con_candidatos": len({occurrence["ruta"] for occurrence in appearances}),
             "apariciones": len(appearances), "candidatos": groups}
+
+
+def clustering_findings(report):
+    routes = defaultdict(list)
+    for candidate in report["candidatos"]:
+        for occurrence in candidate["apariciones"]:
+            routes[occurrence["archivo"], occurrence["ruta"]].append(occurrence)
+    for (file, route), occurrences in routes.items():
+        research = [item for item in occurrences if item["estado"] == "investigacion"]
+        client = [item for item in occurrences if item["estado"] == "validacion_cliente"]
+        for pending, resolution, detail in (
+            (research, "investigación", "Contrastar vínculos, aceptaciones por perfil y condiciones de avance."),
+            (client, "cliente", "Medir recorrido transitable, tiempos y disponibilidad de objetivos en Forever."),
+        ):
+            if not pending:
+                continue
+            first = pending[0]
+            location = f"tramo {first['seccion']}, paso {first['paso']}"
+            if first["linea"] is not None:
+                location = f"línea {first['linea']}, {location}"
+            yield {"bloque": 5, "gravedad": "pendiente", "codigo": "objetivos_agrupables",
+                   "archivo": file, "ruta": route, "ubicacion": location, "resolucion": resolution,
+                   "detalle": f"{len(pending)} pares candidatos a agrupar dentro del mismo paso. {detail}"}
 
 
 def render_clustering(report):
@@ -138,12 +179,20 @@ def render_clustering(report):
                   f"Distancia {candidate['distancia_original']:.2f} → {candidate['distancia_alternativa']:.2f}, "
                   f"diferencia de {candidate['ahorro_geometrico']:.2f} ({candidate['reduccion_pct']:.2f} %). "
                   f"{len(candidate['apariciones'])} apariciones.", ""]
-        if candidate["relaciones_sin_evidencia"]:
+        contrast = candidate["contraste_relaciones"]
+        if contrast.get("fuentes"):
+            sources = " · ".join(f"[Fuente {i}]({url})" for i, url in enumerate(contrast["fuentes"], 1))
+            lines += [f"Contraste local del par ({contrast['fecha_consulta']}). {contrast['detalle']} {sources}", ""]
+        elif candidate["relaciones_sin_evidencia"]:
             lines += [f"Pendiente de investigación: {len(candidate['relaciones_sin_evidencia'])} campos "
                       "de relaciones entre misiones sin evidencia suficiente.", ""]
         for conflict in candidate["relaciones_que_bloquean"]:
             lines += [f"La misión {conflict['mision']} vincula a {conflict['relacionada']} en «{conflict['campo']}». "
                       f"[Evidencia]({conflict['fuente']})", ""]
+        for candidate_link in candidate["relaciones_por_contrastar"]:
+            source = f" [Traza]({candidate_link['fuente']})" if candidate_link["fuente"] else ""
+            lines += [f"La traza sugiere un vínculo entre {candidate_link['mision']} y {candidate_link['relacionada']} "
+                      f"en «{candidate_link['campo']}».{source}", ""]
         lines += ["| Ruta | Archivo y ubicación | Objetivos | Estado |",
                   "| --- | --- | --- | --- |"]
         for occurrence in candidate["apariciones"]:

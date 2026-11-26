@@ -3,7 +3,8 @@
 import unittest
 from pathlib import Path
 
-from agrupamientos import RELATIONS, analyze_clustering, render_clustering
+from agrupamientos import RELATIONS, analyze_clustering, clustering_findings, render_clustering
+from catalogo import load_catalog
 from lua_routes import load_routes
 from mission_rules import load_mission_localization
 
@@ -56,6 +57,23 @@ class TestAgrupamientos(unittest.TestCase):
             route["secciones"][0]["pasos"][1]["wp"][1].update(field)
             self.assertFalse(analyze_clustering([route], {})["candidatos"])
 
+    def test_pair_contrast_keeps_unrelated_fields_open_and_yields_to_new_links(self):
+        route = route_fixture(waypoint(0, 11, "A"))
+        evidence = {"fuentes": ["pares"], "detalle": "Caso probado", "fecha_consulta": "2026-11-26"}
+        catalog = {"relaciones_agrupamiento": {"11:12": evidence}}
+        report = analyze_clustering([route], catalog)
+        self.assertTrue(report["candidatos"][0]["relaciones_sin_evidencia"])
+        self.assertEqual([row["resolucion"] for row in clustering_findings(report)], ["cliente"])
+
+        catalog["candidatos_por_mision"] = {"11": [{"campo": "excluyentes", "valor": [12], "fuente": "traza"}]}
+        report = analyze_clustering([route], catalog)
+        self.assertIn("La traza sugiere un vínculo", render_clustering(report))
+        self.assertEqual([row["resolucion"] for row in clustering_findings(report)], ["investigación"])
+
+        catalog["misiones"] = {"12": {"estado": "forever", "fuente": "registro", "prerrequisitos_alternativos": [11]}}
+        report = analyze_clustering([route], catalog)
+        self.assertEqual(report["candidatos"][0]["relaciones_que_bloquean"][0]["campo"], "prerrequisitos_alternativos")
+
 
 class TestRutasDesolace(unittest.TestCase):
     @classmethod
@@ -69,6 +87,13 @@ class TestRutasDesolace(unittest.TestCase):
         self.assertEqual(report["apariciones"], 51)
         self.assertEqual({item["mapa"]: len(item["apariciones"]) for item in report["candidatos"]},
                          {1413: 7, 1435: 22, 1443: 22})
+
+    def test_documented_windows_are_reported_as_client_checks(self):
+        report = analyze_clustering(self.routes, load_catalog())
+        findings = list(clustering_findings(report))
+        self.assertEqual(report["apariciones"], 51)
+        self.assertEqual(len(findings), 22)
+        self.assertTrue(all(row["resolucion"] == "cliente" for row in findings))
 
     def test_desolace_text_retains_mission_order_and_has_english_translation(self):
         messages = set()

@@ -74,8 +74,12 @@ def audit(addon, blocks, catalog, flight_reports=None):
 
         for route in eligible:
             findings.extend(result for result in audit_world(route, catalog) if result["bloque"] in blocks)
+    if 5 in blocks:
+        from agrupamientos import analyze_clustering, clustering_findings
+
+        findings.extend(clustering_findings(analyze_clustering(eligible, catalog)))
     for item in findings:
-        if item["gravedad"] == "pendiente":
+        if item["gravedad"] == "pendiente" and "resolucion" not in item:
             item["resolucion"] = "cliente" if item["codigo"] in CLIENT_CHECKS else "investigación"
     findings.sort(key=lambda item: (item["bloque"], SEVERITIES.index(item["gravedad"]),
                                     item.get("archivo") or "", item["codigo"], str(item.get("ubicacion", ""))))

@@ -35,6 +35,8 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Corregir los textos de 30 refuerzos sin XP base y conservar el historial de respuestas del servidor por ID.
 - [x] Corregir las variantes de Frondavil y los pasos de invasión que llevaban a ciudades de la otra facción.
 - [x] Contrastar los objetos, el temporizador y el riesgo de las tres ventanas de agrupamiento y corregir sus instrucciones.
+- [x] Contrastar las relaciones entre los tres pares de objetivos con la base de QuestieDB que hereda Forever y sus datos de servidor. Clasificar las 51 apariciones en las 22 rutas para la prueba de recorrido.
+- [ ] Cronometrar ambas secuencias de las tres ventanas en Forever. Anotar trazado transitable, esperas de objetivos y margen antes de que caduque la piedra de 924.
 - [x] Actualizar los IDs de las dos entregas de Kum'isha y contrastar los pasos previos en Pantano de las Penas y Desolace.
 - [x] Contrastar las fichas con la tabla QuestV2 del cliente y comprobar los casos de oferta sin fila y fila sin oferta observada.
 - [x] Contrastar el encargo 96222 de Umarak y las variantes de Gelkis y Magram en Desolace.
