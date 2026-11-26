@@ -53,7 +53,7 @@ def inventory_missions(routes, catalog, quest_v2=None):
                 fields[field] = {"estado": status, "valor": value, "fuente": source}
                 provenance = entry.get("evidencia", {})
                 details = provenance.get(field, provenance.get("nombres", {})) if field.startswith("nombre_") else provenance.get(field, {})
-                fields[field].update({k: details[k] for k in ("build", "tabla", "metodo") if k in details})
+                fields[field].update({k: details[k] for k in ("build", "tabla", "metodo", "fuentes_adicionales") if k in details})
                 coverage[field] += 1
         positions = []
         for (action, map_id, x, y), shared in sorted(lookup["posiciones"].items()):

@@ -166,4 +166,8 @@ def load_catalog(path=None, trace_directory=None, quest_directory=None, eg_direc
     catalog = _merge_catalog(catalog, read_catalog(HERE / "perfiles_forever.json"))
     catalog = _merge_catalog(catalog, read_catalog(HERE / "arranques_forever.json"))
     catalog = _merge_catalog(catalog, read_catalog(HERE / "cartografia_forever.json"))
+    if quest_directory is not None and eg_directory is not None:
+        from questie_rules import corroborate_classic_followups
+
+        catalog = _merge_catalog(catalog, corroborate_classic_followups(quest_directory, catalog))
     return _merge_catalog(catalog, read_catalog(path)) if path is not None else catalog

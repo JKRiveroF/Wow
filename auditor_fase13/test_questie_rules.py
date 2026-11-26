@@ -8,12 +8,39 @@ from catalogo import _merge_catalog, import_quest_v2
 from inventario_misiones import inventory_missions
 from lua_routes import load_routes
 from mission_rules import load_mission_localization
-from questie_rules import BASE, FIXES, RELATIONS, _decode, import_quest_rules, observed_objectives
+from questie_rules import (BASE, CLASSIC_DB, FIXES, LEGACY_CACHE, LEGACY_FIXES, RELATIONS,
+                          _decode, corroborate_classic_followups, import_quest_rules, observed_objectives)
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
 class QuestieRulesTest(unittest.TestCase):
+    def test_inherited_followup_requires_server_suggestion_and_prior_history(self):
+        base = ('    [\'nextQuestInChain\'] = 3,\n[7] = {"name, with {braces}",{{4,5}},12},\n'
+                '[8] = {"other",nil,13},\n[9] = {"dynamic",nil,14},\n')
+        fixes = ('        [7] = {\n            [questKeys.nextQuestInChain] = 11,\n        },\n'
+                 'function C:LoadFactionFixes()\n        [9] = {\n'
+                 '            [questKeys.nextQuestInChain] = 3,\n        },\n')
+        suggestion = {"estado": "forever", "fuente": "cache"}
+        history = {"estado": "forever", "fuente": "observación"}
+        catalog = {"misiones": {
+            str(q): {"siguiente_sugerida": after, "evidencia": {"siguiente_sugerida": suggestion}}
+            for q, after in ((7, 11), (8, 13), (9, 14))}}
+        catalog["misiones"].update({str(after): {"misiones_previas_observadas": {"before": before},
+                                               "evidencia": {"misiones_previas_observadas": history}}
+                                     for after, before in ((11, [7]), (13, [20]), (14, [9]))})
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            (directory / Path(CLASSIC_DB).name).write_bytes(base.encode())
+            (directory / LEGACY_CACHE).write_bytes(fixes.encode())
+            with patch("questie_rules.HASHES", {CLASSIC_DB: sha256(base.encode()).hexdigest(),
+                                              LEGACY_FIXES: sha256(fixes.encode()).hexdigest()}):
+                result = corroborate_classic_followups(directory, catalog)["misiones"]
+        self.assertEqual(set(result), {"7"})
+        self.assertEqual(result["7"]["seguimientos"], [11])
+        self.assertNotIn("prerrequisitos", result["7"])
+        self.assertIn(LEGACY_FIXES, result["7"]["evidencia"]["seguimientos"]["fuentes_adicionales"][0])
+
     def test_client_quest_index_does_not_supply_server_availability(self):
         raw = b"ID,UniqueBitFlag,UiQuestDetailsThemeID\n42,4,0\n"
         with tempfile.TemporaryDirectory() as temporary:

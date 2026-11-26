@@ -9,10 +9,16 @@ SOURCE = "https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forev
 BASE = "generated/foreverBaseQuest.lua"
 FIXES = "foreverQuestFixes.lua"
 RELATIONS = "traces/foreverQuestRelationTraces.lua"
+CLASSIC_DB = "data/Classic/classicQuestDB.lua"
+LEGACY_FIXES = "src/corrections/Forever/legacy/classicQuestFixes.lua"
+LEGACY_CACHE = "legacyForeverClassicQuestFixes.lua"
+REPOSITORY = "https://github.com/Questie/QuestieDB/blob/v1.1.6/"
 HASHES = {
     BASE: "197dff16946293da0cd23722578cb383a498c6e8d046fc49a96a3777883a66c2",
     FIXES: "1f322361045262150f843f8c3e72ed6ac048a449883899889b36eb1146465b30",
     RELATIONS: "8fdaf341227ae4b890c5c865f024a6c0a951423fa5d1a09073e5c3a833e871f8",
+    CLASSIC_DB: "bd44f6353531b4fe3b95eab3d469bef64ab41503646c509db73813f309ab3ad4",
+    LEGACY_FIXES: "76cd6a05f035826cabc6180a0ff2a1a37c5e7946c891eb0a06412fab5a4caf2e",
 }
 
 ROW = re.compile(r"^ {8}\[(\d+)\]\s*=\s*\{")
@@ -32,8 +38,8 @@ RACES = {
 CLASSES = {"DRUID", "HUNTER", "MAGE", "PALADIN", "PRIEST", "ROGUE", "SHAMAN", "WARLOCK", "WARRIOR"}
 
 
-def _read(directory, name):
-    path = directory / Path(name).name
+def _read(directory, name, cache_name=None):
+    path = directory / (cache_name or Path(name).name)
     raw = path.read_bytes()
     if sha256(raw).hexdigest() != HASHES[name]:
         raise ValueError(f"SHA-256 inesperado en {path}. Se requieren los datos de QuestieDB 1.1.6.")
@@ -152,3 +158,69 @@ def import_quest_rules(directory):
                 entry[key] = item
                 entry["evidencia"]["nombre_en" if key == "nombres" else key] = evidence
     return {"misiones": missions, "candidatos_por_mision": relation_candidates}
+
+
+def _classic_columns(row):
+    """Separa la fila compacta sin interpretar sus literales Lua."""
+    fields = []
+    start = depth = 0
+    for token in re.finditer(r'"(?:[^"\\]|\\.)*"|[{},]', row):
+        symbol = token[0]
+        if symbol == "{":
+            depth += 1
+        elif symbol == "}":
+            depth -= 1
+        elif symbol == "," and not depth:
+            fields.append(row[start:token.start()].strip())
+            start = token.end()
+    fields.append(row[start:].strip())
+    return fields
+
+
+def _classic_followups(directory):
+    base = _read(directory, CLASSIC_DB)
+    column = next(int(match[1]) - 1 for line in base
+                  if (match := re.match(r"^ +\['nextQuestInChain'\] = (\d+),", line)))
+    pairs = {}
+    for number, line in enumerate(base, 1):
+        row = re.fullmatch(r"\[(\d+)\] = \{(.*)\},", line)
+        if row is None:
+            continue
+        fields = _classic_columns(row[2])
+        if len(fields) > column and fields[column].isdecimal() and int(fields[column]):
+            pairs[row[1]] = (int(fields[column]), f"{REPOSITORY}{CLASSIC_DB}#L{number}")
+
+    legacy = _read(directory, LEGACY_FIXES, LEGACY_CACHE)
+    dynamic_start = next(i for i, line in enumerate(legacy, 1) if ":LoadFactionFixes(" in line)
+    for quest, number, field, value, _ in _fields(legacy):
+        if field != "nextQuestInChain":
+            continue
+        if number < dynamic_start and value.isdecimal() and int(value):
+            pairs[quest] = (int(value), f"{REPOSITORY}{LEGACY_FIXES}#L{number}")
+        else:
+            pairs.pop(quest, None)
+    return pairs
+
+
+def corroborate_classic_followups(directory, catalog):
+    """Contrasta una continuación, con tres fuentes y sin deducir requisitos de aceptación."""
+    if not all((directory / name).is_file() for name in (Path(CLASSIC_DB).name, LEGACY_CACHE)):
+        return {}
+    missions = catalog.get("misiones", {})
+    confirmed = {}
+    for quest, (following, classic_source) in _classic_followups(directory).items():
+        entry = missions.get(quest, {})
+        successor = missions.get(str(following), {})
+        if "seguimientos" in entry or entry.get("siguiente_sugerida") != following:
+            continue
+        history = successor.get("misiones_previas_observadas", {})
+        if int(quest) not in history.get("before", []):
+            continue
+        candidate = entry.get("evidencia", {}).get("siguiente_sugerida", {})
+        observed = successor.get("evidencia", {}).get("misiones_previas_observadas", {})
+        if candidate.get("estado") != "forever" or observed.get("estado") != "forever":
+            continue
+        proof = {**candidate, "metodo": "secuencia_contrastada",
+                 "fuentes_adicionales": [classic_source, observed["fuente"]]}
+        confirmed[quest] = {"seguimientos": [following], "evidencia": {"seguimientos": proof}}
+    return {"misiones": confirmed}

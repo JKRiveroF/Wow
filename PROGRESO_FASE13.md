@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 08:27:50 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 08:32:57 +01:00 (Madrid)**
 
-**Tarea actual** · Resolver los campos investigables de los 24 IDs activos pendientes y reutilizar la evidencia de cadenas y requisitos por ID.
+**Tarea actual** · Verificar la oferta, los títulos y las condiciones de misión que quedan abiertos. Priorizar dependencias antes de clase, raza y facción.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -252,19 +252,35 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Pasaron **2 pruebas específicas** y la **regresión de 70 pruebas**. El auditor comprobó 2.476 fichas, 2.468 IDs activos y los 2.462 IDs de 9.7.9. Hay 2.446 fichas con evidencia de existencia, 2.273 con título español y 2.445 con título inglés y XP base.
 - Las 47 rutas registran **0 errores y 56 avisos** por el requisito opcional de Kum'isha. Quedan **301 grupos de investigación y 94 de cliente**. El avance global por criterios completos sigue en **40,83 %**.
 
-## Último bloque verificado · Relaciones de los agrupamientos
+## Relaciones de los agrupamientos · corte verificado
 
 - Se contrastaron los tres pares en las bases de QuestieDB y con las consultas de servidor ya disponibles. Los 51 casos de las 22 rutas contemplan ambas aceptaciones antes de los objetivos. El auditor revisa también los enlaces inferidos y las condiciones por perfil.
 - Los 22 grupos pasan a **validación en el cliente**. La comparación local conserva ambos órdenes. Falta medir el terreno, las esperas, las patrullas y el tiempo de la piedra en Los Baldíos. Los huecos generales de relaciones siguen registrados por misión. [Ventanas, resultados y fuentes](auditor_fase13/AGRUPAMIENTOS_FASE13.md).
 - Pasaron **16 pruebas específicas** y la **regresión de 72 pruebas**. El auditor registró **0 errores y 56 avisos**. Quedan **279 grupos de investigación y 116 de cliente**. El global sigue en **40,83 %** por criterios completos.
 
+## Último bloque verificado · Seguimientos de misión
+
+- Se acreditaron **165 seguimientos nuevos** mediante el enlace heredado, la sugerencia del servidor y el historial del sucesor. El inventario pasó de 161 a **326 seguimientos documentados**. Ambos IDs aparecen juntos en ruta en 153 pares y la evidencia se reutilizó en 2.832 combinaciones de par y ruta. [Método y fuentes](auditor_fase13/FUENTES.md#seguimientos-contrastados--26-de-noviembre-de-2026).
+- La comprobación de orden registró **0 errores y 56 avisos**, todos por el requisito opcional anterior a Kum'isha. Pasaron la prueba específica de fuentes y la **regresión de 73 pruebas**. Siguen abiertos 279 grupos de investigación y 116 de cliente. El avance por criterios completos permanece en **40,83 %**.
+
+## Comprobaciones que impiden cerrar los criterios
+
+| Bloque | Investigación pendiente | Validación en Forever |
+| --- | --- | --- |
+| Misiones y dependencias | Entre 2.468 IDs activos faltan 24 acreditaciones de oferta, 195 títulos ES, 25 EN, 25 niveles mínimos, 2.142 seguimientos y 2.444 fichas de prerrequisitos obligatorios. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Oferta por fase o perfil cuando los registros externos no la acrediten. |
+| Clase, raza y facción | 2.383 fichas sin condición de clase acreditada, 1.985 sin condición racial y 1.974 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
+| Cartografía | Posiciones por acción y misión en las 47 rutas, incluidas entradas y puntos de PNJ. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
+| Experiencia | 25 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP efectiva, nivel inicial y bloqueos por tramo en las 47 rutas. |
+| Viajes | Posiciones, transporte y requisitos de nodos en 44 rutas. | Costes y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
+| Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
+
 ## Siguientes tareas
 
-1. Contrastar los campos de los 24 IDs activos aún sin observación de oferta, con prioridad para los ocho sin fila en QuestV2.
-2. Ampliar títulos y requisitos con los 569 historiales de misiones previas y la evidencia versionada del servidor.
-3. Medir en Forever las tres ventanas, el margen de la piedra de 924 y la XP efectiva. Observar encargos de banda, campo de batalla y eventos al estar habilitados. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
+1. Revisar los ocho IDs activos sin oferta acreditada ni fila en QuestV2. Completar títulos, requisitos y objetos con las fuentes descargadas.
+2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
+3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `75e85b1`.
+La fase sigue abierta. El corte previo es `e665467`.
 
 ## Avance individual
 
