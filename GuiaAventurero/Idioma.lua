@@ -243,7 +243,8 @@ local function TraducirDestino(d)
   if GL.ingles and type(d.n) == "string" then
     local pre, resto = d.n:match("^([^:]+): (.+)$")
     if pre and PREFIJOS[pre] then
-      local mision, pnj = resto:match("^(.-) %((.-)%)$")
+      local mision, pnj = resto:match("^(.*) %(([^()]*)%)$")
+      if not mision then mision, pnj = resto:match("^(.-) %((.-)%)$") end
       if not mision then mision = resto end
       local t = PREFIJOS[pre] .. ": " .. NombreMision(d.q, mision)
       if pnj then t = t .. " (" .. Traducir(pnj) .. ")" end

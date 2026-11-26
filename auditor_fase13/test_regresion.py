@@ -19,6 +19,7 @@ MANIFEST = Path(__file__).with_name("SHA256_ORIGINALES.sha256")
 ALLOWED_MODULES = {
     "GuiaAventurero/Datos94.lua",
     "GuiaAventurero/GuiaAventurero.lua",
+    "GuiaAventurero/Idioma.lua",
     "GuiaAventurero/Idioma/enUS_Datos.lua",
     "GuiaAventurero/Idioma/enUS_Interfaz.lua",
     "GuiaAventurero/Idioma/enUS_Refuerzos97.lua",
@@ -139,6 +140,20 @@ def _route_without_reviewed_edits(source):
             line = re.sub(r't = "[^"]+"', 't = "<cadena revisada>"', line, count=1)
             line = re.sub(r'(q = (?:324|526|94484|94493), a = "[AT]"), alternativa = \d+', r'\1', line)
             line = re.sub(r', \{ [^{}]+q = (?:98221|93680), a = "[AT]" \}', "", line)
+        if "Una lección que aprender" in line:
+            line = re.sub(r'q = (?:26|27)(?=, a = "[AT]")', "q = <variante acuática>", line)
+        if "Sheldras Moontree" in line and 'npc = 5504' in line and 'hechizos = { 5188 }' in line:
+            line = re.sub(r't = "[^"]+"', 't = "<inicio de forma felina>"', line, count=1)
+            line = re.sub(r', \{ [^{}]+q = 98393, a = "[AT]" \}', "", line)
+        if 'q = 98394, a = "A"' in line or ('q = 98341, a = "A"' in line and "q = 98340" not in line):
+            line = re.sub(r't = "[^"]+"', 't = "<encargo de forma felina>"', line, count=1)
+        if 'q = 430, a = "A"' in line:
+            line = re.sub(r't = "[^"]+"', 't = "<requisitos de Ivar>"', line, count=1)
+            line = re.sub(r', \{ [^{}]+q = (?:430, a = "T"|91920, a = "[ACT]"|91921, a = "A") \}', "", line)
+        if 'q = 425, a = "A"' in line:
+            line = re.sub(r't = "[^"]+"', 't = "<entrega antes de Ivar>"', line, count=1)
+            line = line.replace('y = 12.7, n = "Entregar: Vuelve con Quinn (de nuevo) (Quinn Yorick)", q = 91921',
+                                'y = 12.6, n = "Entregar: Vuelve con Quinn (Quinn Yorick)", q = 430')
         if any(f'q = {quest}, a = "T"' in line for quest in (94495, 94497, 94499)):
             line = re.sub(r't = "[^"]+"', 't = "<odres revisados>"', line, count=1)
             line = re.sub(r', \{ [^{}]+q = (?:94499|94500), a = "A" \}', "", line)
@@ -288,6 +303,26 @@ class IntegridadTest(unittest.TestCase):
             self.assertEqual([q for _, q in entries], ["93685", "93686"])
             self.assertIn("The Found One", localized["por_nombre"][entries[0][0]])
             self.assertIn("Flawless Draenethyst Sphere", localized["por_nombre"][entries[1][0]])
+
+    def test_ivar_intro_preserves_destinations_and_requires_both_new_quests(self):
+        for route in sorted((ADDON / "Rutas").glob("NoMuerto*.lua")):
+            with self.subTest(route=route.name):
+                lines = route.read_text(encoding="utf-8").splitlines()
+                before = next(i for i, line in enumerate(lines) if 'q = 430, a = "A"' in line)
+                self.assertEqual(re.findall(r'q = (\d+), a = "([ACT])"', lines[before])[-6:],
+                                 [("430", "A"), ("430", "T"), ("91920", "A"), ("91920", "C"),
+                                  ("91920", "T"), ("91921", "A")])
+                self.assertEqual(re.findall(r'q = (\d+), a = "([ACT])"', lines[before + 1]),
+                                 [("91921", "T"), ("425", "A"), ("425", "C"), ("425", "T")])
+
+    def test_druid_routes_use_the_correct_aquatic_variants_and_cat_referral(self):
+        elf = _source("Rutas/ElfoDruida.lua")
+        tauren = _source("Rutas/TaurenDruida.lua")
+        self.assertEqual(re.findall(r'\bq = (26|27), a = "([AT])"', elf), [("26", "A"), ("26", "T")])
+        self.assertEqual(re.findall(r'\bq = (26|27), a = "([AT])"', tauren), [("27", "A"), ("27", "T")])
+        for route, next_quest in ((elf, 98394), (_source("Rutas/SkyborneADruida.lua"), 98341)):
+            self.assertLess(route.index('q = 98393, a = "A"'), route.index('q = 98393, a = "T"'))
+            self.assertLess(route.index('q = 98393, a = "T"'), route.index(f'q = {next_quest}, a = "A"'))
 
 
 class GuardadosTest(unittest.TestCase):

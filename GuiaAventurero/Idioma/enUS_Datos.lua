@@ -15,6 +15,8 @@ GL.AnadirIngles({
 })
 GL.AnadirIngles([==[
 return {
+["Ojos salvajes"]="Wild Eyes",
+["Vuelve con Quinn (de nuevo)"]="Return to Quinn (Again)",
 ["Garfanieve"]="Snowtalon",
 ["Izha'Rel y Tor'Rel"]="Ravasaur Hunters",
 ["Encuentro raro; aparición no garantizada. Ubicación exacta y botín pendientes de confirmar."]="Rare encounter; spawn not guaranteed. Exact location and loot remain unconfirmed.",
@@ -8228,6 +8230,8 @@ return {
 [91758]="Follow That Kobold!",
 [91772]="Shhh! We're Hunting Kobolds",
 [91775]="Book Return",
+[91920]="Wild Eyes",
+[91921]="Return to Quinn (Again)",
 [92124]="Book Inventory",
 [92460]="Coming of Age",
 [92461]="Harmony in Balance",
@@ -8417,6 +8421,7 @@ return {
 [98342]="The Great Cat Spirit",
 [98362]="To Thunder Bluff",
 [98392]="Darkness in the Glade",
+[98393]="The Great Cat Spirit",
 [98394]="The Great Cat Spirit",
 [98396]="The Great Cat Spirit",
 [98397]="To Darnassus",

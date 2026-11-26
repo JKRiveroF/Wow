@@ -39,6 +39,7 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Contrastar las fichas con la tabla QuestV2 del cliente y comprobar los casos de oferta sin fila y fila sin oferta observada.
 - [x] Contrastar el encargo 96222 de Umarak y las variantes de Gelkis y Magram en Desolace.
 - [x] Colocar la cadena opcional de Kum'isha y probar los seis pasos previos en ambos catálogos con Lua.
+- [x] Corregir las variantes acuáticas de druida, añadir el encargo previo de Forma felina y completar la cadena de Ivar.
 - [ ] Revisar los 27 IDs activos sin evidencia de oferta.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
 - [x] Corregir 26 encargos de canje, reputación, eventos y JcJ que aparecían como refuerzos de XP.

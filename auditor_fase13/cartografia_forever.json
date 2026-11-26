@@ -1,6 +1,28 @@
 {
   "fecha_consulta_cartografia": "2026-11-25",
   "misiones": {
+    "26": {
+      "posiciones": {"A": [{"m": 1457, "x": 35.4, "y": 8.4}], "T": [{"m": 1450, "x": 56.2, "y": 30.6}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/26/", "fecha_consulta": "2026-11-26"}}
+    },
+    "27": {
+      "posiciones": {"A": [{"m": 1456, "x": 76.5, "y": 27.2}], "T": [{"m": 1450, "x": 56.2, "y": 30.6}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://bindonforever.com/quest/27", "fecha_consulta": "2026-11-26"}},
+      "contraste_cartografia": ["https://zephras.com/forever/enUS/quest/27/"]
+    },
+    "91920": {
+      "posiciones": {"A": [{"m": 1421, "x": 53.4, "y": 12.7}], "C": [{"m": 1421, "x": 65.1, "y": 11.8}], "T": [{"m": 1421, "x": 42.9, "y": 40.9}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://bindonforever.com/quest/91920", "fecha_consulta": "2026-11-26"}},
+      "contraste_cartografia": ["https://zephras.com/forever/enUS/quest/91920/"]
+    },
+    "91921": {
+      "posiciones": {"A": [{"m": 1421, "x": 42.9, "y": 40.9}], "T": [{"m": 1421, "x": 53.4, "y": 12.7}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/91921/", "fecha_consulta": "2026-11-26"}}
+    },
+    "98393": {
+      "posiciones": {"A": [{"m": 1457, "x": 35.4, "y": 8.4}], "T": [{"m": 1450, "x": 56.2, "y": 30.6}]},
+      "evidencia": {"posiciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/98393/", "fecha_consulta": "2026-11-26"}}
+    },
     "96222": {
       "posiciones": {"A": [{"m": 1443, "x": 43.5, "y": 79}], "C": [{"m": 1443, "x": 29.6, "y": 52}], "T": [{"m": 1443, "x": 43.5, "y": 79}]},
       "elite": true,

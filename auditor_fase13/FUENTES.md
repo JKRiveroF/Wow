@@ -109,6 +109,12 @@ El encargo 96222 de Umarak pide nivel 35, el fragmento de llave 6077 y el uso de
 
 Los registros 1374 y 1375 conservan sus títulos y destinos heredados mientras se comprueba su oferta. Los textos indican la rama Gelkis o Magram y permiten continuar si el encargo no está en el diario. Los ID 93128 y 93196 llevan el mismo nombre y tienen objetivos y accesos distintos en la cadena de Shen'dralas. Se mantuvieron como expedientes separados. [Khan Jehn Gelkis](https://zephras.com/forever/enUS/quest/93128/) · [Khan Jehn Magram](https://zephras.com/forever/enUS/quest/93196/) · [Tramas de la zona anunciadas por Blizzard](https://worldofwarcraft.blizzard.com/en-us/news/24315820/world-of-warcraft-forever-now-live).
 
+## Dependencias de Ivar y de druida · 26 de noviembre de 2026
+
+- Las máscaras de servidor y los instructores distinguen las variantes acuáticas. Mathrengyl ofrece 26 a elfos de la noche y Skyborne de Alianza. Turak ofrece 27 a taurens y Skyborne de Horda. Ambas requieren nivel 16 y se entregan a Dendrite. Se intercambiaron los IDs en las dos rutas que apuntaban al instructor correcto con el ID de la otra facción. [Variante 26](https://zephras.com/forever/enUS/quest/26/) · [Variante 27](https://zephras.com/forever/enUS/quest/27/).
+- Las dos rutas Alianza incorporan la aceptación y entrega de 98393 antes de 98394 o 98341. Mathrengyl ofrece el encargo de nivel 20 en Darnassus y se entrega a Dendrite en el Claro de la Luna. El desvío hacia Darnassus se indica solo si el personaje aún necesita el encargo. [Derivación de Alianza](https://zephras.com/forever/enUS/quest/98393/) · [Dependencias del espíritu felino](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/foreverQuestFixes.lua#L6305-L6310).
+- Las seis rutas de no-muertos siguen la cadena 430 → 91920 → 91921 → 425. Se añaden la recogida de tres ojos de múrloc (730) y la entrega de la poción de Quinn (248930). El objetivo de 91920 señala la ribera de Lordamere. Los ojos son un material comerciable que se puede llevar a Renferrel si ya se tiene. Las posiciones de Quinn y Renferrel se contrastaron por acción. [Ojos salvajes](https://bindonforever.com/quest/91920) · [Poción](https://zephras.com/forever/enUS/quest/91921/) · [Ivar](https://zephras.com/forever/enUS/quest/425/).
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

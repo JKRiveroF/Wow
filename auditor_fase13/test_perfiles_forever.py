@@ -33,6 +33,15 @@ def lua_for_addon(faction="Alliance"):
 
 
 class ForeverProfilesTest(unittest.TestCase):
+    def test_waypoint_translates_a_title_with_parentheses_before_the_npc(self):
+        lua, module, load = lua_for_addon("Horde")
+        load("Idioma.lua")
+        load("Idioma/enUS_Datos.lua")
+        waypoint = lua.table_from({"m": 1421, "n": "Entregar: Vuelve con Quinn (de nuevo) (Quinn Yorick)",
+                                    "q": 91921, "a": "T"})
+        module["TraducirDestino"](waypoint)
+        self.assertEqual(waypoint["n"], "Turn in: Return to Quinn (Again) (Quinn Yorick)")
+
     def test_ten_skyborne_training_texts_translate_with_addon_engine(self):
         lua, module, load = lua_for_addon()
         load("Idioma.lua")

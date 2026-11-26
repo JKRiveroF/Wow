@@ -79,7 +79,7 @@ def _mission_title(waypoint):
     prefix, _, label = name.partition(": ")
     if prefix not in PREFIXES or not label.strip():
         return None, None
-    match = re.fullmatch(r"(.+?) \((.+)\)", label)
+    match = re.fullmatch(r"(.+) \(([^()]+)\)", label) or re.fullmatch(r"(.+?) \((.+)\)", label)
     return prefix, match[1] if match else label
 
 

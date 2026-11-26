@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 07:34:33 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 07:42:58 +01:00 (Madrid)**
 
-**Tarea actual** · Corregir las dos variantes de druida intercambiadas y contrastar las restricciones de especialización y las dependencias de Ivar y del espíritu felino.
+**Tarea actual** · Contrastar los avisos de herrería y guerrero y la oferta de los 27 IDs pendientes.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -211,21 +211,28 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Hay 2.469 fichas y 2.463 IDs activos. Se cotejaron los 2.462 IDs de la base 9.7.9. Hay evidencia de existencia para 2.438 fichas, título español para 2.266, título inglés y XP base para 2.437. De los 27 IDs activos sin evidencia de oferta, 18 tienen fila en QuestV2.
 - Pasaron las **61 pruebas locales**, incluida la verificación de la misión 96222, el orden guardado y las instrucciones en ambos idiomas. La auditoría registró **0 errores, 92 avisos**, 301 grupos de investigación y 94 de cliente. El avance se mantiene en 40,83 % por criterios completos.
 
-## Último bloque verificado · Kum'isha
+## Kum'isha · corte verificado
 
 - El catálogo opcional de Alianza y Horda incorpora los seis pasos de Magtoor y Azore hasta El Encontrado, con sus destinos e instrucciones ES/EN. Los pasos se desbloquean al entregar el anterior y respetan los niveles mínimos de 30 y 45. Las misiones de la cadena son legibles al reconectar en otro continente. [Cadena, objetos y coordenadas](auditor_fase13/FUENTES.md#cadena-opcional-de-kumisha--26-de-noviembre-de-2026).
 - Pasaron las **62 pruebas locales**. La nueva prueba ejecuta la carga en Lua y comprueba requisitos, destinos, traducciones y el modo Solo ruta en ambas facciones. Se compararon los resultados de cada una de las 47 rutas con la tabla individual.
 - La auditoría mantiene **0 errores, 92 avisos**, 301 grupos de investigación y 94 de cliente. De los 64 avisos de prerrequisitos alternativos, 56 identifican que la ruta principal no entrega El Encontrado. El requisito queda accesible por el catálogo opcional. El global por criterios completos sigue en **40,83 %**.
 - Queda por observar la oferta efectiva de la cadena en Forever para cada facción y medir el tiempo del desvío. [Comprobación en cliente](auditor_fase13/VALIDACION_FOREVER.md).
 
+## Último bloque verificado · Ivar y formas de druida
+
+- Se corrigieron los IDs 26 y 27 de Forma acuática para el elfo de la noche y el tauren. El elfo y el Skyborne de Alianza recogen el encargo 98393 en Darnassus y lo entregan antes de seguir con Forma felina.
+- Las seis rutas de no-muertos añaden 91920 y 91921 antes de Ivar. Los pasos conservan su índice y los tres destinos de Ivar mantienen su posición dentro del paso. Se comprobaron la costa de Lordamere, los tres ojos de múrloc, la poción, los niveles y los títulos ES/EN. [Variantes, dependencias y destinos](auditor_fase13/FUENTES.md#dependencias-de-ivar-y-de-druida--26-de-noviembre-de-2026).
+- Pasaron las **65 pruebas locales**. La auditoría de las 47 rutas quedó en **0 errores y 80 avisos**, 12 menos que en el corte anterior. Quedan 56 avisos de la entrega opcional previa a Kum'isha y 24 de perfil. Hay 301 grupos de investigación y 94 de cliente. El global por criterios completos sigue en **40,83 %**.
+- El inventario tiene 2.472 fichas y 2.466 IDs activos e incluye los 2.462 IDs originales. Hay evidencia de existencia para 2.441 IDs, título español para 2.269 y título inglés y XP base para 2.440.
+
 ## Siguientes tareas
 
-1. Corregir los IDs 26 y 27 de la cadena acuática de druida y contrastar los perfiles de herrería y guerrero. Revisar los requisitos de apertura de Ivar y del espíritu felino.
-2. Contrastar los 27 IDs activos sin evidencia de oferta, incluidos los nueve sin fila en QuestV2, las variantes heredadas y las condiciones de evento. Ampliar la cobertura de títulos y requisitos con los 567 historiales de misiones previas.
+1. Contrastar las variantes de Forja de armaduras (5301 y 85712) y el encargo de guerrero 1700. Comprobar el desbloqueo de Forma acuática en las rutas Skyborne.
+2. Contrastar los 27 IDs activos sin evidencia de oferta, incluidos los nueve sin fila en QuestV2, las variantes heredadas y las condiciones de evento. Ampliar la cobertura de títulos y requisitos con los 569 historiales de misiones previas.
 3. Completar los 21 campos pendientes de las tres ventanas de viaje. Comparar el margen restante de la piedra de 924 y medir el terreno y los tiempos de las alternativas en el cliente.
 4. Registrar en Forever los tiempos de recorrido y la XP efectiva cuando estén disponibles. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `f64daf9`.
+La fase sigue abierta. El corte previo es `45be9db`.
 
 ## Avance individual
 
@@ -249,7 +256,7 @@ Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criter
 | `humano_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `humano_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `elfo_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
-| `elfo_druida` | Revisada localmente | 6/6 | 8/18 | 4 | 6 | 2 |
+| `elfo_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `elfo_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `elfo_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `elfo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
@@ -263,13 +270,13 @@ Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criter
 | `tauren_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
 | `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
 | `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 4 | 7 | 2 |
-| `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
-| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 3 | 7 | 2 |
-| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 3 | 7 | 2 |
-| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 3 | 7 | 2 |
-| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 3 | 7 | 2 |
-| `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
+| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
+| `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
 | `skyborne_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 7 | 2 |
 | `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
 | `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 7 | 2 |
@@ -279,4 +286,4 @@ Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criter
 | `skyborne_a_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `skyborne_a_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
 | `skyborne_a_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `skyborne_a_druida` | Revisada localmente | 6/6 | 8/18 | 2 | 6 | 2 |
+| `skyborne_a_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 6 | 2 |
