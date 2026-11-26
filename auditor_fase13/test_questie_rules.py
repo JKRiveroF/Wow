@@ -10,7 +10,7 @@ from lua_routes import load_routes
 from mission_rules import load_mission_localization
 from questie_evidence import import_inherited_spanish_titles
 from questie_rules import (BASE, CLASSIC_DB, FIXES, LEGACY_CACHE, LEGACY_FIXES, RELATIONS,
-                          _decode, corroborate_inherited_relations, import_quest_rules, observed_objectives)
+                          _decode, corroborate_inherited_fields, import_quest_rules, observed_objectives)
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -55,7 +55,7 @@ class QuestieRulesTest(unittest.TestCase):
             for name, source in sources.items():
                 (directory / (LEGACY_CACHE if name == LEGACY_FIXES else Path(name).name)).write_bytes(source.encode())
             with patch("questie_rules.HASHES", {name: sha256(source.encode()).hexdigest() for name, source in sources.items()}):
-                result = corroborate_inherited_relations(directory, catalog)["misiones"]
+                result = corroborate_inherited_fields(directory, catalog)["misiones"]
         self.assertEqual(set(result), {"7"})
         self.assertEqual(result["7"]["seguimientos"], [11])
         self.assertNotIn("prerrequisitos", result["7"])
@@ -79,10 +79,42 @@ class QuestieRulesTest(unittest.TestCase):
             for name, source in sources.items():
                 (directory / (LEGACY_CACHE if name == LEGACY_FIXES else Path(name).name)).write_bytes(source.encode())
             with patch("questie_rules.HASHES", {name: sha256(source.encode()).hexdigest() for name, source in sources.items()}):
-                result = corroborate_inherited_relations(directory, catalog)["misiones"]
+                result = corroborate_inherited_fields(directory, catalog)["misiones"]
         self.assertEqual(set(result), {"7"})
         self.assertEqual(result["7"]["prerrequisitos_alternativos"], [9])
         self.assertIn(RELATIONS, result["7"]["evidencia"]["prerrequisitos_alternativos"]["fuente"])
+
+    def test_inherited_objects_and_exclusions_require_matching_observations(self):
+        base = """    ['requiredSourceItems'] = 2,
+    ['exclusiveTo'] = 3,
+[7] = {"a",{32,33},{8}},
+[8] = {"b",{32,34},{7}},
+"""
+        traces = """        -- [7] = {
+            -- already in QuestieDB; Assumption: offer lists show it and 8 exclude each other (absence, cooccurrence; very high; 100+ characters)
+            -- [questKeys.exclusiveTo] = {8},
+        -- },
+        -- [8] = {
+            -- already in QuestieDB; Assumption: the server completes it and 7 together (cooccurrence; very high; 100+ characters)
+            -- [questKeys.exclusiveTo] = {7},
+        -- },
+"""
+        source = {"estado": "forever", "fuente": "registro"}
+        observations = {"existe": True, "objeto_entregado": 32, "objetos_por_botin": [{"itemId": 33, "count": 1}],
+                        "evidencia": {"objeto_entregado": source, "objetos_por_botin": source}}
+        catalog = {"misiones": {"7": observations, "8": observations}}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            sources = {CLASSIC_DB: base, LEGACY_FIXES: "function C:LoadFactionFixes()\n",
+                       BASE: "", FIXES: "", RELATIONS: traces}
+            for name, data in sources.items():
+                (directory / (LEGACY_CACHE if name == LEGACY_FIXES else Path(name).name)).write_bytes(data.encode())
+            with patch("questie_rules.HASHES", {name: sha256(data.encode()).hexdigest() for name, data in sources.items()}):
+                result = corroborate_inherited_fields(directory, catalog)["misiones"]
+        self.assertEqual(set(result), {"7"})
+        self.assertEqual(result["7"]["objetos"], [32, 33])
+        self.assertEqual(result["7"]["excluyentes"], [8])
+        self.assertIn(RELATIONS, result["7"]["evidencia"]["excluyentes"]["fuente"])
 
     def test_client_quest_index_does_not_supply_server_availability(self):
         raw = b"ID,UniqueBitFlag,UiQuestDetailsThemeID\n42,4,0\n"

@@ -1,5 +1,61 @@
 {
   "misiones": {
+    "996": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/996/", "fecha_consulta": "2026-11-26"}}
+    },
+    "2523": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/2523/", "fecha_consulta": "2026-11-26"}}
+    },
+    "2586": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/2586/", "fecha_consulta": "2026-11-26"}}
+    },
+    "2602": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/2602/", "fecha_consulta": "2026-11-26"}}
+    },
+    "2604": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/2604/", "fecha_consulta": "2026-11-26"}}
+    },
+    "3382": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/3382/", "fecha_consulta": "2026-11-26"}}
+    },
+    "4381": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4381/", "fecha_consulta": "2026-11-26"}}
+    },
+    "4382": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4382/", "fecha_consulta": "2026-11-26"}}
+    },
+    "4383": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4383/", "fecha_consulta": "2026-11-26"}}
+    },
+    "4384": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4384/", "fecha_consulta": "2026-11-26"}}
+    },
+    "4385": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4385/", "fecha_consulta": "2026-11-26"}}
+    },
+    "4386": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4386/", "fecha_consulta": "2026-11-26"}}
+    },
+    "8324": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://foreverquestlog.com/quests/8324/", "fecha_consulta": "2026-11-26"}}
+    },
+    "8467": {
+      "repetible": true,
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/8467/", "fecha_consulta": "2026-11-26"}}
+    },
     "1878": {
       "estado": "forever",
       "fuente": "https://worldofwarcraft.blizzard.com/en-us/news/24315281/wow-forever-hotfixes-november-16-2026",
@@ -23,48 +79,58 @@
       }
     },
     "4103": {
+      "repetible": true,
       "facciones": ["Alliance"],
       "prerrequisitos": [5882],
       "objetos": [11511],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4103/"}, "prerrequisitos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4103/"}, "objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4103/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4103/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4103/"}, "prerrequisitos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4103/"}, "objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4103/"}}
     },
     "4104": {
+      "repetible": true,
       "facciones": ["Alliance"],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4104/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4104/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4104/"}}
     },
     "4105": {
+      "repetible": true,
       "facciones": ["Alliance"],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4105/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4105/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4105/"}}
     },
     "4106": {
+      "repetible": true,
       "facciones": ["Alliance"],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4106/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4106/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4106/"}}
     },
     "4107": {
+      "repetible": true,
       "facciones": ["Alliance"],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4107/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4107/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4107/"}}
     },
     "4108": {
+      "repetible": true,
       "facciones": ["Horde"],
       "prerrequisitos": [5887],
       "objetos": [11511],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4108/"}, "prerrequisitos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4108/"}, "objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4108/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4108/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4108/"}, "prerrequisitos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4108/"}, "objetos": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4108/"}}
     },
     "4109": {
+      "repetible": true,
       "facciones": ["Horde"],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4109/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4109/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4109/"}}
     },
     "4110": {
+      "repetible": true,
       "facciones": ["Horde"],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4110/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4110/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4110/"}}
     },
     "4111": {
+      "repetible": true,
       "facciones": ["Horde"],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4111/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/4111/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4111/"}}
     },
     "4112": {
+      "repetible": true,
       "facciones": ["Horde"],
-      "evidencia": {"facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4112/"}}
+      "evidencia": {"repetible": {"estado": "forever", "fuente": "https://foreverquestlog.com/quests/4112/", "fecha_consulta": "2026-11-26"}, "facciones": {"estado": "forever", "fuente": "https://zephras.com/forever/enUS/quest/4112/"}}
     },
     "5227": {
       "existe": true,

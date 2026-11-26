@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 12:53:58 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 13:01:17 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar las misiones con oferta pendiente y aprovechar las fichas disponibles para repetición, objetos y exclusiones.
+**Tarea actual** · Revisar las condiciones de los 24 IDs sin oferta acreditada y las instrucciones sobre los objetos auxiliares confirmados.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -292,11 +292,17 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Las cuatro rutas de guerrero de la Horda entregan 1848 antes de recoger el encargo de Orm. Las dos rutas de mago de la Horda recogen 1947 con Deino en Orgrimmar, entregan a Tabetha y detallan los materiales de 1948 y su carga en Arathi. Se conservan los índices de paso y se añadieron textos ES/EN. [Puntos, cadenas y materiales](auditor_fase13/FUENTES.md#algaz-armadura-brutal-y-tabetha--26-de-noviembre-de-2026).
 - Pasaron **2 pruebas específicas** y la **regresión de 78 pruebas**. Desaparecieron los **33 avisos de orden y acceso**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. El inventario conserva los 2.462 IDs originales. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos permanece en **40,83 %**.
 
-## Último bloque verificado · Observaciones de posición y entrega
+## Observaciones de posición y entrega · corte verificado
 
 - Se incorporaron siete instantáneas de Efficient Games. Hay **520 destinos únicos adicionales** cerca de una posición observada, en 11.545 combinaciones de destino y ruta. Las fichas con entregas observadas pasan de 274 a **492**, diferenciadas por compilación y efecto Legacy. [Fuentes y alcance](auditor_fase13/FUENTES.md#observaciones-de-posiciones-y-entregas--26-de-noviembre-de-2026).
 - El corte mantiene **24 IDs activos** sin evidencia positiva de oferta. Se conserva la comprobación directa de los casos estacionales y de banda cuando se habiliten. La cercanía de un destino y la XP efectiva de una entrega quedan en campos separados de la posición exacta y la XP base.
 - Pasaron **14 pruebas específicas** y la **regresión de 79 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
+
+## Último bloque verificado · Objetos auxiliares, canjes y exclusiones
+
+- Se documentaron objetos auxiliares en **28 misiones** mediante coincidencia con los campos de entrega o botín del servidor. Se acreditó la exclusión de las ofertas 3681 y 2998 de Libro de la Divinidad. También se registraron **24 misiones repetibles** con indicador explícito, incluidos los diez canjes de Frondavil. [Método y fuentes](auditor_fase13/FUENTES.md#objetos-auxiliares-canjes-y-exclusiones--26-de-noviembre-de-2026).
+- El inventario tiene **43 fichas con objetos auxiliares**, **45 con exclusiones** y **26 con repetición acreditada**. Estos datos se incorporan por ID a todas sus rutas.
+- Pasaron **17 pruebas específicas** y la **regresión de 80 pruebas**. Las 47 rutas mantienen **0 errores y 56 avisos** de Kum’isha, con **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -315,7 +321,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `a27e63f`.
+La fase sigue abierta. El corte previo es `ae1eb64`.
 
 ## Avance individual
 

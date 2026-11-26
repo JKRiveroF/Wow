@@ -29,12 +29,17 @@ LIST_FIELDS = {"preQuestGroup": "prerrequisitos", "preQuestSingle": "prerrequisi
                "exclusiveTo": "excluyentes", "breadcrumbs": "introductorias", "requiredSourceItems": "objetos"}
 LINK_FIELDS = {"nextQuestInChain": "seguimientos", "disabledByQuest": "desactivada_por", "parentQuest": "mision_activa"}
 RELATION_FIELDS = {"preQuestGroup", "preQuestSingle", "exclusiveTo", "breadcrumbs", "nextQuestInChain"}
-INHERITED_RELATIONS = {"preQuestGroup", "preQuestSingle", "nextQuestInChain"}
+INHERITED_FIELDS = {"preQuestGroup", "preQuestSingle", "nextQuestInChain", "exclusiveTo", "requiredSourceItems"}
 CLASSIC_COLUMN = re.compile(r"^ +\['(\w+)'\] = (\d+),")
 TRACE_ROW = re.compile(r"^ {8}(?:-- )?\[(\d+)\]\s*=\s*\{")
 TRACE_REQUIREMENT = re.compile(r"^ {12}-- \[questKeys\.preQuestSingle\] = \{(\d+)\},\s*$")
 TRACE_HANDOFF = re.compile(
     r"^ {12}-- already in QuestieDB; Assumption: offered right after (\d+) was turned in "
+    r"\(([^;]+); very high; 100\+ characters\)\s*$"
+)
+TRACE_EXCLUSION = re.compile(r"^ {12}-- \[questKeys\.exclusiveTo\] = (\{[\d, ]+\}),\s*$")
+TRACE_EXCLUDED_OFFERS = re.compile(
+    r"^ {12}-- already in QuestieDB; Assumption: offer lists show it and ([\d, ]+) exclude each other "
     r"\(([^;]+); very high; 100\+ characters\)\s*$"
 )
 GATE_FIELDS = {"preQuestSingle", "preQuestGroup", "parentQuest", "availableStartingWith", "disabledByQuest"}
@@ -186,10 +191,10 @@ def _classic_columns(row):
     return fields
 
 
-def _classic_relations(directory):
+def _classic_fields(directory):
     base = _read(directory, CLASSIC_DB)
     columns = {match[1]: int(match[2]) - 1 for line in base if (match := CLASSIC_COLUMN.match(line))
-               and match[1] in INHERITED_RELATIONS}
+               and match[1] in INHERITED_FIELDS}
     records = {}
     for number, line in enumerate(base, 1):
         row = re.fullmatch(r"\[(\d+)\] = \{(.*)\},", line)
@@ -202,7 +207,7 @@ def _classic_relations(directory):
     legacy = _read(directory, LEGACY_FIXES, LEGACY_CACHE)
     dynamic_start = next(i for i, line in enumerate(legacy, 1) if ":LoadFactionFixes(" in line)
     for quest, number, field, value, _ in _fields(legacy):
-        if field not in INHERITED_RELATIONS:
+        if field not in INHERITED_FIELDS:
             continue
         if number < dynamic_start:
             records.setdefault(quest, {})[field] = (value, f"{REPOSITORY}{LEGACY_FIXES}#L{number}")
@@ -226,13 +231,34 @@ def _traced_requirements(lines):
                 yield quest, int(condition[1]), number
 
 
-def corroborate_inherited_relations(directory, catalog):
-    """Contrasta continuaciones y requisitos de una entrega con evidencia de alcance distinto."""
+def _traced_exclusions(lines):
+    quest = None
+    for number, line in enumerate(lines, 1):
+        if row := TRACE_ROW.match(line):
+            quest = row[1]
+        elif line.strip() in ("},", "-- },"):
+            quest = None
+        elif quest and (record := TRACE_EXCLUSION.fullmatch(line)):
+            note = TRACE_EXCLUDED_OFFERS.fullmatch(lines[number - 2])
+            if note and {"absence", "cooccurrence"} <= set(note[2].split(", ")):
+                ids = {int(value) for value in re.findall(r"\d+", note[1])}
+                if ids and ids == set(_decode("exclusiveTo", record[1]).get("excluyentes", [])):
+                    yield quest, sorted(ids), number
+
+
+def corroborate_inherited_fields(directory, catalog):
+    """Contrasta los campos heredados con observaciones equivalentes de Forever."""
     if not all((directory / name).is_file() for name in (Path(CLASSIC_DB).name, LEGACY_CACHE)):
         return {}
     missions = catalog.get("misiones", {})
-    inherited = _classic_relations(directory)
+    inherited = _classic_fields(directory)
     confirmed = {}
+
+    def register(quest, field, value, proof):
+        record = confirmed.setdefault(quest, {"evidencia": {}})
+        record[field] = value
+        record["evidencia"][field] = proof
+
     for quest, fields in inherited.items():
         value, classic_source = fields.get("nextQuestInChain", ("", ""))
         if not value.isdecimal() or not (following := int(value)):
@@ -250,15 +276,18 @@ def corroborate_inherited_relations(directory, catalog):
             continue
         proof = {**candidate, "metodo": "secuencia_contrastada",
                  "fuentes_adicionales": [classic_source, observed["fuente"]]}
-        confirmed[quest] = {"seguimientos": [following], "evidencia": {"seguimientos": proof}}
+        register(quest, "seguimientos", [following], proof)
 
     base, fixes = (_read(directory, layer) for layer in (BASE, FIXES))
-    replaced = {quest for lines in (base, fixes) for quest, _, field, _, _ in _fields(lines) if field in GATE_FIELDS}
-    dynamic = next((i for i, line in enumerate(fixes) if ":LoadDynamic(" in line), len(fixes))
-    replaced.update(re.findall(r"\[(\d+)\]\s*=", "\n".join(fixes[dynamic:])))
-    for quest, required, number in _traced_requirements(_read(directory, RELATIONS)):
+    replaced = {(quest, field) for lines in (base, fixes) for quest, _, field, _, _ in _fields(lines)}
+    dynamic_start = next((i for i, line in enumerate(fixes) if ":LoadDynamic(" in line), len(fixes))
+    dynamic = set(re.findall(r"\[(\d+)\]\s*=", "\n".join(fixes[dynamic_start:])))
+    traces = _read(directory, RELATIONS)
+    for quest, required, number in _traced_requirements(traces):
         entry = missions.get(quest, {})
-        if quest in replaced or not entry.get("existe") or entry.keys() & {
+        if quest in dynamic or any((quest, field) in replaced for field in GATE_FIELDS):
+            continue
+        if not entry.get("existe") or entry.keys() & {
             "prerrequisitos", "prerrequisitos_alternativos", "mision_activa", "desactivada_por"
         }:
             continue
@@ -268,7 +297,40 @@ def corroborate_inherited_relations(directory, catalog):
             continue
         proof = {"estado": "forever", "fuente": f"{SOURCE}{RELATIONS}#L{number}",
                  "metodo": "oferta_tras_entrega_contrastada", "fuentes_adicionales": [source]}
-        record = confirmed.setdefault(quest, {"evidencia": {}})
-        record[field] = [required]
-        record["evidencia"][field] = proof
+        register(quest, field, [required], proof)
+
+    for quest, excluded, number in _traced_exclusions(traces):
+        entry = missions.get(quest, {})
+        if quest in dynamic or (quest, "exclusiveTo") in replaced or not entry.get("existe") or "excluyentes" in entry:
+            continue
+        baseline, source = inherited.get(quest, {}).get("exclusiveTo", ("", ""))
+        if set(_decode("exclusiveTo", baseline).get("excluyentes", [])) != set(excluded):
+            continue
+        proof = {"estado": "forever", "fuente": f"{SOURCE}{RELATIONS}#L{number}",
+                 "metodo": "exclusion_de_oferta_contrastada", "fuentes_adicionales": [source]}
+        register(quest, "excluyentes", excluded, proof)
+
+    for quest, fields in inherited.items():
+        entry = missions.get(quest, {})
+        if quest in dynamic or (quest, "requiredSourceItems") in replaced or "objetos" in entry:
+            continue
+        baseline, source = fields.get("requiredSourceItems", ("", ""))
+        items = _decode("requiredSourceItems", baseline).get("objetos")
+        if not items:
+            continue
+        evidence = entry.get("evidencia", {})
+        offered = evidence.get("objeto_entregado", {})
+        loot = evidence.get("objetos_por_botin", {})
+        proofs = {}
+        if offered.get("estado") == "forever":
+            proofs[entry["objeto_entregado"]] = offered
+        if loot.get("estado") == "forever":
+            proofs.update((row["itemId"], loot) for row in entry["objetos_por_botin"] if row.get("count", 0) > 0)
+        if not set(items) <= proofs.keys():
+            continue
+        first = proofs[items[0]]
+        sources = list(dict.fromkeys([source, *(proofs[item]["fuente"] for item in items
+                                                if proofs[item]["fuente"] != first["fuente"])]))
+        proof = {**first, "metodo": "objetos_auxiliares_contrastados", "fuentes_adicionales": sources}
+        register(quest, "objetos", items, proof)
     return {"misiones": confirmed}
