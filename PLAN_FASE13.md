@@ -55,7 +55,9 @@ Una ruta completamente verificada requiere todos sus criterios aplicables, inclu
 - [x] Incorporar de forma opcional las dos cadenas de Forma acuática de Skyborne y señalar las visitas de ruta donde recoger las mitades.
 - [x] Contrastar la rama actual de Traición en Azshara y aplicar sus tres encargos de Forever en las 22 rutas Horda.
 - [x] Revisar los 25 IDs activos sin evidencia de oferta, acreditar el canje 5227 y corregir los pasos y destinos de los encargos opcionales.
-- [ ] Resolver los campos investigables de los 24 IDs restantes, con prioridad para los ocho sin fila en QuestV2. Verificar la oferta estacional y de banda con observaciones de la fase correspondiente.
+- [x] Contrastar los 24 IDs pendientes en las seis instantáneas iniciales y documentar los requisitos de prueba y las rutas afectadas por ID.
+- [ ] Buscar evidencia de iniciador, variante y requisitos para las 11 ofertas investigables, con prioridad para 5201, 6848, 8319 y 9266, que carecen de fila en QuestV2. Usar las tablas y trazas ya archivadas.
+- [ ] Verificar las cinco ofertas estacionales y los ocho casos vinculados a botín de banda cuando haya cliente y se cumplan las condiciones de contenido. Confirmar las cantidades heredadas de los siete canjes de Ahn'Qiraj.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
 - [x] Cotejar las etiquetas de los 195 IDs sin título español observado con la localización heredada. Guardar el resultado por ID y señalar 85712 y 93686 para contraste directo.
 - [x] Corregir 26 encargos de canje, reputación, eventos y JcJ que aparecían como refuerzos de XP.

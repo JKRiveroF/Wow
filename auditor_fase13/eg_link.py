@@ -27,6 +27,12 @@ HASHES = {
     ("71037", "flights"): "a1406e02cc1124769f7297cf6a0e96b91fc9dde61eac5af2c155349db63bc7e3",
 }
 EXTRA_HASHES = {
+    ("70790", "quest_scan"): "61dcbb4de5f9b08fe65c091080bb3af8eeff0c4a4ced8f31b27ef0e449f17e56",
+    ("70790", "npcs"): "e732c47ad4bde79fa6ea1acba656d7498c39ac46e8cc4afc29f43239e4f128b4",
+    ("70862", "quest_scan"): "c237d72377bad9904bf4ad49d1121cc73ae3f2aa94847cfcc8d75e28268fbae3",
+    ("70862", "npcs"): "64ca5ce997d82cc0ce9aa1ea1f96ea2c363b28bb3ebf3af460e2d16693915cdc",
+    ("70888", "quest_scan"): "f7bd32186f15993c6bdb42b1c4dfcf68e9bbdeca31834a4460a52d4854716fd9",
+    ("70888", "npcs"): "e03cc30ff79ebf02f50bdc6baf3463b5b8c65569175a1e112102fcfc9ea74274",
     ("70959", "quest_scan"): "d765048784e3c9a2259869982a2da0fce7a2913712fc1aa618315f6647d429a2",
     ("71037", "npcs"): "25cbc37150af015aae0c0406c2485d1c26e2f35b622c0963e2b830b683e7b8b0",
     ("71037", "objectives"): "724e5c3263d78da807cb09e59fcdd87367e77306ba5a4a6ec4d3a91d054fc903",
@@ -52,6 +58,7 @@ EG_FIELDS = (
 XP_BUILD = "1.60.1.71091"
 XP_HASH = "1513f3f2646ae0b33b79de6219614792f0dbc050bb5bd76c1c4f0fce668a86fd"
 NEW_BUILD = "1.60.1.71139"
+RECENT_REVISION_BUILDS = {"1.60.1.70790", "1.60.1.70862", "1.60.1.70888", NEW_BUILD}
 QUEST_INFO_HASH = "06e1f7250d8ad8d042516ebae1fa4a78fa9307cab0fe62daf19a73331518fd4b"
 QUEST_INFO_SOURCE = f"https://wago.tools/db2/QuestInfo/csv?build={XP_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
@@ -59,7 +66,7 @@ RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
 
 
 def _source(build, dataset):
-    revision = REVISION_71139 if build == NEW_BUILD else REVISION
+    revision = REVISION_71139 if build in RECENT_REVISION_BUILDS else REVISION
     return {"estado": "forever", "build": build, "fuente": f"{BASE}{revision}/data/wowf/{build}/{dataset}.json"}
 
 

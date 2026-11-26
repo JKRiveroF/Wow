@@ -16,10 +16,45 @@ Registra la compilación e interfaz del cliente, idioma del cliente y de la guí
 | Herrería y guerrero | Registra qué variante ofrece Okothos a cada clase Horda y el nivel de Herrería al aceptarla. Con enano y gnomo, comprueba la entrega de las notas a Klockmort antes de visitar Menethil, la ubicación de los depósitos y la entrega de 1709. |
 | Forma acuática de Skyborne | Empieza a nivel 16 como druida de cada facción. Confirma los plazos del lago y del adorno, la posición de los arcones, el desbloqueo del hechizo y el coste de recoger las mitades en viajes de la ruta. |
 | Traición en Azshara | Comprueba la oferta de la carta 3504, la entrega en el tomo kaldorei y las tres patrullas. Registra cómo se activan los cristales y la secuencia de entrega 91500 y 91531. |
-| Oferta y eventos | Registra el caldero 5227 tras completar su cadena, la primera XP y la XP de un canje posterior. Durante cada evento, comprueba sus encargos con un personaje de cada facción y la variante de regalo para paladín y Skyborne. Cuando se abra el contenido correspondiente, verifica la oferta de Hydraxis, la prueba de Eris, los canjes de clase de Ahn'Qiraj y el encargo de Ryson en Alterac. |
+| Oferta y eventos | Registra el caldero 5227 tras completar su cadena, la primera XP y la XP de un canje posterior. Consulta la matriz de oferta para los demás IDs. |
 | Etiquetas de destino | Antes y después de aceptar una misión de élite, mazmorra o banda, revisa las etiquetas ES/EN y el tamaño recomendado cuando responda el cliente. Comprueba también una misión normal y una tarjeta de mazmorra opcional. |
 | Prerrequisitos de ruta | En Menethil, comprueba 473 a nivel 23 con y sin 455 entregada. Con Guerrero de la Horda, entrega 1838 y 1848 antes de pedir el encargo de Orm. Con Mago de la Horda, visita a Deino, entrega 1947 y verifica la obtención, carga y entrega de la zarza de 1948. |
 | Canje 8941 | Con un pícaro de la Horda de nivel 58 o superior, comprueba la oferta después de 8978, el canje de las dos piezas Oficioscuro y la oferta posterior de 8930. Registra la XP efectiva y el nivel al entregar. |
 | Comportamiento anterior | Abre guía, talentos, equipo, misiones, profesiones y secciones de mapas con datos previos de 9.7.9. Verifica los textos ES/EN y registra cualquier error de arranque, selección o traducción. |
 
 Los resultados de las pruebas simuladas quedan en las pruebas del auditor. El estado de cada comprobación de esta tabla sigue pendiente de observación en el cliente.
+
+## Matriz de oferta pendiente por misión
+
+Los 24 ID carecen de oferta acreditada en el inventario. Las condiciones de partida y los materiales proceden de las fichas de referencia y de la base heredada. Registra el ID que ofrece el iniciador, el perfil y los requisitos cumplidos. [Evidencia disponible y límites](FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).
+
+5201, 6848, 8319, 8353, 8355, 8356, 8863 y 9266 carecen de registro en los tres escaneos iniciales y de fila en QuestV2 de 71139. Los otros 16 aparecen como consultas sin respuesta en las tres compilaciones iniciales.
+
+El calendario extraído sitúa el Festival de Invierno del 15 de diciembre de 2026 al 2 de enero de 2027, el Festival Lunar del 2 al 16 de febrero de 2027 y el próximo Halloween del 18 de octubre al 2 de noviembre de 2027. Comprueba la ventana al empezar la prueba. [Calendario de WoW Forever DB](https://wowfdb.com/events/).
+
+| ID | Rutas | Vía prioritaria | Comprobación pendiente |
+| ---: | ---: | --- | --- |
+| 1374 | 32 | Investigar oferta | Con Uthek y la rama Gelkis tras 1373, distingue la oferta heredada de los pasos de la variante 93128. Registra las condiciones de reputación y el ID mostrado. |
+| 1375 | 34 | Investigar oferta | Con Warug y la rama Magram tras 1371, distingue la oferta heredada de los pasos de la variante 93196. Registra las condiciones de reputación y el ID mostrado. |
+| 2358 | 4 | Investigar oferta | Busca la oferta de la Sombra de Arantir en Villa del Lago con pícaro y confirma si pide los cuernos 7906. |
+| 3504 | 22 | Investigar oferta | Busca la carta de Belgrom con Horda antes de 3505. Registra si sigue siendo la entrada a la cadena 3505 → 91497 → 91500 → 91531. |
+| 5201 | 24 | Investigar oferta | Comprueba a Rivern con Alianza desde nivel 58 y reputación con los Instructores de Sableinvernales. Registra si ofrece 5201 tras el primer encargo, su umbral y si se repite. |
+| 6804 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 55. Si la ofrece, registra cuándo entrega el Aspecto de Neptulon (17310) y si conserva el objetivo de 12 brazales (17309). |
+| 6805 | 47 | Investigar oferta | Comprueba a Hydraxis desde nivel 55, con y sin 6804 aceptada o entregada. Registra si ofrece 6805 y pide 15 elementales de cada tipo. |
+| 6821 | 47 | Investigar oferta | Comprueba a Hydraxis después de entregar 6804 y 6805. Registra si pide el ojo 17322, si procede del Piroguardián brasadivino y si la entrega ofrece 6822. |
+| 6848 | 1 | Investigar oferta | En Valle de Alterac, busca a Ryson con Alianza. Registra el ID de la oferta y la posición del ojo en las cuevas de los Hacha Invernal. |
+| 7622 | 3 | Cliente con objeto de banda | Con sacerdote al nivel 60, comprueba cómo se consigue el Ojo de la Divinidad en Forever. Equípalo, busca a Eris y registra la oferta y el resultado del reto de los campesinos. |
+| 8319 | 46 | Investigar oferta | Tras 8318, comprueba si Bor ofrece el canje de diez textos 20404 y vuelve a ofrecerlo después de entregarlo. |
+| 8353 | 1 | Cliente durante Halloween | Con 8311 activa, usa `/chicken` frente al tabernero Fuegobrezo en Forjaz. Verifica el ID y el caramelo. |
+| 8355 | 1 | Cliente durante Halloween | Con 8311 activa, usa `/train` frente a Talvash en Forjaz. Verifica el ID y el caramelo. |
+| 8356 | 1 | Cliente durante Halloween | Con 8311 activa, usa `/flex` frente a la tabernera Allison en Ventormenta. Verifica el ID y el caramelo. |
+| 8556 | 4 | Cliente con botín de Ahn'Qiraj | Con guerrero de nivel 60 y Honorable, comprueba el canje con Yessendra. Referencia heredada: 1 × 20884, 2 × 20868, 5 × 20861 y 5 × 20865. |
+| 8689 | 1 | Cliente con botín de Ahn'Qiraj | Con sacerdote de nivel 60 y Reverenciado, comprueba el canje con Keyl. Referencia heredada: 1 × 20885, 2 × 20870, 5 × 20859 y 5 × 20863. |
+| 8691 | 3 | Cliente con botín de Ahn'Qiraj | Con mago de nivel 60 y Reverenciado, comprueba el canje con Keyl. Referencia heredada: 1 × 20885, 2 × 20873, 5 × 20858 y 5 × 20862. |
+| 8692 | 3 | Cliente con botín de Ahn'Qiraj | Con druida de nivel 60 y Reverenciado, comprueba el canje con Keyl. Referencia heredada: 1 × 20889, 2 × 20872, 5 × 20864 y 5 × 20860. |
+| 8693 | 1 | Cliente con botín de Ahn'Qiraj | Con pícaro de nivel 60 y Reverenciado, comprueba el canje con Keyl. Referencia heredada: 1 × 20885, 2 × 20866, 5 × 20861 y 5 × 20865. |
+| 8694 | 1 | Cliente con botín de Ahn'Qiraj | Con brujo de nivel 60 y Reverenciado, comprueba el canje con Keyl. Referencia heredada: 1 × 20889, 2 × 20869, 5 × 20865 y 5 × 20861. |
+| 8696 | 2 | Cliente con botín de Ahn'Qiraj | Con cazador de nivel 60 y Reverenciado, comprueba el canje con Keyl. Referencia heredada: 1 × 20889, 2 × 20868, 5 × 20858 y 5 × 20862. |
+| 8788 | 6 | Cliente durante Festival de Invierno | Abre el regalo 180746 de Orgrimmar (52,3 / 69,4). Contrasta el ID que reciben un paladín, un Skyborne y otro personaje de la Horda. |
+| 8863 | 43 | Cliente durante Festival Lunar | Comprueba si el PNJ 15864 acepta una moneda 21100 y vuelve a ofrecer el canje con un personaje de cada facción. |
+| 9266 | 20 | Investigar oferta | Comprueba el canje de 40 paños rúnicos (14047) y cuatro carbones (3857) con Bronn en Vista Eterna. Registra reputación al ofrecerse, efecto al entregarlo y si vuelve a ofrecerlo. |

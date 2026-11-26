@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 13:14:24 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 13:23:37 +01:00 (Madrid)**
 
-**Tarea actual** · Contrastar los 24 IDs sin oferta acreditada y sus requisitos especiales con evidencia por fase.
+**Tarea actual** · Verificar iniciadores y desbloqueos de 11 ofertas investigables, empezando por las cuatro sin fila en QuestV2.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -309,30 +309,36 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Los **406 pasos** de 17 misiones en las 47 rutas muestran cómo conseguir, usar o combinar los objetos auxiliares. Se añadieron las instrucciones ES/EN de Aquementas, El Cubil, Faucehielo y otros encargos. Hakkar, los fragmentos de La Masacre y las tibias de guerrero quedan como opcionales en la estimación de XP. [Objetivos y fuentes](auditor_fase13/FUENTES.md#instrucciones-de-uso-de-materiales--26-de-noviembre-de-2026).
 - Pasaron **2 pruebas específicas** y la **regresión de 81 pruebas**. La prueba de integridad comprueba que la actualización se limita al texto de los pasos indicados. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos se mantiene en **40,83 %**.
 
-## Último bloque verificado · Consultas 71139
+## Misiones y dependencias · Consultas 71139
 
 - Se contrastaron **901 fichas activas** en la compilación 71139. Los campos de identidad, nivel, objetivos, recompensas y perfil de las 900 fichas compartidas coinciden con el corte anterior. El inventario incorporó seis seguimientos y pasó a 576 fichas con historial de misiones previas. Los 24 IDs sin oferta acreditada siguen pendientes. [Compilación y fuentes](auditor_fase13/FUENTES.md#consultas-de-la-compilación-71139--26-de-noviembre-de-2026).
 - Se documentaron el título, nivel 58, equipo Oficioscuro, secuencia 8978 → 8941 → 8930 y **19.900 XP base** de Una compensación justa. Las tres rutas de pícaro de la Horda muestran el canje y su etiqueta de mazmorra. El encargo se contabiliza en la XP opcional. Quedan 24 IDs activos sin XP base.
 - Pasaron **8 pruebas específicas** y la **regresión de 83 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance sigue en **40,83 %** por criterios completos.
 
+## Último bloque verificado · Ofertas y posiciones de las primeras compilaciones
+
+- Se contrastaron **seis instantáneas** de consulta y de PNJ. Entre los 24 IDs sin oferta acreditada, 16 tienen consultas sin respuesta en los tres escaneos y ocho carecen de registro. Cada ID tiene ahora una comprobación asociada, con **11 ofertas investigables**, **cinco estacionales** y **ocho vinculadas a botín de banda**. Los requisitos de partida incluyen cantidades e IDs de los siete canjes de Ahn'Qiraj. [Matriz de oferta pendiente](auditor_fase13/VALIDACION_FOREVER.md#matriz-de-oferta-pendiente-por-misión).
+- **450 fichas** incorporaron muestras de oferta o entrega. **897 destinos** adicionales tienen una observación cercana del mismo mapa y acción. Quedan 3.837 destinos sin observación cercana o específica. Los puntos cercanos siguen pendientes de confirmación exacta. [Instantáneas y método](auditor_fase13/FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).
+- Pasaron **8 pruebas específicas** y la **regresión de 84 pruebas**. Las 47 rutas registran **0 errores y 56 avisos** de Kum’isha. Quedan **279 grupos de investigación y 116 de cliente**. El avance por criterios completos sigue en **40,83 %**.
+
 ## Comprobaciones que impiden cerrar los criterios
 
 | Bloque | Investigación pendiente | Validación en Forever |
 | --- | --- | --- |
-| Misiones y dependencias | Entre 2.468 IDs activos faltan 24 acreditaciones de oferta, 194 títulos ES observados (192 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos y 2.443 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Oferta por fase o perfil cuando los registros externos no la acrediten. |
+| Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se prioriza investigar 11 de ellas. Faltan 194 títulos ES observados (192 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.443 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y las restantes cuando los registros externos no acrediten su oferta por fase o perfil. |
 | Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.970 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
-| Cartografía | 4.734 destinos únicos sin una referencia específica o cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
+| Cartografía | 3.837 destinos únicos sin una referencia específica o cercana. Otros 2.113 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP efectiva, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Posiciones, transporte y requisitos de nodos en 44 rutas. | Costes y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
 | Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
 
 ## Siguientes tareas
 
-1. Contrastar la oferta de los ocho IDs sin fila en QuestV2 y los campos de repetición, objetos, exclusiones y desbloqueos.
+1. Contrastar las ofertas 5201, 6848, 8319 y 9266 y los iniciadores y desbloqueos de las demás misiones investigables. Priorizar campos de repetición, objetos y exclusiones.
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `8168bce`.
+La fase sigue abierta. El corte previo es `c24308c`.
 
 ## Avance individual
 

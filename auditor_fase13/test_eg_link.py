@@ -16,6 +16,13 @@ class EGLinkTests(unittest.TestCase):
         self.assertNotIn(REVISION_71139, previous["fuente"])
         self.assertTrue(current["fuente"].endswith(f"/{NEW_BUILD}/quests.enUS.json"))
 
+    def test_early_live_snapshots_link_to_the_revision_with_verified_hashes(self):
+        for build in ("1.60.1.70790", "1.60.1.70862", "1.60.1.70888"):
+            for dataset in ("npcs", "quest_scan"):
+                with self.subTest(build=build, dataset=dataset):
+                    source = _source(build, dataset)
+                    self.assertIn(f"/{REVISION_71139}/data/wowf/{build}/{dataset}.json", source["fuente"])
+
     def test_quest_info_distinguishes_elite_dungeon_and_unclassified_quests(self):
         table = {1: "Elite", 41: "PvP", 62: "Raid", 81: "Dungeon"}
         self.assertEqual(_quest_type({"questInfoId": 1}, table), {"tipo_mision": "Elite", "elite": True})
