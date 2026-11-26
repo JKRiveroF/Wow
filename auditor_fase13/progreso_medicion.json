@@ -1,62 +1,86 @@
 {
   "version": 1,
-  "actualizado": "2026-11-26T17:48:42+01:00",
+  "actualizado": "2026-11-26T17:55:29+01:00",
   "anterior": {
     "1": {
       "certificado": [
         95,
         95
       ],
-      "efectivo": null
+      "efectivo": [
+        1,
+        1
+      ]
     },
     "2": {
       "certificado": [
         47,
         188
       ],
-      "efectivo": null
+      "efectivo": [
+        6457,
+        12340
+      ]
     },
     "3": {
       "certificado": [
         47,
         141
       ],
-      "efectivo": null
+      "efectivo": [
+        1717405,
+        3813488
+      ]
     },
     "4": {
       "certificado": [
         47,
         141
       ],
-      "efectivo": null
+      "efectivo": [
+        15277,
+        29616
+      ]
     },
     "5": {
       "certificado": [
         47,
         141
       ],
-      "efectivo": null
+      "efectivo": [
+        53,
+        112
+      ]
     },
     "6": {
       "certificado": [
         94,
         141
       ],
-      "efectivo": null
+      "efectivo": [
+        11875,
+        17276
+      ]
     },
     "7": {
       "certificado": [
         1,
         4
       ],
-      "efectivo": null
+      "efectivo": [
+        3,
+        8
+      ]
     },
     "global": {
       "certificado": [
         49,
         120
       ],
-      "efectivo": null
+      "efectivo": [
+        1309939929,
+        2352922096
+      ]
     }
   },
   "actual": {
@@ -115,8 +139,8 @@
           188
         ],
         "efectivo": [
-          6457,
-          12340
+          206639,
+          394880
         ],
         "criterios": [
           {
@@ -134,8 +158,8 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              3629,
-              4936
+              14519,
+              19744
             ],
             "familias": [
               {
@@ -158,16 +182,16 @@
                 "nombre": "nombre_es",
                 "unidades": 2468,
                 "estados": {
-                  "confirmada": 2274,
-                  "parcial": 192,
+                  "confirmada": 2277,
+                  "parcial": 189,
                   "inferencia": 0,
                   "investigacion": 2,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 4740,
+                "comprobaciones_superadas": 4743,
                 "comprobaciones_aplicables": 4936,
                 "etapas": {
-                  "confirmadas": 2274,
+                  "confirmadas": 2277,
                   "contrastadas": 2466
                 }
               },
@@ -1122,8 +1146,8 @@
         120
       ],
       "efectivo": [
-        1309939929,
-        2352922096
+        41918792757,
+        75293507072
       ]
     },
     "regresion": {
@@ -1168,56 +1192,80 @@
         0,
         1
       ],
-      "efectivo": null
+      "efectivo": [
+        0,
+        1
+      ]
     },
     "2": {
       "certificado": [
         0,
         1
       ],
-      "efectivo": null
+      "efectivo": [
+        3,
+        78976
+      ]
     },
     "3": {
       "certificado": [
         0,
         1
       ],
-      "efectivo": null
+      "efectivo": [
+        0,
+        1
+      ]
     },
     "4": {
       "certificado": [
         0,
         1
       ],
-      "efectivo": null
+      "efectivo": [
+        0,
+        1
+      ]
     },
     "5": {
       "certificado": [
         0,
         1
       ],
-      "efectivo": null
+      "efectivo": [
+        0,
+        1
+      ]
     },
     "6": {
       "certificado": [
         0,
         1
       ],
-      "efectivo": null
+      "efectivo": [
+        0,
+        1
+      ]
     },
     "7": {
       "certificado": [
         0,
         1
       ],
-      "efectivo": null
+      "efectivo": [
+        0,
+        1
+      ]
     },
     "global": {
       "certificado": [
         0,
         1
       ],
-      "efectivo": null
+      "efectivo": [
+        3,
+        315904
+      ]
     }
   }
 }

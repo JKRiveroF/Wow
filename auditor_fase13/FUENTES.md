@@ -227,3 +227,7 @@ La consulta 71091 acredita diez textos Crepusculares encriptados (20404) para 83
 - Duración de Skysight en la compilación en ejecución. Las notas de Blizzard y la extracción del cliente difieren. La guía distingue el efecto breve del beneficio Charged de una hora.
 - Coordenadas exactas de los estriadores reubicados y puntos de objetivo, PNJ o entradas con evidencia parcial.
 - Disponibilidad efectiva, requisitos y tiempos de los viajes, vuelos, piedras de hogar, barcos y zepelines. Se contrastaron los requisitos y objetos con evidencia disponible para las tres ventanas de [agrupamiento](AGRUPAMIENTOS_FASE13.md). Los tiempos, el terreno y el acceso con objetivos activos se miden en Forever.
+
+## Títulos esES de QuestieDB · 26 de noviembre de 2026
+
+La revisión `498734b` aporta tres títulos en su archivo de trazas en español de España. Coinciden con las etiquetas del addon en los 97 pares de misión y ruta revisados. El contraste acredita el título de cada ID. Los títulos esES de 85712 y 93686 siguen pendientes de una observación para esos IDs. [2972](https://github.com/Questie/QuestieDB/blob/498734b13f1ed25931566298f6ca119ad058c17f/l10n/Forever/traces/lookupQuests/esES.lua#L1687) · [4222](https://github.com/Questie/QuestieDB/blob/498734b13f1ed25931566298f6ca119ad058c17f/l10n/Forever/traces/lookupQuests/esES.lua#L1964) · [6609](https://github.com/Questie/QuestieDB/blob/498734b13f1ed25931566298f6ca119ad058c17f/l10n/Forever/traces/lookupQuests/esES.lua#L2511).

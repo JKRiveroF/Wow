@@ -1,5 +1,17 @@
 {
   "misiones": {
+    "2972": {
+      "nombres": {"es": "La justicia del castigo"},
+      "evidencia": {"nombre_es": {"estado": "forever", "fuente": "https://github.com/Questie/QuestieDB/blob/498734b13f1ed25931566298f6ca119ad058c17f/l10n/Forever/traces/lookupQuests/esES.lua#L1687", "fecha_consulta": "2026-11-26"}}
+    },
+    "4222": {
+      "nombres": {"es": "Flor del viento corrupta"},
+      "evidencia": {"nombre_es": {"estado": "forever", "fuente": "https://github.com/Questie/QuestieDB/blob/498734b13f1ed25931566298f6ca119ad058c17f/l10n/Forever/traces/lookupQuests/esES.lua#L1964", "fecha_consulta": "2026-11-26"}}
+    },
+    "6609": {
+      "nombres": {"es": "¡Me has dejado seco!"},
+      "evidencia": {"nombre_es": {"estado": "forever", "fuente": "https://github.com/Questie/QuestieDB/blob/498734b13f1ed25931566298f6ca119ad058c17f/l10n/Forever/traces/lookupQuests/esES.lua#L2511", "fecha_consulta": "2026-11-26"}}
+    },
     "996": {
       "repetible": true,
       "evidencia": {"repetible": {"estado": "forever", "fuente": "https://questing.wiki/wow-forever/quests/996/", "fecha_consulta": "2026-11-26"}}

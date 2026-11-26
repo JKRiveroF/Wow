@@ -54,16 +54,16 @@ La evidencia **confirmada** supera la comprobación de la familia. Los títulos 
 
 | Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | — | 100 % | — |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | — | 52,33 % | — |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 45,04 % | — |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 51,58 % | — |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 47,32 % | — |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | — | 68,74 % | — |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | — | 37,5 % | — |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | — | 55,67 % | — |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,04 % | 45,04 % | 0 pp |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 51,58 % | 51,58 % | 0 pp |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,74 % | 68,74 % | 0 pp |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 55,67 % | 55,67 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-26 17:48:42+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 17:55:29+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -114,6 +114,7 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Cotejar las etiquetas de los 195 IDs sin título español observado con la localización heredada. Guardar el resultado por ID y señalar 85712 y 93686 para contraste directo.
 - [x] Corregir 26 encargos de canje, reputación, eventos y JcJ que aparecían como refuerzos de XP.
 - [x] Contrastar y corregir los 32 refuerzos restantes con XP base cero. Distinguir pasos de cadena, de transporte, de clase y de Alterac.
+- [x] Incorporar las trazas esES de 2972, 4222 y 6609 y contrastarlas con las etiquetas de las rutas.
 - [ ] Revisar los requisitos de perfil y buscar evidencia para los títulos que siguen sin fuente.
 - [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.
 - [ ] Actualizar las novedades ES/EN y preparar el ZIP definitivo con los archivos distribuibles, tras superar los criterios de cierre local.

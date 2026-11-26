@@ -12,16 +12,16 @@
 
 | Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | — | 100 % | — |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | — | 52,33 % | — |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 45,04 % | — |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 51,58 % | — |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | — | 47,32 % | — |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | — | 68,74 % | — |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | — | 37,5 % | — |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | — | 55,67 % | — |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 45,04 % | 45,04 % | 0 pp |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 51,58 % | 51,58 % | 0 pp |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 47,32 % | 0 pp |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 68,74 % | 68,74 % | 0 pp |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 55,67 % | 55,67 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-26 17:48:42+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-26 17:55:29+01:00 (Madrid)**
 
 El auditor registra **279 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -352,11 +352,15 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 
 - Se precisaron los límites de reputación heredados de 5201 y 9266. Se distinguieron la variante de Horda 6847 y el canje observado 8324 de los casos pendientes 6848 y 8319. La comprobación por ID reutilizó QuestieDB, QuestV2 y las instantáneas de Forever. Las cuatro ofertas siguen pendientes y los dos indicadores conservan sus valores. [Resultado del contraste](auditor_fase13/FUENTES.md#umbrales-y-variantes-de-cuatro-ofertas--26-de-noviembre-de-2026).
 
+## Misiones · Títulos en español de España
+
+- Se incorporaron los títulos observados de 2972, 4222 y 6609. Coinciden con las etiquetas existentes en 97 pares de misión y ruta. Quedan 191 IDs activos sin título esES observado. [Trazas por ID](auditor_fase13/FUENTES.md#títulos-eses-de-questiedb--26-de-noviembre-de-2026).
+
 ## Comprobaciones que impiden cerrar los criterios
 
 | Bloque | Investigación pendiente | Validación en Forever |
 | --- | --- | --- |
-| Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se prioriza investigar 11 de ellas. Faltan 194 títulos ES observados (192 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.443 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y las restantes cuando los registros externos no acrediten su oferta por fase o perfil. |
+| Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se prioriza investigar 11 de ellas. Faltan 191 títulos ES observados (189 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.443 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y las restantes cuando los registros externos no acrediten su oferta por fase o perfil. |
 | Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.970 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
 | Cartografía | 3.837 destinos únicos sin una referencia específica o cercana. Otros 2.113 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP efectiva, nivel inicial y bloqueos por tramo en las 47 rutas. |
