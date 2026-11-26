@@ -3,7 +3,8 @@
 from collections import Counter, defaultdict
 
 from eg_link import EG_FIELDS
-from mission_rules import PHASE_SIX_FIELDS, PHASE_TWO_FIELDS, _collect, _confirmed, _entry, _evidence
+from mission_rules import (PHASE_SIX_FIELDS, PHASE_TWO_FIELDS, _collect, _confirmed, _entry,
+                           _evidence, _mission_title, _norm)
 from world_rules import _matches_observation, _matches_positions, _position, _positions_by_action, _source
 
 FIELDS = (*PHASE_TWO_FIELDS, *PHASE_SIX_FIELDS, "prerrequisitos_alternativos", "objeto_entregado",
@@ -23,13 +24,16 @@ def _coordinate_result(entry, action, position):
 
 
 def inventory_missions(routes, catalog, quest_v2=None):
-    missions = defaultdict(lambda: {"rutas": set(), "acciones": Counter(), "posiciones": defaultdict(set)})
+    missions = defaultdict(lambda: {"rutas": set(), "acciones": Counter(), "posiciones": defaultdict(set),
+                                    "titulos_guia": set()})
     for route in routes:
         route_id = route.get("id") or route["_archivo"]
         for point in _collect(route, []):
             mission = missions[point.quest]
             mission["rutas"].add(route_id)
             mission["acciones"][point.action] += 1
+            if point.action in ("A", "T") and (title := _mission_title(point.waypoint)[1]):
+                mission["titulos_guia"].add(title)
             if location := _position(point.waypoint):
                 mission["posiciones"][point.action, *location].add(route_id)
 
@@ -42,6 +46,7 @@ def inventory_missions(routes, catalog, quest_v2=None):
     reports = []
     fields_to_check = (*FIELDS, *EG_FIELDS) if "vuelos_observados" in catalog else FIELDS
     candidates = catalog.get("candidatos_por_mision", {})
+    inherited = catalog.get("titulos_es_heredados", {})
     for quest in sorted(quest_ids):
         lookup = missions[quest]
         entry = _entry(catalog, quest)
@@ -63,6 +68,12 @@ def inventory_missions(routes, catalog, quest_v2=None):
         record = {"id": quest, "rutas": sorted(lookup["rutas"]), "acciones": dict(lookup["acciones"]),
                   "evidencia": fields, "pendientes_de_fuente": [field for field in FIELDS if field not in fields],
                   "posiciones": positions, "indicios": candidates.get(str(quest), [])}
+        if "nombre_es" not in fields and (title := inherited.get(str(quest))):
+            labels = lookup["titulos_guia"]
+            different = sorted(label for label in labels if _norm(label) != _norm(title["valor"]))
+            record["contraste_es_heredado"] = {
+                **title, "titulo_guia_cotejado": bool(labels), "titulos_guia_distintos": different,
+            }
         if str(quest) in retired:
             record["retirada_de_rutas_originales"] = retired[str(quest)]
         if quest_v2 is not None:

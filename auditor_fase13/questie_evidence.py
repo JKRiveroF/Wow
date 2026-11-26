@@ -13,6 +13,18 @@ SPANISH_TRACES = {
     "esMX": "3578d5a312faa5735cc306cf8e313b54f77a3cc08d8057232145f534c71b5da0",
 }
 TITLE_ROW = re.compile(r'^\[([1-9][0-9]*)\] = \{("(?:[^"\\]|\\.)*"),')
+INHERITED_ES = "l10n/Forever/lookupQuests/esES.lua"
+INHERITED_ES_HASH = "aa73cd9be0da92d0b5af501b92c896dd0c58a6881d28d8c907ee242f283e2fcd"
+
+
+def _title_rows(data):
+    for number, line in enumerate(data.decode("utf-8-sig").splitlines(), 1):
+        row = TITLE_ROW.match(line)
+        if row:
+            quest, literal = row.groups()
+            title = json.loads(literal)
+            if title.strip():
+                yield number, quest, title
 
 
 def import_spanish_titles(directory: Path) -> dict:
@@ -27,15 +39,7 @@ def import_spanish_titles(directory: Path) -> dict:
             raise ValueError(f"SHA-256 inesperado en {path}. Se requieren las trazas de QuestieDB 1.1.6.")
 
         source = SOURCE_URL + f"l10n/Forever/traces/lookupQuests/{locale}.lua"
-        lines = data.decode("utf-8-sig").splitlines()
-        for line_number, line in enumerate(lines, 1):
-            row = TITLE_ROW.match(line)
-            if not row:
-                continue
-            quest_id, literal = row.groups()
-            title = json.loads(literal)
-            if not title.strip():
-                continue
+        for line_number, quest_id, title in _title_rows(data):
             link = f"{source}#L{line_number}"
             entry = quests.setdefault(quest_id, {
                 "nombres": {"es": []},
@@ -47,3 +51,14 @@ def import_spanish_titles(directory: Path) -> dict:
             entry["evidencia"]["nombre_es"]["fuentes_por_locale"][locale] = link
 
     return {"misiones": quests}
+
+
+def import_inherited_spanish_titles(directory):
+    path = directory / "questie-forever-heredado-esES.lua"
+    if not path.is_file():
+        return {}
+    data = path.read_bytes()
+    if sha256(data).hexdigest() != INHERITED_ES_HASH:
+        raise ValueError(f"SHA-256 inesperado en {path}. Se requiere la localización heredada de QuestieDB 1.1.6.")
+    return {quest: {"valor": title, "estado": "classic_compatible", "fuente": f"{SOURCE_URL}{INHERITED_ES}#L{number}"}
+            for number, quest, title in _title_rows(data)}

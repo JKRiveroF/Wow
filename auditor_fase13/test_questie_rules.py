@@ -8,6 +8,7 @@ from catalogo import _merge_catalog, import_quest_v2
 from inventario_misiones import inventory_missions
 from lua_routes import load_routes
 from mission_rules import load_mission_localization
+from questie_evidence import import_inherited_spanish_titles
 from questie_rules import (BASE, CLASSIC_DB, FIXES, LEGACY_CACHE, LEGACY_FIXES, RELATIONS,
                           _decode, corroborate_classic_followups, import_quest_rules, observed_objectives)
 
@@ -15,6 +16,25 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 class QuestieRulesTest(unittest.TestCase):
+    def test_inherited_spanish_compares_labels_without_counting_as_a_live_title(self):
+        data = '[7] = {"Misión de la costa", {}},\n'.encode()
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "questie-forever-heredado-esES.lua"
+            path.write_bytes(data)
+            with patch("questie_evidence.INHERITED_ES_HASH", sha256(data).hexdigest()):
+                titles = import_inherited_spanish_titles(path.parent)
+        route = {"id": "ruta", "_archivo": "ruta.lua", "secciones": [{"pasos": [{"wp": [
+            {"a": "A", "q": 7, "n": "Recoger: Misión de la costa"},
+            {"a": "T", "q": 7, "n": "Entregar: Otra misión"},
+        ]}]}]}
+        report = inventory_missions([route], {"titulos_es_heredados": titles})
+        self.assertEqual(report["cobertura"]["nombre_es"], 0)
+        quest, = report["misiones"]
+        self.assertIn("existe", quest["pendientes_de_fuente"])
+        inherited = quest["contraste_es_heredado"]
+        self.assertEqual(inherited["estado"], "classic_compatible")
+        self.assertEqual(inherited["titulos_guia_distintos"], ["Otra misión"])
+
     def test_inherited_followup_requires_server_suggestion_and_prior_history(self):
         base = ('    [\'nextQuestInChain\'] = 3,\n[7] = {"name, with {braces}",{{4,5}},12},\n'
                 '[8] = {"other",nil,13},\n[9] = {"dynamic",nil,14},\n')

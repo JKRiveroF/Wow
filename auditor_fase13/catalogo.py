@@ -135,7 +135,7 @@ def _merge_catalog(previous, current):
 def load_catalog(path=None, trace_directory=None, quest_directory=None, eg_directory=None):
     catalog = import_traces(trace_directory) if trace_directory is not None else {}
     if quest_directory is not None:
-        from questie_evidence import import_spanish_titles
+        from questie_evidence import import_inherited_spanish_titles, import_spanish_titles
         from questie_rules import import_quest_rules
 
         rules = import_quest_rules(quest_directory)
@@ -151,6 +151,7 @@ def load_catalog(path=None, trace_directory=None, quest_directory=None, eg_direc
                 entry["evidencia"].pop("objetos_objetivo")
         catalog = _merge_catalog(catalog, rules)
         catalog = _merge_catalog(catalog, import_spanish_titles(quest_directory))
+        catalog["titulos_es_heredados"] = import_inherited_spanish_titles(quest_directory)
     if eg_directory is not None:
         from eg_link import import_eg_link
 

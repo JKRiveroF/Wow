@@ -4,9 +4,9 @@
 
 `████████░░░░░░░░░░░░`
 
-**Última actualización · 2026-11-26 08:32:57 +01:00 (Madrid)**
+**Última actualización · 2026-11-26 08:36:46 +01:00 (Madrid)**
 
-**Tarea actual** · Verificar la oferta, los títulos y las condiciones de misión que quedan abiertos. Priorizar dependencias antes de clase, raza y facción.
+**Tarea actual** · Completar las condiciones de misión que se puedan acreditar con los datos del servidor y resolver los casos de oferta con evidencia disponible.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -258,16 +258,21 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Los 22 grupos pasan a **validación en el cliente**. La comparación local conserva ambos órdenes. Falta medir el terreno, las esperas, las patrullas y el tiempo de la piedra en Los Baldíos. Los huecos generales de relaciones siguen registrados por misión. [Ventanas, resultados y fuentes](auditor_fase13/AGRUPAMIENTOS_FASE13.md).
 - Pasaron **16 pruebas específicas** y la **regresión de 72 pruebas**. El auditor registró **0 errores y 56 avisos**. Quedan **279 grupos de investigación y 116 de cliente**. El global sigue en **40,83 %** por criterios completos.
 
-## Último bloque verificado · Seguimientos de misión
+## Seguimientos de misión · corte verificado
 
 - Se acreditaron **165 seguimientos nuevos** mediante el enlace heredado, la sugerencia del servidor y el historial del sucesor. El inventario pasó de 161 a **326 seguimientos documentados**. Ambos IDs aparecen juntos en ruta en 153 pares y la evidencia se reutilizó en 2.832 combinaciones de par y ruta. [Método y fuentes](auditor_fase13/FUENTES.md#seguimientos-contrastados--26-de-noviembre-de-2026).
 - La comprobación de orden registró **0 errores y 56 avisos**, todos por el requisito opcional anterior a Kum'isha. Pasaron la prueba específica de fuentes y la **regresión de 73 pruebas**. Siguen abiertos 279 grupos de investigación y 116 de cliente. El avance por criterios completos permanece en **40,83 %**.
+
+## Último bloque verificado · Títulos españoles heredados
+
+- Se cotejaron las etiquetas de recogida y entrega de los 195 IDs sin título español observado. **193 coinciden** con la localización heredada que QuestieDB empaqueta para Forever. Los IDs 85712 y 93686 carecen de entrada en ese archivo. El informe individual conserva los resultados, incluida la línea de cada título cotejado. [Fuente y alcance](auditor_fase13/FUENTES.md#localización-española-heredada--26-de-noviembre-de-2026).
+- La cobertura observada queda en **2.273 títulos ES**. La comprobación heredada complementa ese dato. Pasaron la prueba específica y la **regresión de 74 pruebas**. Las 47 rutas registraron **0 errores y 56 avisos**, con **279 grupos de investigación y 116 de cliente**. El global se mantiene en **40,83 %**.
 
 ## Comprobaciones que impiden cerrar los criterios
 
 | Bloque | Investigación pendiente | Validación en Forever |
 | --- | --- | --- |
-| Misiones y dependencias | Entre 2.468 IDs activos faltan 24 acreditaciones de oferta, 195 títulos ES, 25 EN, 25 niveles mínimos, 2.142 seguimientos y 2.444 fichas de prerrequisitos obligatorios. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Oferta por fase o perfil cuando los registros externos no la acrediten. |
+| Misiones y dependencias | Entre 2.468 IDs activos faltan 24 acreditaciones de oferta, 195 títulos ES observados (193 cotejados con la referencia heredada), 25 EN, 25 niveles mínimos, 2.142 seguimientos y 2.444 fichas de prerrequisitos obligatorios. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Oferta por fase o perfil cuando los registros externos no la acrediten. |
 | Clase, raza y facción | 2.383 fichas sin condición de clase acreditada, 1.985 sin condición racial y 1.974 sin condición de facción. Incluye determinar si cada misión aplica una restricción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. |
 | Cartografía | Posiciones por acción y misión en las 47 rutas, incluidas entradas y puntos de PNJ. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos puntos reubicados. |
 | Experiencia | 25 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP efectiva, nivel inicial y bloqueos por tramo en las 47 rutas. |
@@ -280,7 +285,7 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `e665467`.
+La fase sigue abierta. El corte previo es `656709c`.
 
 ## Avance individual
 
