@@ -10,7 +10,7 @@ from lua_routes import load_routes
 from mission_rules import load_mission_localization
 from questie_evidence import import_inherited_spanish_titles
 from questie_rules import (BASE, CLASSIC_DB, FIXES, LEGACY_CACHE, LEGACY_FIXES, RELATIONS,
-                          _decode, corroborate_classic_followups, import_quest_rules, observed_objectives)
+                          _decode, corroborate_inherited_relations, import_quest_rules, observed_objectives)
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -51,15 +51,38 @@ class QuestieRulesTest(unittest.TestCase):
                                      for after, before in ((11, [7]), (13, [20]), (14, [9]))})
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
-            (directory / Path(CLASSIC_DB).name).write_bytes(base.encode())
-            (directory / LEGACY_CACHE).write_bytes(fixes.encode())
-            with patch("questie_rules.HASHES", {CLASSIC_DB: sha256(base.encode()).hexdigest(),
-                                              LEGACY_FIXES: sha256(fixes.encode()).hexdigest()}):
-                result = corroborate_classic_followups(directory, catalog)["misiones"]
+            sources = {CLASSIC_DB: base, LEGACY_FIXES: fixes, BASE: "", FIXES: "", RELATIONS: ""}
+            for name, source in sources.items():
+                (directory / (LEGACY_CACHE if name == LEGACY_FIXES else Path(name).name)).write_bytes(source.encode())
+            with patch("questie_rules.HASHES", {name: sha256(source.encode()).hexdigest() for name, source in sources.items()}):
+                result = corroborate_inherited_relations(directory, catalog)["misiones"]
         self.assertEqual(set(result), {"7"})
         self.assertEqual(result["7"]["seguimientos"], [11])
         self.assertNotIn("prerrequisitos", result["7"])
         self.assertIn(LEGACY_FIXES, result["7"]["evidencia"]["seguimientos"]["fuentes_adicionales"][0])
+
+    def test_inherited_requirement_needs_matching_gate_and_strong_observed_offer(self):
+        base = "    ['preQuestSingle'] = 2,\n" + "\n".join(
+            f'[{quest}] = {{"quest",{{{prior}}}}},' for quest, prior in ((7, 9), (8, 9), (10, 11), (12, 9), (13, 9)))
+        traces = "\n".join(
+            f"        -- [{quest}] = {{\n"
+            f"            -- already in QuestieDB; Assumption: offered right after 9 was turned in "
+            f"(handoff, offer-set{', absence' if absence else ''}; very high; 100+ characters)\n"
+            f"            -- [questKeys.preQuestSingle] = {{9}},\n        -- }},"
+            for quest, absence in ((7, True), (8, False), (10, True), (12, True), (13, True)))
+        fixes = "        [12] = {\n            [questKeys.preQuestGroup] = {},\n        },\n"
+        catalog = {"misiones": {str(quest): {"existe": True} for quest in (7, 8, 10, 12)}}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            sources = {CLASSIC_DB: base, LEGACY_FIXES: "function C:LoadFactionFixes()\n",
+                       BASE: "", FIXES: fixes, RELATIONS: traces}
+            for name, source in sources.items():
+                (directory / (LEGACY_CACHE if name == LEGACY_FIXES else Path(name).name)).write_bytes(source.encode())
+            with patch("questie_rules.HASHES", {name: sha256(source.encode()).hexdigest() for name, source in sources.items()}):
+                result = corroborate_inherited_relations(directory, catalog)["misiones"]
+        self.assertEqual(set(result), {"7"})
+        self.assertEqual(result["7"]["prerrequisitos_alternativos"], [9])
+        self.assertIn(RELATIONS, result["7"]["evidencia"]["prerrequisitos_alternativos"]["fuente"])
 
     def test_client_quest_index_does_not_supply_server_availability(self):
         raw = b"ID,UniqueBitFlag,UiQuestDetailsThemeID\n42,4,0\n"

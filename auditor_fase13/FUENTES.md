@@ -162,6 +162,10 @@ Las 240 misiones de ruta de élite, mazmorra o banda comparten las categorías g
 
 Se contrastó la oferta pendiente con el CSV de EverlookDB. De los 24 IDs pendientes, 18 aparecen con iniciadores y entregas procedentes de ClassicDB y seis carecen de fila. Las 18 fichas sirven de referencia heredada y no aportan una observación nueva de oferta en Forever. [Exportación EverlookDB](https://everlookdb.com/data.html) · [Procedencia de datos](https://everlookdb.com/credits.html).
 
+## Requisitos de una sola entrega · 26 de noviembre de 2026
+
+Se leyó la base Classic y la capa heredada de QuestieDB 1.1.6. El auditor contrasta la lista de acceso de un único ID con la anotación publicada para Forever. Exige coincidencia exacta, oferta observada tras la entrega, comparación de ofertas con y sin la entrega, nivel de confianza muy alto y 100 o más personajes. Conserva las correcciones y los requisitos ya documentados y excluye los cambios dinámicos. Los historiales de entregas y las sugerencias del servidor siguen registrándose por separado. [Base heredada](https://github.com/Questie/QuestieDB/blob/v1.1.6/data/Classic/classicQuestDB.lua) · [Trazas de relaciones](https://github.com/Questie/QuestieDB/blob/v1.1.6/src/corrections/Forever/traces/foreverQuestRelationTraces.lua) · [Método de observación](https://github.com/Questie/QuestieTrace).
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

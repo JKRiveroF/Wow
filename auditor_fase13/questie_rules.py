@@ -29,6 +29,15 @@ LIST_FIELDS = {"preQuestGroup": "prerrequisitos", "preQuestSingle": "prerrequisi
                "exclusiveTo": "excluyentes", "breadcrumbs": "introductorias", "requiredSourceItems": "objetos"}
 LINK_FIELDS = {"nextQuestInChain": "seguimientos", "disabledByQuest": "desactivada_por", "parentQuest": "mision_activa"}
 RELATION_FIELDS = {"preQuestGroup", "preQuestSingle", "exclusiveTo", "breadcrumbs", "nextQuestInChain"}
+INHERITED_RELATIONS = {"preQuestGroup", "preQuestSingle", "nextQuestInChain"}
+CLASSIC_COLUMN = re.compile(r"^ +\['(\w+)'\] = (\d+),")
+TRACE_ROW = re.compile(r"^ {8}(?:-- )?\[(\d+)\]\s*=\s*\{")
+TRACE_REQUIREMENT = re.compile(r"^ {12}-- \[questKeys\.preQuestSingle\] = \{(\d+)\},\s*$")
+TRACE_HANDOFF = re.compile(
+    r"^ {12}-- already in QuestieDB; Assumption: offered right after (\d+) was turned in "
+    r"\(([^;]+); very high; 100\+ characters\)\s*$"
+)
+GATE_FIELDS = {"preQuestSingle", "preQuestGroup", "parentQuest", "availableStartingWith", "disabledByQuest"}
 RACES = {
     "HUMAN": ("Alliance", "Human"), "DWARF": ("Alliance", "Dwarf"), "NIGHT_ELF": ("Alliance", "NightElf"),
     "GNOME": ("Alliance", "Gnome"), "SKYBORNE_ALLIANCE": ("Alliance", "Skyborne"),
@@ -177,38 +186,57 @@ def _classic_columns(row):
     return fields
 
 
-def _classic_followups(directory):
+def _classic_relations(directory):
     base = _read(directory, CLASSIC_DB)
-    column = next(int(match[1]) - 1 for line in base
-                  if (match := re.match(r"^ +\['nextQuestInChain'\] = (\d+),", line)))
-    pairs = {}
+    columns = {match[1]: int(match[2]) - 1 for line in base if (match := CLASSIC_COLUMN.match(line))
+               and match[1] in INHERITED_RELATIONS}
+    records = {}
     for number, line in enumerate(base, 1):
         row = re.fullmatch(r"\[(\d+)\] = \{(.*)\},", line)
         if row is None:
             continue
         fields = _classic_columns(row[2])
-        if len(fields) > column and fields[column].isdecimal() and int(fields[column]):
-            pairs[row[1]] = (int(fields[column]), f"{REPOSITORY}{CLASSIC_DB}#L{number}")
+        source = f"{REPOSITORY}{CLASSIC_DB}#L{number}"
+        records[row[1]] = {field: (fields[index], source) for field, index in columns.items() if index < len(fields)}
 
     legacy = _read(directory, LEGACY_FIXES, LEGACY_CACHE)
     dynamic_start = next(i for i, line in enumerate(legacy, 1) if ":LoadFactionFixes(" in line)
     for quest, number, field, value, _ in _fields(legacy):
-        if field != "nextQuestInChain":
+        if field not in INHERITED_RELATIONS:
             continue
-        if number < dynamic_start and value.isdecimal() and int(value):
-            pairs[quest] = (int(value), f"{REPOSITORY}{LEGACY_FIXES}#L{number}")
+        if number < dynamic_start:
+            records.setdefault(quest, {})[field] = (value, f"{REPOSITORY}{LEGACY_FIXES}#L{number}")
         else:
-            pairs.pop(quest, None)
-    return pairs
+            records.setdefault(quest, {}).pop(field, None)
+    return records
 
 
-def corroborate_classic_followups(directory, catalog):
-    """Contrasta una continuación, con tres fuentes y sin deducir requisitos de aceptación."""
+def _traced_requirements(lines):
+    """Selecciona solo entregas con observación del ofrecimiento antes y después."""
+    quest = None
+    for number, line in enumerate(lines, 1):
+        if row := TRACE_ROW.match(line):
+            quest = row[1]
+        elif line.strip() in ("},", "-- },"):
+            quest = None
+        elif quest and (condition := TRACE_REQUIREMENT.fullmatch(line)):
+            handoff = TRACE_HANDOFF.fullmatch(lines[number - 2])
+            if (handoff and handoff[1] == condition[1]
+                    and {"handoff", "offer-set", "absence"} <= set(handoff[2].split(", "))):
+                yield quest, int(condition[1]), number
+
+
+def corroborate_inherited_relations(directory, catalog):
+    """Contrasta continuaciones y requisitos de una entrega con evidencia de alcance distinto."""
     if not all((directory / name).is_file() for name in (Path(CLASSIC_DB).name, LEGACY_CACHE)):
         return {}
     missions = catalog.get("misiones", {})
+    inherited = _classic_relations(directory)
     confirmed = {}
-    for quest, (following, classic_source) in _classic_followups(directory).items():
+    for quest, fields in inherited.items():
+        value, classic_source = fields.get("nextQuestInChain", ("", ""))
+        if not value.isdecimal() or not (following := int(value)):
+            continue
         entry = missions.get(quest, {})
         successor = missions.get(str(following), {})
         if "seguimientos" in entry or entry.get("siguiente_sugerida") != following:
@@ -223,4 +251,24 @@ def corroborate_classic_followups(directory, catalog):
         proof = {**candidate, "metodo": "secuencia_contrastada",
                  "fuentes_adicionales": [classic_source, observed["fuente"]]}
         confirmed[quest] = {"seguimientos": [following], "evidencia": {"seguimientos": proof}}
+
+    base, fixes = (_read(directory, layer) for layer in (BASE, FIXES))
+    replaced = {quest for lines in (base, fixes) for quest, _, field, _, _ in _fields(lines) if field in GATE_FIELDS}
+    dynamic = next((i for i, line in enumerate(fixes) if ":LoadDynamic(" in line), len(fixes))
+    replaced.update(re.findall(r"\[(\d+)\]\s*=", "\n".join(fixes[dynamic:])))
+    for quest, required, number in _traced_requirements(_read(directory, RELATIONS)):
+        entry = missions.get(quest, {})
+        if quest in replaced or not entry.get("existe") or entry.keys() & {
+            "prerrequisitos", "prerrequisitos_alternativos", "mision_activa", "desactivada_por"
+        }:
+            continue
+        baseline, source = inherited.get(quest, {}).get("preQuestSingle", ("", ""))
+        field = "prerrequisitos_alternativos"
+        if _decode("preQuestSingle", baseline).get(field) != [required]:
+            continue
+        proof = {"estado": "forever", "fuente": f"{SOURCE}{RELATIONS}#L{number}",
+                 "metodo": "oferta_tras_entrega_contrastada", "fuentes_adicionales": [source]}
+        record = confirmed.setdefault(quest, {"evidencia": {}})
+        record[field] = [required]
+        record["evidencia"][field] = proof
     return {"misiones": confirmed}
