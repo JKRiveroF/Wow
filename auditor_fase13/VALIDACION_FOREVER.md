@@ -61,6 +61,15 @@ Para 2781, registra el botín de 8723 al derrotar a 7847 en Tanaris y la posici�
 
 Para 86 y 385, registra por separado los objetos obtenidos y la posición real de la criatura. En 385, comprueba el origen de 2925 con la misión activa después de verificar 2924. [Referencias por entidad](FUENTES.md#botín-observado-en-efficient-games).
 
+### Botín en Feralas y Un'Goro
+
+| Misiones | UiMapID y marcador de la guía | Comprobación compartida |
+| --- | --- | --- |
+| 2855–2859 | Feralas, 1444, 60,2 / 68,7 | Registrar si se obtiene 8153 de un Gordunni 5236, 5238 o 5239, o del nodo 142140 con el oficio pertinente. Anotar entidad, método, punto y cantidad. Un registro de obtención permite contrastar el origen en los cinco encargos de Peletería. |
+| 4148 y 5150 | Cráter de Un'Goro, 1449, 66 / 16,5 | Registrar si se obtiene 11315 en el punto de la guía y si aumenta el contador. Distinguir entre una criatura 6513 o 6516 y una planta 164958. Registrar cada misión activa por separado si cambia el avance. |
+
+Registra la compilación y el UiMapID que muestra el juego junto a la entidad, el objeto y las coordenadas. Si solo encuentras el objeto en otro lugar, anota el hallazgo con su posición. [Alcance de las observaciones archivadas](FUENTES.md#botín-registrado-por-jugadores).
+
 ## Matriz de oferta pendiente por misión
 
 Los 24 ID carecen de oferta acreditada en el inventario. Las condiciones de partida y los materiales proceden de las fichas de referencia y de la base heredada. Registra el ID que ofrece el iniciador, el perfil y los requisitos cumplidos. [Evidencia disponible y límites](FUENTES.md#oferta-en-las-compilaciones-iniciales--26-de-noviembre-de-2026).

@@ -1,5 +1,30 @@
 {
   "fecha_consulta_cartografia": "2026-11-25",
+  "botin_fuentes_publicas": {
+    "1529": [
+      {"tipo": "pnj", "id": 2554, "fuente": "https://wowgoldscout.com/item/1529", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"},
+      {"tipo": "pnj", "id": 2762, "fuente": "https://wowgoldscout.com/item/1529", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"}
+    ],
+    "8363": [
+      {"tipo": "pnj", "id": 2009, "fuente": "https://guide.wow4ever.se/en/npc/2009#drops", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"}
+    ],
+    "10639": [
+      {"tipo": "pnj", "id": 1988, "fuente": "https://wowgoldscout.com/item/10639", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"},
+      {"tipo": "pnj", "id": 1989, "fuente": "https://wowgoldscout.com/item/10639", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"}
+    ],
+    "12431": [
+      {"tipo": "pnj", "id": 7438, "fuente": "https://wowgoldscout.com/item/12431", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"},
+      {"tipo": "pnj", "id": 7439, "fuente": "https://wowgoldscout.com/item/12431", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"}
+    ],
+    "12435": [
+      {"tipo": "pnj", "id": 7458, "fuente": "https://wowgoldscout.com/item/12435", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"},
+      {"tipo": "pnj", "id": 7459, "fuente": "https://wowgoldscout.com/item/12435", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"}
+    ],
+    "21383": [
+      {"tipo": "pnj", "id": 7439, "fuente": "https://wowgoldscout.com/item/21383", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"},
+      {"tipo": "pnj", "id": 7440, "fuente": "https://wowgoldscout.com/item/21383", "metodo_botin": "botin_de_jugadores", "fecha_consulta": "2026-11-27"}
+    ]
+  },
   "relaciones_agrupamiento": {
     "5381:5386": {
       "fecha_consulta": "2026-11-26",

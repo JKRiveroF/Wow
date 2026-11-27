@@ -50,7 +50,7 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 57,2 %**
+**Progreso efectivo global · 57,21 %**
 
 `███████████░░░░░░░░░`
 
@@ -58,14 +58,14 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,44 % | 46,44 % | +0,01 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,44 % | 46,45 % | +0,01 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,2 % | 57,2 % | 0 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,2 % | 57,21 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-27 07:54:03+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 07:59:45+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -101,7 +101,8 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Contrastar los 11 candidatos preliminares de botín de Efficient Games y ampliar la comprobación a nueve instantáneas. Conservar por separado el vínculo al origen y la posición observada de la entidad.
 - [x] Contrastar los candidatos heredados con el botín vinculado a la misión activa y las respuestas `questItems` del servidor. Se acreditó cercanía en 134 de los 151 destinos, incluidos los siete compartidos por las 47 rutas.
 - [x] Incorporar el botín de interacciones con entidad y hechizo identificados. Se acreditó cercanía en 8 destinos y el contraste acumulado cubre 136 de los 151 candidatos heredados.
-- [ ] Contrastar los 15 candidatos heredados restantes con observaciones de otros recopiladores y verificar las posiciones exactas donde el contraste acredita cercanía.
+- [x] Cruzar las observaciones de GoldScout y Forever Scout con las posiciones archivadas. El contraste acumulado acredita cercanía en 144 de los 151 candidatos heredados.
+- [ ] Resolver los siete destinos heredados que quedan, agrupados por los objetos 8153 en Feralas y 11315 en Un'Goro. Contrastar una observación de botín próxima al marcador o comprobar la obtención en Forever. Validar también el punto exacto donde las fuentes acreditan cercanía. [Protocolo](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
 - [ ] Verificar el punto exacto y el acceso a los destinos con contraste parcial. Para los puntos aún sin observación cercana, priorizar posiciones documentadas de iniciadores, receptores y objetivos compartidos.
 - [ ] Verificar en Forever los ocho pares de aprendizaje pendientes o parciales, con prioridad para el desbloqueo de 18960 y los efectos de recompensa de mago, paladín y chamán.
 - [x] Cruzar objetos auxiliares y exclusiones heredadas con registros de Forever y añadir las marcas expresas de repetición documentadas en el corte.

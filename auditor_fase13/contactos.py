@@ -141,14 +141,14 @@ def _apply_loot_rules(sources, reference, lines, scoped=None):
                         del observed[entity]
 
 
-def _loot_sources(directory, observed=None, quest_observed=None, queried=None):
+def _loot_sources(directory, observed=None, quest_observed=None, queried=None, reported=None):
     traces = _lines(directory, ITEM_TRACES)
     fixes = _lines(directory, ITEM_FIXES)
     if not fixes:
         return {}, {}
     sources = defaultdict(dict)
     _apply_loot_rules(sources, ITEM_TRACES, traces)
-    for evidence in (queried, observed):
+    for evidence in (queried, reported, observed):
         for item, samples in (evidence or {}).items():
             sources[item].update({(sample["tipo"], sample["id"]): sample for sample in samples})
     quests = {quest: {item: {(sample["tipo"], sample["id"]): sample for sample in samples}
@@ -170,7 +170,8 @@ def _loot_positions(item, origins, trace_points, eg_points):
         for sample in (*samples, *eg_points.get(f"botin_{kind}", {}).get(entity, ())):
             key = kind, entity, sample["m"], sample["x"], sample["y"]
             points[key] = {**sample, "tipo": kind, "id": entity, "item": item, "fuente_botin": loot["fuente"],
-                           **{field: loot[field] for field in ("registro_botin", "mision_botin", "hechizo_botin", "metodo_botin")
+                           **{field: loot[field] for field in ("registro_botin", "mision_botin", "hechizo_botin",
+                                                              "metodo_botin", "fecha_consulta")
                               if field in loot}}
     return list(points.values())
 
@@ -187,8 +188,9 @@ def link_contacts(directory, catalog):
     static = _static_contacts(_lines(directory, QUESTS), missions)
     _apply_corrections(_read(directory, FIXES), static, traced)
     eg_points = catalog.get("entidades_interaccion", {})
+    reported = {int(item): rows for item, rows in catalog.get("botin_fuentes_publicas", {}).items()}
     loot, quest_loot = _loot_sources(directory, catalog.get("botin_observado"), catalog.get("botin_por_mision"),
-                                    catalog.get("botin_consultado"))
+                                    catalog.get("botin_consultado"), reported=reported)
     loot_origins = {item: dict(sorted(entities.items())) for item, entities in loot.items() if entities}
     loot_positions = {}
     matched = {}

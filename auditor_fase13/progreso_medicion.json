@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-27T07:54:03+01:00",
+  "actualizado": "2026-11-27T07:59:45+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -28,8 +28,8 @@
         141
       ],
       "efectivo": [
-        1517965,
-        3268704
+        10627019,
+        22880928
       ]
     },
     "4": {
@@ -78,8 +78,8 @@
         120
       ],
       "efectivo": [
-        5445365016727,
-        9519250536960
+        38118291331361,
+        66634753758720
       ]
     }
   },
@@ -457,8 +457,8 @@
           141
         ],
         "efectivo": [
-          10627019,
-          22880928
+          3542761,
+          7626976
         ],
         "criterios": [
           {
@@ -476,7 +476,7 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              3000043,
+              3001307,
               7626976
             ],
             "familias": [
@@ -501,16 +501,16 @@
                 "unidades": 6034,
                 "estados": {
                   "confirmada": 84,
-                  "parcial": 3410,
+                  "parcial": 3418,
                   "inferencia": 0,
-                  "investigacion": 2540,
+                  "investigacion": 2532,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 3578,
+                "comprobaciones_superadas": 3586,
                 "comprobaciones_aplicables": 12068,
                 "etapas": {
                   "confirmadas": 84,
-                  "contrastadas": 3494
+                  "contrastadas": 3502
                 }
               },
               {
@@ -1074,18 +1074,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 125,
+                "unidades": 126,
                 "estados": {
-                  "confirmada": 125,
+                  "confirmada": 126,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 125,
-                "comprobaciones_aplicables": 125,
+                "comprobaciones_superadas": 126,
+                "comprobaciones_aplicables": 126,
                 "etapas": {
-                  "confirmadas": 125
+                  "confirmadas": 126
                 }
               }
             ]
@@ -1167,13 +1167,13 @@
         120
       ],
       "efectivo": [
-        38118291331361,
-        66634753758720
+        12706342515211,
+        22211584586240
       ]
     },
     "regresion": {
-      "ejecutadas": 125,
-      "superadas": 125,
+      "ejecutadas": 126,
+      "superadas": 126,
       "correcta": true
     },
     "casos_cliente": [

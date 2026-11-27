@@ -312,6 +312,21 @@ El 27 de noviembre se contrastaron las claves `npc:<id>|spell:<id>` y `object:<i
 
 En Teldrassil, el hechizo 22810 registra los objetos 3406 y 3408 en los cofres 2739 y 2742 para 483, y el 5167 en el objeto 4406 para 917. En 873, la posición adicional procede de otra interacción registrada para el mismo PNJ 3476. El vínculo con el objeto 5104 sigue procediendo del botín con la misión activa. La instantánea inicial 70532 se revisó para estos candidatos y carece de muestras útiles. [Botín 70790](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/data/wowf/1.60.1.70790/loot.json) · [Botín 70532](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/data/wowf/1.60.1.70532/loot.json).
 
+## Botín registrado por jugadores
+
+El 27 de noviembre se incorporaron observaciones positivas de los recopiladores de GoldScout y Forever Scout. La ficha de cada objeto o criatura identifica el par de IDs. El auditor cruza el par con las posiciones archivadas de la misma entidad y conserva por separado la fuente de botín y la de posición. Se acredita cercanía cuando coinciden el UiMapID y la tolerancia de un punto. Sigue pendiente comprobar las coordenadas exactas y las condiciones de obtención, como llevar el objeto que habilita el botín E'ko. [Metodología de GoldScout](https://wowgoldscout.com/faq) · [Registro de Forever Scout para la criatura 2009](https://guide.wow4ever.se/en/npc/2009#drops).
+
+| Misión | Objeto y origen observado |
+| --- | --- |
+| 1948 | Jade 1529 en 2554 y 2762, con un destino cercano para cada criatura. [GoldScout](https://wowgoldscout.com/item/1529). |
+| 2541 | Amuleto de vudú de chamán 8363 en 2009. [Forever Scout](https://guide.wow4ever.se/en/npc/2009#drops). |
+| 3521 | Icor de Tejemadera 10639 en 1989, con posición cercana. La publicación también registra 1988. [GoldScout](https://wowgoldscout.com/item/10639). |
+| 4802 | E'ko Nevada 12431 en 7439, con posición cercana. La publicación también registra 7438. [GoldScout](https://wowgoldscout.com/item/12431). |
+| 4805 | E'ko de cardo de hielo 12435 en 7458 y 7459, con dos destinos cercanos. [GoldScout](https://wowgoldscout.com/item/12435). |
+| 8469 | Abalorios de espíritu Nevada 21383 en 7439 y 7440 cerca del destino. [GoldScout](https://wowgoldscout.com/item/21383). |
+
+Quedan siete marcadores de dos objetos. Para 8153 hay botín observado en otras zonas y presencia de la planta 142140 en Feralas, con el vínculo local de botín pendiente. Para 11315 consta la obtención de la planta 164958 en Un'Goro y quedan por contrastar las criaturas y la obtención en el punto de la guía. [Botín de 8153](https://wowgoldscout.com/item/8153) · [Planta 142140](https://guide.wow4ever.se/en/objects/142140) · [Planta 164958](https://guide.wow4ever.se/en/objects/164958) · [Protocolo de los dos lugares](VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
+
 ## XP de entrega por perfil
 
 Las muestras de entrega válidas registran XP y un nivel entre 1 y 59. Se omiten las marcas de nivel máximo o XP desactivada. Un cero observado con XP habilitada sigue siendo un dato. Cada perfil se cruza con la raza y facción de la ruta y el intervalo inclusivo en el mínimo y exclusivo en el máximo. Se cuenta una entrega obligatoria por ID, aplicando las ramas raciales y alternativas de la ruta. Las observaciones históricas no acreditan el saldo del tramo ni la XP de combate. [Campos de entrega de Efficient Games](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/DATASETS.md#turn_ins).

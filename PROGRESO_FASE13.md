@@ -6,7 +6,7 @@
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 57,2 %**
+**Progreso efectivo global · 57,21 %**
 
 `███████████░░░░░░░░░`
 
@@ -14,20 +14,20 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,44 % | 46,44 % | +0,01 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,44 % | 46,45 % | +0,01 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,2 % | 57,2 % | 0 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,2 % | 57,21 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-27 07:54:03+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 07:59:45+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Contrastar los 15 destinos heredados de botín que siguen sin referencia compatible con las observaciones de otros recopiladores de Forever. Continuar el contraste de perfiles y ofertas.
+**Tarea actual** · Buscar evidencia adicional de las ofertas y restricciones de clase abiertas. Quedan siete destinos heredados de botín en dos puntos de Feralas y Un'Goro para contrastar con nuevas observaciones o en el cliente.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -433,10 +433,15 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - El inventario conserva un origen para al menos un objeto de **758 misiones activas**. En **518** hay un vínculo declarado en las consultas del servidor. El campo de procedencia distingue esas respuestas del botín observado al jugar. Para 92553, el registro identifica a la criatura 251661 como origen de 5469 en Zephras. El punto exacto y el avance con la misión activa quedan en el protocolo. [Validación](auditor_fase13/VALIDACION_FOREVER.md#destinos-reubicados-en-mapas-de-zona).
 - Pasaron **36 pruebas específicas** y **122 de regresión completa**. Las 47 rutas registraron **0 errores y 56 avisos conocidos**. El efectivo de cartografía subió a **46,44 %**. El global muestra **57,20 % efectivo** y **40,83 % certificado**. [Medición](PLAN_FASE13.md#lectura-automática-del-avance).
 
-## Último bloque verificado · Botín de interacciones
+## Botín de interacciones · Corte verificado
 
 - La lectura de cofres, nodos y otras interacciones con ID de hechizo aporta cercanía para **8 destinos de 8 misiones** en **142 apariciones en rutas**. Entre ellos están los destinos de 483 y 917 en Teldrassil. El contraste acumulado cubre **136 de 151 candidatos heredados**. Hay **782 misiones activas** con al menos un origen de botín. [Esquema y casos](auditor_fase13/FUENTES.md#botín-de-interacciones).
 - Pasaron **30 pruebas específicas** y **125 de regresión**. Se mantuvieron los mismos 56 avisos y ningún error en las 47 rutas. La tabla automática conserva la precisión de la variación incluso cuando coinciden los porcentajes redondeados.
+
+## Último bloque verificado · Botín registrado por jugadores
+
+- Las observaciones de GoldScout y Forever Scout acreditan cercanía para **8 destinos de 6 misiones** en **62 apariciones en rutas**. El contraste acumulado llega a **144 de 151 candidatos heredados**. Los **7 restantes** corresponden a dos lugares de obtención. El inventario conserva un origen de botín para **786 misiones activas**. [Fuentes y alcance](auditor_fase13/FUENTES.md#botín-registrado-por-jugadores).
+- Pasaron **31 pruebas específicas** y **126 de regresión completa**. Las 47 rutas conservan **0 errores y 56 avisos conocidos**. El progreso efectivo de cartografía llega al **46,45 %** y el efectivo global al **57,21 %**. El certificado global sigue en **40,83 %**.
 
 ## Comprobaciones que impiden cerrar los criterios
 
@@ -444,18 +449,18 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 | --- | --- | --- |
 | Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se prioriza investigar 11 de ellas. Faltan 191 títulos ES observados (189 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.442 fichas de prerrequisitos acumulativos y 1.797 de requisitos alternativos o de una sola entrega. Faltan también campos de exclusión, repetición, objetos, grupo y desbloqueos. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y las restantes cuando los registros externos no acrediten su oferta por fase o perfil. |
 | Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.959 sin condición de facción. Hay contraste parcial para 337 de clase, 878 de raza y 863 de facción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. Ocho pares de misión y hechizo tienen prueba individual. |
-| Cartografía | 2.540 destinos de misión únicos sin una referencia específica o cercana. Otros 3.410 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos los interiores de 1486 y 6563 y los casos de botín del protocolo. |
+| Cartografía | 2.532 destinos de misión únicos sin una referencia específica o cercana. Otros 3.418 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos los interiores de 1486 y 6563 y los dos casos compartidos de botín de Feralas y Un'Goro. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP de entrega pendiente de una muestra de progresión en 1.384 IDs, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Alternativas de transporte, requisitos de desbloqueo y escalas observadas que difieren por compilación. | Costes, acceso y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
 | Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
 
 ## Siguientes tareas
 
-1. Contrastar los 15 destinos heredados restantes con observaciones de otros recopiladores de Forever. Seguir buscando condiciones explícitas para los contrastes de clase abiertos.
+1. Contrastar las ofertas abiertas y las condiciones explícitas de clase. Revisar nuevas observaciones de los siete destinos heredados agrupados en el protocolo. [Casos de botín](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
 2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
 3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `e764cbb`.
+La fase sigue abierta. El corte previo es `0da3667`.
 
 ## Avance individual
 

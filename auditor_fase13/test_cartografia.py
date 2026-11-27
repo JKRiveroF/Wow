@@ -180,6 +180,26 @@ function C:LoadDynamic()
         self.assertEqual(found["origenes_botin"], {"90": [observed]})
         self.assertEqual(_coordinate_result(queried, "C", (1429, 35, 40)), "cerca_de_observacion")
 
+    def test_public_loot_reports_are_matched_by_exact_item_and_entity(self):
+        item = {"objetos_objetivo": [8363], "evidencia": {"objetos_objetivo": {
+            "estado": "forever", "fuente": "objetivo de misión"}}}
+        unrelated = {**item, "objetos_objetivo": [8364]}
+        point = {"m": 1438, "x": 44.8, "y": 59.4, "fuente": "traza"}
+        report = {"tipo": "pnj", "id": 2009, "fuente": "publicación", "metodo_botin": "botin_de_jugadores",
+                  "fecha_consulta": "2026-11-27"}
+        catalog = {"misiones": {"2541": item, "2561": unrelated}, "botin_fuentes_publicas": {"8363": [report]},
+                   "entidades_interaccion": {"criatura": {2009: [point]}}}
+        with patch("contactos._lines", side_effect=lambda _, src: ["-- correcciones"] if src == ITEM_FIXES else []), \
+                patch("contactos._read", return_value=[]):
+            found = link_contacts(ADDON.parent, catalog)["misiones"]
+        self.assertEqual(set(found), {"2541"})
+        self.assertEqual(found["2541"]["origenes_botin"], {"8363": [report]})
+        reference, = found["2541"]["referencias_botin"]["C"]
+        self.assertEqual((reference["fuente"], reference["fuente_botin"], reference["fecha_consulta"]),
+                         ("traza", "publicación", "2026-11-27"))
+        self.assertEqual(_coordinate_result(found["2541"], "C", (1438, 44.7, 59.5)), "cerca_de_observacion")
+        self.assertEqual(_coordinate_result(found["2541"], "C", (1439, 44.7, 59.5)), "investigacion")
+
     def test_reprojected_points_provide_partial_evidence_for_the_documented_action(self):
         records = read_catalog(ADDON.parent / "auditor_fase13" / "cartografia_forever.json")["misiones"]
         self.assertEqual(_coordinate_result(records["1486"], "T", (1413, 46, 35.7)), "cerca_de_observacion")
