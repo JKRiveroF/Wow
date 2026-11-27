@@ -59,7 +59,14 @@ GL.WH.jefes["Templo de Ahn'Qiraj"] = {
     { n = "Fankriss el Implacable", ing = "Fankriss the Unyielding", nivel = 63, npc = 15510, botin = { { id = 21665 }, { id = 21639 }, { id = 21627 }, { id = 21663 }, { id = 21652 }, { id = 21651 }, { id = 21645 }, { id = 21650 }, { id = 21635 }, { id = 21664 }, { id = 21647 }, { id = 22402 }, { id = 22396 }, { id = 21237 }, { id = 21232 } } },
     { n = "Viscidus", ing = "Viscidus", nivel = 63, npc = 15299, botin = { { id = 21624 }, { id = 21623 }, { id = 21626 }, { id = 21622 }, { id = 21677 }, { id = 21625 }, { id = 22399 }, { id = 21237 }, { id = 21232 }, { id = 20928 }, { id = 20932 } } },
     { n = "Princesa Huhuran", ing = "Princess Huhuran", nivel = 63, npc = 15509, botin = { { id = 21621 }, { id = 21618 }, { id = 21619 }, { id = 21617 }, { id = 21620 }, { id = 21616 }, { id = 21237 }, { id = 21232 }, { id = 20928 }, { id = 20932 } } },
-    { n = "Los emperadores gemelos", ing = "The Twin Emperors", nivel = 63, npc = 15275, botin = { { id = 15276 }, { id = 20930 }, { id = 21602 }, { id = 21599 }, { id = 21598 }, { id = 21600 }, { id = 21601 }, { id = 21597 }, { id = 20735 }, { id = 21232 }, { id = 20926 }, { id = 21608 }, { id = 21604 }, { id = 21605 }, { id = 21609 }, { id = 21607 }, { id = 21606 }, { id = 21679 }, { id = 20726 }, { id = 21237 } } },
+    { n = "Los emperadores gemelos", ing = "The Twin Emperors", nivel = 63, npc = 15275, npcSecundario977 = 15276, botin = { { id = 20930 }, { id = 21602 }, { id = 21599 }, { id = 21598 }, { id = 21600 }, { id = 21601 }, { id = 21597 }, { id = 20735 }, { id = 21232 }, { id = 20926 }, { id = 21608 }, { id = 21604 }, { id = 21605 }, { id = 21609 }, { id = 21607 }, { id = 21606 }, { id = 21679 }, { id = 20726 }, { id = 21237 } } },
     { n = "Ouro", ing = "Ouro", nivel = 63, npc = 15517, botin = { { id = 21615 }, { id = 21611 }, { id = 23558 }, { id = 23570 }, { id = 21610 }, { id = 23557 }, { id = 21237 }, { id = 21232 }, { id = 20927 }, { id = 20931 } } },
     { n = "C'Thun", ing = "C'Thun", nivel = 63, npc = 15727, botin = { { id = 22732 }, { id = 21583 }, { id = 22731 }, { id = 22730 }, { id = 21582 }, { id = 21586 }, { id = 21585 }, { id = 21581 }, { id = 21596 }, { id = 21579 }, { id = 21839 }, { id = 21126 }, { id = 21134 }, { id = 20929 }, { id = 20933 }, { id = 21221 }, { id = 22734 } } },
 }
+
+-- El fichero procede de AtlasLootClassic 1.12: no es una comprobación de botín de Forever.
+for _, zona in ipairs({"Núcleo de Magma", "Guarida de Onyxia", "Guarida Alanegra", "Zul'Gurub", "Ruinas de Ahn'Qiraj", "Templo de Ahn'Qiraj"}) do
+  for _, jefe in ipairs(GL.WH.jefes[zona]) do
+    for _, objeto in ipairs(jefe.botin or {}) do objeto.pendiente977 = true end
+  end
+end

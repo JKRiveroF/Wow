@@ -58,9 +58,25 @@ local function Apuntar()
   local db = DB()
   if type(db) ~= "table" then return end
   if type(db.vuelosNPC) ~= "table" then db.vuelosNPC = {} end
-  local guid = UnitGUID and UnitGUID("npc")
-  local id = not (issecretvalue and issecretvalue(guid)) and type(guid) == "string" and tonumber((select(6, strsplit("-", guid))))
-  if id then db.vuelosNPC[id] = true end
+  local lado = Lado()
+  local okG, guid = false, nil
+  if UnitGUID then okG, guid = pcall(UnitGUID, "npc") end
+  local id
+  if okG and not (issecretvalue and issecretvalue(guid)) and type(guid) == "string" then
+    id = tonumber(guid:match("^Creature%-[^-]+%-[^-]+%-[^-]+%-[^-]+%-(%d+)%-[^-]+$"))
+  end
+  -- Solo el maestro identificado en el catálogo y compatible con la facción.
+  if id then
+    for _, v in ipairs(Maestros()) do
+      if v.npc == id and DeMiLado(v, lado) then
+        db.vuelosNPC[id] = true
+        if type(db.vuelos) ~= "table" then db.vuelos = {} end
+        if type(v.n) == "string" and v.n ~= "" then db.vuelos[v.n] = true end
+        if type(v.ing) == "string" and v.ing ~= "" then db.vuelos[v.ing] = true end
+        break
+      end
+    end
+  end
   if not (C_TaxiMap and C_TaxiMap.GetAllTaxiNodes and GetTaxiMapID and C_Map and C_Map.GetWorldPosFromMapPos and C_Map.GetMapPosFromWorldPos and CreateVector2D) then return end
   local okM, mapa = pcall(GetTaxiMapID)
   if not okM or (issecretvalue and issecretvalue(mapa)) or type(mapa) ~= "number" or mapa <= 0 or mapa >= math.huge or mapa % 1 ~= 0 then return end
@@ -92,7 +108,6 @@ local function Apuntar()
       porNPC[v.npc] = (porNPC[v.npc] or 0) + 1
     end
   end
-  local lado = Lado()
   for n, opciones in pairs(candidatos) do
     local v = opciones[1]
     if #opciones == 1 and porNPC[v.npc] == 1 and DeMiLado(v, lado) and GL.EstadoVueloConocido(n.state) then
@@ -101,14 +116,14 @@ local function Apuntar()
   end
 end
 local ev = CreateFrame("Frame")
-ev:RegisterEvent("TAXIMAP_OPENED")
+GL.Evento(ev, "TAXIMAP_OPENED")
 ev:SetScript("OnEvent", function() pcall(Apuntar) end)
 
 -- ¿Lo tienes? Por PNJ o, como antes, por el nombre del maestro (Exploración guarda db.vuelos[nombre])
 local function Tengo(v)
   if GL.VueloConocidoNPC(v.npc) then return true end
   local db = DB()
-  return type(db) == "table" and type(db.vuelos) == "table" and (db.vuelos[v.n] or (v.ing and db.vuelos[v.ing])) and true or false
+  return type(db) == "table" and type(db.vuelos) == "table" and (db.vuelos[v.n] == true or (v.ing and db.vuelos[v.ing] == true)) and true or false
 end
 
 -- Recomendaciones de exploración: catálogo común, distancia en línea recta.

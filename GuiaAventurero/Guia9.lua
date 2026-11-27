@@ -15,7 +15,10 @@ local BLANCO8 = "Interface\\Buttons\\WHITE8X8"
 
 local function DB() return GuiaAventureroDB or {} end
 local function Si(k) return DB()[k] ~= false end
-local function Num(v) v = (GL.Seguro and GL.Seguro(v)) or v; return type(v) == "number" and v or nil end
+local function Num(v)
+  if GL.Seguro then v = GL.Seguro(v) end
+  return type(v) == "number" and v == v and v >= 0 and v < math.huge and v or nil
+end
 local function Ahora() return (GetTime and GetTime()) or 0 end
 local function Nivel() return Num(UnitLevel and UnitLevel("player")) or 1 end
 local function Miles(n)
@@ -45,18 +48,20 @@ local function LeerXP()
 end
 
 local function Almacen()
-  if type(GuiaAventureroCuenta) ~= "table" then GuiaAventureroCuenta = {} end
-  local c = GuiaAventureroCuenta
-  if type(c.pasos9) ~= "table" then c.pasos9 = {} end
-  local id = (GL.RUTA and GL.RUTA.id) or "?"
-  if type(c.pasos9[id]) ~= "table" then c.pasos9[id] = {} end
-  return c.pasos9[id]
+  local c = type(GuiaAventureroCuenta) == "table" and GuiaAventureroCuenta.pasos9
+  local id = GL.RUTA and GL.RUTA.id
+  local t = type(c) == "table" and id and c[id]
+  return type(t) == "table" and t or {}
 end
 
-local claveAnt, desde, xpDesde = nil, nil, 0
+local claveAnt, desde, xpDesde, rutaAnt, dbAnt = nil, nil, 0, nil, nil
 local function MirarPaso()
   local db = DB()
-  if not db.seccion or not db.paso then return end
+  local ruta = GL.RUTA and GL.RUTA.id
+  if type(ruta) ~= "string" or ruta == "" or type(db.seccion) ~= "number" or type(db.paso) ~= "number" then
+    claveAnt, desde = nil, nil; return
+  end
+  if ruta ~= rutaAnt or db ~= dbAnt then claveAnt, desde = nil, nil; rutaAnt, dbAnt = ruta, db end
   local clave = db.seccion .. ":" .. db.paso
   if clave == claveAnt then return end
   if claveAnt and desde and GL.PasoDespues then
@@ -66,7 +71,7 @@ local function MirarPaso()
     -- solo cuenta si avanzas al paso que sigue (saltar pasos o volver atrás no es lo que tarda un paso)
     if ns == db.seccion and np == db.paso and dt >= 10 and dt <= 3600 then
       if GL.GuardarTiempoPaso then GL.GuardarTiempoPaso(claveAnt, math.floor(dt), math.max(0, xpTotal - xpDesde))
-      else Almacen()[claveAnt] = { t = math.floor(dt), xp = math.max(0, xpTotal - xpDesde) } end
+      end
     end
   end
   claveAnt, desde, xpDesde = clave, Ahora(), xpTotal
@@ -74,7 +79,7 @@ end
 
 local function Media()
   local t, n = 0, 0
-  for _, v in pairs(Almacen()) do if type(v) == "table" and Num(v.t) then t, n = t + v.t, n + 1 end end
+  for _, v in pairs(Almacen()) do if type(v) == "table" and Num(v.t) and v.t > 0 and v.t <= 3600 then t, n = t + v.t, n + 1 end end
   if n < 3 then return nil end
   return t / n
 end
@@ -106,7 +111,7 @@ local function TiempoPaso(clave)
     if ok then return nil end
   end
   local g = Almacen()[clave]
-  if type(g) == "table" and Num(g.t) then return g.t, true end
+  if type(g) == "table" and Num(g.t) and g.t > 0 and g.t <= 3600 then return g.t, true end
   local m = Media()
   if m then return m, false end
   return nil
@@ -446,7 +451,7 @@ local function PintarMapa(d, ancho)
     for i = 1, #mapa.camino do mapa.camino[i]:Hide() end
   end
   mapa.mapID = d.m
-  mapa.nombre:SetText(C.BLANCO .. tostring(d.z or "") .. C.FIN)
+  mapa.nombre:SetText(C.BLANCO .. (GL.ZonaDestinoGuiaR11 and GL.ZonaDestinoGuiaR11(d) or tostring(d.z or "")) .. C.FIN)
   return true
 end
 
@@ -595,12 +600,12 @@ local ACCION_AVISO = {
 -- los reactivos (venenos, polvos, velas...) se venden en las capitales: lo dice en el chat
 local function AccionAviso(clave)
   if ACCION_AVISO[clave] then return ACCION_AVISO[clave] end
-  if string.find(clave, L"^reactivo") then
+  if string.find(clave, "^reactivo") then
     return function() if GL.Mensaje then GL.Mensaje(L"los reactivos los vende el vendedor de reactivos de las capitales y de algunos pueblos grandes.") end end
   end
 end
 
-local TITULOS = { comida = L"Sin comida ni bebida", bolsas = L"Bolsas llenas", municion = L"Poca munición", equipo = L"Equipo a punto de romperse" }
+local TITULOS = { comida = "Sin comida ni bebida", bolsas = "Bolsas llenas", municion = "Poca munición", equipo = "Equipo a punto de romperse" }
 GL.TITULOS_AVISO = TITULOS   -- 9.4
 local function MirarAvisos()
   if not Si("avisosFuera") then return end   -- 9.4.2: también con la ventana abierta (ya no hay avisos en la Guía)
@@ -616,7 +621,7 @@ local function MirarAvisos()
           hay[clave] = true
           if not vistas[clave] then
             vistas[clave] = true
-            local titulo = TITULOS[clave] or (string.find(clave, L"^reactivo") and L"Pocos reactivos") or L"Aviso"
+            local titulo = (TITULOS[clave] and L(TITULOS[clave])) or (string.find(clave, "^reactivo") and L"Pocos reactivos") or L"Aviso"
             Lanzar(titulo, Limpio(a[2]), true, AccionAviso(clave))
           end
         end

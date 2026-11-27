@@ -97,18 +97,33 @@ local cacheBolsas = { libres = nil, comida = nil }
 local function InfoHueco(b, s)
   if C_Container and C_Container.GetContainerItemInfo then
     local i = C_Container.GetContainerItemInfo(b, s)
-    if type(i) == "table" then return i.hyperlink, i.stackCount or 1, i.quality, i.hasNoValue end
+    if type(i) == "table" then
+      if not i.hyperlink and i.itemID then error("enlace de objeto pendiente") end
+      return i.hyperlink, i.stackCount, i.quality, i.hasNoValue, i.isLocked
+    end
+    if i ~= nil then error("datos de hueco no disponibles") end
     return nil
   end
   if GetContainerItemInfo then
-    local _, cuenta, _, calidad, _, _, link, _, sinValor = GetContainerItemInfo(b, s)
-    return link, cuenta or 1, calidad, sinValor
+    local textura, cuenta, bloqueado, calidad, _, _, link, _, sinValor = GetContainerItemInfo(b, s)
+    if not link and (textura or cuenta and cuenta>0) then error("enlace de objeto pendiente") end
+    return link, cuenta, calidad, sinValor, bloqueado
   end
+  error("API de inventario no disponible")
 end
 
+local function EnteroBolsaR14(v)
+  if type(issecretvalue)=="function" then
+    local ok,secreto=pcall(issecretvalue,v)
+    if not ok or secreto then return false end
+  end
+  return type(v)=="number" and v>=0 and v<math.huge and v%1==0
+end
 local function Huecos(b)
   local f = (C_Container and C_Container.GetContainerNumSlots) or GetContainerNumSlots
-  return f and Num(f(b)) or 0
+  local n = type(f)=="function" and f(b)
+  if not EnteroBolsaR14(n) then error("inventario no disponible") end
+  return n
 end
 
 -- Solo huecos generales; una lectura incompleta no equivale a bolsas llenas.
@@ -118,9 +133,11 @@ function GL.HuecosGenerales976()
   local total = 0
   for b = 0, (NUM_BAG_SLOTS or 4) do
     local ok, n, tipo = pcall(f, b)
-    if not ok or type(n) ~= "number" or n < 0 then return nil end
+    if not ok or not EnteroBolsaR14(n) then return nil end
+    if tipo ~= nil and not EnteroBolsaR14(tipo) then return nil end
     if tipo == 0 or (b == 0 and tipo == nil) then total = total + n
     elseif tipo == nil and n > 0 then return nil end
+    if total >= math.huge then return nil end
   end
   return total
 end
@@ -181,17 +198,23 @@ local function MejorBolsaDisponible()
   end
   return mejor
 end
-GL.MejorBolsaDisponible9775 = MejorBolsaDisponible
+function GL.MejorBolsaDisponible9775()
+  local ok, mejora = pcall(MejorBolsaDisponible)
+  if ok then return mejora end
+end
 
-local function LeerBolsas()
+local function EscanearBolsasR14()
   local libres, comida, municion = GL.HuecosGenerales976(), 0, 0
   local pociones, pendientesDatos = 0, false
   local nivel = Nivel()
   local grises, sobrantes, baratos = {}, {}, {}
   for b = 0, (NUM_BAG_SLOTS or 4) do
     for s = 1, Huecos(b) do
-      local link, cuenta = InfoHueco(b, s)
-      if link and GetItemInfo then
+      local link, cuenta, calidad, sinValor = InfoHueco(b, s)
+      if link then
+        if type(link)~="string" or not EnteroBolsaR14(cuenta) or cuenta==0 or type(GetItemInfo)~="function" then
+          error("datos de objeto no disponibles")
+        end
         local nombreItem, _, _, _, requerido, _, _, _, _, _, valor, clase, sub = GetItemInfo(link)
         if not nombreItem or clase == nil then pendientesDatos = true end
         if clase == 0 and sub == 1 then
@@ -203,20 +226,28 @@ local function LeerBolsas()
         -- 7.5.15: qué se puede tirar si las bolsas se llenan
         local nombre = link:match("%[(.-)%]") or "?"
         local precio = tonumber(Num(valor)) or 0
-        local _, _, calidad, sinValor = InfoHueco(b, s)
-        local o = { n = nombre, c = cuenta or 1, p = precio * (cuenta or 1) }
-        if calidad == 0 and not sinValor and precio > 0 then table.insert(grises, o)
-        elseif clase == 12 and Sobrante(link) then table.insert(sobrantes, o)
-        elseif (clase == 2 or clase == 4) and precio > 0 and (calidad or 1) <= 2 then table.insert(baratos, o) end
+        local lista
+        if calidad == 0 and not sinValor and precio > 0 then lista = grises
+        elseif clase == 12 and Sobrante(link) then lista = sobrantes
+        elseif (clase == 2 or clase == 4) and precio > 0 and (calidad or 1) <= 2 then lista = baratos end
+        if lista then table.insert(lista, { n = nombre, c = cuenta or 1, p = precio * (cuenta or 1) }) end
       end
     end
   end
-  cacheBolsas.libres, cacheBolsas.comida, cacheBolsas.municion = libres, comida, municion
-  cacheBolsas.pociones = not pendientesDatos and pociones or nil
-  cacheBolsas.mejora = MejorBolsaDisponible()
+  local mejora = MejorBolsaDisponible()
   local porPrecio = function(a, b) return a.p < b.p end
   table.sort(grises, porPrecio); table.sort(baratos, porPrecio)
-  cacheBolsas.grises, cacheBolsas.sobrantes, cacheBolsas.baratos = grises, sobrantes, baratos
+  return {libres=libres, comida=not pendientesDatos and comida or nil,
+    municion=not pendientesDatos and municion or nil, pociones=not pendientesDatos and pociones or nil,
+    mejora=mejora, grises=grises, sobrantes=sobrantes, baratos=baratos}
+end
+local function LeerBolsas()
+  -- Publicar solo una lectura completa. Una lectura fallida invalida los avisos
+  -- anteriores sin borrar datos guardados ni sustituir la tabla compartida.
+  local ok, nueva = pcall(EscanearBolsasR14)
+  for k in pairs(cacheBolsas) do cacheBolsas[k] = nil end
+  if ok then for k,v in pairs(nueva) do cacheBolsas[k] = v end end
+  return ok
 end
 
 -- 7.5.15: "Pata de lobo rota x4 (4 c)"
@@ -357,15 +388,15 @@ local COLORES_URGENCIA = {   -- 9.0: GL.COLORES_AVISO los cambia en el modo dalt
 }
 local function Urgencia(clave)
   if type(clave) ~= "string" then return 2 end
-  if string.find(clave, L"^reactivo") then return 1 end
+  if string.find(clave, "^reactivo") then return 1 end
   if clave == "bolsas" and cacheBolsas.libres == 0 then return 1 end
   return URGENCIA[clave] or 2
 end
 GL.ListaAvisos, GL.UrgenciaAviso, GL.BolsasCache = Avisos, Urgencia, function() return cacheBolsas end   -- 9.0: para Guia9.lua
 GL.URGENCIA_AVISO = URGENCIA   -- 9.4: los avisos de otros archivos ponen aquí su urgencia
 -- 9.0: píldoras. Cada aviso es una etiqueta corta; al pulsarla se abre debajo. Los urgentes salen abiertos.
-local NOMBRE_PILDORA = { mejorabolsa = L"Mejorar bolsa", equipo = L"Reparar", bolsas = L"Bolsas llenas", sobrantes = L"Objetos de misión", comida = L"Sin comida",
-  municion = L"Munición", hogar = L"Piedra de hogar", posada = L"Posada" }
+local NOMBRE_PILDORA = { mejorabolsa = "Mejorar bolsa", equipo = "Reparar", bolsas = "Bolsas llenas", sobrantes = "Objetos de misión", comida = "Sin comida",
+  municion = "Munición", hogar = "Piedra de hogar", posada = "Posada" }
 GL.NOMBRE_PILDORA = NOMBRE_PILDORA   -- 9.4
 local pildoras, abiertaPildora = {}, {}
 local function Pildora(i, panel)
@@ -387,8 +418,8 @@ local function Pildora(i, panel)
   return b
 end
 local function NombrePildora(clave)
-  if NOMBRE_PILDORA[clave] then return NOMBRE_PILDORA[clave] end
-  if type(clave) == "string" and string.find(clave, L"^reactivo") then return L"Reactivos" end
+  if NOMBRE_PILDORA[clave] then return L(NOMBRE_PILDORA[clave]) end
+  if type(clave) == "string" and string.find(clave, "^reactivo") then return L"Reactivos" end
   return L"Aviso"
 end
 local function TarjetaAvisos(panel, y, ancho)
@@ -473,42 +504,146 @@ end
 ------------------------------------------------------------------------
 -- Vender lo gris (automatismo autoVender, apagado de serie)
 ------------------------------------------------------------------------
+-- Una sola pasada por diálogo; no reintentar ventas rechazadas ni actuar fuera del vendedor.
+local sesionVendedor, vendiendo, reparando
+local function VentaPermitida(sesion)
+  local db = DB()
+  if sesion == nil or sesionVendedor ~= sesion or type(db) ~= "table" or db.autoVender ~= true then return false end
+  -- R13: compartir el criterio conservador de combate de misiones y pesca.
+  if type(GL.AccionProtegidaPermitidaR13) ~= "function" or not GL.AccionProtegidaPermitidaR13() then return false end
+  if IsShiftKeyDown and IsShiftKeyDown() then return false end
+  if MerchantFrame and MerchantFrame.IsShown and not MerchantFrame:IsShown() then return false end
+  if not GetCursorInfo then return false end
+  local ok, cursor = pcall(GetCursorInfo)
+  return ok and cursor == nil
+end
+
+local function NoEsObjetoMision(b, s, id)
+  if GL.WH and GL.WH.objetosMision and GL.WH.objetosMision[id] then return false end
+  if C_Container and C_Container.GetContainerItemQuestInfo then
+    local ok, info = pcall(C_Container.GetContainerItemQuestInfo, b, s)
+    return ok and type(info) == "table" and not info.isQuestItem and (not info.questID or info.questID == 0) and not info.isActive
+  elseif GetContainerItemQuestInfo then
+    local ok, mision, idMision, activa = pcall(GetContainerItemQuestInfo, b, s)
+    return ok and not mision and (not idMision or idMision == 0) and not activa
+  end
+  return false
+end
+
+local function PrecioBasura(b, s)
+  local link, cuenta, calidad, sinValor, bloqueado = InfoHueco(b, s)
+  if type(link) ~= "string" or calidad ~= 0 or sinValor or bloqueado or not GetItemInfo then return nil end
+  local id = tonumber(link:match("item:(%d+)"))
+  if not id or not NoEsObjetoMision(b, s, id) then return nil end
+  local nombre, _, calidadReal, _, _, _, _, _, _, _, precio, clase, sub = GetItemInfo(link)
+  -- Solo basura gris confirmada (clase Miscelánea, subclase Chatarra). Reservar equipo,
+  -- materiales, objetos especiales y datos desconocidos para una decisión manual.
+  if not nombre or calidadReal ~= 0 or clase ~= 15 or sub ~= 0 or type(precio) ~= "number"
+    or not (precio > 0 and precio < math.huge and precio == math.floor(precio))
+    or type(cuenta) ~= "number" or not (cuenta > 0 and cuenta < math.huge and cuenta == math.floor(cuenta))
+    or precio * cuenta >= math.huge then return nil end
+  return precio * cuenta, link, cuenta
+end
+
 local function VenderGris()
-  if DB().autoVender ~= true or (IsShiftKeyDown and IsShiftKeyDown()) then return end
+  local sesion = sesionVendedor
+  if vendiendo or reparando or not sesion or sesion.procesada then return end
+  sesion.procesada = true
+  if not VentaPermitida(sesion) then return end
   local usar = (C_Container and C_Container.UseContainerItem) or UseContainerItem
-  if not usar then return end
+  if type(usar) ~= "function" then return end
+  vendiendo = true
   local n, total = 0, 0
-  for b = 0, 4 do
-    for s = 1, Huecos(b) do
-      local link, cuenta, calidad, sinValor = InfoHueco(b, s)
-      if link and calidad == 0 and not sinValor then
-        local precio = GetItemInfo and select(11, GetItemInfo(link))
-        if type(precio) == "number" and precio > 0 then
-          pcall(usar, b, s)
-          n, total = n + 1, total + precio * (cuenta or 1)
-        end
+  -- Liberar el bloqueo aunque falle una lectura de la API.
+  pcall(function()
+    -- R13: seleccionar antes de vender; un gestor de bolsas puede mover objetos
+    -- durante UseContainerItem. No incorporar nuevos candidatos durante la pasada.
+    local candidatos = {}
+    for b = 0, (NUM_BAG_SLOTS or 4) do
+      for s = 1, Huecos(b) do
+        if not VentaPermitida(sesion) then return end
+        local precio, link, cuenta = PrecioBasura(b, s)
+        if precio then candidatos[#candidatos + 1] = { b = b, s = s, precio = precio, link = link, cuenta = cuenta } end
       end
     end
-  end
+    for _, candidato in ipairs(candidatos) do
+      if not VentaPermitida(sesion) then return end
+      local b, s = candidato.b, candidato.s
+      -- Revalidar también los datos de misión y el precio: pueden haber cambiado
+      -- desde la selección inicial aunque el enlace y la cantidad coincidan.
+      local precio, link, cuenta = PrecioBasura(b, s)
+      if precio ~= candidato.precio or link ~= candidato.link or cuenta ~= candidato.cuenta then return end
+      local actual, cantidad, calidad, sinValor, bloqueado = InfoHueco(b, s)
+      if actual ~= link or cantidad ~= cuenta or calidad ~= 0 or sinValor or bloqueado then return end
+      if not VentaPermitida(sesion) then return end
+      local ok, resultado = pcall(usar, b, s)
+      if not ok or resultado == false then return end
+      n, total = n + 1, total + precio
+    end
+  end)
+  vendiendo = false
   if n > 0 and GL.Mensaje then
-    GL.Mensaje(L"vendidos " .. n .. (n == 1 and L" objeto gris" or L" objetos grises") .. L" por " .. ((GL.Dinero and GL.Dinero(total)) or (total .. " c")) .. ".")
+    GL.Mensaje(L"Solicitudes de venta de basura: " .. n .. L". Valor estimado: " .. ((GL.Dinero and GL.Dinero(total)) or (total .. " c")) .. ".")
   end
 end
 
--- 7.5.15: reparar todo con tu oro al abrir un vendedor que repara (Shift: no repara)
+-- Una solicitud de reparación por diálogo, con el oro personal y la reserva opcional.
+local function ReparacionPermitida(sesion)
+  local db = DB()
+  if not sesion or sesionVendedor ~= sesion or type(db) ~= "table" or db.autoReparar == false then return false end
+  -- R13: compartir el criterio conservador de combate de misiones y pesca.
+  if type(GL.AccionProtegidaPermitidaR13) ~= "function" or not GL.AccionProtegidaPermitidaR13() then return false end
+  if IsShiftKeyDown and IsShiftKeyDown() then return false end
+  if MerchantFrame and MerchantFrame.IsShown and not MerchantFrame:IsShown() then return false end
+  return true
+end
+
+local function CobreValido(n)
+  return type(n) == "number" and n >= 0 and n < math.huge and n == math.floor(n)
+end
+
 local function Reparar()
-  if DB().autoReparar == false or (IsShiftKeyDown and IsShiftKeyDown()) then return end
-  if not CanMerchantRepair or not GetRepairAllCost or not RepairAllItems or not CanMerchantRepair() then return end
-  local coste, puede = GetRepairAllCost()
-  coste = Num(coste)
-  if coste <= 0 or puede == false then return end
-  local dinero = function(c) return (GL.Dinero and GL.Dinero(c)) or (c .. " c") end
-  if GetMoney and Num(GetMoney()) < coste then
-    if GL.Mensaje then GL.Mensaje(L"|cffff7070no tienes oro para reparar todo|r (cuesta " .. dinero(coste) .. ").") end
-    return
-  end
-  RepairAllItems()
-  if GL.Mensaje then GL.Mensaje(L"reparado todo por " .. dinero(coste) .. ".") end
+  local sesion = sesionVendedor
+  if reparando or vendiendo or not sesion or sesion.reparacionProcesada then return end
+  sesion.reparacionProcesada = true
+  reparando = true
+  pcall(function()
+    if not ReparacionPermitida(sesion) then return end
+    if type(CanMerchantRepair) ~= "function" or type(GetRepairAllCost) ~= "function"
+      or type(RepairAllItems) ~= "function" or type(GetMoney) ~= "function" or not CanMerchantRepair() then return end
+    local coste, puede = GetRepairAllCost()
+    if not CobreValido(coste) or coste == 0 or puede ~= true then return end
+    local saldo = GetMoney()
+    if not CobreValido(saldo) then return end
+    local dinero = function(c) return (GL.Dinero and GL.Dinero(c)) or (c .. " c") end
+    if saldo < coste then
+      if GL.Mensaje then GL.Mensaje(L"|cffff7070no tienes oro para reparar todo|r (cuesta " .. dinero(coste) .. ").") end
+      return
+    end
+    local reserva = 0
+    if DB().reservaOro == true then
+      if type(GL.ReservaOro) ~= "function" then return end
+      reserva = GL.ReservaOro(true)
+      if not CobreValido(reserva) then return end
+    end
+    if saldo - coste < reserva then
+      if GL.Mensaje then GL.Mensaje(L"Reparación automática omitida para conservar la reserva de oro. Puedes reparar manualmente.") end
+      return
+    end
+    -- Si los datos o preferencias cambian durante la lectura, no gastar con una cotización obsoleta.
+    local nuevoCoste, nuevoPuede = GetRepairAllCost()
+    if nuevoCoste ~= coste or nuevoPuede ~= true or GetMoney() ~= saldo or not CanMerchantRepair()
+      or not ReparacionPermitida(sesion) then return end
+    if DB().reservaOro == true then
+      if type(GL.ReservaOro) ~= "function" or GL.ReservaOro(true) ~= reserva then return end
+    end
+    if not ReparacionPermitida(sesion) then return end
+    local ok, resultado = pcall(RepairAllItems, false)
+    if ok and resultado ~= false and GL.Mensaje then
+      GL.Mensaje(L"Reparación solicitada. Coste estimado: " .. dinero(coste) .. ".")
+    end
+  end)
+  reparando = false
 end
 
 ------------------------------------------------------------------------
@@ -928,12 +1063,40 @@ table.insert(GL.alIniciar, CrearPanel)
 ------------------------------------------------------------------------
 -- Eventos y reloj
 ------------------------------------------------------------------------
+-- R12: agrupar ráfagas del diario y del inventario sin perder la última lectura.
+local bolsasPendientesR12, fueraMundoR14
+local function ProgramarBolsasR12()
+  if bolsasPendientesR12 or fueraMundoR14 then return end
+  local token = {}
+  bolsasPendientesR12 = token
+  local function Hacer()
+    if bolsasPendientesR12 ~= token or fueraMundoR14 then return end
+    bolsasPendientesR12 = nil
+    if type(DB()) ~= "table" then return end
+    pcall(LeerBolsas)
+    if GL.ProgramarRefresco then GL.ProgramarRefresco() end
+  end
+  if C_Timer and type(C_Timer.After) == "function" then
+    local ok, resultado = pcall(C_Timer.After, 0.05, Hacer)
+    if not ok or resultado == false then Hacer() end
+  else Hacer() end
+end
+
 local eventos = CreateFrame("Frame")
-for _, e in ipairs({ "PLAYER_LOGIN", "PLAYER_XP_UPDATE", "PLAYER_LEVEL_UP", "QUEST_TURNED_IN", "PLAYER_DEAD", "BAG_UPDATE_DELAYED",
-  "MERCHANT_SHOW", "GROUP_ROSTER_UPDATE", "CHAT_MSG_ADDON", "UPDATE_INVENTORY_DURABILITY", "PLAYER_LOGOUT", "QUEST_LOG_UPDATE" }) do
+GL.Evento(eventos, "BAG_UPDATE_DELAYED", "BAG_UPDATE")
+for _, e in ipairs({ "PLAYER_LOGIN", "PLAYER_XP_UPDATE", "PLAYER_LEVEL_UP", "QUEST_TURNED_IN", "PLAYER_DEAD",
+  "PLAYER_LEAVING_WORLD", "PLAYER_ENTERING_WORLD", "MERCHANT_SHOW", "MERCHANT_CLOSED", "GROUP_ROSTER_UPDATE", "CHAT_MSG_ADDON", "UPDATE_INVENTORY_DURABILITY", "PLAYER_LOGOUT", "QUEST_LOG_UPDATE" }) do
   GL.Evento(eventos, e)
 end
 eventos:SetScript("OnEvent", function(_, evento, ...)
+  if evento == "MERCHANT_CLOSED" then sesionVendedor = nil; return end
+  if evento == "PLAYER_LEAVING_WORLD" or evento == "PLAYER_LOGOUT" then
+    sesionVendedor, bolsasPendientesR12, fueraMundoR14 = nil, nil, true
+    if evento == "PLAYER_LEAVING_WORLD" then return end
+  elseif evento == "PLAYER_ENTERING_WORLD" then
+    sesionVendedor, bolsasPendientesR12, fueraMundoR14 = nil, nil, false
+    ProgramarBolsasR12(); return
+  elseif fueraMundoR14 then return end
   if type(DB()) ~= "table" then return end
   if evento == "PLAYER_LOGIN" then
     inicio = Ahora()
@@ -948,13 +1111,16 @@ eventos:SetScript("OnEvent", function(_, evento, ...)
     Enviar(true)
   elseif evento == "PLAYER_DEAD" then
     local e = Estad(); if e then e.muertes = (e.muertes or 0) + 1 end
-  elseif evento == "BAG_UPDATE_DELAYED" then
-    pcall(LeerBolsas)
+  elseif evento == "BAG_UPDATE_DELAYED" or evento == "BAG_UPDATE" then
+    ProgramarBolsasR12(); return
   elseif evento == "MERCHANT_SHOW" then
+    if not sesionVendedor then sesionVendedor = {} end
+    local sesion = sesionVendedor
+    if reparando or vendiendo then return end
     pcall(Reparar)
-    pcall(VenderGris)
+    if sesionVendedor == sesion then pcall(VenderGris) end
   elseif evento == "QUEST_LOG_UPDATE" then
-    pcall(LeerBolsas)
+    ProgramarBolsasR12(); return
   elseif evento == "GROUP_ROSTER_UPDATE" then
     if not EnGrupo() then companeros = {} end
     Enviar(true)
@@ -974,6 +1140,7 @@ end)
 -- cada segundo suma tiempo al nivel actual; cada 20 s manda el paso al grupo si ha cambiado
 local acumulado, envio = 0, 0
 eventos:SetScript("OnUpdate", function(_, dt)
+  if fueraMundoR14 then acumulado, envio = 0, 0; return end
   acumulado, envio = acumulado + dt, envio + dt
   if acumulado >= 1 then
     local n = type(DB()) == "table" and DelNivel(Nivel())

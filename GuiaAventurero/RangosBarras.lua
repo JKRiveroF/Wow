@@ -14,84 +14,117 @@ local function Auto() return DB().rangosAuto == true end
 local MAX_RANURA = 144
 local ESPERA = 1.5          -- el instructor enseña varios de golpe: se juntan en un solo aviso
 
+-- Los IDs del libro del jugador son la fuente de aprendizaje; no usar los
+-- equivalentes de misión ni los hechizos apuntados fuera del libro por la guía.
+local function Seguro(f, ...)
+  if type(f)~="function" then return nil end
+  local ok,a,b,c,d,e,g,h=pcall(f,...)
+  if ok then return a,b,c,d,e,g,h end
+end
 local function Nombre(id)
-  local ok, n = pcall(function()
-    if C_Spell and C_Spell.GetSpellName then return C_Spell.GetSpellName(id) end
-    return GetSpellInfo and (GetSpellInfo(id))
-  end)
-  return ok and n or nil
+  return Seguro(C_Spell and C_Spell.GetSpellName,id) or Seguro(GetSpellInfo,id)
 end
-
--- número de rango («Rango 4», «Rank 4»); 0 si no tiene
-local function NumRango(id)
-  local ok, r = pcall(function()
-    if C_Spell and C_Spell.GetSpellSubtext then return C_Spell.GetSpellSubtext(id) end
-    return GetSpellSubtext and GetSpellSubtext(id)
-  end)
-  return (ok and type(r) == "string" and tonumber(r:match("(%d+)"))) or 0
+local function NumRango(id, texto)
+  local r=texto or Seguro(C_Spell and C_Spell.GetSpellSubtext,id) or Seguro(GetSpellSubtext,id)
+  if not r or r=="" then local _,sub=Seguro(GetSpellInfo,id);r=sub end
+  return type(r)=="string" and tonumber(r:match("(%d+)")) or 0
 end
-
--- el rango más alto que conoces de ese hechizo (el juego lo da al pedirlo por el nombre)
-local function MejorRango(nombre)
-  local ok, id = pcall(function()
-    if C_Spell and C_Spell.GetSpellInfo then local i = C_Spell.GetSpellInfo(nombre); return i and i.spellID end
-    return GetSpellInfo and select(7, GetSpellInfo(nombre))
-  end)
-  return ok and id or nil
-end
-
-local function Conocido(id)
-  if GL.HechizoConocido then local ok, r = pcall(GL.HechizoConocido, id); if ok and r then return true end end
-  if IsPlayerSpell then local ok, r = pcall(IsPlayerSpell, id); if ok and r then return true end end
-  if IsSpellKnown then local ok, r = pcall(IsSpellKnown, id); if ok and r then return true end end
-  return false
-end
-
-local function EnCombate() return InCombatLockdown and InCombatLockdown() end
-
--- 9.7.4: el mejor rango que conoces de un hechizo de las barras. Se mira la cadena de rangos de la ruta y,
--- además, lo que da el juego por el nombre; gana el rango más alto. Devuelve nuevo, rangoNuevo, rangoViejo.
-local function MejorQue(id, nombre)
-  local cand = {}
-  local cadena = GL.CadenaDeHechizo and GL.CadenaDeHechizo(id)
-  if cadena then
-    local pos
-    for i, x in ipairs(cadena) do if x == id then pos = i end end
-    if pos then
-      for i = #cadena, pos + 1, -1 do
-        if Conocido(cadena[i]) then
-          local rn, rv = NumRango(cadena[i]), NumRango(id)
-          if rn == 0 or rv == 0 then rn, rv = i, pos end   -- sin el texto «Rango N»: su lugar en la cadena
-          table.insert(cand, { cadena[i], rn, rv })
-          break
-        end
-      end
+local function Banco() return Enum and Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Player or 0 end
+local function Libro()
+  local porId,porNombre={},{}
+  local function Anotar(id,slot,moderno,nombre,sub)
+    if type(id)~="number" or id<=0 or porId[id] then return end
+    nombre=nombre or Nombre(id)
+    local f={id=id,slot=slot,moderno=moderno,nombre=nombre,rango=NumRango(id,sub)}
+    porId[id]=f
+    if nombre and f.rango>0 then
+      porNombre[nombre]=porNombre[nombre] or {};table.insert(porNombre[nombre],f)
     end
   end
-  local mejor = nombre and MejorRango(nombre)
-  if mejor and mejor ~= id and Conocido(mejor) then
-    local rn, rv = NumRango(mejor), NumRango(id)
-    if rn > rv then table.insert(cand, { mejor, rn, rv }) end
+  if C_SpellBook and C_SpellBook.GetNumSpellBookSkillLines and C_SpellBook.GetSpellBookSkillLineInfo and C_SpellBook.GetSpellBookItemInfo then
+    for i=1,Seguro(C_SpellBook.GetNumSpellBookSkillLines) or 0 do
+      local t=Seguro(C_SpellBook.GetSpellBookSkillLineInfo,i)
+      if t then for j=(t.itemIndexOffset or 0)+1,(t.itemIndexOffset or 0)+(t.numSpellBookItems or 0) do
+        local f=Seguro(C_SpellBook.GetSpellBookItemInfo,j,Banco())
+        if f and f.itemType==(Enum and Enum.SpellBookItemType and Enum.SpellBookItemType.Spell or 1) and not f.isPassive and not f.isOffSpec then
+          -- No considerar una sustitución temporal como otro rango del hechizo.
+          if not f.spellID or not f.actionID or f.spellID==f.actionID then Anotar(f.spellID or f.actionID,j,true,f.name,f.subName) end
+        end
+      end end
+    end
   end
-  local elegido
-  for _, c in ipairs(cand) do if not elegido or c[2] > elegido[2] then elegido = c end end
-  if elegido then return elegido[1], elegido[2], elegido[3] end
-  return nil
+  if GetNumSpellTabs and GetSpellTabInfo and GetSpellBookItemInfo then
+    for i=1,Seguro(GetNumSpellTabs) or 0 do
+      local _,_,offset,n=Seguro(GetSpellTabInfo,i)
+      if offset and n then for j=offset+1,offset+n do
+        local tipo,id=Seguro(GetSpellBookItemInfo,j,BOOKTYPE_SPELL or "spell")
+        if tipo=="SPELL" and not Seguro(IsPassiveSpell,id) then
+          local nombre,sub=Seguro(GetSpellBookItemName,j,BOOKTYPE_SPELL or "spell")
+          Anotar(id,j,false,nombre,sub)
+        end
+      end end
+    end
+  end
+  return porId,porNombre
+end
+local function Conocido(id,libro)
+  if libro and libro[id] then return true end
+  return Seguro(C_SpellBook and C_SpellBook.IsSpellKnown,id,Banco())==true or
+    Seguro(IsSpellKnown,id,false)==true or Seguro(IsPlayerSpell,id)==true
+end
+local function EnCombate() return (InCombatLockdown and InCombatLockdown()) or (UnitAffectingCombat and UnitAffectingCombat("player")) end
+local function Temporal()
+  return Seguro(HasVehicleActionBar) or Seguro(HasOverrideActionBar) or Seguro(HasPossessBar) or
+    Seguro(C_ActionBar and C_ActionBar.HasVehicleActionBar) or Seguro(C_ActionBar and C_ActionBar.HasOverrideActionBar) or
+    Seguro(C_ActionBar and C_ActionBar.HasPossessBar)
+end
+local function Accion(ranura)
+  return Seguro(GetActionInfo or (C_ActionBar and C_ActionBar.GetActionInfo),ranura)
+end
+-- Primero la cadena auditada. Fuera de ella solo el libro real, con nombre y
+-- rangos explícitos no ambiguos. Nunca usar el ID resuelto por un nombre a secas.
+local function MejorQue(id,nombre,libro,porNombre)
+  local cadena=Seguro(GL.CadenaDeHechizo,id)
+  if cadena then
+    local pos
+    for i,x in ipairs(cadena) do if x==id then pos=i;break end end
+    if pos then
+      for i=#cadena,pos+1,-1 do
+        if Conocido(cadena[i],libro) then
+          local rn,rv=NumRango(cadena[i]),NumRango(id)
+          if rn==0 or rv==0 then rn,rv=i,pos end
+          if rn>rv then return cadena[i],rn,rv end
+        end
+      end
+      return nil
+    end
+  end
+  local rv=NumRango(id);if rv==0 or not nombre then return nil end
+  local rangos={[rv]=id};local mejor,rn=nil,rv
+  for _,f in ipairs(porNombre[nombre] or {}) do
+    if rangos[f.rango] and rangos[f.rango]~=f.id then return nil end
+    rangos[f.rango]=f.id
+    -- Una cadena de la guía distinta invalida la coincidencia por nombre.
+    if Seguro(GL.CadenaDeHechizo,f.id) then return nil end
+    if f.rango>rn then mejor,rn=f.id,f.rango end
+  end
+  return mejor,rn,rv
 end
 
 -- Ranuras de las barras con un rango viejo de los hechizos aprendidos. nombres: { [nombre] = true } o nil (todos).
 -- Devuelve una lista { { nombre, nuevo, viejo, rangoNuevo, rangoViejo, ranuras = {...} } }.
-local function Buscar(nombres)
+local function Buscar(nombres, incluirIgnorados)
   local porHechizo, lista = {}, {}
-  if not GetActionInfo then return lista end
+  if not GetActionInfo and not (C_ActionBar and C_ActionBar.GetActionInfo) then return lista end
+  local libro,porNombre=Libro()
   local ignorar = DB().rangosIgnorados or {}
   for ranura = 1, MAX_RANURA do
-    local ok, tipo, id = pcall(GetActionInfo, ranura)
-    if ok and tipo == "spell" and id then
+    local tipo,id=Accion(ranura)
+    if tipo == "spell" and type(id)=="number" then
       local nombre = Nombre(id)
       if (nombre or not nombres) and (not nombres or nombres[nombre]) then
-        local mejor, rn, rv = MejorQue(id, nombre)
-        if mejor and not ignorar[id .. ">" .. mejor] then
+        local mejor, rn, rv = MejorQue(id,nombre,libro,porNombre)
+        if mejor and (incluirIgnorados or not ignorar[id .. ">" .. mejor]) then
           local clave = id .. ">" .. mejor
           local h = porHechizo[clave]
           if not h then
@@ -107,21 +140,103 @@ local function Buscar(nombres)
   return lista
 end
 
-local function Sustituir(lista)
-  if EnCombate() or not PickupSpell or not PlaceAction then return 0 end
-  local n = 0
-  for _, h in ipairs(lista) do
-    for _, ranura in ipairs(h.ranuras) do
-      local ok = pcall(function()
-        ClearCursor()
-        PickupSpell(h.nuevo)
-        PlaceAction(ranura)
-        ClearCursor()
-      end)
-      if ok then n = n + 1 end
+-- 9.7.9.3 (Quini: «los hechizos siguen sin cambiarse solos, aunque le des al botón»): antes, si el juego no tenía
+-- PickupSpell (los clientes nuevos lo tienen en C_Spell) no se hacía nada y no se decía nada. Ahora se recoge con lo que
+-- haya, se comprueba que el botón ha cambiado de verdad y, si no, se dice por qué (y queda en /ga informe).
+local ultimoMotivo
+local modificando=false
+local function Cursor()
+  if not GetCursorInfo then return "unknown" end
+  local ok,tipo,slot,banco,id=pcall(GetCursorInfo)
+  if not ok then return "unknown" end
+  if tipo~="spell" then return tipo,nil end
+  -- La segunda devolución es el índice del libro, NO el ID de hechizo.
+  if type(id)=="number" then return tipo,id end
+  if type(slot)=="number" then
+    if type(banco)=="number" and C_SpellBook then
+      local f=Seguro(C_SpellBook.GetSpellBookItemInfo,slot,banco)
+      if f then return tipo,f.spellID or f.actionID end
+    elseif banco=="spell" or banco==BOOKTYPE_SPELL then
+      local t,x=Seguro(GetSpellBookItemInfo,slot,banco)
+      if t=="SPELL" then return tipo,x end
     end
   end
-  return n
+  return tipo,nil
+end
+local function Recoger(id,libro)
+  if not GetCursorInfo or not ClearCursor then return false,L"API de cursor no disponible" end
+  if Cursor() then return false,L"cursor ocupado" end
+  local formas={};local f=libro[id]
+  -- El índice exacto del libro evita resolver por nombre o recoger otro rango.
+  if f and f.moderno and C_SpellBook and C_SpellBook.PickupSpellBookItem then
+    formas[#formas+1]=function() C_SpellBook.PickupSpellBookItem(f.slot,Banco()) end
+  elseif f and not f.moderno and PickupSpellBookItem then
+    formas[#formas+1]=function() PickupSpellBookItem(f.slot,BOOKTYPE_SPELL or "spell") end
+  end
+  if C_Spell and C_Spell.PickupSpell then formas[#formas+1]=function() C_Spell.PickupSpell(id) end end
+  if PickupSpell then formas[#formas+1]=function() PickupSpell(id) end end
+  for _,accion in ipairs(formas) do
+    if EnCombate() or Temporal() then return false,L"barras bloqueadas" end
+    pcall(accion)
+    local t,x=Cursor()
+    if t=="spell" and x==id then return true end
+    if t then pcall(ClearCursor) end -- solo lo que acaba de recoger el addon
+  end
+  return false,L"no se pudo recoger el ID "..id
+end
+local function Sustituir(lista)
+  if modificando then return 0,{} end
+  ultimoMotivo=nil
+  local n,fallos=0,{}
+  modificando=true
+  local libro,porNombre=Libro()
+  local function Fallo(h,ranura,motivo)
+    ultimoMotivo=motivo;fallos[#fallos+1]={viejo=h.viejo,nuevo=h.nuevo,ranura=ranura,motivo=motivo}
+  end
+  for _,h in ipairs(lista) do for _,ranura in ipairs(h.ranuras) do
+    local tipo,id=Accion(ranura)
+    if tipo=="spell" and id==h.viejo then
+      local mejor=MejorQue(id,Nombre(id),libro,porNombre)
+      if mejor~=h.nuevo then Fallo(h,ranura,L"rango aprendido cambiado; vuelve a revisar")
+      elseif EnCombate() or Temporal() then Fallo(h,ranura,L"barras bloqueadas")
+      elseif not PlaceAction or not GetCursorInfo or not ClearCursor then Fallo(h,ranura,L"API de barras no disponible")
+      elseif Cursor() then Fallo(h,ranura,L"cursor ocupado")
+      else
+        local cogido,motivo=Recoger(h.nuevo,libro)
+        if not cogido then Fallo(h,ranura,motivo)
+        else
+          local t,x=Accion(ranura)
+          if t~="spell" or x~=h.viejo or EnCombate() or Temporal() then
+            pcall(ClearCursor);Fallo(h,ranura,L"botón cambiado o bloqueado")
+          else
+            local ok,err=pcall(PlaceAction,ranura)
+            local nt,nid=Accion(ranura)
+            if nt=="spell" and nid==h.nuevo then n=n+1
+            else
+              -- Si la API cambió el botón a otra cosa y dejó el original en
+              -- el cursor, restaurarlo antes de limpiar nuestro cursor.
+              local ct,cid=Cursor()
+              if (nt~="spell" or nid~=h.viejo) and ct=="spell" and cid==h.viejo and not EnCombate() then
+                pcall(PlaceAction,ranura)
+              end
+              Fallo(h,ranura,L"botón "..ranura..L": esperado "..h.nuevo..L", recibido "..tostring(nid)..(ok and "" or " ("..tostring(err)..")"))
+            end
+            pcall(ClearCursor)
+          end
+        end
+      end
+    end -- una macro, objeto, botón vacío o hechizo movido nunca se sobreescribe
+  end end
+  modificando=false
+  if #fallos>0 and GL.Fallo then GL.Fallo("rangos",ultimoMotivo) end
+  return n,fallos
+end
+local function AvisarResultado(n,fallos)
+  if not GL.Mensaje then return end
+  if n>0 then GL.Mensaje(L"rangos nuevos puestos en "..n..(n==1 and L" botón" or L" botones")..".") end
+  if fallos and #fallos>0 then
+    GL.Mensaje((GL.ingles and "Ranks still pending: " or "Rangos pendientes: ")..#fallos..". "..tostring(ultimoMotivo or "?")..". /ga rangos")
+  end
 end
 
 local function Linea(h)
@@ -132,6 +247,13 @@ end
 
 -- ventana del aviso
 local aviso, pendiente
+local function CerrarAviso()
+  if aviso then aviso.datos={};aviso.manual=nil;aviso:Hide() end
+end
+local function AvisoValido(f)
+  return f:IsShown() and (f.manual or Activo())
+end
+local Programar, Reintentar
 local function CrearAviso()
   local f = CreateFrame("Frame", "GuiaAventureroRangosBarras", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
   f:SetSize(360, 120)
@@ -160,23 +282,27 @@ local function CrearAviso()
   f.lista:SetPoint("RIGHT", f, "RIGHT", -10, 0)
   f.lista:SetSpacing(3)
   f.si = GL.CrearBoton(f, L"Sustituir", function()
-    local n = Sustituir(f.datos or {})
-    if n > 0 and GL.Mensaje then GL.Mensaje(L"rangos nuevos puestos en " .. n .. (n == 1 and L" botón" or L" botones") .. ".") end
-    f:Hide()
+    if not AvisoValido(f) then CerrarAviso();return end
+    local n,fallos=Sustituir(f.datos or {}); AvisarResultado(n,fallos)
+    CerrarAviso()
+    if #fallos>0 and Reintentar then Reintentar(fallos) end
   end, nil, 22, "accion")
   f.si:SetWidth(100)
   f.no = GL.CrearBoton(f, L"Ahora no", function()
+    if not AvisoValido(f) then CerrarAviso();return end
     local ig = DB().rangosIgnorados or {}
     for _, h in ipairs(f.datos or {}) do ig[h.viejo .. ">" .. h.nuevo] = true end
     if GuiaAventureroDB then GuiaAventureroDB.rangosIgnorados = ig end
-    f:Hide()
+    CerrarAviso()
   end, nil, 22)
   f.no:SetWidth(90)
   f.siempre = GL.CrearBoton(f, L"Siempre solo", function()
-    if GuiaAventureroDB then GuiaAventureroDB.rangosAuto = true end
-    local n = Sustituir(f.datos or {})
+    if not AvisoValido(f) then CerrarAviso();return end
+    if GuiaAventureroDB then GuiaAventureroDB.rangosAuto = true; GuiaAventureroDB.rangosBarras = true end
+    local n,fallos=Sustituir(f.datos or {}); AvisarResultado(n,fallos)
+    if #fallos>0 and Reintentar then Reintentar(fallos) end
     if GL.Mensaje then GL.Mensaje(L"desde ahora los rangos nuevos se ponen solos en tus barras (se quita en Ajustes › General)." ) end
-    f:Hide()
+    CerrarAviso()
   end, nil, 22)
   f.siempre:SetWidth(110)
   f.si:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 10, 10)
@@ -190,9 +316,10 @@ local function CrearAviso()
   return f
 end
 
-local function Mostrar(lista)
+local function Mostrar(lista,manual,silencio)
   aviso = aviso or CrearAviso()
   aviso.datos = lista
+  aviso.manual = manual == true
   local l = {}
   for i, h in ipairs(lista) do
     if i > 8 then table.insert(l, C.GRIS .. L"y " .. (#lista - 8) .. L" más" .. C.FIN); break end
@@ -207,83 +334,132 @@ local function Mostrar(lista)
   aviso.icono:SetTexture(icono or "Interface\\Icons\\INV_Misc_Book_09")
   aviso:SetHeight(96 + math.min(#lista, 9) * 16)
   aviso:Show()
-  if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPEN then pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPEN) end
+  if not silencio and PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPEN then pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPEN) end
 end
 
-local aprendidos = {}
-local base = nil   -- 9.7.4: rangos viejos que ya había en las barras al conectar
+local aprendidos,base,esperando={},nil,{}
+local programado=false
+local generacion=0
+local function Clave(h) return h.viejo..">"..h.nuevo end
 local function Revisar()
-  pendiente = false
-  if not Activo() then aprendidos = {}; return end
-  if EnCombate() then pendiente = true; return end
-  -- 9.7.4: se mira toda la barra; salen los rangos que acabas de aprender y los que no estaban al conectar
-  -- (por si el juego no avisa de lo aprendido). Los rangos viejos que ya tenías al entrar no se preguntan.
-  local todos = Buscar(nil)
-  local lista = {}
-  for _, h in ipairs(todos) do
-    local clave = h.viejo .. ">" .. h.nuevo
-    if aprendidos[h.nombre] or (base and not base[clave]) then table.insert(lista, h) end
-    if base then base[clave] = true end
+  if modificando then return end
+  pendiente=false
+  local activo=Activo()
+  local manual=aviso and aviso:IsShown() and aviso.manual
+  if not activo then
+    aprendidos={};esperando={};base=nil
+    if not manual then CerrarAviso();return end
   end
-  aprendidos = {}
-  if #lista == 0 then return end
+  if EnCombate() or Temporal() or Cursor() then pendiente=true;return end
+  -- Un aviso manual puede incluir rangos ignorados; no convertirlos en acciones automáticas.
+  if manual then
+    local actuales,claves={},{}
+    for _,h in ipairs(aviso.datos or {}) do claves[Clave(h)]=true end
+    for _,h in ipairs(Buscar(nil,true)) do if claves[Clave(h)] then actuales[#actuales+1]=h end end
+    if #actuales>0 then
+      -- Una solicitud manual conserva la prioridad hasta que el jugador decida.
+      Mostrar(actuales,true,true)
+      return
+    else CerrarAviso() end
+    if not activo then return end
+  end
+  local todos=Buscar(nil)
+  local lista={}
+  local vistos={}
+  for _,h in ipairs(todos) do
+    local k=Clave(h);vistos[k]=true
+    if (not base and Auto()) or aprendidos[h.nombre] or (base and not base[k]) or esperando[k] then
+      lista[#lista+1]=h
+    end
+  end
+  base=base or {}
+  for _,h in ipairs(todos) do base[Clave(h)]=true end
+  for k in pairs(esperando) do if not vistos[k] then esperando[k]=nil end end
+  aprendidos={}
   if Auto() then
-    local n = Sustituir(lista)
-    if n > 0 and GL.Mensaje then
-      local nombres = {}
-      for _, h in ipairs(lista) do table.insert(nombres, h.nombre .. " " .. h.rangoNuevo) end
-      GL.Mensaje(L"rangos nuevos puestos en tus barras: " .. table.concat(nombres, ", ") .. ".")
-    end
+    if aviso and aviso:IsShown() and not aviso.manual then CerrarAviso() end
+    if #lista==0 then return end
+    for _,h in ipairs(lista) do esperando[Clave(h)]=nil end
+    local n,fallos=Sustituir(lista)
+    AvisarResultado(n,fallos)
+    if #fallos>0 then Reintentar(fallos) end
   else
-    Mostrar(lista)
-  end
-end
-
-local programado = false
-local function Programar()
-  if programado then return end
-  programado = true
-  local function Hacer() programado = false; Revisar() end
-  if C_Timer and C_Timer.After then C_Timer.After(ESPERA, Hacer) else Hacer() end
-end
-
-local ev = CreateFrame("Frame")
--- 9.7.4: los dos avisos de «hechizo aprendido» (cada cliente usa uno) y, por si ninguno llega, el cambio del libro
-for _, e in ipairs({ "LEARNED_SPELL_IN_SKILL_LINE", "LEARNED_SPELL_IN_TAB", "SPELLS_CHANGED", "PLAYER_ENTERING_WORLD" }) do
-  pcall(ev.RegisterEvent, ev, e)
-end
-ev:RegisterEvent("PLAYER_REGEN_ENABLED")
-ev:SetScript("OnEvent", function(_, event, id)
-  if event == "PLAYER_REGEN_ENABLED" then
-    if pendiente then Programar() end
-    return
-  end
-  if event == "PLAYER_ENTERING_WORLD" then
-    local function Foto()
-      if base then return end
-      base = {}
-      for _, h in ipairs(Buscar(nil)) do base[h.viejo .. ">" .. h.nuevo] = true end
+    -- Conservar avisos anteriores aún válidos al llegar otro lote de rangos.
+    local claves={}
+    for _,h in ipairs(lista) do claves[Clave(h)]=true end
+    if aviso and aviso:IsShown() then
+      for _,h in ipairs(aviso.datos or {}) do claves[Clave(h)]=true end
     end
-    if C_Timer and C_Timer.After then C_Timer.After(5, function() pcall(Foto) end) else pcall(Foto) end
+    local esManual=aviso and aviso:IsShown() and aviso.manual
+    local actuales={};for _,h in ipairs(esManual and Buscar(nil,true) or todos) do if claves[Clave(h)] then actuales[#actuales+1]=h end end
+    if #actuales>0 then Mostrar(actuales,esManual,#lista==0) else CerrarAviso() end
+  end
+end
+Programar=function(demora)
+  if programado then return end
+  programado=true
+  local g=generacion
+  local function Hacer()
+    if g~=generacion then return end
+    programado=false;Revisar()
+  end
+  if C_Timer and C_Timer.After then C_Timer.After(demora or ESPERA,Hacer) else Hacer() end
+end
+-- Reintentos limitados por lote; los siguientes eventos del juego vuelven a
+-- comprobar las parejas pendientes sin dar por exitoso un cambio fallido.
+local intentos=0
+Reintentar=function(fallos)
+  for _,f in ipairs(fallos) do esperando[Clave(f)]=true end
+  if Auto() and intentos<3 and C_Timer and C_Timer.After then intentos=intentos+1;Programar(2*intentos) end
+end
+local ev=CreateFrame("Frame")
+for _,e in ipairs({"LEARNED_SPELL_IN_SKILL_LINE","LEARNED_SPELL_IN_TAB","SPELLS_CHANGED","PLAYER_ENTERING_WORLD","PLAYER_REGEN_ENABLED","UPDATE_SHAPESHIFT_FORM","UPDATE_BONUS_ACTIONBAR","ACTIONBAR_PAGE_CHANGED","ACTIONBAR_SLOT_CHANGED","UPDATE_VEHICLE_ACTIONBAR","CURSOR_CHANGED","SPELL_DATA_LOAD_RESULT"}) do
+  pcall(ev.RegisterEvent,ev,e)
+end
+ev:SetScript("OnEvent",function(_,event,id)
+  if modificando then return end
+  if event=="ACTIONBAR_SLOT_CHANGED" then
+    if aviso and aviso:IsShown() then Programar() end
     return
   end
-  if event == "SPELLS_CHANGED" then
-    if base then Programar() end
+  if not Activo() and not (aviso and aviso:IsShown() and aviso.manual) then return end
+  if event=="PLAYER_ENTERING_WORLD" then
+    intentos=0;Programar(2);return
+  end
+  if event=="LEARNED_SPELL_IN_SKILL_LINE" or event=="LEARNED_SPELL_IN_TAB" then
+    local nombre=type(id)=="number" and Nombre(id);if nombre then aprendidos[nombre]=true end
+    intentos=0;Programar()
+    -- Algunos clientes notifican antes de actualizar el libro.
+    if C_Timer and C_Timer.After then
+      local g=generacion
+      C_Timer.After(4,function() if g==generacion and Activo() then Programar() end end)
+    end
     return
   end
-  local nombre = id and Nombre(id)
-  if nombre then aprendidos[nombre] = true; Programar() end
+  if event=="SPELLS_CHANGED" then Programar();return end
+  if event=="SPELL_DATA_LOAD_RESULT" then if next(esperando) or not base then Programar() end;return end
+  if pendiente or next(esperando) then Programar() end
 end)
 
 -- /ga rangos: buscar ahora en las barras todos los rangos viejos (aunque no los acabes de aprender)
 GL.comandos = GL.comandos or {}
 GL.comandos["rangos"] = function()
   if EnCombate() then if GL.Mensaje then GL.Mensaje(L"en combate no se pueden cambiar las barras.") end; return end
-  local lista = Buscar(nil)
+  if Temporal() then if GL.Mensaje then GL.Mensaje(L"barras bloqueadas") end; return end
+  local lista = Buscar(nil,true)
   if #lista == 0 then
+    CerrarAviso()
     if GL.Mensaje then GL.Mensaje(L"tus barras ya tienen los rangos más altos que conoces.") end
   else
-    Mostrar(lista)
+    Mostrar(lista,true)
+  end
+end
+
+GL.ActualizarRangosBarras = function(cambio)
+  if cambio or not Activo() then
+    aprendidos={};esperando={};base=nil;pendiente=false
+    generacion=generacion+1;programado=false;intentos=0
+    if not (aviso and aviso:IsShown() and aviso.manual) then CerrarAviso() end
   end
 end
 

@@ -72,17 +72,17 @@ end
 
 local function MaterialesQueFaltan()
   local R = GL.RUTA
-  if not (R and R.profesiones and GL.NivelProfesion and GL.InventarioProfesion975) then return 0 end
+  if not (R and R.profesiones and GL.NivelProfesion and GL.BolsasProfesion975) then return 0 end
   local faltan = 0
   for _, prof in ipairs(R.profesiones) do
     local ok, nivel = pcall(GL.NivelProfesion, prof)
     if ok and nivel then
       for _, paso in ipairs(prof.pasos or {}) do
         if nivel >= paso.d and nivel < paso.h then
-          for _, m in ipairs(paso.mat or {}) do
-            if m[2] and m[2] > 0 then
-              local tengo = GL.InventarioProfesion975(m[1])
-              if tengo ~= nil and tengo < (GL.NecesarioProfesion975 and GL.NecesarioProfesion975(paso, m, nivel) or m[2] * math.max(1, paso.h - nivel)) then faltan = faltan + 1 end
+          for _, m in ipairs(GL.MaterialesTramo975(paso,nivel)) do
+            if m.cantidad>0 then
+              local tengo = GL.BolsasProfesion975(m.id)
+              if tengo~=nil and tengo<m.cantidad then faltan=faltan+1 end
             end
           end
           break
@@ -116,7 +116,11 @@ local function Contadores()
     local okZ, maz = pcall(MazmorrasANivel)
     cacheCont.maz = okZ and maz or 0
   end
-  Poner(Boton("oficios"), cacheCont.mat, "util", cacheCont.mat == 1 and L"material que te falta para el tramo de tu profesión" or L"materiales que te faltan para el tramo de tus profesiones")
+  -- 9.7.9.1 (Quini: «no se quita el icono del 4 de las profesiones»): como Personaje y Mazmorras, el número se quita al
+  -- abrir Profesiones y solo vuelve si cambia (otro material que falte, otro tramo).
+  local claveMat = tostring(cacheCont.mat)
+  if db.modo == "oficios" then db.oficiosVista = claveMat end
+  Poner(Boton("oficios"), (db.oficiosVista == claveMat) and 0 or cacheCont.mat, "util", cacheCont.mat == 1 and L"material que te falta para el tramo de tu profesión" or L"materiales que te faltan para el tramo de tus profesiones")
   local vistaMaz = db.mazVista == Nivel()
   if db.modo == "mazmorras" then db.mazVista = Nivel(); vistaMaz = true end
   Poner(Boton("mazmorras"), vistaMaz and 0 or cacheCont.maz, "oportunidad", cacheCont.maz == 1 and L"mazmorra de tu nivel con misiones" or L"mazmorras de tu nivel con misiones")
@@ -305,7 +309,7 @@ local function ControlesBusca(b, pendiente, pagina, paginas, capacidad)
   HabilitarBusca(b.next, disponible and pagina < paginas)
 end
 local FILTROS_CATALOGO = { false, "Banda", "Jefe", "Botín", "Profesión", "Receta", "Material", "Misión" }
-local TIPOS = { { "todo", L"Todo" }, { "mision", L"Misiones" }, { "pnj", "PNJ" }, { "mazmorra", L"Mazmorras" }, { "ajuste", L"Ajustes" }, { "catalogo", L"Catálogo" } }
+local TIPOS = { { "todo", "Todo" }, { "mision", "Misiones" }, { "pnj", "PNJ" }, { "mazmorra", "Mazmorras" }, { "ajuste", "Ajustes" }, { "catalogo", "Catálogo" } }
 
 local function Resultados(texto, filtroCatalogo)
   local r = { mision = {}, pnj = {}, mazmorra = {}, ajuste = {}, catalogo = {} }
@@ -354,6 +358,21 @@ local function Resultados(texto, filtroCatalogo)
   return r
 end
 
+-- Un temporizador rechazado no debe dejar deshabilitados los resultados.
+local function ProgramarBusca(g)
+  local pendiente = true
+  local function Ejecutar()
+    if not pendiente then return end
+    pendiente = false
+    if g == busca.generacion and busca.pendiente then GL.RefrescarBuscador() end
+  end
+  if C_Timer and type(C_Timer.After) == "function" then
+    local ok, resultado = pcall(C_Timer.After, 0.18, Ejecutar)
+    if ok and resultado ~= false then return end
+  end
+  Ejecutar()
+end
+
 local function CrearBuscador()
   if busca.panel or not GL.frame then return end
   local frame = GL.frame
@@ -376,7 +395,7 @@ local function CrearBuscador()
   caja:SetScript("OnTextChanged", function(self)
     GL.Mostrar(pista, (self:GetText() or "") == "" and not self:HasFocus())
     busca.pagina=1; busca.pendiente=true; ControlesBusca(busca,true,1,1,0); if busca.estado then busca.estado:SetText("") end; for _,f in ipairs(busca.filas) do f.e=nil; f:Hide() end; busca.generacion=(busca.generacion or 0)+1; local g=busca.generacion
-    if C_Timer and C_Timer.After then C_Timer.After(0.18,function() if g==busca.generacion then GL.RefrescarBuscador() end end) else GL.RefrescarBuscador() end
+    ProgramarBusca(g)
   end)
   caja:SetScript("OnEditFocusGained", function() pista:Hide() end)
   caja:SetScript("OnEditFocusLost", function(self) GL.Mostrar(pista, (self:GetText() or "") == "") end)
@@ -385,7 +404,7 @@ local function CrearBuscador()
   busca.caja = caja
   busca.tipos = {}
   for i, t in ipairs(TIPOS) do
-    local b = GL.CrearBoton(p, t[2], function() busca.tipo = t[1]; busca.pagina=1; GL.RefrescarBuscador() end, nil, 18, "pestana")
+    local b = GL.CrearBoton(p, L(t[2]), function() busca.tipo = t[1]; busca.pagina=1; GL.RefrescarBuscador() end, nil, 18, "pestana")
     b.tipo = t[1]
     busca.tipos[i] = b
   end
@@ -470,10 +489,19 @@ local function FilaBusca(i)
     if not self.e or not GameTooltip then return end
     GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetText(self.e.n or "",1,1,1,1,true); GameTooltip:AddLine(self.e.d or "",1,1,1,true); GameTooltip:Show()
   end)
-  f:SetScript("OnLeave",function() if GameTooltip then GameTooltip:Hide() end end)
-  f:SetScript("OnHide",function(self)
-    if GameTooltip and GameTooltip.IsOwned and GameTooltip:IsOwned(self) then GameTooltip:Hide() end
-  end)
+  local function CerrarTooltipPropio(self)
+    if not GameTooltip then return end
+    local ok, propio
+    if type(GameTooltip.IsOwned) == "function" then
+      ok, propio = pcall(GameTooltip.IsOwned, GameTooltip, self)
+      if ok and (propio == true or propio == 1) then GameTooltip:Hide() end
+    elseif type(GameTooltip.GetOwner) == "function" then
+      ok, propio = pcall(GameTooltip.GetOwner, GameTooltip)
+      if ok and propio == self then GameTooltip:Hide() end
+    end
+  end
+  f:SetScript("OnLeave", CerrarTooltipPropio)
+  f:SetScript("OnHide", CerrarTooltipPropio)
   f:SetScript("OnClick", function(self)
     local e = self.e
     if not e then return end
@@ -493,8 +521,8 @@ local function FilaBusca(i)
   return f
 end
 
-local IR = { mision = L"Ir al paso", pnj = L"Flecha ➜", mazmorra = L"Ver", ajuste = L"Abrir", catalogo=L"Ver" }
-local CAB = { mision = L"MISIONES", pnj = L"PNJ Y LUGARES", mazmorra = L"MAZMORRAS Y JEFES", ajuste = L"AJUSTES", catalogo=L"Catálogo" }
+local IR = { mision = "Ir al paso", pnj = "Flecha ➜", mazmorra = "Ver", ajuste = "Abrir", catalogo="Ver" }
+local CAB = { mision = "MISIONES", pnj = "PNJ Y LUGARES", mazmorra = "MAZMORRAS Y JEFES", ajuste = "AJUSTES", catalogo="Catálogo" }
 -- Conserva el primer resultado visible al cambiar la capacidad de una página.
 local function PaginaBusca(pagina, anterior, capacidad, cantidad, redimensionar)
   pagina = math.max(1, pagina or 1)
@@ -524,7 +552,7 @@ function GL.RefrescarBuscador(redimensionar)
   for _, b in ipairs(busca.tipos) do
     b:SetActivo(b.tipo == busca.tipo)
     local n = (b.tipo == "todo") and total or #(r[b.tipo] or {})
-    local nombre = ({ todo = L"Todo", mision = L"Misiones", pnj = "PNJ", mazmorra = L"Mazmorras", ajuste = L"Ajustes", catalogo=L"Catálogo" })[b.tipo]
+    local nombre = ({ todo = L"Todo", mision = L"Misiones", pnj = L"PNJ", mazmorra = L"Mazmorras", ajuste = L"Ajustes", catalogo=L"Catálogo" })[b.tipo]
     b.texto:SetText(nombre .. (valido and (" " .. n .. (b.tipo=="catalogo" and n==100 and "+" or "")) or ""))
   end
   for _, f in ipairs(busca.filas) do f:Hide(); f.e=nil end
@@ -554,8 +582,8 @@ function GL.RefrescarBuscador(redimensionar)
     local entrada=lista[k]; local tipo,e=entrada.tipo,entrada.e
     local pos=k-primero; local y=inicio+pos*32; local f=FilaBusca(pos+1); f.e=e
     f.n:SetText((tipo=="mision" and C.AMARILLO or C.BLANCO)..e.n..C.FIN)
-    f.d:SetText(C.GRIS..(e.d or CAB[tipo])..C.FIN)
-    f.ir:SetText(C.AZUL..IR[tipo]..C.FIN)
+    f.d:SetText(C.GRIS..(e.d or L(CAB[tipo]))..C.FIN)
+    f.ir:SetText(C.AZUL..L(IR[tipo])..C.FIN)
     local anchoAccion = (f.ir.GetStringWidth and f.ir:GetStringWidth()) or 74
     local anchoFila = math.max(1, p:GetWidth() or 0)
     local margen = math.min(math.ceil(math.max(0,anchoAccion))+12, math.max(12, math.floor(anchoFila * 0.4)))
@@ -625,32 +653,143 @@ end
 ------------------------------------------------------------------------
 local tuto
 local SIN_OPCIONES = function() return {} end
+
+-- 9.7.9.8: el tutorial marca en amarillo lo que explica (un marco que parpadea y una etiqueta con su nombre),
+-- para que se sepa qué botón es cada cosa. Cada pantalla dice qué marcar con una lista { marco, etiqueta, lado }.
+local AMARILLO = { 1, 0.82, 0 }
+local marcas = {}
+local function Marca(k)
+  local m = marcas[k]
+  if m then return m end
+  m = CreateFrame("Frame", nil, UIParent)
+  m:SetFrameStrata("FULLSCREEN_DIALOG")
+  m:EnableMouse(false)
+  m.lineas = {}
+  for j = 1, 4 do
+    local t = m:CreateTexture(nil, "OVERLAY")
+    t:SetColorTexture(AMARILLO[1], AMARILLO[2], AMARILLO[3], 1)
+    m.lineas[j] = t
+  end
+  m.lineas[1]:SetPoint("TOPLEFT", m, "TOPLEFT"); m.lineas[1]:SetPoint("TOPRIGHT", m, "TOPRIGHT"); m.lineas[1]:SetHeight(2)
+  m.lineas[2]:SetPoint("BOTTOMLEFT", m, "BOTTOMLEFT"); m.lineas[2]:SetPoint("BOTTOMRIGHT", m, "BOTTOMRIGHT"); m.lineas[2]:SetHeight(2)
+  m.lineas[3]:SetPoint("TOPLEFT", m, "TOPLEFT"); m.lineas[3]:SetPoint("BOTTOMLEFT", m, "BOTTOMLEFT"); m.lineas[3]:SetWidth(2)
+  m.lineas[4]:SetPoint("TOPRIGHT", m, "TOPRIGHT"); m.lineas[4]:SetPoint("BOTTOMRIGHT", m, "BOTTOMRIGHT"); m.lineas[4]:SetWidth(2)
+  m.brillo = m:CreateTexture(nil, "BACKGROUND")
+  m.brillo:SetPoint("TOPLEFT", m, "TOPLEFT", -4, 4)
+  m.brillo:SetPoint("BOTTOMRIGHT", m, "BOTTOMRIGHT", 4, -4)
+  m.brillo:SetColorTexture(AMARILLO[1], AMARILLO[2], AMARILLO[3], 0.18)
+  m.cartel = CreateFrame("Frame", nil, m)
+  m.cartel:SetFrameStrata("FULLSCREEN_DIALOG")
+  m.cartel.fondo = m.cartel:CreateTexture(nil, "BACKGROUND")
+  m.cartel.fondo:SetAllPoints()
+  m.cartel.fondo:SetColorTexture(AMARILLO[1], AMARILLO[2], AMARILLO[3], 0.95)
+  m.cartel.texto = GL.Texto(m.cartel, "GameFontNormalSmall")
+  m.cartel.texto:SetPoint("CENTER", m.cartel, "CENTER", 0, 0)
+  m.cartel.texto:SetTextColor(0.08, 0.08, 0.08)
+  -- parpadeo suave: el marco va de medio a todo cada segundo y pico
+  m.t = 0
+  m:SetScript("OnUpdate", function(self, dt)
+    self.t = (self.t + (tonumber(dt) or 0)) % 1.2
+    local a = 0.55 + 0.45 * math.abs(1 - self.t / 0.6)
+    for _, l in ipairs(self.lineas) do l:SetAlpha(a) end
+    self.brillo:SetAlpha(a)
+  end)
+  marcas[k] = m
+  return m
+end
+
+local function QuitarMarcas()
+  for _, m in ipairs(marcas) do m:Hide() end
+end
+GL.TutorialQuitarMarcas = QuitarMarcas
+
+-- lado: "derecha" (barra lateral), "abajo" o "abajo2" (una fila más abajo, para que no se pisen), "arriba"
+local function PonerMarcas(lista)
+  QuitarMarcas()
+  local n = 0
+  for _, e in ipairs(lista or {}) do
+    local f = e[1]
+    if f and f.IsVisible and f:IsVisible() then
+      n = n + 1
+      local m = Marca(n)
+      m:ClearAllPoints()
+      m:SetPoint("TOPLEFT", f, "TOPLEFT", -3, 3)
+      m:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 3, -3)
+      local c = m.cartel
+      if e[2] and e[2] ~= "" then
+        local lado = e[3] or "derecha"
+        local flecha = (lado == "derecha" and "< ") or (lado == "arriba" and "v ") or "^ "
+        c.texto:SetText(flecha .. e[2])
+        local w = tonumber(c.texto.GetStringWidth and c.texto:GetStringWidth()) or (#e[2] * 6)
+        c:SetSize(w + 12, 16)
+        c:ClearAllPoints()
+        if lado == "derecha" then c:SetPoint("LEFT", m, "RIGHT", 4, 0)
+        elseif lado == "arriba" then c:SetPoint("BOTTOM", m, "TOP", 0, 4)
+        elseif lado == "abajo2" then c:SetPoint("TOP", m, "BOTTOM", 0, -22)
+        else c:SetPoint("TOP", m, "BOTTOM", 0, -4) end
+        c:Show()
+      else
+        c:Hide()
+      end
+      m:Show()
+    end
+  end
+  return n
+end
+GL._PonerMarcasTuto = PonerMarcas   -- pruebas
+
+local function UI() return GL.ui or {} end
+local function Lateral(clave)
+  for _, b in ipairs(GL.botonesLaterales or {}) do if b.clave == clave then return b end end
+end
+local function MarcasBarra()
+  local l = {}
+  local u = UI()
+  for _, b in ipairs(GL.botonesLaterales or {}) do
+    local nombre = b.etiqueta
+    if b == u.botonCompacto then nombre = L"Tamaño" elseif b == u.botonOpciones then nombre = L"Ajustes" end
+    table.insert(l, { b, nombre, "derecha" })
+  end
+  return l
+end
 local PANTALLAS = {
-  -- 9.4.2: primero, cómo se usa la guía (tres pantallas que solo explican); después, lo que puedes elegir
-  { L"Tu ruta", L"La pestaña Guía te dice qué misión toca ahora, dónde recogerla y dónde entregarla. Pulsa un paso de la tarjeta y la flecha te lleva allí.", SIN_OPCIONES },
-  { L"La flecha", L"La flecha de la pantalla te lleva a cada sitio y te dice a cuántos metros está. Si te pierdes, pulsa «Mi nivel» y la guía vuelve a lo que te toca.", SIN_OPCIONES },
-  { L"Lo demás", L"En la barra de la izquierda tienes Personaje (talentos, hechizos y equipo), Oro, Exploración y Mazmorras y bandas.", SIN_OPCIONES },
+  -- 9.4.2: primero, cómo se usa la guía (pantallas que solo explican); después, lo que puedes elegir
+  -- 9.7.9.8: el cuarto campo dice qué se marca en amarillo mientras se lee la pantalla
+  { "Tu ruta", "La pestaña |cffffd100Guía|r (marcada en amarillo) te dice qué misión toca ahora, dónde recogerla y dónde entregarla. Pulsa una misión de la tarjeta para ver sus pasos, y «Llévame» para que la flecha te lleve.", SIN_OPCIONES,
+    function() return { { Lateral("guia"), L"Guía", "derecha" } } end },
+  { "Moverte por la ruta", "Debajo de la barra de la ruta: |cffffd100Atrás|r y |cffffd100Siguiente|r cambian de paso a mano, |cffffd100Mi nivel|r te lleva al paso que te toca ahora y |cffffd100?|r te dice por qué un paso no avanza.", SIN_OPCIONES,
+    function()
+      local n = UI().nav or {}
+      return { { n[1], L"paso anterior", "abajo" }, { n[2], L"tu paso", "abajo2" }, { n[3], L"salta el paso", "abajo" }, { n[4], L"¿qué falta?", "abajo2" } }
+    end },
+  { "La flecha", "La |cffffd100flecha|r de la pantalla te lleva a cada sitio y te dice a cuántos metros está. El botón marcado arriba a la derecha de la ventana la enseña o la esconde.", SIN_OPCIONES,
+    function() return { { _G.GuiaAventureroFlecha, L"La flecha", "arriba" }, { UI().botonFlecha, L"Flecha sí / no", "arriba" } } end },
+  { "La barra de la izquierda", "Cada icono de la barra abre una parte de la guía: te los marcamos todos con su nombre. Pasa el ratón por encima de cualquiera y te dice qué hace.", SIN_OPCIONES, MarcasBarra },
   -- 9.6: los automatismos vienen apagados en un personaje nuevo; aquí se elige (antes el tutorial decía que todo iba solo)
-  { L"Lo que hace la guía sola", L"|cffa48cffAutomático:|r la guía pasa sola los pasos que ya has hecho, la flecha salta al siguiente destino al llegar y tus talentos se ponen solos al subir de nivel.\n|cffa48cffLo hago yo:|r al acabar un paso pulsas «Saltar paso», eliges en la tarjeta adónde va la flecha y pones los talentos tú, siguiendo Personaje › Talentos.\n|cffb4b4b8Con los dos, la guía te dice qué misión toca, dónde y cuánto te falta. Lo cambias cuando quieras en Ajustes › Automatismos.|r", function()
-      local function Poner(v) for _, k in ipairs({ "auto", "autoDestino", "autoTalentos" }) do DB()[k] = v end
+  { "Lo que hace la guía sola", "|cffa48cffAutomático:|r la guía pasa sola los pasos que ya has hecho, la flecha salta al siguiente destino al llegar y tus talentos se ponen solos al subir de nivel.\n|cffa48cffLo hago yo:|r al acabar un paso pulsas «Siguiente», eliges en la tarjeta adónde va la flecha y pones los talentos tú, siguiendo Personaje › Talentos.\n|cffb4b4b8Con los dos, la guía te dice qué misión toca, dónde y cuánto te falta. Lo cambias cuando quieras en Ajustes › Automatismos.|r", function()
+      local function Poner(v) for _, k in ipairs({ "auto", "autoDestino", "autoTalentos" }) do
+        DB()[k] = v; if GL.NotificarAutomatismo then GL.NotificarAutomatismo(k, v) end
+      end
         if v and GL.ProgramarSync then GL.ProgramarSync() end end
       return {
         { L"Automático", L"La guía avanza y pone los talentos", function() Poner(true) end, function() return DB().auto ~= false and DB().autoTalentos ~= false end },
         { L"Lo hago yo", L"Tú avanzas y pones los talentos", function() Poner(false) end, function() return DB().auto == false end },
       }
-    end },
-  { L"Estilo de ruta", L"Cuántas misiones extra mete la guía.", function()
+    end,
+    function() return { { (UI().nav or {})[3], L"Siguiente", "abajo" }, { UI().botonOpciones, L"Ajustes", "derecha" } } end },
+  { "Estilo de ruta", "Cuántas misiones extra mete la guía.", function()
       local l = {}
-      for _, e in ipairs(GL.ESTILOS_RUTA or {}) do table.insert(l, { e.n, e.d, function() DB().estiloRuta = e.id end, function() return (DB().estiloRuta or "normal") == e.id end }) end
+      for _, e in ipairs(GL.ESTILOS_RUTA or {}) do table.insert(l, { L(e.n), L(e.d), function() DB().estiloRuta = e.id end, function() return (DB().estiloRuta or "normal") == e.id end }) end
       return l
     end },
-  { L"Tamaño de la ventana", L"Lo puedes cambiar luego con el botón de abajo de la barra o con doble clic en el retrato.", function()
+  { "Tamaño de la ventana", "Lo puedes cambiar luego con el botón marcado, abajo en la barra de la izquierda, o con doble clic en el retrato.", function()
       return {
         { L"Completa", L"Todo a la vista", function() DB().tamanoElegido = "completo" end, function() return (DB().tamanoElegido or DB().tamano or "completo") == "completo" end },
         { L"Compacta", L"XP y el paso", function() DB().tamanoElegido = "compacto" end, function() return (DB().tamanoElegido or DB().tamano) == "compacto" end },
         { L"Franja", L"Lo mínimo", function() DB().tamanoElegido = "franja" end, function() return (DB().tamanoElegido or DB().tamano) == "franja" end },
       }
-    end },
+    end,
+    function() return { { UI().botonCompacto, L"Tamaño", "derecha" } } end },
   -- 9.4.2: el color se elige en Ajustes › Aspecto (el tutorial, más corto)
   -- { L"Color de acento", L"Morado, dorado, el color de tu clase o verde.", function()
   --     local l = {}
@@ -665,8 +804,8 @@ local PANTALLAS = {
 local function PintarTuto()
   local i = tuto.i
   local pt = PANTALLAS[i]
-  tuto.paso:SetText(C.GRIS .. L"Paso " .. i .. L" de " .. #PANTALLAS .. " · " .. string.lower(pt[1]) .. C.FIN)
-  tuto.desc:SetText(pt[2])
+  tuto.paso:SetText(C.GRIS .. L"Paso " .. i .. L" de " .. #PANTALLAS .. " · " .. string.lower(L(pt[1])) .. C.FIN)
+  tuto.desc:SetText(L(pt[2]))
   -- 9.6: las opciones van debajo del texto, que puede ocupar varias líneas; la ventana crece con él
   local hDesc = tonumber(tuto.desc.GetStringHeight and tuto.desc:GetStringHeight()) or 24
   local yOps = 50 + math.max(30, math.floor(hDesc + 10))
@@ -693,8 +832,8 @@ local function PintarTuto()
     b:SetWidth(w)
     b:ClearAllPoints()
     b:SetPoint("TOPLEFT", tuto, "TOPLEFT", 10 + (k - 1) * (w + 6), -yOps)
-    b.n:SetText(o[1])
-    b.d:SetText(o[2] and (C.GRIS .. o[2] .. C.FIN) or "")
+    b.n:SetText(L(o[1]))
+    b.d:SetText(o[2] and (C.GRIS .. L(o[2]) .. C.FIN) or "")
     b.d:SetWidth(w - 10)
     local elegido = o[4] and o[4]()
     local a = (o[5] and o[5].acento) or GL.COLOR.acento
@@ -707,10 +846,31 @@ local function PintarTuto()
   if tuto.siguiente.texto then tuto.siguiente.texto:SetText(i == #PANTALLAS and L"Empezar" or L"Siguiente ›") end
   local ac = GL.COLOR.acento
   tuto.raya:SetColorTexture(ac[1], ac[2], ac[3], 1)
+  -- 9.7.9.8: marca en amarillo lo que explica esta pantalla
+  local ok, lista = pcall(pt[4] or SIN_OPCIONES)
+  PonerMarcas(ok and lista or nil)
+end
+
+-- 9.7.9.8: el tutorial va al lado de la ventana de la guía, no encima, para que se vea lo que está marcado
+local function Colocar()
+  tuto:ClearAllPoints()
+  local f = GL.frame
+  if f and f.IsVisible and f:IsVisible() then
+    local function Esc(x) return tonumber(x and x.GetEffectiveScale and x:GetEffectiveScale()) or 1 end
+    local k = Esc(f) / Esc(UIParent)
+    local der = (tonumber(f:GetRight()) or 0) * k
+    local izq = (tonumber(f:GetLeft()) or 0) * k
+    local ancho = tonumber(UIParent:GetWidth()) or 0
+    local wt = (tonumber(tuto:GetWidth()) or 400) + 30
+    if ancho > 0 and der + wt <= ancho then tuto:SetPoint("LEFT", f, "RIGHT", 24, 0); return end
+    if izq >= wt then tuto:SetPoint("RIGHT", f, "LEFT", -24, 0); return end
+  end
+  tuto:SetPoint("CENTER", UIParent, "CENTER", 0, 120)
 end
 
 local function Terminar()
   tuto:Hide()
+  QuitarMarcas()
   local t = DB().tamanoElegido
   if t and GL.PonerTamano then pcall(GL.PonerTamano, t) end
   DB().tamanoElegido = nil
@@ -720,9 +880,9 @@ function GL.Tutorial9(i)
   if not tuto then
     tuto = CreateFrame("Frame", "GuiaAventureroTutorial", UIParent, PLANTILLA)
     tuto:SetSize(400, 230)   -- 9.4.2: más alto para las tarjetas de 74
-    tuto:SetPoint("CENTER", UIParent, "CENTER", 0, 120)
     tuto:SetFrameStrata("DIALOG")
     tuto:EnableMouse(true)
+    tuto:SetScript("OnHide", function() QuitarMarcas() end)   -- 9.7.9.8: que no se queden marcas sueltas
     GL.Caja(tuto, GL.COLOR.fondo, GL.COLOR.borde)
     tuto.raya = tuto:CreateTexture(nil, "ARTWORK")
     tuto.raya:SetHeight(2)
@@ -758,6 +918,7 @@ function GL.Tutorial9(i)
     if GL.Ayuda then GL.Ayuda(tuto.nunca, L"No volver a mostrarlo", L"Con /ga tutorial lo puedes ver igual. También en Ajustes › General.") end
   end
   tuto.i = math.max(1, math.min(tonumber(i) or 1, #PANTALLAS))
+  Colocar()
   tuto:Show()
   PintarTuto()
 end
@@ -765,21 +926,32 @@ end
 ------------------------------------------------------------------------
 -- /ga memoria
 ------------------------------------------------------------------------
-local SECCIONES = { { "guia", L"Guía" }, { "talentos", L"Talentos" }, { "oficios", L"Profesiones" }, { "exploracion", L"Exploración" },
-  { "mazmorras", L"Mazmorras y bandas" }, { "reputacion", L"Reputación" }, { "biblioteca", L"Biblioteca" }, { "cuenta", L"Cuenta" }, { "coleccion", L"Colección" } }
+local SECCIONES = { { "guia", "Guía" }, { "talentos", "Talentos" }, { "oficios", "Profesiones" }, { "exploracion", "Exploración" },
+  { "mazmorras", "Mazmorras y bandas" }, { "reputacion", "Reputación" }, { "biblioteca", "Biblioteca" }, { "cuenta", "Cuenta" }, { "coleccion", "Colección" } }
+-- 9.7.9.1: mide dos veces, antes y después de recoger la basura de Lua, para distinguir lo que la guía usa de verdad
+-- de lo que el juego aún no ha limpiado (sin tener que escribir un /run, que el juego avisa como script personalizado).
+local function MemoriaGuia()
+  if not (UpdateAddOnMemoryUsage and GetAddOnMemoryUsage) then return nil end
+  pcall(UpdateAddOnMemoryUsage)
+  local ok, v = pcall(GetAddOnMemoryUsage, "GuiaAventurero")
+  return ok and Num(v) or nil
+end
+local function TextoKB(kb)
+  return (kb >= 1024) and GL.FormatoDecimal(string.format("%.1f MB", kb / 1024)) or (math.floor(kb) .. " KB")
+end
 function GL.TextoMemoria()
-  local kb
-  if UpdateAddOnMemoryUsage and GetAddOnMemoryUsage then
-    pcall(UpdateAddOnMemoryUsage)
-    local nombre = "GuiaAventurero"
-    local ok, v = pcall(GetAddOnMemoryUsage, nombre)
-    if ok then kb = Num(v) end
+  local kb = MemoriaGuia()
+  local limpia
+  if kb and collectgarbage then
+    pcall(collectgarbage, "collect")
+    limpia = MemoriaGuia()
   end
   local cargadas, sin = {}, {}
   for _, s in ipairs(SECCIONES) do
-    if s[1] == "guia" or s[1] == "talentos" or s[1] == "oficios" or GL.modos[s[1]] then table.insert(cargadas, s[2]) else table.insert(sin, s[2]) end
+    if s[1] == "guia" or s[1] == "talentos" or s[1] == "oficios" or GL.modos[s[1]] then table.insert(cargadas, L(s[2])) else table.insert(sin, L(s[2])) end
   end
-  local mem = kb and ((kb >= 1024) and GL.FormatoDecimal(string.format("%.1f MB", kb / 1024)) or (math.floor(kb) .. " KB")) or L"el juego no lo dice"
+  local mem = kb and TextoKB(kb) or L"el juego no lo dice"
+  if kb and limpia then mem = mem .. L" (en uso de verdad, tras limpiar: " .. TextoKB(limpia) .. ")" end
   local txt = L"memoria: " .. mem .. L". Cargadas: " .. table.concat(cargadas, ", ") .. "."
   if #sin > 0 then txt = txt .. L" Sin cargar todavía: " .. table.concat(sin, ", ") .. "." end
   if GL.ContinenteActual then txt = txt .. L" Opcionales cargadas: " .. GL.ContinenteActual() .. "." end

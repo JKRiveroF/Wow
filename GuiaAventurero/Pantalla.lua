@@ -198,6 +198,9 @@ end
 ------------------------------------------------------------------------
 local barra, botones = nil, {}
 local alegreDesde = nil
+-- R12: el último listado válido es inmutable para esta barra.
+local listaVacia = {}
+local listaPintada, alegreOculto, numPintados
 
 local function Boton(i)
   if botones[i] then return botones[i] end
@@ -267,10 +270,12 @@ end
 local function Actualizar()
   local db = DB()
   if type(db) ~= "table" then return end
-  Crear()
   if db.barraBuffs == false then   -- 7.9.8: sigue en combate; solo se quita cada icono cuando el buff está puesto
-    barra:Hide(); return
+    if barra then barra:Hide() end
+    listaPintada, alegreOculto = nil, nil
+    return
   end
+  Crear()
   -- 8.9.3: en combate (o si los buffs vienen en secreto) se mantiene lo último que se vio fuera de combate,
   -- sin volver a leerlos; así no salen iconos de buffs que sí llevas puestos
   local enCombate = (InCombatLockdown and InCombatLockdown()) or (UnitAffectingCombat and UnitAffectingCombat("player"))
@@ -280,20 +285,34 @@ local function Actualizar()
     local ok, l = pcall(Calcular)
     if ok and type(l) == "table" and not secreto then lista = l; GL._ultimaListaBuffs = l end
   end
-  if not lista then
-    lista = {}
-    for i, v in ipairs(GL._ultimaListaBuffs or {}) do lista[i] = v end
-  end
-  -- alegre se quita sola a los 10 s
+  lista = lista or GL._ultimaListaBuffs or listaVacia
+  -- La lista guardada no se modifica al caducar el aviso alegre.
   local hayAlegre = false
-  for i = #lista, 1, -1 do
-    if lista[i].alegre then
-      hayAlegre = true
-      alegreDesde = alegreDesde or ((GetTime and GetTime()) or 0)
-      if ((GetTime and GetTime()) or 0) - alegreDesde > 10 then table.remove(lista, i) end
+  for i = 1, #lista do
+    if lista[i].alegre then hayAlegre = true; break end
+  end
+  local ocultarAlegre = false
+  if hayAlegre then
+    local ahora = (GetTime and GetTime()) or 0
+    alegreDesde = alegreDesde or ahora
+    ocultarAlegre = ahora - alegreDesde > 10
+  else
+    alegreDesde = nil
+  end
+  -- En combate o con auras secretas se reutiliza exactamente la última lista.
+  -- No repintar sus iconos si ni el contenido ni la caducidad han cambiado.
+  if lista == listaPintada and ocultarAlegre == alegreOculto then
+    local visible = numPintados > 0
+    if (visible or not barra.moviendo) and barra:IsShown() ~= visible then GL.Mostrar(barra, visible) end
+    return
+  end
+  local origen = lista
+  if ocultarAlegre then
+    lista = {}
+    for i = 1, #origen do
+      if not origen[i].alegre then lista[#lista + 1] = origen[i] end
     end
   end
-  if not hayAlegre then alegreDesde = nil end
   local n = math.min(#lista, MAX)
   for i = n + 1, #botones do botones[i]:Hide() end   -- 7.9.8: no se esconden los que siguen (esconderlos soltaba el arrastre)
   for i = 1, n do
@@ -313,6 +332,7 @@ local function Actualizar()
   end
   barra:SetWidth(math.max(LADO + 12, 12 + n * (LADO + 8) - 8))
   if n > 0 or not barra.moviendo then GL.Mostrar(barra, n > 0) end
+  listaPintada, alegreOculto, numPintados = origen, ocultarAlegre, n
 end
 
 local ev = CreateFrame("Frame")

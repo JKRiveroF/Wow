@@ -18,73 +18,86 @@ end
 local function Ahora() return (time and time()) or 0 end
 local function Consulta(f, ...)
   if type(f) ~= "function" then return nil end
-  local ok, a, b = pcall(f, ...)
+  local ok, a, b, c, d, e, g, h, i = pcall(f, ...)
   if not ok then return nil end
-  if issecretvalue and issecretvalue(a) then a = nil end
-  if issecretvalue and issecretvalue(b) then b = nil end
-  return a, b
+  local function Seguro(v)
+    if issecretvalue and issecretvalue(v) then return nil end
+    return v
+  end
+  return Seguro(a), Seguro(b), Seguro(c), Seguro(d), Seguro(e), Seguro(g), Seguro(h), Seguro(i)
 end
 
 -- cuántos objetos de un jefe te sirven (los puedes llevar según tu ruta); el juego tiene que conocer el objeto
 function GL.UtilesDeJefe(j)
   if not (j and j.botin and GL.BotinUtil) then return 0, 0 end
-  local n, mejor = 0, 0
-  for _, o in ipairs(j.botin) do
-    local ok, util, mej = pcall(GL.BotinUtil, o.id)
-    if ok and util then n = n + 1; if mej then mejor = mejor + 1 end end
+  local n, mejor, vistos, mejoras = 0, 0, {}, {}
+  for _, o in ipairs(GL.NormalizarBotin977 and GL.NormalizarBotin977(j.botin) or j.botin) do
+    if o.id then
+      local ok, util, mej, _, _, aviso = pcall(GL.BotinUtil, o.id)
+      if ok and util then
+        if not vistos[o.id] then n = n + 1; vistos[o.id] = true end
+        if mej and not aviso and not o.mision977 and not mejoras[o.id] then mejor = mejor + 1; mejoras[o.id] = true end
+      end
+    end
   end
   return n, mejor
 end
 
 local function NombreJefe(j) return ((j.n or "?"):gsub("^[^:]+: ", "")) end
 
-local function BuscarMazmorra(nombre)
-  if not GL.DatosMazmorras or Minus(nombre) == "" then return nil end
-  local ok, datos = pcall(GL.DatosMazmorras)
-  if not ok or type(datos) ~= "table" then return nil end
-  local b = Minus(nombre)
-  -- 9.3.5: el nombre del juego puede estar en español o en inglés (sea cual sea el idioma de la guía)
-  local function Nombres(m) return Minus(m.clave or m.n), Minus(GL.EnIngles and GL.EnIngles(m.clave or m.n) or m.n) end
-  for _, m in ipairs(datos) do
-    local es, en = Nombres(m)
-    if es == b or en == b then return m end
-  end
-  -- No elegir una instancia por un fragmento ambiguo del nombre.
-  return nil
+local function NombreVisibleR11(j)
+  local nombre = GL.NombreJefeGuiaR11 and GL.NombreJefeGuiaR11(j) or j.n or "?"
+  return (nombre:gsub("^[^:]+: ", ""))
 end
 
--- 9.7.6: una banda de Datos94 (Bandas.lua) con la forma de una mazmorra para el modo mazmorra
-local function BuscarBanda(nombre)
-  if Minus(nombre) == "" then return nil end
-  local b = Minus(nombre)
-  for _, r in ipairs((GL.D94 and GL.D94.bandas) or {}) do
-    local es = r.clave or r.n
-    for _, n in ipairs({ Minus(es), Minus(r.ing), Minus(r.n) }) do
-      if n ~= "" and n == b then
-        return { n = r.n, clave = es, banda = true, jugadores = r.jugadores, min = r.nivel, max = r.nivel, misiones = {},
-          mapaNombre = (GL.clienteIngles and r.ing) or es }
-      end
+local function BuscarMazmorra(nombre)
+  if not GL.DatosMazmorras or Minus(nombre) == "" then return nil, false end
+  local ok, datos = pcall(GL.DatosMazmorras)
+  if not ok or type(datos) ~= "table" or #datos == 0 then return nil, false end
+  local b, encontrada = Minus(nombre), nil
+  for _, m in ipairs(datos) do
+    local es = m.clave or m.n
+    local en = GL.EnIngles and GL.EnIngles(es) or es
+    if Minus(es) == b or Minus(en) == b or Minus(m.n) == b or Minus(m.ing) == b then
+      if encontrada and (encontrada.clave or encontrada.n) ~= es then return nil, true end
+      encontrada = m
     end
   end
-  return nil
+  return encontrada, true
+end
+
+-- Una banda del catálogo con la forma de una mazmorra para el panel existente.
+local function BuscarBanda(nombre)
+  if Minus(nombre) == "" or not (GL.D94 and type(GL.D94.bandas) == "table" and #GL.D94.bandas > 0) then return nil, false end
+  local b, encontrada = Minus(nombre), nil
+  for _, r in ipairs(GL.D94.bandas) do
+    local es = r.clave or r.n
+    if Minus(es) == b or Minus(r.ing) == b or Minus(r.n) == b then
+      if encontrada and encontrada.clave ~= es then return nil, true end
+      encontrada = { n = r.n, clave = es, banda = true, jugadores = r.jugadores, min = r.nivel, max = r.nivel, misiones = {},
+        mapaNombre = (GL.clienteIngles and r.ing) or es }
+    end
+  end
+  return encontrada, true
 end
 GL._buscarMazmorra = BuscarMazmorra
 GL._buscarBanda = BuscarBanda   -- para las pruebas
 
 local actual   -- la mazmorra en la que estás (tabla de Mazmorras.lua)
-local ven
+local ven, contexto
 local function Muertos()
   local db = DB()
-  if type(db.mazMuertos) ~= "table" or db.mazMuertos.n ~= (actual and actual.n) then
-    db.mazMuertos = { n = actual and actual.n, t = Ahora(), jefes = {} }
-  end
-  if type(db.mazMuertos.jefes) ~= "table" then db.mazMuertos.jefes = {} end
-  return db.mazMuertos.jefes
+  local p = db.mazMuertos
+  if type(p) ~= "table" or type(p.jefes) ~= "table" or p.activa ~= true then return {} end
+  return p.jefes
 end
 
 -- 9.7.6: el jefe bajo el ratón en el mapa (resaltado) o elegido con clic, marcado en la lista
 local resaltado, elegido = nil, nil
 local function Clave(j) return GL.ClaveJefe and j and GL.ClaveJefe(j.n) or nil end
+local function IdentidadJefe(j)
+  return type(j) == "table" and (j.nombreOriginal977 or j.ing or j.n) or nil
+end
 local function MarcarFilas()
   if not ven then return end
   local a = GL.COLOR.acento
@@ -115,19 +128,20 @@ local function Fila(i)
   if f.texto.SetWordWrap then f.texto:SetWordWrap(false) end
   f:RegisterForClicks("LeftButtonUp", "RightButtonUp")
   f:SetScript("OnClick", function(self, boton)
-    if not self.jefe then return end
+    if not actual or not self.jefe or not self:IsShown() or not ven:IsShown() then return end
     if boton == "RightButton" then   -- clic derecho: marcar o desmarcar como muerto a mano
       local m = Muertos()
-      m[self.jefe.n] = not m[self.jefe.n] or nil
+      local k = IdentidadJefe(self.jefe)
+      if k then m[k] = m[k] ~= true or nil end
       GL.RefrescarModoMazmorra()
       return
     end
     -- 9.7.6: queda elegido en la lista y en el mapa
     elegido = Clave(self.jefe); MarcarFilas()
     local MM = GL.MapaModoMazmorra
-    if MM then MM.Elegir(elegido) end
+    if MM then MM.Elegir(elegido, self.jefe.n) end
     if GL.VerBotin then
-      local b = GL.VerBotin(NombreJefe(self.jefe), self.jefe.botin or {})
+      local b = GL.VerBotin(NombreVisibleR11(self.jefe), self.jefe.botin or {})
       if MM and MM.AnclarBotin then MM.AnclarBotin(b)
       elseif b and ven then b:ClearAllPoints(); b:SetPoint("TOPLEFT", ven, "TOPRIGHT", 8, 0) end
     end
@@ -144,6 +158,21 @@ local function Fila(i)
   end)
   ven.filas[i] = f
   return f
+end
+
+-- Si falta el mapa integrado, abrir el catálogo correspondiente, no otra instancia.
+local function AbrirMapaActual()
+  if not actual then return end
+  if GL.MapaModoMazmorra and GL.MapaModoMazmorra.Abrir(actual) then
+    GL.RefrescarModoMazmorra(); return
+  end
+  if GL.frame and not GL.frame:IsShown() and GL.AlternarVentana then GL.AlternarVentana() end
+  if actual.banda then
+    if GL.AbrirBanda976 then GL.AbrirBanda976(actual.clave or actual.n) end
+    return
+  end
+  if GL.AbrirMazmorra then GL.AbrirMazmorra(actual.clave or actual.n) end
+  if GL._abrirMapaMazmorra then pcall(GL._abrirMapaMazmorra, actual) end
 end
 
 local function Crear()
@@ -176,20 +205,13 @@ local function Crear()
   ven.cabJefes = GL.Texto(ven, "GameFontHighlightSmall")
   ven.cabMisiones = GL.Texto(ven, "GameFontHighlightSmall")
   ven.misiones = GL.Texto(ven, "GameFontHighlightSmall")
-  ven.mapa = GL.CrearBoton(ven, L"Mapa", function()
-    -- 9.7.6: el mapa vuelve debajo de las misiones; si no hay dibujo, la pestaña Mazmorras como antes
-    if actual and GL.MapaModoMazmorra and GL.MapaModoMazmorra.Abrir(actual) then GL.RefrescarModoMazmorra(); return end
-    if GL.frame and not GL.frame:IsShown() and GL.AlternarVentana then GL.AlternarVentana() end
-    if actual and GL.AbrirMazmorra then GL.AbrirMazmorra(actual.n) end
-    if actual and GL._abrirMapaMazmorra then pcall(GL._abrirMapaMazmorra, actual) end
-  end, nil, 20)
+  ven.mapa = GL.CrearBoton(ven, L"Mapa", AbrirMapaActual, nil, 20)
   ven.mapa:SetWidth(80)
   ven.botin = GL.CrearBoton(ven, L"Botín útil", function()
     if not actual then return end
-    local todos = {}
-    for _, j in ipairs((GL.JefesVisibles976 and GL.JefesVisibles976(actual.clave or actual.n)) or (GL.WH and GL.WH.jefes and GL.WH.jefes[actual.clave or actual.n]) or {}) do
-      for _, o in ipairs(j.botin or {}) do table.insert(todos, o) end
-    end
+    local clave = actual.clave or actual.n
+    local jefes = (GL.JefesVisibles976 and GL.JefesVisibles976(clave)) or (GL.WH and GL.WH.jefes and GL.WH.jefes[clave]) or {}
+    local todos = GL.BotinesDeJefes977(jefes)
     local b = GL.VerBotin and GL.VerBotin(actual.n .. L" · todo el botín", todos)
     if b then b:ClearAllPoints(); b:SetPoint("TOPLEFT", ven, "TOPRIGHT", 8, 0) end
   end, nil, 20, "accion")
@@ -209,6 +231,17 @@ local function Crear()
   ven:Hide()
 end
 
+-- No cambiar el estado de la visita al restablecer sus coordenadas.
+GL.alReiniciar = GL.alReiniciar or {}
+table.insert(GL.alReiniciar, function()
+  DB().posMazmorra = nil
+  if ven then
+    ven:ClearAllPoints()
+    if GL.frame then ven:SetPoint("TOPLEFT", GL.frame, "TOPLEFT", 0, 0)
+    else ven:SetPoint("RIGHT", UIParent, "RIGHT", -60, 60) end
+  end
+end)
+
 function GL.RefrescarModoMazmorra()
   if not ven or not actual then return end
   local a = GL.COLOR.acento
@@ -221,7 +254,7 @@ function GL.RefrescarModoMazmorra()
   local y = 44
   ven.cabJefes:ClearAllPoints()
   ven.cabJefes:SetPoint("TOPLEFT", ven, "TOPLEFT", 10, -y)
-  ven.cabJefes:SetText(C.GRIS .. "JEFES" .. C.FIN .. ((#jefes == 0) and (C.GRIS .. L"  aún no se conocen" .. C.FIN) or ""))
+  ven.cabJefes:SetText(C.GRIS .. L"JEFES · PROGRESO DE ESTA VISITA" .. C.FIN .. ((#jefes == 0) and (C.GRIS .. L"  aún no se conocen" .. C.FIN) or ""))
   y = y + 16
   for _, f in ipairs(ven.filas) do f:Hide() end
   local siguiente = false
@@ -231,11 +264,11 @@ function GL.RefrescarModoMazmorra()
     local ubicacion = GL.UbicacionJefe977 and GL.UbicacionJefe977(j)
     f.ayudaTexto = L"Clic: su botín (todo o lo útil para ti). Clic derecho: marcar como muerto."
     if ubicacion then f.ayudaTexto = f.ayudaTexto .. "\n" .. ubicacion end
-    local muerto = muertos[j.n]
+    local muerto = muertos[IdentidadJefe(j)] == true
     local util, mejor = GL.UtilesDeJefe(j)
     local esSig = not muerto and not siguiente
     if esSig then siguiente = true end
-    local nombre = NombreJefe(j)
+    local nombre = NombreVisibleR11(j)
     if muerto then f.texto:SetText(GL.Icono("✓") .. " " .. C.GRIS .. nombre .. C.FIN)
     elseif esSig then f.texto:SetText(C.AMARILLO .. "› " .. nombre .. C.FIN .. C.GRIS .. L"  siguiente" .. C.FIN)
     else f.texto:SetText("|cffd0d2dc" .. nombre .. C.FIN) end
@@ -254,7 +287,7 @@ function GL.RefrescarModoMazmorra()
   y = y + 6
   ven.cabMisiones:ClearAllPoints()
   ven.cabMisiones:SetPoint("TOPLEFT", ven, "TOPLEFT", 10, -y)
-  ven.cabMisiones:SetText(C.GRIS .. "MISIONES" .. C.FIN)
+  ven.cabMisiones:SetText(C.GRIS .. L"MISIONES" .. C.FIN)
   y = y + 16
   local l = {}
   for _, q in ipairs(actual.misiones or {}) do
@@ -301,11 +334,65 @@ function GL.RefrescarModoMazmorra()
 end
 
 local ventanaAntes, descartada = nil, nil
-local function Entrar(m)
+-- Identidad del catálogo independiente del idioma, con datos de instancia reales si existen.
+-- Un mapID de instancia no es un ID de mapa de interfaz ni una identificación de lockout.
+local function EnteroPositivo(v)
+  if not (issecretvalue and issecretvalue(v)) and type(v) == "number" and v > 0 and v < math.huge and v == math.floor(v) then return v end
+end
+local function Contexto(m, id, dificultad)
+  return { clave = m.clave or m.n, banda = m.banda == true, id = EnteroPositivo(id), dificultad = EnteroPositivo(dificultad) }
+end
+local function Mismo(a, b)
+  return a and b and a.clave == b.clave and a.banda == b.banda
+    and (not a.id or not b.id or a.id == b.id)
+    and (not a.dificultad or not b.dificultad or a.dificultad == b.dificultad)
+end
+local function Completar(a,b)
+  a.id = a.id or b.id; a.dificultad = a.dificultad or b.dificultad
+end
+-- El ID de GetInstanceInfo identifica el tipo de mapa, no el bloqueo individual.
+-- Tras una salida confirmada no reutilizar las muertes como si fueran de la nueva visita.
+local function CerrarProgreso()
+  local p = DB().mazMuertos
+  if type(p) == "table" and p.activa == true then p.activa = false end
+end
+local function SincronizarProgreso(m, nuevo)
+  local db = DB()
+  local p = db.mazMuertos
+  if type(p) == "table" and p.activa == true and Mismo(p, nuevo) and type(p.jefes) == "table" then
+    Completar(p, nuevo)
+    return
+  end
+  -- Conservar el registro legado sin atribuirlo a una visita nueva.
+  local legado = type(p) == "table" and p.legado or nil
+  if type(p) == "table" and p.clave == nil and type(p.jefes) == "table" then
+    legado = { n = p.n, t = p.t, jefes = p.jefes }
+  end
+  local anterior
+  if type(p) == "table" and p.clave and type(p.jefes) == "table" then
+    anterior = { n = p.n, clave = p.clave, banda = p.banda, id = p.id, dificultad = p.dificultad, t = p.t, jefes = p.jefes }
+  end
+  db.mazMuertos = { n = m.n, clave = nuevo.clave, banda = nuevo.banda, id = nuevo.id,
+    dificultad = nuevo.dificultad, activa = true, t = Ahora(), jefes = {}, legado = legado, anterior = anterior }
+end
+local function Entrar(m, nuevo)
+  nuevo = nuevo or Contexto(m)
   if not ven then Crear() end
-  if not actual or actual.n ~= m.n then resaltado, elegido = nil, nil end
+  if not Mismo(contexto, nuevo) then
+    resaltado, elegido = nil, nil
+    if actual and GL.MapaModoMazmorra then pcall(GL.MapaModoMazmorra.Cerrar) end
+  end
+  contexto = nuevo
+  SincronizarProgreso(m, nuevo)
   local cambiando = actual ~= nil
   actual = m
+  -- Al entrar en la instancia buscada ya no se necesita su entrada exterior.
+  local desvio = GL.DesvioActual and GL.DesvioActual()
+  if type(desvio) == "table" and desvio.mazmorraEntrada and GL.SeguirDesvio
+      and (Minus(desvio.mazmorraEntrada) == Minus(m.clave or m.n)
+        or Minus(desvio.mazmorraEntrada) == Minus(m.n)) then
+    GL.SeguirDesvio(nil)
+  end
   if not cambiando and GL.frame then
     ventanaAntes = GL.frame:IsShown()
     if ventanaAntes then GL.frame:Hide() end
@@ -318,11 +405,11 @@ local function Entrar(m)
 end
 
 function GL.SalirModoMazmorra(aMano)
-  if aMano and actual then descartada = actual.n end
+  if aMano and actual then descartada = contexto or Contexto(actual) end
   if ven then ven:Hide() end
   if GL.MapaModoMazmorra then pcall(GL.MapaModoMazmorra.Cerrar) end   -- 9.7.6
   if not actual then return end
-  actual = nil
+  actual, contexto = nil, nil
   if ventanaAntes == "franja" and GL.PonerTamano then pcall(GL.PonerTamano, "franja")
   elseif ventanaAntes and GL.frame then GL.frame:Show() end
   ventanaAntes = nil
@@ -330,37 +417,112 @@ function GL.SalirModoMazmorra(aMano)
 end
 
 local function Mirar()
-  if not Si("modoMazmorra") then if actual then GL.SalirModoMazmorra() end return end
+  local habilitado = Si("modoMazmorra")
+  if not habilitado and actual then GL.SalirModoMazmorra() end
   local dentro, tipo = Consulta(IsInInstance)
   -- Una consulta fallida no equivale a abandonar la instancia.
   if type(dentro) ~= "boolean" or (dentro and type(tipo) ~= "string") then return end
   if dentro and (tipo == "party" or tipo == "raid") then
     local buscar = tipo == "party" and BuscarMazmorra or BuscarBanda
-    local nombre = Consulta(GetInstanceInfo)
-    local zona = Consulta(GetZoneText)
-    if Minus(nombre) == "" and Minus(zona) == "" then return end
-    local m = buscar(nombre) or buscar(zona)
-    if m and descartada and m.n ~= descartada then descartada = nil end
-    if m and m.n ~= descartada and (not actual or actual.n ~= m.n) then Entrar(m)
-    elseif actual and (not m or m.n == descartada) then GL.SalirModoMazmorra() end
+    local nombre, tipoInfo, dificultad, _, _, _, _, id = Consulta(GetInstanceInfo)
+    if type(tipoInfo) == "string" and tipoInfo ~= "" and tipoInfo ~= tipo then return end
+    local nombreReal = Minus(nombre) ~= ""
+    if not nombreReal then nombre = Consulta(GetZoneText) end
+    if Minus(nombre) == "" then return end
+    local m, catalogo = buscar(nombre)
+    if not catalogo then return end
+    if not m then
+      -- Zona de respaldo desconocida puede ser una sala de la instancia actual.
+      if not nombreReal then return end
+      descartada = nil
+      CerrarProgreso()
+      if actual then GL.SalirModoMazmorra() end
+      return
+    end
+    local nuevo = Contexto(m, id, dificultad)
+    -- Una sala con nombre de otra instancia no basta para cambiar de contexto.
+    local guardado = DB().mazMuertos
+    if not nombreReal and ((contexto and not Mismo(contexto, nuevo)) or (descartada and not Mismo(descartada, nuevo))
+        or (type(guardado) == "table" and guardado.activa == true and not Mismo(guardado, nuevo))) then return end
+    if habilitado or (type(DB().mazMuertos) == "table" and DB().mazMuertos.activa == true) then SincronizarProgreso(m, nuevo) end
+    if not habilitado then return end
+    if descartada then
+      if Mismo(descartada, nuevo) then
+        Completar(descartada, nuevo)
+        if actual then GL.SalirModoMazmorra() end
+        return
+      end
+      descartada = nil
+    end
+    if not actual or not Mismo(contexto, nuevo) then Entrar(m, nuevo)
+    else Completar(contexto, nuevo) end
   else
     descartada = nil
+    CerrarProgreso()
     if actual then GL.SalirModoMazmorra() end
   end
 end
 GL._modoMazmorra = { Entrar = Entrar, Mirar = Mirar, Actual = function() return actual end }
 
--- jefe muerto: por el encuentro o por el registro de combate (con el nombre)
-local function Matar(nombre)
+-- Identificación inequívoca, sin compartir el progreso de un grupo cartográfico.
+local function Matar(nombre, dificultad, npc, encuentro)
   if not actual or Minus(nombre) == "" then return end
-  local b = Minus(nombre)
+  local anterior = contexto
+  -- Revalidar la instancia antes de aceptar un evento retrasado de otra zona.
+  local dentro, tipo = Consulta(IsInInstance)
+  if dentro ~= true or tipo ~= (actual.banda and "raid" or "party") then return end
+  local nom, tipoInfo, dif, _, _, _, _, id = Consulta(GetInstanceInfo)
+  if tipoInfo and tipoInfo ~= tipo then return end
+  if Minus(nom) == "" then nom = Consulta(GetZoneText) end
+  local buscar = tipo == "raid" and BuscarBanda or BuscarMazmorra
+  local m = buscar(nom)
+  if not m or not Mismo(anterior, Contexto(m, id, dif)) then return end
+  if issecretvalue and (issecretvalue(dificultad) or issecretvalue(encuentro)) then return end
+  if dificultad ~= nil and not EnteroPositivo(dificultad) then return end
+  if encuentro ~= nil and not EnteroPositivo(encuentro) then return end
+  local difEvento, difActual = EnteroPositivo(dificultad), EnteroPositivo(dif) or anterior.dificultad
+  if difEvento and difActual and difEvento ~= difActual then return end
+  local b, encontrado = Minus(nombre), nil
   for _, j in ipairs((GL.JefesVisibles976 and GL.JefesVisibles976(actual.clave or actual.n)) or (GL.WH and GL.WH.jefes and GL.WH.jefes[actual.clave or actual.n]) or {}) do
-    local n = Minus(NombreJefe(j)):gsub(" %(.*%)$", "")
-    local en = GL.EnIngles and Minus(GL.EnIngles(NombreJefe(j))):gsub(" %(.*%)$", "") or n
-    if n ~= "" and (n == b or en == b) then
-      local muertos = Muertos()
-      if not muertos[j.n] then muertos[j.n] = true; GL.RefrescarModoMazmorra() end
-      return
+    local coincide = false
+    for _, alias in pairs({ j.n, j.ing, j.nombreOriginal977, NombreJefe(j), GL.EnIngles and GL.EnIngles(NombreJefe(j)) }) do
+      local n = Minus(alias):gsub(" %(.*%)$", "")
+      if n ~= "" and (n == b or Minus(alias) == b) then coincide = true end
+    end
+    if coincide and (not npc or not EnteroPositivo(j.npc) or j.npc == npc) then
+      if encontrado and encontrado ~= j then return end
+      encontrado = j
+    end
+  end
+  local k = IdentidadJefe(encontrado)
+  if not k then return end
+  -- Vincular el ID de evento solo después de resolver un nombre inequívoco.
+  -- No equiparar ID de diario, PNJ o mapa con el ID del evento.
+  if encuentro then
+    local p = DB().mazMuertos
+    if type(p) ~= "table" or p.activa ~= true then return end
+    if type(p.encuentros977) ~= "table" then p.encuentros977 = {} end
+    local e = p.encuentros977
+    if e[encuentro] and e[encuentro] ~= k then return end
+    for idEvento, jefe in pairs(e) do if jefe == k and idEvento ~= encuentro then return end end
+    e[encuentro] = k
+  end
+  local muertos = Muertos()
+  if muertos[k] ~= true then muertos[k] = true; GL.RefrescarModoMazmorra() end
+end
+
+
+local function ReinicioConfirmado(mensaje)
+  local p = DB().mazMuertos
+  if type(p) ~= "table" or p.activa ~= true or Minus(mensaje) == "" or type(INSTANCE_RESET) ~= "string" then return end
+  for _, nombre in pairs({p.n, p.clave, GL.EnIngles and GL.EnIngles(p.clave)}) do
+    if type(nombre) == "string" and nombre ~= "" then
+      local ok, texto = pcall(string.format, INSTANCE_RESET, nombre)
+      if ok and texto == mensaje then
+        CerrarProgreso()
+        if actual and contexto then SincronizarProgreso(actual, contexto); GL.RefrescarModoMazmorra() end
+        return
+      end
     end
   end
 end
@@ -381,23 +543,61 @@ table.insert(GL.ajustesInterfaz, { "mapaModoMazmorra", "Mapa en el modo mazmorra
 
 table.insert(GL.alIniciar, function()
   local f = CreateFrame("Frame")
-  f:RegisterEvent("PLAYER_ENTERING_WORLD")
-  f:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-  f:RegisterEvent("QUEST_LOG_UPDATE")
+  pcall(f.RegisterEvent, f, "PLAYER_ENTERING_WORLD")
+  pcall(f.RegisterEvent, f, "ZONE_CHANGED_NEW_AREA")
+  pcall(f.RegisterEvent, f, "QUEST_LOG_UPDATE")
+  pcall(f.RegisterEvent, f, "PLAYER_DIFFICULTY_CHANGED")
+  pcall(f.RegisterEvent, f, "UPDATE_INSTANCE_INFO")
   pcall(f.RegisterEvent, f, "ENCOUNTER_END")
   pcall(f.RegisterEvent, f, "BOSS_KILL")
+  pcall(f.RegisterEvent, f, "CHAT_MSG_SYSTEM")
   -- 9.7.4: en WoW Forever un addon no puede escuchar el registro de combate (COMBAT_LOG_EVENT_UNFILTERED):
   -- el juego lo bloquea y sale ADDON_ACTION_FORBIDDEN. Además del fin de encuentro, se mira si tu objetivo muere.
   pcall(f.RegisterEvent, f, "PLAYER_TARGET_CHANGED")
   if f.RegisterUnitEvent then pcall(f.RegisterUnitEvent, f, "UNIT_HEALTH", "target") end
-  f:SetScript("OnEvent", function(_, evento, a1, a2, _, _, a5)
-    if evento == "UNIT_HEALTH" or evento == "PLAYER_TARGET_CHANGED" then
+  local eventosEquipo = { PLAYER_EQUIPMENT_CHANGED=true, PLAYER_LEVEL_UP=true, SPELLS_CHANGED=true, PLAYER_TALENT_UPDATE=true, UPDATE_FACTION=true, SKILL_LINES_CHANGED=true, GET_ITEM_INFO_RECEIVED=true }
+  for e in pairs(eventosEquipo) do pcall(f.RegisterEvent, f, e) end
+  local pendienteEquipo = false
+  local function RefrescarEquipo(id)
+    if not actual then return end
+    if id then
+      local relevante = false
+      local clave = actual.clave or actual.n
+      local jefes = (GL.JefesVisibles976 and GL.JefesVisibles976(clave)) or (GL.WH and GL.WH.jefes and GL.WH.jefes[clave]) or {}
+      for _, j in ipairs(jefes) do
+        for _, o in ipairs(j.botin or {}) do if o.id == id then relevante = true; break end end
+        if relevante then break end
+      end
+      if not relevante then return end
+    end
+    if pendienteEquipo then return end
+    pendienteEquipo = true
+    local function Pintar()
+      pendienteEquipo = false
+      if actual then pcall(GL.RefrescarModoMazmorra) end
+    end
+    if C_Timer and type(C_Timer.After) == "function" and pcall(C_Timer.After, 0.5, Pintar) then return end
+    Pintar()
+  end
+  f:SetScript("OnEvent", function(_, evento, a1, a2, a3, _, a5)
+    if eventosEquipo[evento] then
+      if evento == "GET_ITEM_INFO_RECEIVED" then
+        if EnteroPositivo(a1) and not (issecretvalue and issecretvalue(a2)) and a2 ~= false then RefrescarEquipo(a1) end
+      else RefrescarEquipo() end
+    elseif evento == "UNIT_HEALTH" or evento == "PLAYER_TARGET_CHANGED" then
       if not actual or Consulta(UnitExists, "target") ~= true then return end
-      if Consulta(UnitIsDead, "target") == true then pcall(Matar, Consulta(UnitName, "target")) end
+      local guid = Consulta(UnitGUID, "target")
+      if type(guid) ~= "string" or not guid:match("^Creature%-") then return end
+      if Consulta(UnitIsPlayer, "target") ~= false or Consulta(UnitIsFriend, "player", "target") ~= false then return end
+      local npc = tonumber(guid:match("^Creature%-[^-]+%-[^-]+%-[^-]+%-[^-]+%-(%d+)%-[^-]+$"))
+      if not EnteroPositivo(npc) then return end
+      if Consulta(UnitIsDead, "target") == true then pcall(Matar, Consulta(UnitName, "target"), nil, npc) end
     elseif evento == "ENCOUNTER_END" then
-      if not (issecretvalue and issecretvalue(a5)) and a5 == 1 then pcall(Matar, a2) end
+      if not (issecretvalue and issecretvalue(a5)) and (a5 == 1 or a5 == true) and EnteroPositivo(a1) then pcall(Matar, a2, a3, nil, a1) end
     elseif evento == "BOSS_KILL" then
-      pcall(Matar, a2)
+      if EnteroPositivo(a1) then pcall(Matar, a2, nil, nil, a1) end
+    elseif evento == "CHAT_MSG_SYSTEM" then
+      pcall(ReinicioConfirmado, a1)
     elseif evento == "QUEST_LOG_UPDATE" then
       if actual then pcall(GL.RefrescarModoMazmorra) end
     else

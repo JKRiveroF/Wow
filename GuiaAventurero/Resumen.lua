@@ -125,7 +125,7 @@ local function Crear()
   GL.Caja(ven, GL.COLOR.fondo, GL.COLOR.borde)
   if GL.Sombra then GL.Sombra(ven) end
   if GL.Acento then GL.Acento(ven, 3) end
-  if UISpecialFrames then table.insert(UISpecialFrames, "GuiaAventureroResumen") end
+  if UISpecialFrames then GL.RegistrarCierreEscapeR13("GuiaAventureroResumen") end
   ui.icono = ven:CreateTexture(nil, "ARTWORK")
   ui.icono:SetSize(30, 30)
   ui.icono:SetPoint("TOP", ven, "TOP", 0, -12)

@@ -182,7 +182,8 @@ local function compraActual()
   if not lista then return {L"No hay datos de materiales para esta profesión."} end
   local coste,sinPrecio=GL.Coste976(lista,db.precios976)
   local out={prof.nombre or "?", L"Coste parcial estimado (cobre): "..coste, L"Materiales sin precio: "..sinPrecio, L"Tramos sin datos: "..tostring(sinDatos or "?")}
-  for _,m in ipairs(lista) do if m.falta>0 then out[#out+1]=L(m.nombre or tostring(m.id)).." #"..m.id.." x"..m.falta end end
+  if GL.AmbitoCompraProfesion975 then out[#out+1]=GL.AmbitoCompraProfesion975() end
+  for _,m in ipairs(lista) do if m.falta>0 then out[#out+1]=L(m.nombre or tostring(m.id)).." #"..m.id.." x"..m.falta..(m.tengo==nil and " (?)" or "") end end
   if desconocido then out[#out+1]=L"Inventario incompleto; comprueba las existencias." end
   out[#out+1]=L"Introduce precios por unidad en cobre: /ga precio ID PRECIO. No se consulta la subasta ni se compran objetos."
   return out
@@ -357,7 +358,7 @@ function GL.Jefes976(query)
         out[#out+1]=GL.ConsejoJefe976(b.n) or L"Estrategia de Forever pendiente de verificar."
         for _,o in ipairs(b.botin or {}) do
           local name=o.n or (o.id and call(GetItemInfo,o.id)) or (L"Objeto".." #"..tostring(o.id or "?"))
-          local tag=""; if o.id and GL.BotinUtil then local usable,better=call(GL.BotinUtil,o.id); if better then tag=" — "..L"posible mejora" elseif usable then tag=" — "..L"utilizable" end end
+          local tag=""; if o.id and GL.BotinUtil then local usable,better=call(GL.BotinUtil,o.id); if better and not o.mision977 then tag=" — "..L"posible mejora" elseif usable then tag=" — "..L"utilizable" end end
           out[#out+1]="  "..name..(o.p and (" ~"..o.p.."%") or "")..tag..(o.origen977 and (" — "..L(o.origen977)) or "")..(o.mision977 and (" — "..L"Objeto de misión") or "")..(o.fuente977 and o.fuente977~=b.fuente977 and (" — "..o.fuente977) or "")..(o.pendiente977 and (" — "..L"Asociación pendiente de contraste") or "")
         end
       end
@@ -370,7 +371,9 @@ function GL.Jefes976(query)
   return out
 end
 local function openMode(mode)
-  if GL.frame then GL.frame:Show(); local db=DB(); if db then db.oculto=false end end
+  if GL.MostrarVentanaCompletaR10 then GL.MostrarVentanaCompletaR10() else
+    if GL.frame then GL.frame:Show(); local db=DB(); if db then db.oculto=false end end
+  end
   if GL.AbrirModo then GL.AbrirModo(mode) end
 end
 GL.comandos=GL.comandos or {}; local cmd=GL.comandos

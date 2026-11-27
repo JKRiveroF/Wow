@@ -21,7 +21,10 @@ local function PonerPerfil(tipo)
   -- Mantener todas las acciones potencialmente destructivas desactivadas incluso en Veterano.
   db.guiaClara = m.guiaClara
   db.estiloRuta = m.estiloRuta
-  for _, k in ipairs(AUTO) do db[k] = m.automaticos end
+  for _, k in ipairs(AUTO) do
+    db[k] = m.automaticos and k ~= "autoVender"
+    if GL.NotificarAutomatismo then GL.NotificarAutomatismo(k, db[k]) end
+  end
   db.autoVender = false
   db.perfil97 = tipo
   if GL.Refrescar then GL.Refrescar() end
@@ -99,7 +102,7 @@ local function QuestieEstado()
     if activo == false or activo == 0 then return false end
     return nil
   end
-  local activo = consultar(C_AddOns and C_AddOns.IsAddOnLoaded)
+  local activo = consultar(type(C_AddOns) == "table" and C_AddOns.IsAddOnLoaded)
   if activo ~= nil then return activo end
   return consultar(IsAddOnLoaded)
 end

@@ -11,12 +11,22 @@ local L = GL.L
 local function DB() return GuiaAventureroDB or {} end
 
 -- Cobre que se guarda: lo que cuesta lo del ahorro que aún no tienes
-local function Reserva()
-  if DB().reservaOro ~= true or not GL.MetasAhorro then return 0 end
-  local ok, metas = pcall(GL.MetasAhorro)
-  if not ok or type(metas) ~= "table" then return 0 end
+local function Reserva(estricta)
+  if DB().reservaOro ~= true then return 0 end
+  -- En reparaciones no confundir ocultar el panel de ahorro con desactivar la reserva.
+  local function desconocida() if not estricta then return 0 end end
+  if not GL.MetasAhorro then return desconocida() end
+  local ok, metas = pcall(GL.MetasAhorro, estricta == true)
+  if not ok or type(metas) ~= "table" then return desconocida() end
   local oro = 0
-  for _, m in ipairs(metas) do if not m.hecho and type(m.o) == "number" then oro = oro + m.o end end
+  for _, m in ipairs(metas) do
+    if type(m) ~= "table" then return desconocida() end
+    if not m.hecho then
+      if type(m.o) == "number" and m.o >= 0 and m.o < math.huge then oro = oro + m.o
+      elseif estricta then return nil end
+    end
+  end
+  if oro >= math.huge then return desconocida() end
   return math.floor(oro * 10000)
 end
 GL.ReservaOro = Reserva
@@ -43,5 +53,5 @@ end
 
 GL.ajustesInterfaz = GL.ajustesInterfaz or {}
 table.insert(GL.ajustesInterfaz, { "reservaOro", "Reservar oro para el 40",
-  "Las compras automáticas en los instructores no tocan el oro del ahorro (equitación, montura y doble especialización). Con el botón «Aprender» del panel compras igual.",
+  "Las compras automáticas en los instructores y las reparaciones automáticas no tocan el oro del ahorro (equitación, montura y doble especialización). Puedes comprar o reparar manualmente.",
   function() return DB().reservaOro == true end, function(v) DB().reservaOro = v end, pestana = "avisos" })

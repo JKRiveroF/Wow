@@ -108,6 +108,15 @@ class EstadoDeVueloTest(unittest.TestCase):
         step.comprobar.nivel = 21
         self.assertEqual(runtime.globals().estado_paso(step), "manual")
 
+    def test_locality_keeps_bilingual_matches_without_counting_zone_or_word_fragments(self):
+        runtime = _create_runtime("enUS", "en")
+        step = runtime.globals().paso_de_vuelo("Menethil")
+        for node, expected in (("Puerto de Menethil, Los Humedales", "hecho"),
+                               ("Arathi, Menethil", "manual"), ("ExMenethil", "manual")):
+            with self.subTest(node=node):
+                runtime.globals().GuiaAventureroDB = runtime.table_from({"vuelos": {node: True}}, recursive=True)
+                self.assertEqual(runtime.globals().estado_paso(step), expected)
+
     def test_taxi_clasico_y_moderno_solo_guardan_estados_positivos(self):
         runtime = _create_runtime("enUS", "en")
         runtime.execute('''

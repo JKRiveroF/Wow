@@ -14,10 +14,10 @@ local MAX_FILAS = 3
 local ALTO_FILA = 32
 
 local ESTILOS = {
-  { id = "rapida", n = L"Solo ruta", d = L"Solo la ruta principal, sin misiones opcionales. Tendrás que matar enemigos para conseguir la experiencia que falte." },
-  { id = "normal", n = L"Normal", d = L"La ruta principal, y te ofrece las opcionales que tengas cerca." },
-  { id = "completa", n = L"Completa", d = L"Mete solas en la tarjeta todas las opcionales de la zona." },
-  { id = "mazmorras", n = L"Con mazmorras", d = L"Normal, y además las misiones de mazmorra de tu nivel." },
+  { id = "rapida", n = "Solo ruta", d = "Solo la ruta principal, sin misiones opcionales. Tendrás que matar enemigos para conseguir la experiencia que falte." },
+  { id = "normal", n = "Normal", d = "La ruta principal, y te ofrece las opcionales que tengas cerca." },
+  { id = "completa", n = "Completa", d = "Mete solas en la tarjeta todas las opcionales de la zona." },
+  { id = "mazmorras", n = "Con mazmorras", d = "Normal, y además las misiones de mazmorra de tu nivel." },
 }
 
 local function DB() return GuiaAventureroDB or {} end
@@ -478,7 +478,7 @@ GL.CrearEstiloRuta = function(padre)
   cont.botones = {}
   local x = 0
   for _, e in ipairs(ESTILOS) do
-    local b = GL.CrearBoton(cont, e.n, function()
+    local b = GL.CrearBoton(cont, L(e.n), function()
       GuiaAventureroDB.estiloRuta = e.id
       cont.Actualizar()
       if GL.Refrescar then GL.Refrescar() end
@@ -486,7 +486,7 @@ GL.CrearEstiloRuta = function(padre)
     b:SetWidth(e.id == "mazmorras" and 100 or 72)
     b:SetPoint("TOPLEFT", cont, "TOPLEFT", x, -16)
     b.idEstilo = e.id
-    if GL.Ayuda then GL.Ayuda(b, e.n, e.d) end
+    if GL.Ayuda then GL.Ayuda(b, L(e.n), L(e.d)) end
     table.insert(cont.botones, b)
     x = x + (e.id == "mazmorras" and 103 or 75)
   end
@@ -497,7 +497,7 @@ GL.CrearEstiloRuta = function(padre)
   cont.Actualizar = function()
     local elegido = Estilo()
     for _, b in ipairs(cont.botones) do b:SetActivo(b.idEstilo == elegido) end
-    for _, e in ipairs(ESTILOS) do if e.id == elegido then cont.desc:SetText(C.GRIS .. e.d .. C.FIN) end end
+    for _, e in ipairs(ESTILOS) do if e.id == elegido then cont.desc:SetText(C.GRIS .. L(e.d) .. C.FIN) end end
   end
   return cont
 end

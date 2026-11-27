@@ -18,7 +18,7 @@ local function Nivel(prof)
   return ok and tonumber(nivel) or nil
 end
 local function Contar(id)
-  local cantidad = GL.InventarioProfesion975 and GL.InventarioProfesion975(id)
+  local cantidad = GL.BolsasProfesion975 and GL.BolsasProfesion975(id)
   return cantidad or 0, cantidad ~= nil
 end
 local function PlanMateriales()
@@ -37,15 +37,14 @@ local function PlanMateriales()
         lineas[#lineas+1] = tostring(prof.nombre or "?") .. " " .. tostring(nv) .. "/300 (" .. tostring(paso.d) .. "-" .. tostring(paso.h) .. ")"
         local mat = paso.mat or {}
         if #mat == 0 then lineas[#lineas+1] = L"Este tramo no tiene materiales identificados." end
-        for _, m in ipairs(mat) do
-          local id, por, nombre = tonumber(m[1]), tonumber(m[2]), tostring(m[3] or m[1] or "?")
-          if id and por and por > 0 then
-            local necesito = GL.NecesarioProfesion975 and GL.NecesarioProfesion975(paso, m, nv) or math.ceil(math.max(1, (tonumber(paso.h) or nv + 1) - nv) * por)
-            local tengo, disponible = Contar(id)
-            lineas[#lineas+1] = "  " .. nombre .. ": " .. (disponible and (tostring(tengo) .. "/") or "?/") .. tostring(necesito) ..
-              (disponible and (" (" .. L"faltan " .. math.max(0, necesito - tengo) .. ")") or "")
-          end
+        local materiales, incompleto=GL.MaterialesTramo975(paso,nv)
+        for _,m in ipairs(materiales) do
+          local tengo, disponible=Contar(m.id)
+          local necesario=m.incompleto and (m.cantidad>0 and (m.cantidad.."+?") or "?") or tostring(m.cantidad)
+          lineas[#lineas+1]="  "..L(m.nombre)..": "..(disponible and tostring(tengo) or "?").."/"..necesario..
+            (disponible and not m.incompleto and (" ("..L"faltan "..math.max(0,m.cantidad-tengo)..")") or "")
         end
+        if incompleto then lineas[#lineas+1]=L"Cantidad necesaria sin confirmar." end
       end
     end
   end
@@ -65,7 +64,7 @@ local function PlanMateriales()
       end
     end
   end
-  lineas[#lineas+1] = L"Las cantidades son estimadas: una receta puede no conceder puntos de habilidad. Incluye bolsas y banco si el cliente permite consultarlos."
+  lineas[#lineas+1] = L"Las cantidades son estimadas: una receta puede no conceder puntos de habilidad. Solo cuentan las bolsas; consulta la lista de compra para incluir el banco abierto."
   lineas[#lineas+1] = L"Las alternativas y el coste dependen de las recetas aprendidas y los precios de tu reino. Míralo en el plan y la Lista de compra de la tarjeta de la profesión."
   return lineas
 end

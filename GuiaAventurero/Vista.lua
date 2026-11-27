@@ -86,7 +86,7 @@ local function Crear()
   GL.Caja(ven, GL.COLOR.fondo, GL.COLOR.borde)
   if GL.Sombra then GL.Sombra(ven) end
   if GL.Acento then GL.Acento(ven, 2) end
-  if UISpecialFrames then table.insert(UISpecialFrames, "GuiaAventureroVistaPrevia") end
+  if UISpecialFrames then GL.RegistrarCierreEscapeR13("GuiaAventureroVistaPrevia") end
   ui.etq = GL.Texto(ven, "GameFontDisableSmall")
   ui.etq:SetPoint("TOPLEFT", ven, "TOPLEFT", 14, -10)
   ui.titulo = GL.Texto(ven, "GameFontNormalLarge")

@@ -115,7 +115,7 @@ local function Crear(panel)
   t.nota = GL.Texto(t, "GameFontDisableSmall")
 end
 
-local function Metros(y) return y and (y >= 1000 and string.format(L"%.1f km", y * 0.9144 / 1000) or (math.floor(y * 0.9144 / 10 + 0.5) * 10 .. " m")) or L"otro continente" end
+local function Metros(y) return y and (y >= 1000 and GL.FormatoDecimal(string.format(L"%.1f km", y * 0.9144 / 1000)) or (math.floor(y * 0.9144 / 10 + 0.5) * 10 .. " m")) or L"otro continente" end
 
 local function Tarjeta(panel, y, ancho)
   if t then t:Hide() end
@@ -162,7 +162,9 @@ GL.comandos["farmeo"] = function()
   local l = Sitios(3)
   if #l == 0 then if GL.Mensaje then GL.Mensaje(L"no tengo sitios de farmeo para tu nivel.") end return end
   abierto = true
-  if GL.frame then GL.frame:Show(); DB().oculto = false end
+  if GL.MostrarVentanaCompletaR10 then GL.MostrarVentanaCompletaR10() else
+    if GL.frame then GL.frame:Show(); DB().oculto = false end
+  end
   if GL.AbrirModo then GL.AbrirModo("guia") end
 end
 

@@ -82,6 +82,13 @@ local LADO = { reputacion = true, mazmorras = true, biblioteca = true, cuenta = 
 local GRUPOS = { clase = "personaje", talentos = "personaje", hechizos = "personaje", equipo = "personaje", estadisticas = "personaje", opciones = "opciones", automatismos = "opciones", novedades = "opciones" }
 -- Automatismos (6.0.2): apagados en los personajes nuevos; los ya empezados conservan lo que tenían.
 local AUTOMATISMOS = { "auto", "autoDestino", "autoMisiones", "autoHechizos", "autoRecetas", "autoTalentos", "autoVender" }
+-- Una desactivación cancela el trabajo diferido, aunque se reactive antes del temporizador.
+function GL.NotificarAutomatismo(k, v)
+  if v ~= false then return end
+  if k == "autoTalentos" and GL.CancelarTalentosAutomaticos then GL.CancelarTalentosAutomaticos()
+  elseif k == "autoHechizos" and GL.CancelarCompraHechizos then GL.CancelarCompraHechizos()
+  elseif k == "autoRecetas" and GL.CancelarCompraRecetas then GL.CancelarCompraRecetas() end
+end
 local Y_CAJA = 92              -- donde empieza la caja del paso en la pestaña Guía
 local ALTO_DESTINO = 18
 local MAX_DESTINOS = 12         -- filas de objetivos: Siguiente, Cerca de ti y Completado (6.1)
@@ -148,10 +155,22 @@ local TEMAS = {
 -- (va en GL y no como local: el archivo está en el límite de 200 locales de Lua 5.1)
 function GL.ColorDeClase()
   if not UnitClass then return nil end
-  local _, token = UnitClass("player")
-  local c = token and ((C_ClassColor and C_ClassColor.GetClassColor and C_ClassColor.GetClassColor(token)) or (RAID_CLASS_COLORS and RAID_CLASS_COLORS[token]))
-  if c and type(c.r) == "number" then return c.r, c.g, c.b end
-  return nil
+  local ok, _, token = pcall(UnitClass, "player")
+  if not ok or (issecretvalue and issecretvalue(token)) or type(token) ~= "string" then return nil end
+  local function RGB(c)
+    if not c or (issecretvalue and issecretvalue(c)) then return nil end
+    local r, g, b = c.r, c.g, c.b
+    local function Canal(v)
+      return not (issecretvalue and issecretvalue(v)) and type(v) == "number" and v >= 0 and v <= 1
+    end
+    if Canal(r) and Canal(g) and Canal(b) then return r, g, b end
+  end
+  if C_ClassColor and type(C_ClassColor.GetClassColor) == "function" then
+    local valido, r, g, b = pcall(function() return RGB(C_ClassColor.GetClassColor(token)) end)
+    if valido and r ~= nil then return r, g, b end
+  end
+  local valido, r, g, b = pcall(function() return RGB(RAID_CLASS_COLORS and RAID_CLASS_COLORS[token]) end)
+  if valido then return r, g, b end
 end
 local FONDO_BASE, BORDE_BASE = { 0.082, 0.090, 0.122 }, { 0.165, 0.176, 0.227 }
 
@@ -170,21 +189,23 @@ end
 
 local function AplicarTema(id)
   local t = BuscarTema(id)
+  -- No mutar los colores de referencia: si la API deja de estar disponible,
+  -- el tema Clase debe volver a su paleta neutra y no conservar datos obsoletos.
+  local a, oscuro, accion, accionBorde = t.acento, t.oscuro, t.accion, t.accionBorde
   if t.clase then
     local okC, r, g, b = pcall(GL.ColorDeClase)
-    if okC and r then
-      Poner(t.acento, r, g, b); Poner(t.oscuro, r * 0.27, g * 0.27, b * 0.27)
-      Poner(t.accion, r * 0.2, g * 0.2, b * 0.2); Poner(t.accionBorde, r * 0.65, g * 0.65, b * 0.65)
+    if okC and r ~= nil then
+      a, oscuro = {r, g, b}, {r * 0.27, g * 0.27, b * 0.27}
+      accion, accionBorde = {r * 0.2, g * 0.2, b * 0.2}, {r * 0.65, g * 0.65, b * 0.65}
     end
   end
-  local a = t.acento
   Poner(COLOR.acento, a[1], a[2], a[3], 1)
   Poner(COLOR.activoBorde, a[1], a[2], a[3], 1)
   Poner(COLOR.pestanaActiva, a[1], a[2], a[3], 0.10)
   Poner(COLOR.elegido, a[1], a[2], a[3], 0.12)
-  Poner(COLOR.activo, t.oscuro[1], t.oscuro[2], t.oscuro[3], 1)
-  Poner(COLOR.accion, t.accion[1], t.accion[2], t.accion[3], 1)
-  Poner(COLOR.accionBorde, t.accionBorde[1], t.accionBorde[2], t.accionBorde[3], 1)
+  Poner(COLOR.activo, oscuro[1], oscuro[2], oscuro[3], 1)
+  Poner(COLOR.accion, accion[1], accion[2], accion[3], 1)
+  Poner(COLOR.accionBorde, accionBorde[1], accionBorde[2], accionBorde[3], 1)
   local f, b = t.fondo or FONDO_BASE, t.borde or BORDE_BASE
   Poner(COLOR.fondo, f[1], f[2], f[3], COLOR.fondo[4])
   Poner(COLOR.borde, b[1], b[2], b[3], 1)
@@ -237,7 +258,7 @@ local inicioTal, finTal, pilaTal = 1, 1, {}
 local inicioOfi, finOfi, pilaOfi = 1, 1, {}
 
 local pestanasInfo = { "entrenar", "equipo", "profesion" }
-local nombresInfo = { entrenar = GL.L"Hechizos", equipo = GL.L"Equipo", profesion = GL.L"Profesión" }
+local nombresInfo = { entrenar = "Hechizos", equipo = "Equipo", profesion = "Profesión" }
 
 ------------------------------------------------------------------------
 -- Utilidades
@@ -310,14 +331,19 @@ local function NumSecciones()
 end
 
 local function SeccionPorNivel(nivel)
+  if not GL.NivelValidoR14(nivel) or not RUTA or type(RUTA.secciones) ~= "table" then return nil end
   local n = NumSecciones()
+  local anterior, primera
   for i = 1, n do
     local s = RUTA.secciones[i]
-    if nivel >= s.min and nivel < s.max then
-      return i
+    if GL.NivelValidoR14(s.min) and GL.NivelValidoR14(s.max) then
+      primera = primera or i
+      if nivel >= s.min and nivel < s.max then return i end
+      if nivel >= s.min then anterior = i end
     end
   end
-  return n
+  -- Por debajo del mínimo, la primera; en un hueco, la última sección accesible.
+  return anterior or primera
 end
 
 -- Las consultas de otros módulos pueden llegar antes de iniciar o después de un fallo de carga.
@@ -343,12 +369,12 @@ local function ClaveDestino(d)
 end
 local function Marcado(lista, d)
   local t = GuiaAventureroDB and GuiaAventureroDB[lista]
-  return (d and type(t) == "table" and t[ClaveDestino(d)]) and true or false
+  return d ~= nil and type(t) == "table" and t[ClaveDestino(d)] == true
 end
 local function Marcar(lista, d, v)
   local db = GuiaAventureroDB
   if type(db[lista]) ~= "table" then db[lista] = {} end
-  db[lista][ClaveDestino(d)] = v or nil
+  db[lista][ClaveDestino(d)] = v == true and true or nil
 end
 
 local function DestinoActual()
@@ -365,92 +391,158 @@ end
 ------------------------------------------------------------------------
 -- Profesiones: Forever usa C_SkillInfo (por id de habilidad); los clientes antiguos, la API global.
 ------------------------------------------------------------------------
-local function BuscarEnSkillInfo(prof, nombre)
-  for i = 1, C_SkillInfo.GetNumSkillLines() do
-    local info = C_SkillInfo.GetSkillLineInfo(i)
-    if info and not info.isHeader then
-      if (prof.skill and prof.skill > 0 and info.skillID == prof.skill)
-        or (info.name and string.lower(info.name) == nombre) then
-        return Seguro(info.rank), Seguro(info.maxRank or info.skillMaxRank or info.maxSkillRank)
+local NivelProfesion
+ do
+  -- Nombres de respaldo para clientes que no exponen el identificador de habilidad.
+  local nombres = {
+    [171]={"Alquimia","Alchemy"}, [164]={"Herrería","Blacksmithing"},
+    [333]={"Encantamiento","Enchanting"}, [202]={"Ingeniería","Engineering"},
+    [182]={"Herboristería","Herbalism"}, [165]={"Peletería","Leatherworking"},
+    [186]={"Minería","Mining"}, [393]={"Desuello","Skinning"}, [197]={"Sastrería","Tailoring"},
+    [129]={"Primeros auxilios","First Aid"}, [185]={"Cocina","Cooking"}, [356]={"Pesca","Fishing"},
+    [40]={"Venenos","Poisons"}, [633]={"Forzar cerraduras","Lockpicking"},
+  }
+  local function Entero(v, minimo)
+    v = Seguro(v)
+    if type(v) == "number" and v >= minimo and v < math.huge and v == math.floor(v) then return v end
+  end
+  local function NoCabecera(v)
+    if issecretvalue and issecretvalue(v) then return false end
+    return not v
+  end
+  local function Coincide(prof, nom, id)
+    local objetivo = Entero(prof.skill, 1)
+    id = Entero(id, 1)
+    if objetivo and id then return objetivo == id end
+    nom = Seguro(nom)
+    if type(nom) ~= "string" or nom == "" then return false end
+    nom = string.lower(nom)
+    if type(prof.nombre) == "string" and nom == string.lower(prof.nombre) then return true end
+    for _, alias in ipairs(nombres[objetivo] or {}) do
+      if nom == string.lower(alias) then return true end
+    end
+    return false
+  end
+  local function RangoValido(rango, tope)
+    rango = Entero(rango, 1)
+    if not rango then return nil end
+    tope = Entero(tope, rango)
+    return rango, tope
+  end
+  local function Cuenta(fn)
+    if type(fn) ~= "function" then return nil end
+    local ok, n = pcall(fn)
+    if ok then return Entero(n, 0) end
+  end
+  local function BuscarModerna(prof)
+    local n = Cuenta(C_SkillInfo.GetNumSkillLines)
+    if not n then return nil end
+    for i = 1, n do
+      local ok, info = pcall(C_SkillInfo.GetSkillLineInfo, i)
+      if ok and type(Seguro(info)) == "table" and NoCabecera(info.isHeader)
+        and Coincide(prof, info.name, info.skillID) then
+        local r,t = RangoValido(info.rank, Seguro(info.maxRank) or Seguro(info.skillMaxRank) or Seguro(info.maxSkillRank))
+        if r then return r,t end
       end
     end
   end
-  return nil
-end
-
--- Devuelve el nivel de la profesion y su tope actual (o nil si no la tienes).
-local function NivelProfesion(prof)
-  local nombre = string.lower(prof.nombre or "")
-  if C_SkillInfo and C_SkillInfo.GetNumSkillLines then
-    local rango, tope = BuscarEnSkillInfo(prof, nombre)
-    if rango then return rango, tope end
-    -- Si la cabecera "Profesiones" está plegada en la ventana de habilidades, sus líneas no se listan.
-    if C_SkillInfo.ExpandSkillHeader then
-      local plegadas = false
-      for i = C_SkillInfo.GetNumSkillLines(), 1, -1 do
-        local info = C_SkillInfo.GetSkillLineInfo(i)
-        if info and info.isHeader and info.isCollapsed then
-          C_SkillInfo.ExpandSkillHeader(i)
-          plegadas = true
+  local expandiendo = false
+  NivelProfesion = function(prof)
+    if type(prof) ~= "table" then return nil end
+    if C_SkillInfo and type(C_SkillInfo.GetSkillLineInfo) == "function" then
+      local rango, tope = BuscarModerna(prof)
+      if rango then return rango, tope end
+      -- Mantener el acceso a las líneas plegadas sin volver a expandir desde un evento síncrono.
+      if not expandiendo and type(C_SkillInfo.ExpandSkillHeader) == "function" then
+        expandiendo = true
+        local n = Cuenta(C_SkillInfo.GetNumSkillLines) or 0
+        for i = n, 1, -1 do
+          local ok, info = pcall(C_SkillInfo.GetSkillLineInfo, i)
+          if ok and type(Seguro(info)) == "table" and Seguro(info.isHeader) == true and Seguro(info.isCollapsed) == true then
+            pcall(C_SkillInfo.ExpandSkillHeader, i)
+          end
+        end
+        expandiendo = false
+        rango, tope = BuscarModerna(prof)
+        if rango then return rango, tope end
+      end
+    end
+    if type(GetProfessions) == "function" and type(GetProfessionInfo) == "function" then
+      local lista = { pcall(GetProfessions) }
+      if lista[1] then
+        for i = 2, 7 do
+          local indice = Entero(lista[i], 1)
+          if indice then
+            local ok, nom, _, rango, tope, _, _, linea = pcall(GetProfessionInfo, indice)
+            if ok and Coincide(prof, nom, linea) then
+              local r,t = RangoValido(rango,tope)
+              if r then return r,t end
+            end
+          end
         end
       end
-      if plegadas then return BuscarEnSkillInfo(prof, nombre) end
+    end
+    if type(GetSkillLineInfo) == "function" then
+      for i = 1, Cuenta(GetNumSkillLines) or 0 do
+        local ok, nom, cabecera, _, rango, _, _, tope = pcall(GetSkillLineInfo, i)
+        if ok and NoCabecera(cabecera) and Coincide(prof, nom) then
+          local r,t = RangoValido(rango,tope)
+          if r then return r,t end
+        end
+      end
     end
     return nil
   end
-  if GetProfessions and GetProfessionInfo and not GetNumSkillLines then
-    local lista = { GetProfessions() }
-    for i = 1, 6 do
-      if lista[i] then
-        local nom, _, rango, tope, _, _, linea = GetProfessionInfo(lista[i])
-        if (prof.skill and linea == prof.skill) or (nom and string.lower(nom) == nombre) then
-          return rango, tope
-        end
-      end
-    end
-    return nil
-  end
-  if GetNumSkillLines then
-    for i = 1, GetNumSkillLines() do
-      local nom, cabecera, _, rango, _, _, tope = GetSkillLineInfo(i)
-      if nom and not cabecera and string.lower(nom) == nombre then
-        return rango, tope
-      end
-    end
-  end
-  return nil
 end
 
 ------------------------------------------------------------------------
 -- Misiones hechas: el addon las comprueba para avanzar solo
 ------------------------------------------------------------------------
 local entregadas = {}   -- entregadas en esta sesion (el juego tarda un momento en marcarlas)
-local bloqueo = false   -- 9.6: «s:p» del paso ya hecho al que volviste a mano: no se te mueve de ahí mientras sigas en él
-
-local function MisionCompletada(q)
-  if entregadas[q] then return true end
-  local f = (C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted) or IsQuestFlaggedCompleted
-  if not f then return false end
-  local ok, r = pcall(f, q)
-  if ok and r then return true end
-  -- 9.2: hecha la alternativa o una posterior de la cadena (al instalar con un personaje ya avanzado)
-  return GL.MisionImplicita and GL.MisionImplicita(q, f) or false
+local bloqueo = false   -- «s:p» del paso ya hecho al que volviste a mano.
+function GL.BloqueoPasoR09(v)
+  bloqueo = v or false
+  if type(GuiaAventureroDB) == "table" then GuiaAventureroDB.bloqueoPasoR09 = bloqueo or nil end
 end
 
 local function MisionEnDiario(q)
-  if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
-    local ok, i = pcall(C_QuestLog.GetLogIndexForQuestID, q)
-    return (ok and i ~= nil and i > 0) and true or false
+  local i = GL.IndiceMisionR14(q)
+  if i == nil then return GL.ConsultarMisionR14(C_QuestLog and C_QuestLog.IsOnQuest, q) end
+  return i > 0
+end
+
+local function MisionCompletada(q)
+  if not GL.IdMisionR14(q) then return false end
+  if entregadas[q] then return true end
+  -- Una misión activa (incluida una repetible) no se da por entregada
+  -- por una marca histórica ni por una alternativa de la cadena.
+  local enDiario = MisionEnDiario(q)
+  if enDiario == true then return false end
+  local f = (C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted) or IsQuestFlaggedCompleted
+  local hecha = GL.ConsultarMisionR14(f, q)
+  if hecha == nil and f ~= IsQuestFlaggedCompleted then
+    local antigua = GL.ConsultarMisionR14(IsQuestFlaggedCompleted, q)
+    if antigua ~= nil then hecha, f = antigua, IsQuestFlaggedCompleted end
   end
-  return false
+  if hecha == true then return true end
+  -- No aceptar inferencias de cadena mientras el diario no sea legible.
+  if enDiario ~= false then return false end
+  return GL.MisionImplicita and GL.MisionImplicita(q, f) == true or false
 end
 
 local function ObjetivosListos(q)
-  if C_QuestLog and C_QuestLog.IsComplete then
-    local ok, r = pcall(C_QuestLog.IsComplete, q)
-    return (ok and r) and true or false
+  return GL.ConsultarMisionR14(C_QuestLog and C_QuestLog.IsComplete, q) == true
+end
+
+function GL.CambioMisionR14(evento, a, b)
+  local q = a
+  if evento == "QUEST_ACCEPTED" and b ~= nil then q = b end
+  if GL.IdMisionR14(q) then
+    if evento == "QUEST_TURNED_IN" then entregadas[q] = true
+    elseif evento == "QUEST_ACCEPTED" then entregadas[q] = nil end
+    -- QUEST_REMOVED también puede llegar tras una entrega: no borrarla.
   end
-  return false
+  if GL.OlvidarImplicitas then GL.OlvidarImplicitas(evento ~= "QUEST_TURNED_IN") end
 end
 
 -- true o false si el destino es de una mision; nil si no se puede comprobar (PNJ o punto del mapa).
@@ -459,11 +551,12 @@ local function DestinoHecho(d)
   if d and Marcado("ignorados", d) then return true end   -- ignorado: cuenta como hecho
   if not d or not d.q then return nil end
   if MisionCompletada(d.q) then return true end
-  -- La alternativa activa permite seguir su rama. Si se aceptaron las dos, queda pendiente la entrega.
-  if d.alternativa and (MisionCompletada(d.alternativa) or
-     (not MisionEnDiario(d.q) and MisionEnDiario(d.alternativa))) then return true end
-  if d.a == "A" then return MisionEnDiario(d.q) end
-  if d.a == "C" then return MisionEnDiario(d.q) and ObjetivosListos(d.q) end
+  local enDiario = MisionEnDiario(d.q)
+  -- Solo seguir la alternativa si el diario confirma que la misión principal no está activa.
+  if d.alternativa and enDiario == false and
+     (MisionEnDiario(d.alternativa) == true or MisionCompletada(d.alternativa)) then return true end
+  if d.a == "A" then return enDiario == true end
+  if d.a == "C" then return enDiario == true and ObjetivosListos(d.q) end
   return false
 end
 
@@ -503,33 +596,36 @@ end
 -- (profesiones aprendidas, zona a la que hay que llegar, ruta de vuelo aprendida o nivel).
 ------------------------------------------------------------------------
 local function EnMapa(objetivo)
-  if not (objetivo and C_Map and C_Map.GetBestMapForUnit) then return false end
-  local m = Seguro(C_Map.GetBestMapForUnit("player"))
-  for _ = 1, 6 do
-    if not m or m == 0 then return false end
-    if m == objetivo then return true end
-    local info = C_Map.GetMapInfo and C_Map.GetMapInfo(m)
-    m = info and Seguro(info.parentMapID)
-  end
-  return false
+  return GL.EnMapaR14(objetivo)
 end
 
 local function VueloConocido(nombre)
-  local vuelos = GuiaAventureroDB and GuiaAventureroDB.vuelos
+  local db = GuiaAventureroDB
+  local vuelos = type(db) == "table" and db.vuelos
   if type(vuelos) ~= "table" or type(nombre) ~= "string" or nombre == "" then return false end
-  -- Las claves guardadas pueden venir de un cliente de otro idioma. La API puede añadir la zona tras una coma.
+  -- El nombre de la localidad puede llevar prefijo (Puerto de Menethil) y zona tras una coma.
+  -- No contar la zona secundaria ni coincidencias dentro de otra palabra.
+  local function Coincide(nodo, buscado)
+    if type(buscado) ~= "string" or buscado == "" then return false end
+    local localidad = string.lower(string.match(nodo, "^[^,]+") or "")
+    buscado = string.lower(buscado)
+    local inicio = 1
+    while true do
+      local i, j = string.find(localidad, buscado, inicio, true)
+      if not i then return false end
+      local antes, despues = string.sub(localidad, i-1, i-1), string.sub(localidad, j+1, j+1)
+      if (i == 1 or antes:match("[%s%p]")) and (j == #localidad or despues:match("[%s%p]")) then return true end
+      inicio = j + 1
+    end
+  end
   local traducir = GL.EnIngles
-  local ingles = traducir and string.lower(traducir(nombre))
-  nombre = string.lower(nombre)
-  for nodo, conocido in pairs(vuelos) do
-    if conocido and type(nodo) == "string" then
-      local guardado = string.lower(nodo)
-      if string.find(guardado, nombre, 1, true) then return true end
-      if traducir then
-        if ingles ~= nombre and string.find(guardado, ingles, 1, true) then return true end
-        local lugar = string.match(nodo, "^[^,]+") or nodo
-        if string.find(string.lower(traducir(lugar)), ingles, 1, true) then return true end
-      end
+  local ingles = traducir and traducir(nombre) or nombre
+  for nodo, descubierto in pairs(vuelos) do
+    if descubierto == true and type(nodo) == "string" then
+      if Coincide(nodo, nombre) or Coincide(nodo, ingles) then return true end
+      -- Las claves del guardado pueden venir de un cliente en otro idioma.
+      local localidad = string.match(nodo, "^[^,]+")
+      if traducir and localidad and Coincide(traducir(localidad), ingles) then return true end
     end
   end
   return false
@@ -550,19 +646,27 @@ local function GuardarVuelos()
   local db = GuiaAventureroDB
   if type(db) ~= "table" then return end
   if type(db.vuelos) ~= "table" then db.vuelos = {} end
-  if NumTaxiNodes and TaxiNodeName and TaxiNodeGetType then
-    for i = 1, (NumTaxiNodes() or 0) do
-      local tipo = TaxiNodeGetType(i)
-      local nombre = Seguro(TaxiNodeName(i))
-      if nombre and (tipo == "CURRENT" or tipo == "REACHABLE") then db.vuelos[nombre] = true end
+  local function Leer(f, ...)
+    if type(f) ~= "function" then return nil end
+    local ok, v = pcall(f, ...)
+    if ok then return Seguro(v) end
+  end
+  local cantidad = Leer(NumTaxiNodes)
+  if type(cantidad) == "number" and cantidad >= 0 and cantidad < math.huge and cantidad % 1 == 0 then
+    for i = 1, cantidad do
+      local tipo = Leer(TaxiNodeGetType, i)
+      local nombre = Leer(TaxiNodeName, i)
+      if type(nombre) == "string" and nombre ~= "" and (tipo == "CURRENT" or tipo == "REACHABLE") then db.vuelos[nombre] = true end
     end
   end
-  if C_TaxiMap and C_TaxiMap.GetAllTaxiNodes and GetTaxiMapID then
-    local ok, nodos = pcall(C_TaxiMap.GetAllTaxiNodes, GetTaxiMapID())
-    if ok and type(nodos) == "table" then
+  if C_TaxiMap and C_TaxiMap.GetAllTaxiNodes then
+    local mapa = Leer(GetTaxiMapID)
+    if type(mapa) ~= "number" or mapa <= 0 or mapa >= math.huge or mapa % 1 ~= 0 then return end
+    local nodos = Leer(C_TaxiMap.GetAllTaxiNodes, mapa)
+    if type(nodos) == "table" then
       for i = 1, #nodos do
-        local n = nodos[i]
-        local nombre = n and Seguro(n.name)
+        local n = Seguro(nodos[i])
+        local nombre = type(n) == "table" and Seguro(n.name)
         if type(nombre) == "string" and nombre ~= "" and GL.EstadoVueloConocido(n.state) then db.vuelos[nombre] = true end
       end
     end
@@ -614,7 +718,10 @@ end
 local function ComprobacionesHechas(p)
   local c = p and p.comprobar
   if not c then return nil end
-  if c.nivel and (UnitLevel("player") or 1) < c.nivel then return nil end
+  if c.nivel then
+    local nivel = GL.NivelJugadorR14()
+    if not nivel or nivel < c.nivel then return nil end
+  end
   if c.llegar and not EnMapa(c.llegar) then return nil end
   if c.vuelo and not VueloConocido(c.vuelo) then return nil end
   if c.hechizos then
@@ -757,11 +864,20 @@ local function AdaptarARaza(R)
   if not raza or R.adaptada == raza then return end
   R.adaptada = raza
   local function DeMiRaza(lista)
-    local quedan = {}
-    for _, e in ipairs(lista) do
-      if not e.raza or e.raza == raza then table.insert(quedan, e) end
+    -- La mayoría de listas no contienen exclusiones raciales. No duplicarlas
+    -- salvo que haya que quitar una entrada; conserva orden y referencias.
+    local quedan
+    for i, e in ipairs(lista) do
+      if e.raza and e.raza ~= raza then
+        if not quedan then
+          quedan = {}
+          for j = 1, i - 1 do quedan[j] = lista[j] end
+        end
+      elseif quedan then
+        quedan[#quedan + 1] = e
+      end
     end
-    return quedan
+    return quedan or lista
   end
   for _, s in ipairs(R.secciones or {}) do
     for _, p in ipairs(s.pasos or {}) do
@@ -868,8 +984,13 @@ end
 
 -- Pone un icono; si el archivo no existe en el cliente, pone el interrogante.
 local function PonerIcono(tex, ruta, recortar)
-  local ok = tex:SetTexture(ruta or INTERROGANTE)
-  if ok == false then tex:SetTexture(INTERROGANTE) end
+  local tipo = type(ruta)
+  if (issecretvalue and issecretvalue(ruta)) or (tipo ~= "string" and tipo ~= "number") or ruta == "" then ruta = INTERROGANTE end
+  local ok, puesto = pcall(tex.SetTexture, tex, ruta)
+  if not ok or puesto == false then
+    local respaldo, resultado = pcall(tex.SetTexture, tex, INTERROGANTE)
+    if not respaldo or resultado == false then pcall(tex.SetTexture, tex, nil) end
+  end
   if recortar == false then
     tex:SetTexCoord(0, 1, 0, 1)
   else
@@ -886,6 +1007,52 @@ end
 
 local function UnaLinea(fs)
   if fs.SetWordWrap then fs:SetWordWrap(false) end
+end
+
+-- Área de lectura dentro de una ficha existente. No crea una ventana independiente.
+-- Conservar la posición mientras se refresca la misma ficha y reiniciarla al cambiar de entrada.
+function GL.CrearTextoDesplazableR10(padre, arriba, abajo)
+  local visor = CreateFrame("ScrollFrame", nil, padre, "UIPanelScrollFrameTemplate")
+  visor:SetPoint("TOPLEFT", padre, "TOPLEFT", 12, -arriba)
+  visor:SetPoint("BOTTOMRIGHT", padre, "BOTTOMRIGHT", -32, abajo)
+  local hijo = CreateFrame("Frame", nil, visor)
+  hijo:SetSize(1, 1)
+  visor:SetScrollChild(hijo)
+  local texto = Texto(hijo, "GameFontHighlightSmall")
+  texto:SetPoint("TOPLEFT", hijo, "TOPLEFT", 0, 0)
+  texto:SetPoint("TOPRIGHT", hijo, "TOPRIGHT", 0, 0)
+  if texto.SetWordWrap then texto:SetWordWrap(true) end
+  local clave, anterior, maximo, pendienteReinicio = nil, nil, 0, false
+  local function Numero(v) return type(v) == "number" and v == v and math.abs(v) < math.huge end
+  local function Ajustar(reiniciar)
+    pendienteReinicio = pendienteReinicio or reiniciar
+    local ancho, alto = visor:GetWidth(), visor:GetHeight()
+    if not Numero(ancho) or not Numero(alto) or ancho <= 0 or alto <= 0 then return end
+    local pos = visor:GetVerticalScroll()
+    hijo:SetWidth(ancho)
+    local h = texto:GetStringHeight()
+    if not Numero(h) or h < 0 then h = 0 end
+    local altura = math.max(alto, math.ceil(h) + 2)
+    hijo:SetHeight(altura)
+    if visor.UpdateScrollChildRect then visor:UpdateScrollChildRect() end
+    maximo = math.max(0, altura - alto)
+    visor:SetVerticalScroll(pendienteReinicio and 0 or math.max(0, math.min(maximo, Numero(pos) and pos or 0)))
+    pendienteReinicio = false
+  end
+  visor:EnableMouseWheel(true)
+  visor:SetScript("OnMouseWheel", function(_, delta)
+    if not Numero(delta) then return end
+    local pos = visor:GetVerticalScroll()
+    visor:SetVerticalScroll(math.max(0, math.min(maximo, (Numero(pos) and pos or 0) - delta * 36)))
+  end)
+  visor:HookScript("OnSizeChanged", function() Ajustar(false) end)
+  visor:HookScript("OnShow", function() Ajustar(false) end)
+  return texto, function(valor, id)
+    local reiniciar = clave ~= id
+    clave = id
+    if anterior ~= valor then anterior = valor; texto:SetText(valor) end
+    Ajustar(reiniciar)
+  end
 end
 
 -- Tooltip: fijo (titulo y texto) o leido de los campos ayudaTitulo y ayudaTexto del marco.
@@ -1162,7 +1329,7 @@ function GL.TextoCabecera()
   local colorNombre = AMARILLO   -- 8.8: con el tema Clase, el nombre sale en el color de la clase
   if GL.temaActivo == "clase" then
     local okC, r, g, b = pcall(GL.ColorDeClase)
-    if okC and r then colorNombre = string.format("|cff%02x%02x%02x", r * 255, g * 255, b * 255) end
+    if okC and r then colorNombre = string.format("|cff%02x%02x%02x", math.floor(r * 255 + 0.5), math.floor(g * 255 + 0.5), math.floor(b * 255 + 0.5)) end
   end
   return colorNombre .. RUTA.nombre .. FIN .. GRIS .. GL.L"  ·  nivel " .. nivel .. FIN .. extra
 end
@@ -1176,17 +1343,7 @@ end
 -- de la zona donde estás para ofrecer retomar ahí.
 ------------------------------------------------------------------------
 local function MapasDeMiZona()
-  local mapas = {}
-  if not (C_Map and C_Map.GetBestMapForUnit) then return mapas end
-  local m = Seguro(C_Map.GetBestMapForUnit("player"))
-  for _ = 1, 6 do
-    if not m or m <= 0 then break end
-    local info = C_Map.GetMapInfo and C_Map.GetMapInfo(m)
-    if type(info) ~= "table" or (info.mapType and info.mapType <= 2) then break end   -- hasta el continente
-    mapas[m] = true
-    m = info.parentMapID
-  end
-  return mapas
+  return GL.MapasZonaR14()
 end
 
 local cacheRetomar = { t = -100 }
@@ -1256,17 +1413,18 @@ local function RefrescarAvisos(p, ancho)
     ui.desvio:Hide()
   end
   ui.aviso:Hide()
+  ui.aviso.retomar, ui.aviso.contextoR14 = nil, nil
   local d = p.wp and p.wp[db.destino]
-  local zona = (GetZoneText and GetZoneText()) or ""
-  local enTaxi = UnitOnTaxi and UnitOnTaxi("player")
-  if d and d.z and zona ~= "" and not enTaxi and ui.zonaDescartada ~= zona then
-    local mapas = MapasDeMiZona()
-    if not mapas[d.m] and d.z ~= zona then
+  local zona = GL.ZonaTextoR14(GetZoneText)
+  if d and d.z and zona ~= "" and GL.TransitoLibreR14() and ui.zonaDescartada ~= zona then
+    local mapas, origen = MapasDeMiZona()
+    if origen and not mapas[d.m] and d.z ~= zona then
       local r = BuscarRetomar(zona, mapas)
       if r then
         local donde = RUTA.secciones[r.s].titulo
         local lejos = (r.dist < 1e8) and (GL.L", a " .. math.floor(r.dist * 0.9144 + 0.5) .. " m") or ""   -- 9.7.4: en inglés salía «a 88 m»
         ui.aviso.retomar = r
+        ui.aviso.contextoR14 = { ruta=RUTA, mapa=origen, zona=zona, s=db.seccion, p=db.paso, i=db.destino }
         ui.aviso.texto:SetWidth(ancho - 18)
         ui.aviso.texto:SetText(AMARILLO .. GL.L"Te has desviado:" .. FIN .. GL.L" estás en " .. BLANCO .. zona .. FIN ..
           GL.L" y tu paso es en " .. d.z .. ".\n" .. GRIS .. GL.L"El paso pendiente más cercano: sección " .. r.s .. GL.L", paso " ..
@@ -1361,20 +1519,19 @@ local function RefrescarGuia()
   local yAvisos = RefrescarAvisos(p, ancho)
   local y
   if clara then
-    if GL.SubirAvisos then pcall(GL.SubirAvisos, ui.panelGuia, 32) end   -- sin la fila Anterior / Mi nivel / Siguiente
-    local okC, hC = pcall(GL.PintarGuiaClara, ui.panelGuia, Y_CAJA - 32 + yAvisos, ancho)
+    -- 9.7.9.7: la fila Atrás / Mi nivel / Siguiente / ? se queda arriba: las tarjetas empiezan donde la caja del paso
+    local okC, hC = pcall(GL.PintarGuiaClara, ui.panelGuia, Y_CAJA + yAvisos, ancho)
     if okC and type(hC) == "number" then
       ui.caja:Hide(); ui.acciones:Hide(); ui.sinDestino:Hide(); ui.cabAvisos:Hide()
       for g = 1, 3 do ui.grupos[g]:Hide() end
       for i = 1, MAX_DESTINOS do ui.destinos[i]:Hide() end
       if GL.OcultarLinea then pcall(GL.OcultarLinea) end
       ui.ultimoPaso = db.seccion .. ":" .. db.paso
-      y = -(Y_CAJA - 32 + yAvisos + hC)
+      y = -(Y_CAJA + yAvisos + hC)
     else
       clara = false
       if GL.Fallo(GL.L"guía clara", hC) then Mensaje(GL.L"guía clara: " .. tostring(hC)) end
       if GL.GuiaClaraOcultar then pcall(GL.GuiaClaraOcultar, false) end
-      if GL.SubirAvisos then pcall(GL.SubirAvisos, ui.panelGuia, -32) end
     end
   end
   if not clara then   -- 9.6: la Guía de antes (sin sangrar de nuevo para no mover todo el bloque)
@@ -1526,15 +1683,15 @@ local function RefrescarGuia()
         fila.coords:SetText(GRIS .. string.format("%.1f, %.1f", d.x or 0, d.y or 0) .. FIN)
         local progreso, detalle = ProgresoDestino(d, e.hecho)
         if g == 2 then progreso = string.format("%d m", math.floor(e.dist * 0.9144 + 0.5))
-        elseif e.pospuesto then progreso = GRIS .. "pospuesto" .. FIN
-        elseif e.hecho then progreso = GRIS .. (Marcado("ignorados", d) and "ignorado" or "hecho") .. FIN end
+        elseif e.pospuesto then progreso = GRIS .. GL.L"pospuesto" .. FIN
+        elseif e.hecho then progreso = GRIS .. (Marcado("ignorados", d) and GL.L"ignorado" or GL.L"hecho") .. FIN end
         fila.progreso:SetText(progreso or "")
         local sigue = (destinoExtra and destinoExtra == d) or (not destinoExtra and g ~= 2 and e.i == db.destino)
         Mostrar(fila.elegido, sigue)
         Mostrar(fila.raya, sigue)
         Mostrar(fila.par, k % 2 == 0)
         fila.ayudaTitulo = d.n
-        fila.ayudaTexto = tostring(d.z) .. "  " .. string.format("%.1f, %.1f", d.x or 0, d.y or 0) ..
+        fila.ayudaTexto = (GL.ZonaDestinoGuiaR11 and GL.ZonaDestinoGuiaR11(d) or tostring(d.z or "")) .. "  " .. string.format("%.1f, %.1f", d.x or 0, d.y or 0) ..
           (e.hecho and ("\n" .. VERDE .. GL.L"Hecho" .. FIN) or "") ..
           ((detalle and detalle ~= "") and ("\n" .. detalle) or "") ..
           ((etiqueta ~= "") and ("\n" .. (grupoN and grupoN > 1 and (GL.L"Recomendado ir con " .. grupoN .. GL.L" jugadores. ") or GL.L"Mejor ir en grupo. ") ..
@@ -1630,7 +1787,7 @@ local function RefrescarGuia()
         local ok, extra = pcall(GL.TextoHechizosNivel)
         if ok and extra and extra ~= "" then t = (t ~= "" and (extra .. "\n\n" .. t)) or extra end
       end
-      if t ~= "" then partes[#partes + 1] = "|cffffd100" .. nombresInfo[clave] .. "|r\n" .. t end
+      if t ~= "" then partes[#partes + 1] = "|cffffd100" .. GL.L(nombresInfo[clave]) .. "|r\n" .. t end
     end
     info = table.concat(partes, "\n\n")
   end
@@ -1646,8 +1803,8 @@ local function RellenarTalento(fila, i, ancho, nivel, real)
   local estado = "futuro"
   if real then   -- 9.7.4: lo que tienes puesto en tu árbol, no solo tu nivel
     if real.hecho[i] then estado = "pasado" elseif real.primero == i then estado = "actual" end
-  elseif nivel > t.h then estado = "pasado" elseif nivel >= t.d then estado = "actual" end
-  PonerIcono(fila.marco.icono, t.icono)
+  elseif nivel >= t.d and nivel <= t.h then estado = "actual" end
+  PonerIcono(fila.marco.icono, (real and real.icono and real.icono[i]) or t.icono)   -- 9.7.9.1: el icono de tu árbol
   fila.marco.icono:SetDesaturated(estado == "pasado")
   fila.marco.icono:SetAlpha(estado == "pasado" and 0.55 or 1)
   if estado == "actual" then
@@ -1666,12 +1823,14 @@ local function RellenarTalento(fila, i, ancho, nivel, real)
   local color = BLANCO
   if estado == "actual" then color = VERDE elseif estado == "pasado" then color = GRIS end
   -- 9.4.2: solo el nombre en el idioma de la guía (el del otro idioma, entre paréntesis, sigue en los datos para buscarlo en el árbol)
-  local titulo = color .. (string.match(t.nombre, "^(.-)%s*%(.-%)%s*$") or t.nombre) .. FIN
+  local nombreTalento = (real and real.nombres and real.nombres[i]) or string.match(t.nombre, "^(.-)%s*%(.-%)%s*$") or t.nombre
+  local titulo = color .. nombreTalento .. FIN
   fila.titulo:SetWidth(ancho - 44 - 58)
   fila.titulo:SetText(titulo)
   local rama = Rama(t.rama)
   local nombreRama = rama and ("|cff" .. rama.color .. t.rama .. FIN) or t.rama
   local nota = nombreRama .. GRIS .. (t.fila and (GL.L", fila " .. t.fila) or "") .. ". " .. t.nota .. FIN
+  if real and real.falta and real.falta[i] then nota = AMARILLO .. GL.L"No está en tu árbol con este nombre: la guía lo salta." .. FIN .. " " .. nota end
   fila.nota:SetWidth(ancho - 44 - 4)
   fila.nota:SetText(nota)
   -- 9.4.2: la nota en una línea; entera, al pasar el ratón por la fila
@@ -1688,8 +1847,10 @@ local function RellenarTalento(fila, i, ancho, nivel, real)
     end)
     fila:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
   end
-  fila.notaTitulo = string.match(t.nombre, "^(.-)%s*%(.-%)%s*$") or t.nombre
-  fila.notaCompleta = nota
+  fila.notaTitulo = nombreTalento
+  local descripcion = real and real.descripciones and real.descripciones[i]
+  if not descripcion and GL.ResumenTalento then descripcion = GL.ResumenTalento(t) end
+  fila.notaCompleta = nota .. (descripcion and ("\n\n" .. descripcion) or "")
   local h = 3 + Alto(fila.titulo, titulo, 13, ancho - 102) + 2 + 14 + 4
   if h < 38 then h = 38 end
   fila:SetHeight(h)
@@ -1705,13 +1866,6 @@ local function RefrescarTalentos()
 
   -- 9.7.7.1: si el juego deja leer tu árbol, los puntos que tienes de verdad en cada rama (antes, los del plan)
   local reales = GL.PuntosRealesPorRama and GL.PuntosRealesPorRama() or nil
-  for i = 1, #ui.ramas do
-    local chip = ui.ramas[i]
-    local r = chip.rama
-    local tengo = reales and ((reales.ramas or {})[r.nombre] or 0) or PuntosRama(r.nombre, nivel)
-    chip.texto:SetText("|cff" .. r.color .. r.nombre .. FIN .. "\n" .. BLANCO .. tengo .. FIN ..
-      GRIS .. " / " .. PuntosRama(r.nombre, 60) .. FIN)
-  end
   local resumen
   if nivel < 10 then
     resumen = BLANCO .. GL.L"Los talentos empiezan al nivel 10." .. FIN
@@ -1720,6 +1874,9 @@ local function RefrescarTalentos()
   end
   -- 9.4.2: los talentos ya salen solo en el idioma de la guía: fuera la frase de los paréntesis
   local intro = tostring(RUTA.talentosIntro or ""):gsub("%s*Nombres en español con el inglés entre paréntesis%.", "")
+  if nivel >= 10 and not reales then
+    resumen = resumen .. "  " .. AMARILLO .. (GL.ingles and "Actual talents not verified; the plan is a guide only." or "Talentos reales sin verificar; el plan es orientativo.") .. FIN
+  end
   resumen = resumen .. "  " .. GRIS .. intro .. FIN
   ui.talResumen:SetWidth(ancho)
   ui.talResumen:SetText(resumen)
@@ -1728,6 +1885,26 @@ local function RefrescarTalentos()
   -- 9.6: con la Guía clara, tarjeta «Ahora» (Pestanas96.lua) y el plan entero en un desplegable
   local claraTal = GL.PestanasClaras and GL.PestanasClaras() and GL.PintarTalentoAhora
   Mostrar(ui.ponerTal, not claraTal)
+  -- 9.7.9.1 (captura de Quini): con «Poner talentos» oculto (Guía clara) las ramas ocupan todo el ancho; si aun así
+  -- no cabe el nombre, la rama se reconoce por su icono y su color, enseña solo los puntos y el nombre va en la ayuda.
+  Repartir(ui.ramas, ancho - ((not claraTal and ui.ponerTal) and (ANCHO_PONER_TAL + 6) or 0))
+  for i = 1, #ui.ramas do
+    local chip = ui.ramas[i]
+    local r = chip.rama
+    local tengo = reales and ((reales.ramas or {})[r.nombre] or 0) or "?"
+    local puntos = BLANCO .. tengo .. FIN .. GRIS .. " / " .. PuntosRama(r.nombre, 60) .. FIN
+    local sitio = (chip:GetWidth() or 0) - 36
+    chip.texto:SetText(r.nombre)
+    local nombreAncho = (chip.texto.GetStringWidth and chip.texto:GetStringWidth()) or (string.len(r.nombre) * 6)
+    if sitio >= nombreAncho then
+      chip.texto:SetText("|cff" .. r.color .. r.nombre .. FIN .. "\n" .. puntos)
+    else
+      chip.texto:SetText(puntos)
+    end
+    local ayuda = reales and string.format(GL.L"Tienes %d puntos en esta rama; el plan llega a %d al nivel 60.", tengo, PuntosRama(r.nombre, 60))
+      or (GL.ingles and "Actual points unknown." or "Puntos reales desconocidos.")
+    Ayuda(chip, "|cff" .. r.color .. r.nombre .. FIN, ayuda)
+  end
   if claraTal then
     local yy, abierto = GL.PintarTalentoAhora(ui.panelTal, -y, ancho, RefrescarTalentos)
     y = -yy
@@ -1751,33 +1928,26 @@ local function RefrescarTalentos()
   ui.talPagina:SetText(GRIS .. GL.L"Talentos " .. Rango(inicioTal, finTal) .. GL.L" de " .. total .. GL.L" (rueda del ratón)" .. FIN)
 end
 
--- Cuantos tienes de un objeto (bolsas y banco).
+-- Cuantos tienes de un objeto en las bolsas para fabricar ahora.
 local function ContarObjeto(id)
-  if GL.InventarioProfesion975 then return GL.InventarioProfesion975(id) end
+  if GL.BolsasProfesion975 then return GL.BolsasProfesion975(id) end
   return nil
 end
 
--- Linea "Tienes: 34/58 Paño de lino, 2 Hilo burdo". Lo que hace falta se cuenta como un punto por objeto fabricado.
+-- Línea de materiales del tramo: cantidades estimadas, agrupadas por objeto; ? si no están confirmadas.
 local function MaterialesPaso(paso, nivel)
   if not paso.mat or #paso.mat == 0 then return nil end
   local partes = {}
-  for i = 1, #paso.mat do
-    local m = paso.mat[i]            -- { id, cantidad por objeto (0 si no se sabe), nombre }
-    local n = ContarObjeto(m[1])
-    if n then
-      if m[2] and m[2] > 0 then
-        local necesario = GL.NecesarioProfesion975 and GL.NecesarioProfesion975(paso, m, nivel) or m[2] * math.max(1, paso.h - paso.d)
-        table.insert(partes, ((n >= necesario) and VERDE or AMARILLO) .. n .. "/" .. necesario .. FIN .. " " .. GL.T(m[3]))
-      else
-        table.insert(partes, BLANCO .. n .. FIN .. " " .. GL.T(m[3]))
-      end
-    else
-      local necesario = m[2] and m[2] > 0 and GL.NecesarioProfesion975 and GL.NecesarioProfesion975(paso, m, nivel)
-      table.insert(partes, GRIS .. "?" .. (necesario and ("/" .. necesario) or "") .. FIN .. " " .. GL.T(m[3]))
-    end
+  local materiales, incompleto = GL.MaterialesTramo975(paso,nivel)
+  for _,m in ipairs(materiales) do
+    local n = ContarObjeto(m.id)
+    local necesario = m.incompleto and (m.cantidad>0 and (m.cantidad .. "+?") or "?") or tostring(m.cantidad)
+    local color = (n==nil or m.incompleto) and GRIS or ((n>=m.cantidad) and VERDE or AMARILLO)
+    table.insert(partes, color .. (n==nil and "?" or n) .. "/" .. necesario .. FIN .. " " .. GL.T(m.nombre))
   end
+  if incompleto then table.insert(partes, GRIS .. GL.L"Cantidad necesaria sin confirmar." .. FIN) end
   if #partes == 0 then return nil end
-  return GRIS .. GL.L"Tienes: " .. FIN .. table.concat(partes, GRIS .. ", " .. FIN)
+  return GRIS .. GL.L"En bolsas: " .. FIN .. table.concat(partes, GRIS .. ", " .. FIN)
 end
 
 ------------------------------------------------------------------------
@@ -1848,16 +2018,17 @@ Preparacion = function(zona, zonaSig, ancho)
         if nivel >= paso.d and nivel < paso.h and paso.mat then
           local faltan = {}
           local incierto = false
-          for _, m in ipairs(paso.mat) do
-            local tengo = ContarObjeto(m[1])
-            if tengo and m[2] and m[2] > 0 then
-              local necesario = GL.NecesarioProfesion975 and GL.NecesarioProfesion975(paso, m, nivel) or m[2] * math.max(1, paso.h - nivel)
-              if tengo < necesario then table.insert(faltan, "|cffff7070" .. (necesario - tengo) .. " " .. GL.T(m[3]) .. FIN) end
-            elseif m[2] and m[2] > 0 then incierto = true end
+          local materiales, sinCantidad = GL.MaterialesTramo975(paso,nivel)
+          for _, m in ipairs(materiales) do
+            local tengo = ContarObjeto(m.id)
+            if tengo~=nil and m.cantidad>0 then
+              if tengo<m.cantidad then table.insert(faltan, "|cffff7070" .. (m.cantidad-tengo) .. " " .. GL.T(m.nombre) .. FIN) end
+            elseif m.cantidad>0 then incierto = true end
           end
-          if incierto then table.insert(lineas, { (prof.corto or prof.nombre) .. ": " .. GL.L"Inventario no disponible para algunos materiales." }) end
+          if sinCantidad then table.insert(lineas, { (prof.corto and GL.L(prof.corto) or prof.nombre) .. ": " .. GL.L"Cantidad necesaria sin confirmar." }) end
+          if incierto then table.insert(lineas, { (prof.corto and GL.L(prof.corto) or prof.nombre) .. ": " .. GL.L"Inventario no disponible para algunos materiales." }) end
           if #faltan > 0 then
-            table.insert(lineas, { (prof.corto or prof.nombre) .. GL.L" (paso " .. paso.d .. "-" .. paso.h .. GL.L"): te faltan " ..
+            table.insert(lineas, { (prof.corto and GL.L(prof.corto) or prof.nombre) .. GL.L" (paso " .. paso.d .. "-" .. paso.h .. GL.L"): te faltan " ..
               table.concat(faltan, ", ") })
           end
           break
@@ -1925,10 +2096,14 @@ local function RellenarPasoOficio(fila, i, ancho, prof, nivel)
   Mostrar(fila.raya, estado == "actual")
   local texto
   if estado == "pasado" then
-    texto = GRIS .. Rango(paso.d, paso.h) .. "  " .. string.gsub(paso.t, "[<>%[%]]", "") .. FIN
+    texto = GRIS .. Rango(paso.d, paso.h) .. "  " .. string.gsub(GL.TextoPasoProfesion979 and GL.TextoPasoProfesion979(paso, false) or paso.t, "[<>%[%]]", "") .. FIN
   else
-    texto = AZUL .. Rango(paso.d, paso.h) .. FIN .. "  " .. Colorear(paso.t)
-    if estado == "actual" then texto = texto .. VERDE .. GL.L"  < estás aquí" .. FIN end
+    texto = AZUL .. Rango(paso.d, paso.h) .. FIN .. "  " .. Colorear(GL.TextoPasoProfesion979 and GL.TextoPasoProfesion979(paso, estado == "actual", GL.topeOficio979) or paso.t)
+    if estado == "actual" then
+      if GL.topeOficio979 and nivel >= GL.topeOficio979 and GL.topeOficio979 < 300 then
+        texto = texto .. AMARILLO .. GL.L"  < límite alcanzado" .. FIN
+      else texto = texto .. VERDE .. GL.L"  < estás aquí" .. FIN end
+    end
     local materiales = MaterialesPaso(paso, nivel)
     if materiales then texto = texto .. "\n" .. materiales end
   end
@@ -1944,13 +2119,20 @@ local function RefrescarOficios()
   local db = GuiaAventureroDB
   local prof = RUTA.profesiones[db.profesion] or RUTA.profesiones[1]
   local nivel, tope = NivelProfesion(prof)
+  GL.topeOficio979 = tope
   local ancho, alto = AnchoContenido(), AltoContenido()
   local total = #prof.pasos
+  -- Seguir el tramo al ganar habilidad solo si el jugador estaba en él.
+  local indice = GL.IndiceTramoProfesion975 and GL.IndiceTramoProfesion975(prof, nivel)
+  if GL.OFI.profTramo == prof and GL.OFI.indiceTramo and inicioOfi == GL.OFI.indiceTramo and indice and indice ~= inicioOfi then
+    inicioOfi, pilaOfi = indice, {}
+  end
+  GL.OFI.profTramo, GL.OFI.indiceTramo = prof, indice
   if inicioOfi > total then inicioOfi = total end
   if inicioOfi < 1 then inicioOfi = 1 end
 
   for i, b in pairs(ui.oficios) do b:SetActivo(i == db.profesion) end
-  if prof.skill then db.profesionSkill = prof.skill end   -- 9.5: para no perderla al rehacer la lista
+  -- No sobrescribir la selección persistente durante un refresco con una lista provisional.
   PonerIcono(ui.ofiMarco.icono, prof.icono)
   ui.ofiNombre:SetText(prof.nombre)
   Mostrar(ui.ofiBarra, not prof.vacia)   -- 9.5: sin profesiones no hay barra que llenar
@@ -1959,7 +2141,7 @@ local function RefrescarOficios()
     ui.ofiBarra:SetMinMaxValues(0, maximo)
     ui.ofiBarra:SetValue(nivel)
     local txt = nivel .. " / " .. maximo
-    if tope and tope < 300 and nivel >= tope then txt = txt .. GL.L"  -  aprende el siguiente rango" end
+    if tope and tope < 300 and nivel >= tope then txt = txt .. GL.L"  -  límite alcanzado" end
     ui.ofiBarra.texto:SetText(txt)
   else
     ui.ofiBarra:SetMinMaxValues(0, 300)
@@ -1967,29 +2149,43 @@ local function RefrescarOficios()
     ui.ofiBarra.texto:SetText(GL.L"Aún no la tienes")
   end
 
-  local intro = GRIS .. Colorear(prof.intro) .. FIN
+  -- 9.7.9.1 (Quini): arriba solo lo que importa para tu nivel de la profesión. La explicación completa (rangos, plan,
+  -- cantidades estimadas, Tienes x/y, y en Pesca señuelos, cañas, concurso...) pasa a la ayuda del icono.
+  local completa = Colorear(prof.intro or "")
+  for i = 1, #prof.pasos do
+    if prof.pasos[i].mat then
+      completa = completa .. "\n\n" .. GL.L"Tienes x/y: existencias (bolsas y banco) y materiales estimados para el tramo restante. Compra en tandas; no todas las fabricaciones dan habilidad."
+      break
+    end
+  end
+  Ayuda(ui.ofiMarco, prof.nombre or "", completa)
+  local intro = ""
+  if not nivel then
+    intro = GRIS .. Colorear(prof.intro or "") .. FIN
+  elseif GL.AvisoRangoProfesion975 then
+    local aviso = GL.AvisoRangoProfesion975(prof, nivel, tope)
+    if aviso then intro = AMARILLO .. aviso .. FIN end
+  end
+  if nivel and GL.AvisoEspecialidades975 then
+    local especialidad=GL.AvisoEspecialidades975(prof.skill)
+    if especialidad then intro = intro .. (intro ~= "" and "\n" or "") .. GRIS .. especialidad .. FIN end
+  end
   if prof.skill == 356 and GL.NecesidadesPesca977 then
     local faltan=GL.NecesidadesPesca977(GL.RUTA and GL.RUTA.profesiones)
     if #faltan>0 then
       local partes={}
       for i=1,math.min(4,#faltan) do
         local m=faltan[i]
-        partes[#partes+1]=((GetItemInfo and GetItemInfo(m.id)) or GL.L(m.nombre)).." ×"..m.falta..(m.desconocido and " (?)" or "")
+        partes[#partes+1]=((GL.NombreMaterialR11 and GL.NombreMaterialR11(m.id,m.nombre)) or GL.L(m.nombre)).." ×"..m.falta..(m.desconocido and " (?)" or "")
       end
-      intro=intro.."\n"..GRIS..GL.L("Peces que te faltan para Cocina y Alquimia (según tus planes, descontando lo que llevas en las bolsas; no todos se pescan aquí): ")..table.concat(partes,", ")..FIN
-    end
-  end
-  for i = 1, #prof.pasos do
-    if prof.pasos[i].mat then
-      intro = intro .. "\n" .. GRIS .. GL.L"Tienes x/y: existencias (bolsas y banco) y materiales estimados para el tramo restante. Compra en tandas; no todas las fabricaciones dan habilidad." .. FIN
-      break
+      intro=(intro~="" and (intro.."\n") or "")..GRIS..GL.L("Peces que te faltan para Cocina y Alquimia (según tus planes, descontando lo que llevas en las bolsas; no todos se pescan aquí): ")..table.concat(partes,", ")..FIN
     end
   end
   ui.ofiIntro:SetWidth(ancho)
   ui.ofiIntro:SetText(intro)
   local y = -(80 + GL.OFI.fila + Alto(ui.ofiIntro, intro, 12, ancho) + 8)
   if GL.TarjetaTramo then   -- 9.0: el tramo actual en una tarjeta propia (Secciones9.lua)
-    local okT, hT = pcall(GL.TarjetaTramo, ui.panelOfi, -y, ancho, prof, nivel)
+    local okT, hT = pcall(GL.TarjetaTramo, ui.panelOfi, -y, ancho, prof, nivel, tope)
     if okT and type(hT) == "number" and hT > 0 then y = y - hT - 8 elseif not okT and GL.Fallo("tramo", hT) then Mensaje(GL.L"tramo: " .. tostring(hT)) end
   end
   if GL.TarjetaRecoleccion then   -- 9.1: ruta de recolección (Recoleccion.lua), solo con Minería, Herboristería o Desuello
@@ -2007,33 +2203,89 @@ local function RefrescarOficios()
   ui.ofiPagina:SetText((total > 0) and (GRIS .. GL.L"Pasos " .. Rango(inicioOfi, finOfi) .. GL.L" de " .. total .. GL.L" (rueda del ratón)" .. FIN) or "")   -- 9.6: sin «Pasos 1-0 de 0»
 end
 
-local function Refrescar()
-  if not frame then return end
-  local db = GuiaAventureroDB
-  RefrescarCabecera()
-  ui.panelGuia:Hide(); ui.panelTal:Hide(); ui.panelOfi:Hide()
-  for _, extra in pairs(GL.modos) do
-    if extra.panel then extra.panel:Hide() end
+-- R10: los paneles se crean una vez, al abrirlos o tras inicializar los módulos.
+function GL.PanelModoR10(modo)
+  if modo == "guia" then return ui.panelGuia, RefrescarGuia end
+  if modo == "talentos" then return ui.panelTal, RefrescarTalentos end
+  if modo == "oficios" then return ui.panelOfi, RefrescarOficios end
+  local extra = type(modo) == "string" and GL.modos[modo]
+  if type(extra) == "table" and extra.panel and type(extra.panel.Show) == "function" and type(extra.panel.Hide) == "function" and type(extra.panel.IsShown) == "function" then
+    return extra.panel, extra.refrescar
   end
-  local extra = GL.modos[db.modo]
-  if extra and extra.panel then
-    extra.panel:Show()
-    if extra.refrescar then   -- 7.6.3: si una pantalla falla, se dice en el chat (una vez) y las pestañas siguen bien
-      local ok, err = pcall(extra.refrescar)
-      if not ok then
-        GL.Fallo("panel " .. tostring(db.modo), err)
-        ui.erroresPantalla = ui.erroresPantalla or {}
-        if not ui.erroresPantalla[db.modo] then ui.erroresPantalla[db.modo] = true; Mensaje(GL.L"error en la pantalla " .. tostring(db.modo) .. ": " .. tostring(err)) end
-      end
+end
+function GL.ErrorPanelR10(modo, err, carga)
+  GL.Fallo("panel " .. tostring(modo), err)
+  ui.erroresPantalla = ui.erroresPantalla or {}
+  if not ui.erroresPantalla[modo] then
+    ui.erroresPantalla[modo] = true
+    Mensaje((carga and GL.L"error al cargar " or GL.L"error en la pantalla ") .. tostring(modo) .. ": " .. tostring(err))
+  end
+end
+function GL.PrepararModoR10(modo)
+  if type(modo) ~= "string" or not frame or GL._iniciandoPanelesR10 then return false end
+  if modo == "mascotas" and not LADO.mascotas then return false end
+  if GL.PanelModoR10(modo) then return true end
+  local crear = GL.perezosos and GL.perezosos[modo]
+  if type(crear) ~= "function" then return false end
+  GL._panelesFallidosR10 = GL._panelesFallidosR10 or {}
+  if GL._panelesFallidosR10[modo] or GL._creandoPanelR10 then return false end
+  local anteriores = {}
+  if frame.GetChildren then for _, hijo in ipairs({frame:GetChildren()}) do anteriores[hijo] = true end end
+  GL._creandoPanelR10 = true
+  local ok, err = pcall(crear)
+  GL._creandoPanelR10 = nil
+  if ok and GL.PanelModoR10(modo) then return true end
+  -- Un constructor interrumpido puede haber dejado un panel parcial visible.
+  -- No repetirlo en la misma sesión ni eliminar los controles ya existentes.
+  GL._panelesFallidosR10[modo] = true
+  GL.modos[modo] = nil
+  -- Los paneles principales también pueden construirse bajo demanda. Un
+  -- constructor parcial no debe parecer válido ni entrar en Disponer().
+  if modo == "talentos" then
+    ui.panelTal, ui.ponerTal = nil, nil
+    ui.ramas, ui.filasTal, ui.pagTal = {}, {}, {}
+  elseif modo == "oficios" then
+    ui.panelOfi = nil
+    ui.oficios, ui.ofiPri, ui.ofiSec, ui.filasOfi, ui.pagOfi = {}, {}, {}, {}, {}
+  end
+  if frame.GetChildren then
+    for _, hijo in ipairs({frame:GetChildren()}) do
+      if not anteriores[hijo] then pcall(hijo.Hide, hijo) end
     end
-  elseif db.modo == "talentos" then
-    ui.panelTal:Show(); RefrescarTalentos()
-  elseif db.modo == "oficios" then
-    ui.panelOfi:Show(); RefrescarOficios()
-  else
-    db.modo = "guia"
-    ui.panelGuia:Show(); RefrescarGuia()
   end
+  GL.ErrorPanelR10(modo, ok and GL.L"no se ha podido crear el panel." or err, true)
+  return false
+end
+
+local function Refrescar()
+  if not frame or GL._iniciandoPanelesR10 or GL._creandoPanelR10 or GL._refrescandoR10 then return end
+  local db = GuiaAventureroDB
+  GL._refrescandoR10 = true
+  local okC, errC = pcall(RefrescarCabecera)
+  if not okC then GL.Fallo("cabecera", errC) end
+  local function MostrarPanel(modo)
+    local objetivo, actualizar = GL.PanelModoR10(modo)
+    if not objetivo then return false, GL.L"no se ha podido crear el panel." end
+    local function Ocultar(p)
+      if p and p ~= objetivo and p:IsShown() then p:Hide() end
+    end
+    for _, p in pairs({ui.panelGuia, ui.panelTal, ui.panelOfi}) do Ocultar(p) end
+    for _, extra in pairs(GL.modos) do if type(extra) == "table" then Ocultar(extra.panel) end end
+    if not objetivo:IsShown() then objetivo:Show() end
+    if actualizar then actualizar() end
+    return true
+  end
+  local ok, mostrado, err = pcall(MostrarPanel, db.modo)
+  if not ok or not mostrado then
+    GL.ErrorPanelR10(db.modo or "guia", ok and err or mostrado)
+    if db.modo ~= "guia" then
+      db.modo = "guia"
+      local bien, resultado, fallo = pcall(MostrarPanel, "guia")
+      if not bien or not resultado then GL.ErrorPanelR10("guia", bien and fallo or resultado) end
+    end
+  end
+  -- Liberar antes de las tareas auxiliares, incluso si el panel falló.
+  GL._refrescandoR10 = nil
   local grupo = GRUPOS[db.modo] or db.modo
   local rep = LADO[db.modo]   -- 6.6: en Reputación y Mazmorras no salen las pestañas de la guía
   for i = 1, #ui.modos do ui.modos[i]:SetActivo(ui.modos[i].clave == grupo) end   -- 9.0: iconos de la barra lateral
@@ -2049,18 +2301,35 @@ local function Refrescar()
     local ok, err = pcall(GL.trasRefrescar[i])
     if not ok and GL.Fallo(GL.L"tras refrescar", err) then Mensaje(GL.L"error: " .. tostring(err)) end
   end
+  return ok and mostrado == true
 end
 
 -- Al redimensionar se refresca como mucho cada 0,05 s.
-local refrescoProgramado = false
-local function ProgramarRefresco()
-  if refrescoProgramado then return end
-  refrescoProgramado = true
-  local function Hacer()
-    refrescoProgramado = false
-    Refrescar()
+-- R14: un temporizador antiguo no debe ejecutar trabajo de una entrada posterior al mundo.
+function GL.NuevoTemporizadorR14()
+  local pendiente, suspendido
+  local function Programar(seg, accion)
+    if suspendido or pendiente then return end
+    local token = {}
+    pendiente = token
+    local function Hacer()
+      if pendiente ~= token or suspendido then return end
+      pendiente = nil
+      local ok, err = pcall(accion)
+      if not ok then GL.Fallo("Temporizador", err) end
+    end
+    if C_Timer and type(C_Timer.After) == "function" then
+      local ok, resultado = pcall(C_Timer.After, seg, Hacer)
+      if not ok or resultado == false then Hacer() end
+    else Hacer() end
   end
-  if C_Timer and C_Timer.After then C_Timer.After(0.05, Hacer) else Hacer() end
+  return { programar = Programar, mundo = function(activo)
+    pendiente, suspendido = nil, not activo
+  end }
+end
+GL._refrescoR14 = GL.NuevoTemporizadorR14()
+local function ProgramarRefresco()
+  GL._refrescoR14.programar(0.05, Refrescar)
 end
 
 ------------------------------------------------------------------------
@@ -2080,7 +2349,7 @@ local function Siguiente()
   db.destino = 1
   -- 9.6: hacia delante no se bloquea: si caes en un paso ya hecho, la guía sigue sola hasta el primero que falte
   -- (antes se quedaba quieta para siempre tras pulsar Siguiente sobre un paso hecho)
-  bloqueo = false
+  GL.BloqueoPasoR09(false)
   Refrescar()
   if GL.ProgramarSync then GL.ProgramarSync() end
 end
@@ -2095,7 +2364,7 @@ local function Anterior()
     db.paso = #RUTA.secciones[db.seccion].pasos
   end
   db.destino = 1
-  bloqueo = PuedeSaltar(db.seccion, db.paso) and (db.seccion .. ":" .. db.paso) or false
+  GL.BloqueoPasoR09(PuedeSaltar(db.seccion, db.paso) and (db.seccion .. ":" .. db.paso) or false)
   Refrescar()
   if anteriorS ~= db.seccion or anteriorP ~= db.paso then
     Mensaje(GL.L"Estás en un paso anterior: Mi nivel te lleva al tuyo")
@@ -2110,7 +2379,7 @@ local function CambiarSeccion(delta)
     db.paso = 1
     db.destino = 1
   end
-  bloqueo = PuedeSaltar(db.seccion, db.paso) and (db.seccion .. ":" .. db.paso) or false
+  GL.BloqueoPasoR09(PuedeSaltar(db.seccion, db.paso) and (db.seccion .. ":" .. db.paso) or false)
   Refrescar()
 end
 
@@ -2162,7 +2431,8 @@ end
 
 -- Al abrir Talentos o Profesiones, la lista empieza en lo que toca a tu nivel.
 local function TalentosDeMiNivel()
-  local nivel = UnitLevel("player") or 1
+  local nivel = GL.NivelJugadorR14()
+  if not nivel then return end
   inicioTal, pilaTal = 1, {}
   for i = 1, #RUTA.talentos do
     if RUTA.talentos[i].h >= nivel then inicioTal = i; return end
@@ -2175,10 +2445,7 @@ local function ProfesionDeMiNivel()
   local nivel = NivelProfesion(prof)
   inicioOfi, pilaOfi = 1, {}
   if not nivel then return end
-  for i = 1, #prof.pasos do
-    if nivel < prof.pasos[i].h then inicioOfi = i; return end
-  end
-  inicioOfi = #prof.pasos
+  inicioOfi = (GL.IndiceTramoProfesion975 and GL.IndiceTramoProfesion975(prof, nivel)) or 1
 end
 
 -- 7.6.1: red de seguridad. Cada panel recorta lo que se salga de él, para que nada sobresalga del marco.
@@ -2193,36 +2460,38 @@ local function RecortarPaneles()
 end
 
 local function AbrirModo(modo)
-  RecortarPaneles()
-  if GuiaAventureroDB.subPersonaje == "estadisticas" then GuiaAventureroDB.subPersonaje = "talentos" end   -- 9.0
-  if modo == "personaje" then modo = GuiaAventureroDB.subPersonaje or "talentos" end
-  if modo == "estadisticas" then GuiaAventureroDB.vistaCuenta, GuiaAventureroDB.hoyModo, modo = "hoy", "nivel", "cuenta" end   -- 9.0
-  -- 9.0: secciones que se crean al abrirlas. 9.4.1: se mira después de traducir "personaje" a su subpestaña
-  -- (si la última abierta era Clase, el botón Personaje no la creaba y volvía a la guía)
-  if GL.perezosos and GL.perezosos[modo] and not GL.modos[modo] then
-    local okP, errP = pcall(GL.perezosos[modo])
-    if not okP then
-      GL.Fallo("panel " .. tostring(modo), errP)
-      Mensaje(GL.L"error al cargar " .. modo .. ": " .. tostring(errP))
-    end
+  local db = GuiaAventureroDB
+  if type(db) ~= "table" or type(modo) ~= "string" or GL._iniciandoPanelesR10 or GL._creandoPanelR10 or GL._refrescandoR10 then return false end
+  if modo == "personaje" then
+    local sub = db.subPersonaje
+    modo = type(sub) == "string" and GRUPOS[sub] == "personaje" and sub ~= "estadisticas" and sub or "talentos"
   end
-  if GL.perezosos and GL.perezosos[modo] and not GL.modos[modo] then modo = "talentos" end
-  if (modo == "hechizos" or modo == "equipo" or modo == "estadisticas") and not GL.modos[modo] then
-    Mensaje(GL.L"la pestaña " .. modo .. GL.L" no se ha podido crear. Escribe /ga depurar y pega el informe en el hilo.")
-    modo = "talentos"
+  local estadisticas = modo == "estadisticas"
+  if estadisticas then modo = "cuenta" end
+  if not GL.PrepararModoR10(modo) then return false end
+  RecortarPaneles() -- también el panel recién creado
+  if estadisticas then db.vistaCuenta, db.hoyModo = "hoy", "nivel" end
+  local ok, err = pcall(function()
+    if modo == "talentos" then TalentosDeMiNivel() elseif modo == "oficios" then ProfesionDeMiNivel() end
+  end)
+  if not ok then GL.ErrorPanelR10(modo, err); return false end
+  db.modo = modo
+  if not Refrescar() or db.modo ~= modo then return false end
+  if GRUPOS[modo] == "personaje" then db.subPersonaje = modo end
+  if not LADO[modo] then
+    db.modoGuia = modo
+  elseif type(db.modoGuia) ~= "string" or LADO[db.modoGuia] or
+      (not GL.PanelModoR10(db.modoGuia) and not (GL.perezosos and type(GL.perezosos[db.modoGuia]) == "function")) then
+    db.modoGuia = "guia"
   end
-  if GRUPOS[modo] == "personaje" then GuiaAventureroDB.subPersonaje = modo end
-  GuiaAventureroDB.modo = modo
-  if not LADO[modo] then GuiaAventureroDB.modoGuia = modo end   -- 6.6: el botón Guía vuelve aquí
-  if modo == "talentos" then TalentosDeMiNivel() elseif modo == "oficios" then ProfesionDeMiNivel() end
-  Refrescar()
+  return true
 end
 
 -- Avanza solo mientras las misiones del paso ya esten hechas, y lleva la flecha al primer destino que falte.
 local function Sincronizar()
   local db = GuiaAventureroDB
   if not RUTA or not frame then return end
-  if db.auto ~= false and not (bloqueo and bloqueo == db.seccion .. ":" .. db.paso) then
+  if GL.PersonajeVivoR14() and db.auto ~= false and not (bloqueo and bloqueo == db.seccion .. ":" .. db.paso) then
     local saltados = 0
     while saltados < 500 and PuedeSaltar(db.seccion, db.paso) do
       local s, p = PasoDespues(db.seccion, db.paso)
@@ -2254,25 +2523,23 @@ local function Sincronizar()
   Refrescar()
 end
 
-local syncProgramada = false
+GL._syncR14 = GL.NuevoTemporizadorR14()
 local function ProgramarSync()
-  if syncProgramada then return end
-  syncProgramada = true
-  local function Hacer()
-    syncProgramada = false
+  GL._syncR14.programar(0.5, function()
     local ok, err = pcall(Sincronizar)
     if not ok then GL.Fallo("Sincronizar", err) end
-  end
-  if C_Timer and C_Timer.After then C_Timer.After(0.5, Hacer) else Hacer() end
+  end)
 end
 
 local function IrAMiNivel()
   local db = GuiaAventureroDB
-  db.seccion = SeccionPorNivel(UnitLevel("player") or 1)
+  local seccion = SeccionPorNivel(GL.NivelJugadorR14())
+  if not seccion then return end
+  db.seccion = seccion
   db.paso = 1
   db.destino = 1
   db.modo = "guia"
-  bloqueo = false
+  GL.BloqueoPasoR09(false)
   Sincronizar()
 end
 
@@ -2280,7 +2547,7 @@ local function AlternarAuto()
   local db = GuiaAventureroDB
   if db.auto == false then
     db.auto = true
-    bloqueo = false
+    GL.BloqueoPasoR09(false)
     Mensaje(GL.L"avance automático activado: la guía pasa sola los pasos con las misiones hechas.")
     Sincronizar()
   else
@@ -2296,7 +2563,7 @@ local function OrientacionJugador()
   if not GetPlayerFacing then return nil end
   local ok, f = pcall(GetPlayerFacing)
   if not ok then return nil end
-  return Seguro(f)
+  return GL.NumeroMapaSeguro(f)
 end
 
 -- Mapa y posicion (0-1) del jugador.
@@ -2305,14 +2572,22 @@ function GL.NumeroMapaSeguro(v)
   if type(v) == "number" and v == v and math.abs(v) < math.huge then return v end
 end
 
+function GL.CoordenadasDestinoR10(d)
+  if type(Seguro(d)) ~= "table" then return false end
+  local m, x, y = GL.NumeroMapaSeguro(d.m), GL.NumeroMapaSeguro(d.x), GL.NumeroMapaSeguro(d.y)
+  return m ~= nil and m > 0 and m % 1 == 0 and x ~= nil and y ~= nil and x >= 0 and x <= 100 and y >= 0 and y <= 100
+end
+
 local function PosicionJugador()
   if not (C_Map and C_Map.GetBestMapForUnit and C_Map.GetPlayerMapPosition) then return nil end
   local ok, mapa, x, y = pcall(function()
-    local m = GL.NumeroMapaSeguro(C_Map.GetBestMapForUnit("player"))
-    if not m or m <= 0 then return nil end
+    local m = GL.MapaUnidadR14()
+    if not m then return nil end
     local pos = C_Map.GetPlayerMapPosition(m, "player")
     if not Seguro(pos) then return nil end
     local px, py = pos:GetXY()
+    -- No combinar una posición obtenida durante la transición con el mapa anterior.
+    if GL.MapaUnidadR14() ~= m then return nil end
     return m, GL.NumeroMapaSeguro(px), GL.NumeroMapaSeguro(py)
   end)
   if not ok or not mapa or not x or not y or x < 0 or x > 1 or y < 0 or y > 1 or (x == 0 and y == 0) then return nil end
@@ -2322,7 +2597,7 @@ end
 -- Punto de un mapa (0-1) en coordenadas del mundo (yardas) y su continente.
 local function AMundo(mapa, x, y)
   mapa, x, y = GL.NumeroMapaSeguro(mapa), GL.NumeroMapaSeguro(x), GL.NumeroMapaSeguro(y)
-  if not (mapa and mapa > 0 and x and y and C_Map and C_Map.GetWorldPosFromMapPos and CreateVector2D) then return nil end
+  if not (mapa and mapa > 0 and mapa % 1 == 0 and x and x >= 0 and x <= 1 and y and y >= 0 and y <= 1 and C_Map and C_Map.GetWorldPosFromMapPos and CreateVector2D) then return nil end
   local ok, c, wx, wy = pcall(function()
     local continente, pos = C_Map.GetWorldPosFromMapPos(mapa, CreateVector2D(x, y))
     continente = GL.NumeroMapaSeguro(continente)
@@ -2348,7 +2623,10 @@ local function Ejes(mapa)
       local sx, sy = x2 - x0, y2 - y0
       local le = math.sqrt(ex * ex + ey * ey)
       local ls = math.sqrt(sx * sx + sy * sy)
-      if le > 0 and ls > 0 then e = { ex / le, ey / le, sx / ls, sy / ls } end
+      if GL.NumeroMapaSeguro(le) and GL.NumeroMapaSeguro(ls) and le > 0 and ls > 0 then
+        local a, b, c, d = ex / le, ey / le, sx / ls, sy / ls
+        if math.abs(a * d - b * c) > 0.000001 then e = { a, b, c, d } end
+      end
     end
     if e then ejesMapa[mapa] = e end
   end
@@ -2357,20 +2635,22 @@ end
 
 -- Devuelve este, sur (yardas) y distancia del jugador al destino; o nil y un motivo.
 local function Vector(d)
+  if not GL.CoordenadasDestinoR10(d) then return nil, "destino" end
   local mapa, px, py = PosicionJugador()
   if not mapa then return nil, "sinpos" end
   local cj, jx, jy = AMundo(mapa, px, py)
   local cd, dx, dy = AMundo(d.m, d.x / 100, d.y / 100)
   local ejes = Ejes(mapa)
+  if cj and cd and cj ~= cd then return nil, "continente" end
   if cj and cd and ejes then
-    if cj ~= cd then return nil, "continente" end
     local vx, vy = dx - jx, dy - jy
     local este = vx * ejes[1] + vy * ejes[2]
     local sur = vx * ejes[3] + vy * ejes[4]
-    return este, sur, math.sqrt(vx * vx + vy * vy), mapa ~= d.m
+    local dist = GL.NumeroMapaSeguro(math.sqrt(vx * vx + vy * vy))
+    if dist and GL.NumeroMapaSeguro(este) and GL.NumeroMapaSeguro(sur) then return este, sur, dist, mapa ~= d.m end
   end
   if mapa == d.m then
-    local tam = TAMANO_ZONA[d.z] or { 1500, 1000 }
+    local tam = TAMANO_ZONA[Seguro(d.z)] or { 1500, 1000 }
     local este = (d.x / 100 - px) * tam[1]
     local sur = (d.y / 100 - py) * tam[2]
     return este, sur, math.sqrt(este * este + sur * sur), false
@@ -2383,8 +2663,9 @@ end
 local llegados = {}
 local function LlegadaAPnj(d)
   local db = GuiaAventureroDB
+  if not GL.PersonajeVivoR14() then return false end
   if db.autoDestino == false then return false end   -- automatismo "Siguiente destino al llegar"
-  if not d.npc or d.q then return false end
+  if destinoExtra or not d.npc or d.q then return false end
   local clave = db.seccion .. ":" .. db.paso .. ":" .. db.destino
   if llegados[clave] then return false end
   llegados[clave] = true
@@ -2408,37 +2689,50 @@ local function BordeFlecha(c)
 end
 
 -- Si el cliente no puede girar la imagen (SetRotation), la flecha dice el rumbo con palabras.
-local RUMBOS_RELATIVOS = { "delante", GL.L"delante a la derecha", GL.L"a la derecha", GL.L"detrás a la derecha", GL.L"detrás",
-  GL.L"detrás a la izquierda", GL.L"a la izquierda", GL.L"delante a la izquierda" }
+local RUMBOS_RELATIVOS = { "delante", "delante a la derecha", "a la derecha", "detrás a la derecha", "detrás",
+  "detrás a la izquierda", "a la izquierda", "delante a la izquierda" }
 local RUMBOS_BRUJULA = { "norte", "nordeste", "este", "sudeste", "sur", "suroeste", "oeste", "noroeste" }
 
 -- rel: angulo en radianes, en sentido horario, desde delante (o desde el norte si no se sabe hacia donde miras).
 local function RumboEnPalabras(rel, conBrujula)
   local lista = conBrujula and RUMBOS_BRUJULA or RUMBOS_RELATIVOS
   local sector = math.floor(rel / (math.pi / 4) + 0.5) % 8
-  return lista[sector + 1]
+  return GL.L(lista[sector + 1])
 end
 
-local RUMBOS8 = { GL.L"al norte", GL.L"al noreste", GL.L"al este", GL.L"al sureste", GL.L"al sur", GL.L"al suroeste", GL.L"al oeste", GL.L"al noroeste" }
+local RUMBOS8 = { "al norte", "al noreste", "al este", "al sureste", "al sur", "al suroeste", "al oeste", "al noroeste" }
 local function ActualizarFlecha()
   flecha.estado = nil   -- 8.8: lo que necesita Graficos.lua (anillo y estilos de flecha)
   flecha.dist:SetText("")
   BordeFlecha(COLOR.flechaBorde)
+  if not GL.PersonajeVivoR14() then
+    flecha.tex:Hide()
+    flecha.texto:SetText(GRIS .. GL.L"Navegación en pausa: estado vital del personaje." .. FIN)
+    return
+  end
   local d = DestinoActual()
-  if not d then
+  if not GL.CoordenadasDestinoR10(d) then
     flecha.tex:Hide()
     flecha.texto:SetText(GRIS .. GL.L"Sin destino en este paso" .. FIN)
     return
+  end
+  local nombre = Seguro(d.n)
+  if type(nombre) ~= "string" or nombre == "" then nombre = GL.L"Destino" end
+  local zona = Seguro(d.z)
+  if type(zona) ~= "string" or zona == "" then
+    local ok, info = pcall(function() return C_Map and C_Map.GetMapInfo and C_Map.GetMapInfo(d.m) end)
+    zona = ok and type(Seguro(info)) == "table" and Seguro(info.name) or nil
+    if type(zona) ~= "string" or zona == "" then zona = nombre end
   end
   local este, sur, dist, otroMapa = Vector(d)
   if not este then
     flecha.tex:Hide()
     if sur == "continente" then
-      flecha.texto:SetText(AMARILLO .. GL.L"Ve a " .. d.z .. FIN .. GL.L" (otro continente)\n" .. GRIS .. d.n .. FIN)
+      flecha.texto:SetText(AMARILLO .. GL.L"Ve a " .. zona .. FIN .. GL.L" (otro continente)\n" .. GRIS .. nombre .. FIN)
     elseif sur == "zona" then
-      flecha.texto:SetText(AMARILLO .. GL.L"Ve a " .. d.z .. FIN .. "\n" .. GRIS .. d.n .. FIN)
+      flecha.texto:SetText(AMARILLO .. GL.L"Ve a " .. zona .. FIN .. "\n" .. GRIS .. nombre .. FIN)
     else
-      flecha.texto:SetText(GRIS .. GL.L"Sin posición (cueva o mazmorra)" .. FIN .. "\n" .. d.z .. " " .. string.format("%.1f, %.1f", d.x, d.y))
+      flecha.texto:SetText(GRIS .. GL.L"Sin posición (cueva o mazmorra)" .. FIN .. "\n" .. zona .. " " .. string.format("%.1f, %.1f", d.x, d.y))
     end
     return
   end
@@ -2449,7 +2743,7 @@ local function ActualizarFlecha()
     BordeFlecha(COLOR.verde)
     flecha.estado = { d = d, dist = dist, llegado = true }
     flecha.dist:SetText(VERDE .. GL.L"¡Has llegado!" .. FIN)
-    flecha.texto:SetText(GRIS .. d.n .. FIN)
+    flecha.texto:SetText(GRIS .. nombre .. FIN)
     if GL.AlLlegar then pcall(GL.AlLlegar, d) end   -- 7.2: sonido al llegar (una vez por destino)
     return
   end
@@ -2462,7 +2756,10 @@ local function ActualizarFlecha()
   rel = rel % dosPi
   -- flecha.tga es una sola flecha que apunta hacia arriba: se gira (SetRotation va en sentido antihorario)
   local girada = false
-  if flecha.puedeGirar then girada = pcall(flecha.tex.SetRotation, flecha.tex, -rel) end
+  if flecha.puedeGirar then
+    local ok, resultado = pcall(flecha.tex.SetRotation, flecha.tex, -rel)
+    girada = ok and resultado ~= false
+  end
   if girada then flecha.tex:Show() else flecha.tex:Hide() end
 
   -- la distancia cambia de color al acercarte; 7.1: la flecha también (verde cerca, amarilla a media distancia, roja lejos)
@@ -2477,14 +2774,14 @@ local function ActualizarFlecha()
   if GuiaAventureroDB.flechaColor == false then r, g, b = 1, 1, 1 end
   flecha.tex:SetVertexColor(r, g, b)
   flecha.estado = { d = d, dist = dist, rel = rel, orient = orient, girada = girada, r = r, g = g, b = b }
-  local donde = GRIS .. d.n .. FIN
-  if otroMapa then donde = donde .. "\n" .. AMARILLO .. d.z .. FIN end
+  local donde = GRIS .. nombre .. FIN
+  if otroMapa then donde = donde .. "\n" .. AMARILLO .. zona .. FIN end
   if girada then
     if not orient then donde = donde .. "\n" .. GRIS .. GL.L"(norte arriba)" .. FIN end
   else
     donde = AMARILLO .. RumboEnPalabras(rel, not orient) .. FIN .. "\n" .. donde
   end
-  local rumbo = RUMBOS8[math.floor(((angulo % dosPi) + math.pi / 8) / (math.pi / 4)) % 8 + 1]   -- 7.1: rumbo de brújula
+  local rumbo = GL.L(RUMBOS8[math.floor(((angulo % dosPi) + math.pi / 8) / (math.pi / 4)) % 8 + 1])   -- 7.1: rumbo de brújula
   flecha.dist:SetText(colorDist .. string.format("%d m", math.floor(dist * 0.9144)) .. FIN .. GRIS .. " · " .. rumbo .. FIN)   -- 6.0.2: en metros (1 yarda = 0,9144 m)
   if destinoExtra then BordeFlecha(COLOR.cian) end   -- 6.2: desvío, en azul
   flecha.texto:SetText(destinoExtra and (AZUL .. GL.L"Desvío" .. FIN .. "\n" .. donde) or donde)
@@ -2637,10 +2934,17 @@ local function CrearPanelGuia()
   ui.progreso:SetPoint("TOPLEFT", p, "TOPLEFT", 0, -40)
   ui.progreso:SetPoint("TOPRIGHT", p, "TOPRIGHT", 0, -40)
 
-  ui.nav[1] = CrearBoton(p, GL.L"< Anterior", Anterior, nil, 24)
+  -- 9.7.9.7 (Quini): esta fila se ve siempre, también con la Guía clara (antes iban abajo y con muchas misiones no se
+  -- veían). «Saltar paso» pasa a ser Siguiente y «¿Atascado? Comprobar paso» es el botón «?».
+  ui.nav[1] = CrearBoton(p, GL.L"< Atrás", Anterior, nil, 24)
   ui.nav[2] = CrearBoton(p, GL.L"Mi nivel", IrAMiNivel, nil, 24)
   ui.nav[3] = CrearBoton(p, GL.L"Siguiente >", Siguiente, nil, 24, "accion")
+  ui.nav[4] = CrearBoton(p, "?", function() if GL.comandos and GL.comandos["comprobar"] then GL.comandos["comprobar"]() end end, nil, 24)
   Encadenar(ui.nav, p, 0, -60)
+  Ayuda(ui.nav[1], GL.L"Atrás", GL.L"Vuelve al paso anterior.")
+  Ayuda(ui.nav[2], GL.L"Mi nivel", GL.L"Si te pierdes: la guía vuelve a la sección de tu nivel y al primer paso que te falta.")
+  Ayuda(ui.nav[3], GL.L"Siguiente", GL.L"Pasa al paso siguiente aunque este no esté hecho.")
+  Ayuda(ui.nav[4], GL.L"¿Atascado? Comprobar paso", GL.L"Comprueba qué misiones están en el diario y cuáles están entregadas; no altera tu progreso.")
 
   ui.caja = CreateFrame("Frame", nil, p, PLANTILLA)
   ui.caja:SetPoint("TOPLEFT", p, "TOPLEFT", 0, -Y_CAJA)
@@ -2768,16 +3072,23 @@ local function CrearPanelGuia()
   local avisoBotones = {}
   avisoBotones[1] = CrearBoton(aviso, GL.L"Retomar ahí", function()
     local r = aviso.retomar
-    if not r then return end
     local db = GuiaAventureroDB
+    local c = aviso.contextoR14
+    if not r or not c or c.ruta~=RUTA or c.s~=db.seccion or c.p~=db.paso or c.i~=db.destino
+        or not GL.TransitoLibreR14() or GL.MapaUnidadR14()~=c.mapa or GL.ZonaTextoR14(GetZoneText)~=c.zona
+        or DestinoHecho(r.d)~=false then
+      aviso.retomar, aviso.contextoR14 = nil, nil
+      Refrescar()
+      return
+    end
     db.seccion, db.paso, db.destino = r.s, r.p, r.i
     destinoExtra = nil
-    bloqueo = false
+    GL.BloqueoPasoR09(false)
     Refrescar()
   end, nil, 20, "accion")
   Ayuda(avisoBotones[1], GL.L"Retomar ahí", GL.L"La guía salta a ese paso, que está en la zona donde estás.")
   avisoBotones[2] = CrearBoton(aviso, GL.L"Seguir con mi paso", function()
-    ui.zonaDescartada = (GetZoneText and GetZoneText()) or ""
+    ui.zonaDescartada = GL.ZonaTextoR14(GetZoneText)
     Refrescar()
   end, nil, 20)
   Ayuda(avisoBotones[2], GL.L"Seguir con mi paso", GL.L"No vuelve a avisar mientras sigas en esta zona.")
@@ -3020,13 +3331,14 @@ GL.OFI.botones = function(p)
     local prof = RUTA.profesiones[i]
     if not prof.vacia then
       -- corto: nombre para el botón cuando el entero no cabe (el entero sale al elegirla)
-      local b = CrearBoton(p, prof.corto or prof.nombre, function()
+      local b = CrearBoton(p, prof.corto and GL.L(prof.corto) or prof.nombre, function()
         GuiaAventureroDB.profesion = indice
         GuiaAventureroDB.profesionSkill = prof.skill
         ProfesionDeMiNivel()
         Refrescar()
       end, prof.icono, 26)
       ui.oficios[i] = b
+      if not b:GetScript("OnEnter") then Ayuda(b, prof.nombre or "", nil) end   -- 9.7.9.1: nombre entero si se corta
       table.insert(GL.OFI.secundaria[prof.skill] and ui.ofiSec or ui.ofiPri, b)
     end
   end
@@ -3095,13 +3407,18 @@ end
 local function Disponer()
   if not frame then return end
   local ancho = AnchoContenido()
-  Repartir(ui.nav, ancho)
+  -- 9.7.9.7: Atrás, Mi nivel y Siguiente se reparten el ancho; «?» es estrecho
+  Repartir({ ui.nav[1], ui.nav[2], ui.nav[3] }, ancho - 26 - 6)
+  if ui.nav[4] then ui.nav[4]:SetWidth(26) end
   Repartir(ui.info, ancho)
   Repartir(ui.ramas, ancho - (ui.ponerTal and (ANCHO_PONER_TAL + 6) or 0))
   -- 9.5: cada fila (principales y secundarias) se reparte el ancho que queda tras su título
   Repartir(ui.ofiPri or ui.oficios, ancho - GL.OFI.titulo)
   Repartir(ui.ofiSec or {}, ancho - GL.OFI.titulo)
-  IconosSegunAncho(ui.oficios, 100)
+  -- 9.7.9.1 (Quini: «falta el icono de las profesiones secundarias»): el icono sale siempre que quepa él con algo de
+  -- texto; antes se quitaba por debajo de 100 y en la fila de tres secundarias nunca salía. El nombre largo se corta
+  -- y entero va en la ayuda del botón.
+  IconosSegunAncho(ui.oficios, 44)
   Repartir(ui.pagTal, ancho)
   Repartir(ui.pagOfi, ancho)
   -- 7.6.1: las subpestañas (Personaje y Opciones) se reparten el ancho, como las pestañas: ya no se salen del marco
@@ -3116,17 +3433,35 @@ end
 
 -- 9.5: rehace la lista de profesiones (las aprendidas) y sus botones; mantiene elegida la que tenías
 GL.OFI.reconstruir = function()
-  if not (GL.ProfesionesDelPersonaje and ui.panelOfi) then return end
+  if not (GL.ProfesionesDelPersonaje and RUTA) then return end
+  local db = GuiaAventureroDB
+  local anterior = RUTA.profesiones[db.profesion]
   local ok, cambia = pcall(GL.ProfesionesDelPersonaje, RUTA)
   if not ok or not cambia then return end
-  GL.OFI.botones(ui.panelOfi)
-  local db = GuiaAventureroDB
+  if ui.panelOfi then GL.OFI.botones(ui.panelOfi) end
   db.profesion = 1
+  local skill = GL.EnteroGuardado(db.profesionSkill) or (anterior and anterior.skill)
   for i, prof in ipairs(RUTA.profesiones) do
-    if prof.skill and prof.skill == db.profesionSkill then db.profesion = i end
+    if skill and prof.skill == skill then db.profesion = i; break end
   end
-  Disponer()
-  ProfesionDeMiNivel()
+  if ui.panelOfi then Disponer() end
+  if RUTA.profesiones[db.profesion] ~= anterior then ProfesionDeMiNivel() end
+end
+
+-- Coalescer eventos de habilidad/receta y descartar callbacks de una ruta antigua.
+GL.OFI.programar = function()
+  if not RUTA or not frame or GL.OFI.pendienteRuta == RUTA then return end
+  local ruta = RUTA
+  GL.OFI.pendienteRuta = ruta
+  local function Hacer()
+    if GL.OFI.pendienteRuta ~= ruta then return end
+    GL.OFI.pendienteRuta = nil
+    if RUTA ~= ruta or not frame then return end
+    GL.OFI.reconstruir()
+    local db = GuiaAventureroDB
+    if frame:IsShown() and db and (db.modo == "oficios" or db.modo == "biblioteca") then ProgramarRefresco() end
+  end
+  if C_Timer and C_Timer.After then C_Timer.After(0.1,Hacer) else Hacer() end
 end
 
 local function GuardarPosicion()
@@ -3142,6 +3477,22 @@ local function Limitar(v, minimo, maximo)
   if v < minimo then return minimo end
   if v > maximo then return maximo end
   return v
+end
+
+-- Escala efectiva de ventanas hijas de UIParent: respetar el ajuste guardado,
+-- reduciéndolo temporalmente solo si la ventana no cabe en la pantalla.
+function GL.EscalaVisibleR10(f, preferida)
+  local function positivo(v) return type(v) == "number" and v > 0 and v < math.huge end
+  if not f or not f.SetScale then return end
+  local escala = positivo(preferida) and preferida or 1
+  if UIParent and UIParent.GetWidth and UIParent.GetHeight and f.GetWidth and f.GetHeight then
+    local w, h, fw, fh = UIParent:GetWidth(), UIParent:GetHeight(), f:GetWidth(), f:GetHeight()
+    if positivo(w) and positivo(h) and positivo(fw) and positivo(fh) then
+      escala = math.min(escala, w / fw, h / fh)
+    end
+  end
+  if positivo(escala) and (not f.GetScale or f:GetScale() ~= escala) then f:SetScale(escala) end
+  return escala
 end
 
 local function CrearVentana()
@@ -3222,6 +3573,8 @@ local function CrearVentana()
   ui.titulo = titulo
 
   local cerrar = CrearBoton(frame, "×", function()
+    -- 9.7.9.8: abierta desde la compacta, cerrar vuelve a la compacta
+    if GuiaAventureroDB.volverCompacto and GL.VolverACompacta then GL.VolverACompacta(); return end
     frame:Hide()
     GuiaAventureroDB.oculto = true
   end, nil, 22, "cerrar")
@@ -3265,8 +3618,14 @@ local function CrearVentana()
     brillo:SetColorTexture(1, 1, 1, 0.06)
     b.texto = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")   -- lo usan las insignias; no se ve
     b.texto:Hide()
-    b.clave, b.etiqueta = clave, nombre
-    b:SetScript("OnClick", function(self, ...) funcion(self, ...) end)
+    b.clave, b.etiqueta, b.iconoRuta = clave, nombre, icono
+    GL.botonesLaterales = GL.botonesLaterales or {}   -- 9.7.9.8: el tutorial los marca todos con su nombre
+    table.insert(GL.botonesLaterales, b)
+    b:SetScript("OnClick", function(self, ...)
+      -- 9.7.9.8: si vienes de la compacta, Guía te devuelve a ella
+      if GL.AntesLateral and GL.AntesLateral(self) then return end
+      funcion(self, ...)
+    end)
     Ayuda(b, nombre, ayuda)
     b.SetActivo = function(self, activo)
       self.esActivo = activo and true or false
@@ -3361,8 +3720,23 @@ local function CrearVentana()
   ui.yLateral = y   -- Interfaz.lua sigue poniendo iconos desde aquí
 
   CrearPanelGuia()
-  CrearPanelTalentos()
-  CrearPanelOficios()
+  -- R12: mantener los datos de talentos/oficios disponibles sin construir
+  -- sus controles hasta que se abran. El ajuste anterior permite precargarlos.
+  GL.perezosos = GL.perezosos or {}
+  GL.perezosos.talentos = function()
+    CrearPanelTalentos()
+    ui.panelTal:Hide()
+    Disponer()
+  end
+  GL.perezosos.oficios = function()
+    CrearPanelOficios()
+    ui.panelOfi:Hide()
+    Disponer()
+  end
+  if db.cargarAlAbrir == false then
+    GL.perezosos.talentos()
+    GL.perezosos.oficios()
+  end
 
   -- pie: autor abajo a la derecha y esquina para cambiar el tamaño
   local autor = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -3397,6 +3771,7 @@ local function CrearVentana()
   agarre:SetScript("OnMouseUp", function()
     frame:StopMovingOrSizing()
     GuardarTamano()
+    GL.EscalaVisibleR10(frame, GuiaAventureroDB.escala or 1)
     GuardarPosicion()
   end)
   Ayuda(agarre, GL.L"Tamaño", GL.L"Arrastra para cambiar el tamaño de la ventana.")
@@ -3424,37 +3799,59 @@ end
 ------------------------------------------------------------------------
 local ESQUEMA = 2
 local MIGRACIONES = {
-  -- 1 (6.0.2): automatismos. Si el personaje ya usaba la guía (tiene ruta), cada uno queda como lo tenía
-  -- (antes venían encendidos); si es nuevo, todos apagados.
-  function(db)
-    if db.automatismos602 then return end   -- ya migrado con la 6.0.2
-    local empezado = db.ruta ~= nil
-    for i = 1, #AUTOMATISMOS do
-      local k = AUTOMATISMOS[i]
-      if db[k] == nil then db[k] = empezado and k ~= "autoVender" end   -- 6.9: vender lo gris nunca venía encendido
+  -- 1 (6.0.2): mantener el comportamiento histórico solo si el guardado antiguo es reconocible.
+  function(db, legado)
+    if db.automatismos602 == true then return end
+    for _, k in ipairs(AUTOMATISMOS) do
+      if db[k] == nil then db[k] = legado and k ~= "autoVender" end
     end
   end,
-  -- 2 (6.9): automatismo nuevo "Vender lo gris", apagado en todos los personajes.
+  -- 2 (6.9): vender lo gris requiere activación expresa.
   function(db)
     if db.autoVender == nil then db.autoVender = false end
   end,
 }
 
 local function Migrar(db)
-  local desde = tonumber(db.esquema) or 0
-  -- Un esquema inválido no debe saltarse migraciones ni indexar funciones inexistentes.
-  if desde ~= desde or desde < 0 or desde == math.huge or desde % 1 ~= 0 then desde = 0 end
-  if desde > ESQUEMA then return end -- conservar datos de versiones posteriores
+  local original = db.esquema
+  local desde = tonumber(original)
+  local valido = desde and desde == desde and desde >= 0 and desde < math.huge and desde % 1 == 0
+  GL.GuardadosEsquemaPosterior = valido and desde > ESQUEMA or false
+  if GL.GuardadosEsquemaPosterior then return true end -- no rebajar el esquema ni marcarlo como migrado
+  if not valido then desde = 0 end
+  local marca = db.automatismos602
+  local marcaValida = marca == nil or type(marca) == "boolean"
+  local legado = (original == nil or valido) and marcaValida and marca ~= true
+    and type(db.ruta) == "string" and db.ruta ~= ""
+  -- Preparar las migraciones sobre una tabla de campos propios; no tocar datos ajenos.
+  local cambios = { automatismos602 = marca }
+  for _, k in ipairs(AUTOMATISMOS) do cambios[k] = db[k] end
   for i = desde + 1, ESQUEMA do
-    local ok, err = pcall(MIGRACIONES[i], db)
+    local ok, err = pcall(MIGRACIONES[i], cambios, legado)
     if not ok then
       Mensaje(GL.L"no se pudo poner al día lo guardado (paso " .. i .. "): " .. tostring(err))
-      return
+      return false
     end
-    db.esquema = i
+  end
+  -- Los consumidores antiguos usan ~= false. Un campo ausente no debe activarlos.
+  for _, k in ipairs(AUTOMATISMOS) do
+    if type(cambios[k]) ~= "boolean" then cambios[k] = false end
+  end
+  local function archivar(k, v)
+    if v == nil then return end
+    local t = db.reparacionesR09
+    if type(t) ~= "table" then t = { anterior = GL.CopiaDiagnosticoR14(t) }; db.reparacionesR09 = t end
+    if t[k] == nil then t[k] = GL.CopiaDiagnosticoR14(v) end
+  end
+  if original ~= nil and (not valido or type(original) ~= "number") then archivar("esquema", original) end
+  if not marcaValida then archivar("automatismos602", marca) end
+  for _, k in ipairs(AUTOMATISMOS) do
+    if db[k] ~= nil and type(db[k]) ~= "boolean" then archivar(k, db[k]) end
+    db[k] = cambios[k]
   end
   db.esquema = ESQUEMA
-  db.automatismos602 = nil   -- lo sustituye db.esquema
+  db.automatismos602 = nil
+  return true
 end
 
 -- Revisa los datos de la ruta cargada: destinos sin mapa o sin coordenadas, mapas que el juego no conoce y
@@ -3489,41 +3886,252 @@ local function RevisarRuta()
   return r
 end
 
+-- R09: reparar solo campos conocidos antes de construir las ventanas o migrar.
+-- La primera forma dañada de cada campo queda en el mismo personaje para diagnóstico.
+function GL.PrepararGuardadosR09(db)
+  local function finito(v)
+    return type(v) == "number" and v == v and v > -math.huge and v < math.huge
+  end
+  if type(db) ~= "table" then
+    local anterior = db
+    db = {}
+    if anterior ~= nil then db.reparacionesR09 = { raiz = GL.CopiaDiagnosticoR14(anterior) } end
+  end
+  local function reparar(k, nuevo)
+    local viejo = db[k]
+    if viejo == nil then return end
+    local t = db.reparacionesR09
+    if type(t) ~= "table" then
+      t = { anterior = GL.CopiaDiagnosticoR14(t) }; db.reparacionesR09 = t
+    end
+    -- R15: conservar diagnósticos independientes y serializables.
+    if t[k] == nil then t[k] = GL.CopiaDiagnosticoR14(viejo) end
+    db[k] = nuevo
+  end
+  local puntos = { TOP=true, BOTTOM=true, LEFT=true, RIGHT=true, CENTER=true,
+    TOPLEFT=true, TOPRIGHT=true, BOTTOMLEFT=true, BOTTOMRIGHT=true }
+  for _, k in ipairs({ "pos", "posFlecha", "posCompacto", "posFranja", "posMazmorra", "posBuffs" }) do
+    local v = db[k]
+    if v ~= nil and (type(v) ~= "table" or type(v[1]) ~= "string" or not puntos[v[1]]
+      or type(v[2]) ~= "string" or not puntos[v[2]] or not finito(v[3]) or not finito(v[4])) then
+      reparar(k, nil)
+    end
+  end
+  local tam = db.tam
+  if tam ~= nil and (type(tam) ~= "table" or not finito(tonumber(tam[1])) or not finito(tonumber(tam[2]))
+    or tonumber(tam[1]) <= 0 or tonumber(tam[2]) <= 0) then reparar("tam", nil) end
+  for k, limites in pairs({ escala={0.6,1.5}, escalaFlecha={0.6,2}, tamTexto={0.8,1.5},
+      alphaVentana={0.3,1}, opacidad={0.2,1} }) do
+    local v = db[k]
+    if v ~= nil then
+      local n = tonumber(v)
+      if not finito(n) or n < limites[1] or n > limites[2] then reparar(k, nil)
+      elseif type(v) ~= "number" then reparar(k, n) end
+    end
+  end
+  if db.anguloMinimapa ~= nil then
+    local n = tonumber(db.anguloMinimapa)
+    if not finito(n) then reparar("anguloMinimapa", nil)
+    elseif type(db.anguloMinimapa) ~= "number" then reparar("anguloMinimapa", n) end
+  end
+  for _, k in ipairs({ "notas", "titulos", "atascos", "pospuestos", "ignorados", "vuelos", "aprendidosFuera", "domadas", "mazNo" }) do
+    if db[k] ~= nil and type(db[k]) ~= "table" then reparar(k, nil) end
+  end
+  for _, k in ipairs({ "notas", "titulos" }) do
+    if type(db[k]) == "table" then
+      local nuevo, mal = {}, false
+      for clave, v in pairs(db[k]) do
+        if type(v) == "string" then nuevo[clave] = v else mal = true end
+      end
+      if mal then reparar(k, nuevo) end
+    end
+  end
+  for _, k in ipairs({ "pospuestos", "ignorados" }) do
+    if type(db[k]) == "table" then
+      local nuevo, mal = {}, false
+      for clave, v in pairs(db[k]) do
+        if type(clave) == "string" and v == true then nuevo[clave] = true else mal = true end
+      end
+      if mal then reparar(k, nuevo) end
+    end
+  end
+  if db.progresoR09 ~= nil and type(db.progresoR09) ~= "table" then reparar("progresoR09", nil) end
+  if type(db.atascos) == "table" then
+    local claves, nuevo, mal = {}, {}, false
+    for k, v in pairs(db.atascos) do
+      if finito(k) and k >= 1 and k % 1 == 0 and type(v) == "string" then claves[#claves+1] = k
+      else mal = true end
+    end
+    table.sort(claves)
+    for i, k in ipairs(claves) do nuevo[i] = db.atascos[k]; if k ~= i then mal = true end end
+    if mal then reparar("atascos", nuevo) end
+  end
+  for _, k in ipairs({ "modo", "modoGuia", "subPersonaje", "pestana", "ruta", "rutaElegida" }) do
+    if db[k] ~= nil and (type(db[k]) ~= "string" or db[k] == "") then reparar(k, nil) end
+  end
+  for _, k in ipairs({ "autoReparar", "autoSeguimiento", "modoPesca", "rangosBarras", "rangosAuto" }) do
+    if db[k] ~= nil and type(db[k]) ~= "boolean" then reparar(k, false) end
+  end
+  for _, k in ipairs({ "oculto", "ocultoCompacto", "ocultoFranja", "compacto", "franja", "bloqueada", "flecha", "alphaRaton", "minimapa", "discretoCombate" }) do
+    if db[k] ~= nil and type(db[k]) ~= "boolean" then reparar(k, nil) end
+  end
+  -- Las banderas antiguas son las que realmente controlaban la visibilidad.
+  -- Solo usar tamano como fuente si no hay ninguna bandera guardada.
+  if db.tamano ~= nil and db.tamano ~= "completo" and db.tamano ~= "compacto" and db.tamano ~= "franja" then
+    reparar("tamano", nil)
+  end
+  if db.compacto ~= nil or db.franja ~= nil or db.tamano ~= nil then
+    local elegido
+    if db.franja == true then elegido = "franja"
+    elseif db.compacto == true then elegido = "compacto"
+    elseif db.franja == nil and db.compacto == nil then elegido = db.tamano or "completo"
+    else elegido = "completo" end
+    if db.tamano ~= nil and db.tamano ~= elegido then reparar("tamano", elegido) end
+    if db.compacto == true and elegido ~= "compacto" then reparar("compacto", false) end
+    db.tamano, db.compacto, db.franja = elegido, elegido == "compacto", elegido == "franja"
+  end
+  for _, k in ipairs(AUTOMATISMOS) do
+    -- Un valor dañado no equivale a consentimiento para una acción automática.
+    if db[k] ~= nil and type(db[k]) ~= "boolean" then reparar(k, false) end
+  end
+  return db
+end
+
+function GL.AjusteCopiableValidoR09(k, v)
+  local limites = { escala={0.6,1.5}, opacidad={0.2,1}, escalaFlecha={0.6,2}, tamTexto={0.8,1.5}, alphaVentana={0.3,1} }
+  local lim = limites[k]
+  if lim then return type(v) == "number" and v == v and v >= lim[1] and v <= lim[2] end
+  if k == "tema" then return type(v) == "string" and BuscarTema(v).id == v end
+  if k == "estiloFlecha" then return v == "clasica" or v == "brujula" or v == "minima" end
+  if k == "marco" then return v == "plano" or v == "clasico" end
+  if k == "fuentePaso" then return v == "juego" or v == "friz" or v == "arial" or v == "morpheus" or v == "skurri" end
+  return type(v) == "boolean"
+end
+
+-- Los índices y las notas de una ruta no identifican pasos de otra.
+-- Mantener los campos activos originales para los módulos y las versiones antiguas.
+do
+  local campos = { "seccion", "paso", "destino", "notas", "pospuestos", "ignorados", "bloqueoPasoR09" }
+  local function Archivo(db)
+    if type(db.progresoR09) ~= "table" then GL.PrepararGuardadosR09(db); db.progresoR09 = {} end
+    return db.progresoR09
+  end
+  local function GuardarDanado(db, id, v)
+    local a = db.reparacionesR09
+    if type(a) ~= "table" then a = { anterior=GL.CopiaDiagnosticoR14(a) }; db.reparacionesR09=a end
+    local k = "progresoR09:" .. id
+    if a[k] == nil then a[k] = GL.CopiaDiagnosticoR14(v) end
+  end
+  function GL.CambiarProgresoRutaR09(db, id, inicio)
+    if type(db) ~= "table" or type(id) ~= "string" or id == "" then return false end
+    if db.ruta == id then return true end
+    local a = Archivo(db)
+    local anterior = db.ruta
+    local foto = {}
+    for _, k in ipairs(campos) do foto[k] = db[k] end
+    if type(anterior) == "string" and anterior ~= "" then
+      if a[anterior] ~= nil then GuardarDanado(db, anterior, a[anterior]) end
+      a[anterior] = foto
+    elseif next(foto) then GuardarDanado(db, "sin-ruta", foto) end
+    local destino = a[id]
+    if destino ~= nil and type(destino) ~= "table" then GuardarDanado(db, id, destino); destino = nil end
+    for _, k in ipairs(campos) do
+      if destino then db[k] = destino[k] else db[k] = nil end
+    end
+    a[id] = nil
+    db.ruta = id
+    if not destino then db.seccion, db.paso, db.destino = inicio or 1, 1, 1 end
+    GL.PrepararGuardadosR09(db)
+    return true
+  end
+  -- Una importación de otra ruta queda pendiente de cargar esa ruta: no mezcla sus
+  -- índices con la ruta que sigue abierta hasta /reload.
+  function GL.PrepararProgresoImportadoR09(db, datos)
+    if type(db) ~= "table" or type(datos) ~= "table" or type(datos.ruta) ~= "string" or datos.ruta == "" then return false end
+    local a = Archivo(db)
+    local anterior = a[datos.ruta]
+    local foto = {}
+    if type(anterior) == "table" then for _, k in ipairs(campos) do foto[k] = anterior[k] end end
+    if anterior ~= nil then GuardarDanado(db, datos.ruta, anterior) end
+    for _, k in ipairs(campos) do if datos[k] ~= nil then foto[k] = datos[k] end end
+    foto.bloqueoPasoR09 = nil
+    a[datos.ruta] = foto
+    db.rutaElegida = datos.ruta
+    return true
+  end
+end
+
+-- R12: medición ligera de PLAYER_LOGIN; no fuerza GC para medir ni modifica SavedVariables.
+function GL.MarcarInicioR12(etapa)
+  if etapa == "inicio" then GL.perfilInicioR12 = {} end
+  local perfil = GL.perfilInicioR12
+  if not perfil then return end
+  local function Numero(fn, ...)
+    if type(fn) ~= "function" then return nil end
+    local ok, n = pcall(fn, ...)
+    if ok and type(n) == "number" and n >= 0 and n < math.huge then return n end
+  end
+  local ms = Numero(debugprofilestop)
+  local kb = Numero(collectgarbage, "count")
+  if etapa == "inicio" then perfil.baseMS = ms end
+  perfil[etapa] = { ms = ms and perfil.baseMS and ms >= perfil.baseMS and (ms - perfil.baseMS) or nil, kb = kb }
+end
+
 local function Iniciar()
-  if type(GuiaAventureroDB) ~= "table" then GuiaAventureroDB = {} end
+  GL.MarcarInicioR12("inicio")
+  -- La preferencia puede llegar después de ejecutar los archivos Lua.
+  AUTOR = GL.L"Creado por JKRiveroF"; GL.AUTOR = AUTOR
+  if GL.RespaldoAntesDeMigrarR09 then GL.RespaldoAntesDeMigrarR09() end
+  GuiaAventureroDB = GL.PrepararGuardadosR09(GuiaAventureroDB)
   local db = GuiaAventureroDB
-  Migrar(db)
+  if not Migrar(db) then return end
+  GL.MarcarInicioR12("guardados")
   GL.temaActivo = AplicarTema(db.tema).id
   RUTA = ElegirRuta()
   if not RUTA then
     Mensaje(GL.L"no hay ninguna ruta instalada en la carpeta Rutas.")
+    GL.MarcarInicioR12("fallo")
     return
   end
-  if not CargarRuta(RUTA) then RUTA = nil; return end
+  if not CargarRuta(RUTA) then RUTA = nil; GL.MarcarInicioR12("fallo"); return end
   AdaptarARaza(RUTA)
   if GL.TraducirRuta then GL.TraducirRuta(RUTA) end   -- 9.3.5: en inglés (Idioma.lua)
   if GL.ProfesionesDelPersonaje then pcall(GL.ProfesionesDelPersonaje, RUTA) end   -- 9.5: las que has aprendido (Secundarias.lua)
   if db.ruta ~= RUTA.id then
     -- ruta nueva para este personaje: empezamos en la seccion de su nivel
-    db.ruta = RUTA.id
-    db.seccion = SeccionPorNivel(UnitLevel("player") or 1)
-    db.paso = 1
-    db.destino = 1
+    GL.CambiarProgresoRutaR09(db, RUTA.id, SeccionPorNivel(GL.NivelJugadorR14()) or 1)
     db.profesion = 1
   end
   -- 9.7.4: lo guardado puede venir raro (texto, decimales, negativos): se pasa a un número entero válido
   db.seccion, db.paso, db.destino = GL.EnteroGuardado(db.seccion), GL.EnteroGuardado(db.paso), GL.EnteroGuardado(db.destino)
   if not db.seccion or db.seccion < 1 or db.seccion > NumSecciones() then db.seccion = 1 end
   if not db.paso or db.paso < 1 or db.paso > #RUTA.secciones[db.seccion].pasos then db.paso = 1 end
-  if not db.destino or db.destino < 1 then db.destino = 1 end
+  local wp = RUTA.secciones[db.seccion].pasos[db.paso].wp or {}
+  if not db.destino or db.destino < 1 or db.destino > math.max(1, #wp) then db.destino = 1 end
+  local clave = db.seccion .. ":" .. db.paso
+  GL.BloqueoPasoR09(db.bloqueoPasoR09 == clave and clave or false)
   if not db.pestana then db.pestana = "entrenar" end
   if not db.modo then db.modo = "guia" end
-  if not db.profesion or not RUTA.profesiones[db.profesion] then db.profesion = 1 end
+  -- El índice cambia al aprender/olvidar otras profesiones; recuperar la selección por habilidad.
+  if db.profesionSkill then
+    local skill = GL.EnteroGuardado(db.profesionSkill)
+    db.profesion = 1
+    for i, prof in ipairs(RUTA.profesiones) do
+      if skill and prof.skill == skill then db.profesion = i; break end
+    end
+  else
+    db.profesion = GL.EnteroGuardado(db.profesion) or 1
+    if not RUTA.profesiones[db.profesion] then db.profesion = 1 end
+    db.profesionSkill = RUTA.profesiones[db.profesion] and RUTA.profesiones[db.profesion].skill
+  end
+  GL.MarcarInicioR12("ruta")
   TalentosDeMiNivel()
   ProfesionDeMiNivel()
   CrearFlecha()
+  GL._iniciandoPanelesR10 = true
   CrearVentana()
   GL.RUTA, GL.frame, GL.flecha = RUTA, frame, flecha
+  GL.MarcarInicioR12("ventana")
   for i = 1, #GL.alIniciar do
     local ok, err = pcall(GL.alIniciar[i])
     if not ok then
@@ -3531,45 +4139,79 @@ local function Iniciar()
       table.insert(GL.erroresCarga, GL.L"al iniciar: " .. "#" .. i .. ": " .. tostring(err))
     end
   end
+  GL.MarcarInicioR12("modulos")
+  GL._iniciandoPanelesR10 = nil
+  if not AbrirModo(db.modo) then AbrirModo("guia") end
   Mensaje(GL.L"cargada la ruta " .. RUTA.nombre .. " (" .. AUTOR .. GL.L"). /ga muestra u oculta la ventana." ..
     (db.auto == false and "" or GL.L" La guía avanza sola cuando ya tienes hechas las misiones de un paso (se quita en Ajustes)."))
   ProgramarSync()
+  GL.MarcarInicioR12("fin")
 end
 
 local eventos = CreateFrame("Frame")
 GL.Evento(eventos, "PLAYER_LOGIN")
+GL.Evento(eventos, "PLAYER_DEAD")
+GL.Evento(eventos, "PLAYER_ALIVE")
+GL.Evento(eventos, "PLAYER_UNGHOST")
 GL.Evento(eventos, "PLAYER_REGEN_DISABLED")
 GL.Evento(eventos, "PLAYER_REGEN_ENABLED")
 GL.Evento(eventos, "PLAYER_LEVEL_UP")
 GL.Evento(eventos, "SKILL_LINES_CHANGED")
 GL.Evento(eventos, "PLAYER_ENTERING_WORLD")
+GL.Evento(eventos, "PLAYER_LEAVING_WORLD")
+GL.Evento(eventos, "PLAYER_LOGOUT")
 GL.Evento(eventos, "QUEST_LOG_UPDATE")
 GL.Evento(eventos, "QUEST_ACCEPTED")
 GL.Evento(eventos, "QUEST_TURNED_IN")
 GL.Evento(eventos, "QUEST_REMOVED")
 GL.Evento(eventos, "ZONE_CHANGED_NEW_AREA")
 GL.Evento(eventos, "TAXIMAP_OPENED")
-GL.Evento(eventos, "BAG_UPDATE_DELAYED")
+GL.Evento(eventos, "BAG_UPDATE_DELAYED", "BAG_UPDATE")
+GL.Evento(eventos, "BANKFRAME_OPENED")
+GL.Evento(eventos, "BANKFRAME_CLOSED")
+GL.Evento(eventos, "PLAYERBANKSLOTS_CHANGED")
 GL.Evento(eventos, "SPELLS_CHANGED")
 GL.Evento(eventos, "LEARNED_SPELL_IN_SKILL_LINE")
+GL.Evento(eventos, "TRADE_SKILL_SHOW")
+GL.Evento(eventos, "TRADE_SKILL_UPDATE")
+GL.Evento(eventos, "CHAT_MSG_SKILL")
 eventos:SetScript("OnEvent", function(self, event, ...)
-  if event == "PLAYER_REGEN_DISABLED" then
+  if event == "PLAYER_LEAVING_WORLD" or event == "PLAYER_LOGOUT" then
+    GL._refrescoR14.mundo(false); GL._syncR14.mundo(false)
+    if GL.EventoBancoProfesion975 then pcall(GL.EventoBancoProfesion975, event) end
+    return
+  elseif event == "PLAYER_ENTERING_WORLD" then
+    GL._refrescoR14.mundo(true); GL._syncR14.mundo(true)
+    if GL.EventoBancoProfesion975 then pcall(GL.EventoBancoProfesion975, event) end
+    if RUTA and frame then GL.OFI.programar(); ProgramarSync() end
+    return
+  elseif event == "PLAYER_DEAD" or event == "PLAYER_ALIVE" or event == "PLAYER_UNGHOST" then
+    if RUTA and frame then ProgramarSync() end
+    return
+  elseif event == "PLAYER_REGEN_DISABLED" then
     if GL.ModoDiscretoCombate then GL.ModoDiscretoCombate(true) end
     return
   elseif event == "PLAYER_REGEN_ENABLED" then
     if GL.ModoDiscretoCombate then GL.ModoDiscretoCombate(false) end
     return
   elseif event == "PLAYER_LOGIN" then
+    if GL.InicializarGuardadosR13 then GL.InicializarGuardadosR13() end
+    if GL.EventoBancoProfesion975 then
+      local ok, err = pcall(GL.EventoBancoProfesion975, event)
+      if not ok then GL.Fallo("Banco/PLAYER_LOGIN", err) end
+    end
     Iniciar()
   elseif event == "TAXIMAP_OPENED" then
     pcall(GuardarVuelos)
     if RUTA and frame then ProgramarSync() end
-  elseif event == "BAG_UPDATE_DELAYED" then
-    -- los materiales de Profesiones cuentan lo que llevas en las bolsas
-    if frame and frame:IsShown() and GuiaAventureroDB.modo == "oficios" then ProgramarRefresco() end
+  elseif event == "BANKFRAME_OPENED" or event == "BANKFRAME_CLOSED" or event == "PLAYERBANKSLOTS_CHANGED" or event == "BAG_UPDATE_DELAYED" or event == "BAG_UPDATE" then
+    if GL.EventoBancoProfesion975 then GL.EventoBancoProfesion975(event) end
+    local db = GuiaAventureroDB
+    if frame and frame:IsShown() and db and (db.modo == "oficios" or db.modo == "biblioteca" or (db.modo == "mazmorras" and db.pestanaMaz == "bandas")) then ProgramarRefresco() end
   elseif event == "PLAYER_LEVEL_UP" then
     if not RUTA or not frame then return end
-    local nivel = tonumber((...)) or UnitLevel("player")
+    local nivel = GL.NivelJugadorR14((...))
+    if not nivel then ProgramarSync(); return end
     -- hechizos nuevos de este nivel por orden de prioridad (Instructor.lua); si no hay datos, el aviso de siempre
     local okE, entreno = pcall(function() return GL.MensajeEntrenamiento and GL.MensajeEntrenamiento(nivel) end)
     if okE and entreno then
@@ -3599,18 +4241,16 @@ eventos:SetScript("OnEvent", function(self, event, ...)
     -- hechizo aprendido: puede cerrar un paso de instructor y cambia la lista de Hechizos
     if RUTA and frame then
       ProgramarSync()
+      GL.OFI.programar()
       if frame:IsShown() and GuiaAventureroDB.modo == "guia" and GuiaAventureroDB.consejosAbiertos then ProgramarRefresco() end
     end
-  elseif event == "SKILL_LINES_CHANGED" then
-    if RUTA and frame and GL.OFI.reconstruir then GL.OFI.reconstruir() end   -- 9.5: aprendiste u olvidaste una profesión
-    if frame and frame:IsShown() and GuiaAventureroDB.modo == "oficios" then Refrescar() end
-    if RUTA and frame then ProgramarSync() end   -- por si el paso era aprender una profesión
+  elseif event == "SKILL_LINES_CHANGED" or event == "TRADE_SKILL_SHOW" or event == "TRADE_SKILL_UPDATE"
+      or event == "CHAT_MSG_SKILL" then
+    if RUTA and frame then GL.OFI.programar(); ProgramarSync() end
   else
     -- cambios en el diario de misiones: comprobar si el paso ya esta hecho
-    if event == "QUEST_TURNED_IN" then
-      local q = tonumber((...))
-      if q then entregadas[q] = true end
-      if GL.OlvidarImplicitas then GL.OlvidarImplicitas() end
+    if event == "QUEST_TURNED_IN" or event == "QUEST_ACCEPTED" or event == "QUEST_REMOVED" then
+      GL.CambioMisionR14(event, ...)
     end
     if RUTA and frame then ProgramarSync() end
   end
@@ -3685,7 +4325,7 @@ local function MostrarInforme(texto)
     local cerrar = CrearBoton(f, GL.L"Cerrar", function() f:Hide() end, nil, 24, "accion")
     cerrar:SetWidth(90)
     cerrar:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -14, 12)
-    if UISpecialFrames then table.insert(UISpecialFrames, "GuiaAventureroInforme") end
+    if UISpecialFrames then GL.RegistrarCierreEscapeR13("GuiaAventureroInforme") end
     f.editor, f.scroll = editor, scroll
     informe = f
   end
@@ -3761,7 +4401,7 @@ local function InformeDiagnostico()
     local t = {}
     for i = 1, #AUTOMATISMOS do
       local k = AUTOMATISMOS[i]
-      table.insert(t, k .. "=" .. ((db[k] ~= false) and GL.L"sí" or "no"))
+      table.insert(t, k .. "=" .. (((k == "autoVender" and db[k] == true) or (k ~= "autoVender" and db[k] ~= false)) and GL.L"sí" or "no"))
     end
     Linea(GL.L"Automatismos: " .. table.concat(t, ", "))
     Linea(GL.L"Guardado de este personaje: esquema " .. tostring(db.esquema) .. GL.L" de " .. ESQUEMA ..
@@ -3844,6 +4484,16 @@ local function InformeDiagnostico()
       propia = GL.L", de ellos Guía del Aventurero " .. string.format("%.1f MB", leer("GuiaAventurero") / 1024)
     end
     Linea(GL.L"Memoria de Lua de toda la interfaz: " .. string.format("%.1f MB", collectgarbage("count") / 1024) .. propia)
+    local perfil = GL.perfilInicioR12
+    if perfil then
+      Linea(GL.L"Inicio (tiempo acumulado; memoria Lua de toda la interfaz):")
+      for _, fase in ipairs({ {"inicio", "Inicio"}, {"guardados", "Datos guardados"}, {"ruta", "Ruta"}, {"ventana", "Ventana"}, {"modulos", "Módulos"}, {"fin", "Fin"}, {"fallo", "Fallo"} }) do
+        local m = perfil[fase[1]]
+        if m then
+          Linea("  " .. GL.L(fase[2]) .. ": " .. (m.ms and string.format("%.1f ms", m.ms) or "?") .. " / " .. (m.kb and string.format("%.1f MB", m.kb / 1024) or "?"))
+        end
+      end
+    end
   end)
   Linea(GL.L"Avisos de error en el chat: " .. (GL.depurar and GL.L"activados" or GL.L"desactivados") ..
     GL.L" (/ga depurar errores los activa o quita)")
@@ -3965,6 +4615,19 @@ GL.comandos["atascado"] = Atascado
 ------------------------------------------------------------------------
 -- Comandos
 ------------------------------------------------------------------------
+-- R10: los accesos explícitos a la guía deben cambiar de tamaño, no superponer ventanas.
+function GL.MostrarVentanaCompletaR10()
+  local db = GuiaAventureroDB
+  if not frame or not db then return false end
+  if (db.compacto or db.franja) and GL.PonerTamano then
+    GL.PonerTamano("completo")
+  else
+    db.oculto = false
+    frame:Show()
+  end
+  return true
+end
+
 SLASH_GUIAAVENTURERO1 = "/ga"
 SLASH_GUIAAVENTURERO2 = "/guialeveo"   -- 9.5: el de antes sigue valiendo
 SLASH_GUIAAVENTURERO3 = "/gleveo"
@@ -3994,7 +4657,7 @@ SlashCmdList["GUIAAVENTURERO"] = function(msg)
     db.rutaElegida = idRuta
     Mensaje(GL.L"ruta '" .. idRuta .. GL.L"' elegida. Escribe /reload para cargarla.")
   elseif msg == "nivel" then
-    IrAMiNivel(); frame:Show(); db.oculto = false
+    IrAMiNivel(); GL.MostrarVentanaCompletaR10()
   elseif msg == "sig" then
     Siguiente()
   elseif msg == "ant" then
@@ -4004,12 +4667,12 @@ SlashCmdList["GUIAAVENTURERO"] = function(msg)
   elseif msg == "flecha" then
     AlternarFlecha()
   elseif msg == "talentos" then
-    frame:Show(); db.oculto = false; AbrirModo("talentos")
+    GL.MostrarVentanaCompletaR10(); AbrirModo("talentos")
   elseif msg == "oficios" or msg == "profesiones" then
-    frame:Show(); db.oculto = false; AbrirModo("oficios")
+    GL.MostrarVentanaCompletaR10(); AbrirModo("oficios")
   elseif msg == "preparar" then
     ui.prepForzada = true
-    frame:Show(); db.oculto = false; AbrirModo("guia")
+    GL.MostrarVentanaCompletaR10(); AbrirModo("guia")
   elseif msg == "ignorados" then
     local n = 0
     for _ in pairs(type(db.ignorados) == "table" and db.ignorados or {}) do n = n + 1 end
@@ -4019,9 +4682,9 @@ SlashCmdList["GUIAAVENTURERO"] = function(msg)
   elseif msg == "automatismos" then
     if GL.AbrirAutomatismos then GL.AbrirAutomatismos() end
   elseif msg == "personaje" then
-    frame:Show(); db.oculto = false; AbrirModo("personaje")
+    GL.MostrarVentanaCompletaR10(); AbrirModo("personaje")
   elseif msg == "exploracion" or msg == "exploración" then
-    frame:Show(); db.oculto = false; AbrirModo("exploracion")
+    GL.MostrarVentanaCompletaR10(); AbrirModo("exploracion")
   elseif msg:match("^idioma") or msg:match("^language") then   -- 9.3.5
     if GL.ComandoIdioma then GL.ComandoIdioma(msg:match("^%S+%s+(%S+)")) end
   elseif msg == "reset" then
@@ -4030,7 +4693,10 @@ SlashCmdList["GUIAAVENTURERO"] = function(msg)
     frame:SetWidth(ANCHO); frame:SetHeight(ALTO)
     flecha:ClearAllPoints(); flecha:SetPoint("TOP", UIParent, "TOP", 0, -120)
     for i = 1, #GL.alReiniciar do pcall(GL.alReiniciar[i]) end
-    IrAMiNivel(); frame:Show(); db.oculto = false
+    -- Restablecer ventanas no significa reiniciar la ruta ni su paso manual.
+    if GL.PonerTamano then GL.PonerTamano("completo")
+    else frame:Show(); db.oculto = false end
+    if GL.AplicarAjustes then GL.AplicarAjustes() end
     Mensaje(GL.L"ventanas reiniciadas.")
   elseif msg == "ayuda" then
     Mensaje(GL.L"/ga (mostrar/ocultar), nivel, sig, ant, auto, flecha, talentos, oficios, compacto, opciones, " ..
@@ -4048,8 +4714,8 @@ end
 local discretoCombate = { activo = false, ventana = false, flecha = false }
 function GL.ModoDiscretoCombate(enCombate)
   local db = GuiaAventureroDB or {}
-  if db.discretoCombate ~= true then return end
   if enCombate then
+    if db.discretoCombate ~= true then return end
     if discretoCombate.activo then return end
     discretoCombate.activo = true
     discretoCombate.ventana = frame and frame:IsShown() or false
@@ -4059,7 +4725,7 @@ function GL.ModoDiscretoCombate(enCombate)
   else
     if not discretoCombate.activo then return end
     discretoCombate.activo = false
-    if discretoCombate.ventana and frame and not db.oculto then frame:Show() end
+    if discretoCombate.ventana and frame and not db.oculto and not db.compacto and not db.franja then frame:Show() end
     if discretoCombate.flecha and flecha and db.flecha ~= false then flecha:Show() end
     discretoCombate.ventana, discretoCombate.flecha = false, false
   end
@@ -4069,7 +4735,7 @@ end
 function GL.AlternarVentana()
   if not frame then return end
   local db = GuiaAventureroDB
-  if frame:IsShown() then
+  if frame:IsShown() or (discretoCombate.activo and discretoCombate.ventana and not db.oculto) then
     frame:Hide(); db.oculto = true
   else
     frame:Show(); db.oculto = false
@@ -4157,18 +4823,64 @@ end
 -- 7.9.1: engancha una función al tooltip de objetos sin romper el archivo que la pide.
 -- Prueba OnTooltipSetItem y, si el cliente no lo tiene, TooltipDataProcessor. Lo que falle queda en el informe.
 GL.erroresCarga = GL.erroresCarga or {}
-function GL.EngancharTooltipObjeto(fn, nombre)
-  if not GameTooltip then return false end
-  local ok = false
-  if GameTooltip.HasScript and GameTooltip.HookScript then
-    local okH, tiene = pcall(GameTooltip.HasScript, GameTooltip, "OnTooltipSetItem")
-    if okH and tiene then ok = pcall(GameTooltip.HookScript, GameTooltip, "OnTooltipSetItem", fn) end
+do
+  (function()
+  local registrados = setmetatable({}, { __mode = "k" })
+  local function Publico(v)
+    if type(issecretvalue) ~= "function" then return true end
+    local ok, secreto = pcall(issecretvalue, v)
+    return ok and not secreto
   end
-  if not ok and TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall and Enum and Enum.TooltipDataType then
-    ok = pcall(TooltipDataProcessor.AddTooltipPostCall, Enum.TooltipDataType.Item, function(t) if t == GameTooltip then fn(t) end end)
+  -- Comprobar el contenido real, no solo el enlace: el mismo objeto puede
+  -- volver a mostrarse en un tooltip reconstruido o limpiado por otro addon.
+  local function TieneSeccion(t, cabecera, prefijo)
+    if type(cabecera) ~= "string" or not Publico(cabecera) or cabecera == "" then return false end
+    if type(t.GetName) ~= "function" or type(t.NumLines) ~= "function" then return false end
+    local nombre, n = t:GetName(), t:NumLines()
+    if not Publico(nombre) or not Publico(n) or type(nombre) ~= "string" or type(n) ~= "number" or n < 0 or n > 256 then return false end
+    for i = 1, n do
+      local linea = _G[nombre .. "TextLeft" .. i]
+      local texto = linea and linea.GetText and linea:GetText()
+      if Publico(texto) and type(texto) == "string" and (texto == cabecera or (prefijo and texto:sub(1, #cabecera + 2) == cabecera .. "  ")) then return true end
+    end
+    return false
   end
-  if not ok then table.insert(GL.erroresCarga, (nombre or "tooltip") .. GL.L": el juego no deja ampliar el tooltip de objetos") end
-  return ok
+  function GL.EngancharTooltipObjeto(fn, nombre, cabecera, prefijo)
+    if type(fn) ~= "function" then return false end
+    if registrados[fn] then return true end
+    local ocupado = false
+    local function Ejecutar(t)
+      if ocupado or not t or t ~= GameTooltip then return end
+      ocupado = true
+      local bien, err = pcall(function()
+        local titulo = type(cabecera) == "function" and cabecera() or cabecera
+        if not TieneSeccion(t, titulo, prefijo) then fn(t) end
+      end)
+      ocupado = false
+      if not bien and GL.Fallo then pcall(GL.Fallo, nombre or "tooltip", err) end
+    end
+    local ok, resultado = false, nil
+    local t = GameTooltip
+    if t and type(t.HasScript) == "function" and type(t.HookScript) == "function" then
+      local okH, tiene = pcall(t.HasScript, t, "OnTooltipSetItem")
+      if okH and Publico(tiene) and (tiene == true or tiene == 1) then
+        ok, resultado = pcall(t.HookScript, t, "OnTooltipSetItem", Ejecutar)
+      end
+    end
+    ok = ok and Publico(resultado) and resultado ~= false
+    if not ok and TooltipDataProcessor and type(TooltipDataProcessor.AddTooltipPostCall) == "function" and Enum and Enum.TooltipDataType and Enum.TooltipDataType.Item ~= nil then
+      ok, resultado = pcall(TooltipDataProcessor.AddTooltipPostCall, Enum.TooltipDataType.Item, Ejecutar)
+      ok = ok and Publico(resultado) and resultado ~= false
+    end
+    if ok then registrados[fn] = true
+    else
+      local aviso = (nombre or "tooltip") .. GL.L": el juego no deja ampliar el tooltip de objetos"
+      for _, texto in ipairs(GL.erroresCarga) do if texto == aviso then return false end end
+      table.insert(GL.erroresCarga, aviso)
+    end
+    return ok
+  end
+  end)()
 end
 GL.MostrarInforme, GL.InformeDiagnostico, GL.TextoAtascos, GL.FotoPaso = MostrarInforme, InformeDiagnostico, TextoAtascos, FotoPaso   -- 9.1
 GL.SeccionPorNivel, GL.PuedeSaltar, GL.Sincronizar = SeccionPorNivel, PuedeSaltar, Sincronizar   -- 9.1
@@ -4192,9 +4904,15 @@ GL.CambiarTema = function(id)
   if frame then Refrescar() end
 end
 -- Opciones cambia el tamano del texto del paso sin recargar.
-GL.AplicarTamTexto = function()
-  if ui.pasoTexto and ui.fuentePaso then ui.pasoTexto:SetFont(ui.fuentePaso, TamTextoPaso(), ui.opcionesPaso) end
+GL.AplicarTamTexto = function(fuente, opciones)
+  if not ui.pasoTexto then return false end
+  if fuente == nil then fuente, opciones = ui.fuentePaso, ui.opcionesPaso end
+  if type(fuente) ~= "string" or fuente == "" then return false end
+  local ok, puesto = pcall(ui.pasoTexto.SetFont, ui.pasoTexto, fuente, TamTextoPaso(), opciones)
+  if not ok or puesto == false then return false end
+  ui.fuentePaso, ui.opcionesPaso = fuente, opciones
   if frame and frame:IsShown() then Refrescar() end
+  return true
 end
 GL.ICONO_ACCION, GL.ICONO_HECHO, GL.ICONO_LUGAR, GL.INTERROGANTE = ICONO_ACCION, ICONO_HECHO, ICONO_LUGAR, INTERROGANTE
 GL.RUTA_FLECHA, GL.BLANCO8, GL.BORDE_VENTANA, GL.AUTOR = RUTA_FLECHA, BLANCO8, BORDE_VENTANA, AUTOR
@@ -4202,9 +4920,12 @@ GL.MARGEN, GL.ARRIBA, GL.ABAJO, GL.ALTO_SUB = MARGEN, ARRIBA, ABAJO, ALTO_SUB
 GL.PosicionJugador, GL.Vector = PosicionJugador, Vector
 GL.AUTOMATISMOS = AUTOMATISMOS
 -- 6.2: desvío (la flecha va a un destino sin cambiar de paso) y saltar al paso de un destino
+GL.DesvioActual = function() return destinoExtra end
 GL.SeguirDesvio = function(d)
+  if d ~= nil and not GL.CoordenadasDestinoR10(d) then return false end
   destinoExtra = d
   if frame then Refrescar() end
+  return true
 end
 GL.AbrirProfesion976 = function(skill)
   if not (RUTA and RUTA.profesiones and GuiaAventureroDB) then return end
@@ -4218,8 +4939,8 @@ GL.IrAPaso = function(s, p, i)
   local db = GuiaAventureroDB
   db.seccion, db.paso, db.destino = s, p, i or 1
   destinoExtra = nil
-  bloqueo = PuedeSaltar(s, p) and (s .. ":" .. p) or false   -- como al ir a mano con Anterior
-  if frame then frame:Show(); db.oculto = false; AbrirModo("guia") end
+  GL.BloqueoPasoR09(PuedeSaltar(s, p) and (s .. ":" .. p) or false)   -- como al ir a mano con Anterior
+  if frame then GL.MostrarVentanaCompletaR10(); AbrirModo("guia") end
 end
 -- 9.1: mover la guía a un paso sin abrir la ventana (Recalcular.lua); la sincronización sigue luego como siempre
 GL.SaltarA = function(s, p, i)
@@ -4227,7 +4948,7 @@ GL.SaltarA = function(s, p, i)
   if not (RUTA and RUTA.secciones[s] and RUTA.secciones[s].pasos[p]) then return false end
   db.seccion, db.paso, db.destino = s, p, i or 1
   destinoExtra = nil
-  bloqueo = false
+  GL.BloqueoPasoR09(false)
   ProgramarSync()
   return true
 end

@@ -21,6 +21,47 @@ local function TextoSeguro(v)
   if Publico(v) and type(v) == "string" and v ~= "" then return v end
 end
 
+local function IdValido(v)
+  return Publico(v) and type(v) == "number" and v > 0 and v < math.huge and v % 1 == 0
+end
+
+-- Una fila sin ID conserva su nombre, pero nunca se convierte en un enlace inventado.
+-- Solo se eliminan duplicados exactos: un mismo objeto con otro origen o tasa sigue siendo otra asociación.
+function GL.NormalizarBotin977(objetos)
+  local out, grupos = {}, {}
+  if type(objetos) ~= "table" then return out end
+  for _, o in ipairs(objetos) do
+    if type(o) == "table" and (IdValido(o.id) or TextoSeguro(o.n)) then
+      local fila = {}
+      for k,v in pairs(o) do fila[k] = v end
+      if not IdValido(fila.id) then fila.id = nil; fila.pendiente977 = true end
+      if not Publico(fila.p) or type(fila.p) ~= "number" or not (fila.p >= 0 and fila.p <= 100) then fila.p = nil end
+      local clave = fila.id or fila.n
+      local grupo = grupos[clave] or {}; grupos[clave] = grupo
+      local repetida = false
+      for _, anterior in ipairs(grupo) do
+        local igual = true
+        for k,v in pairs(fila) do if anterior[k] ~= v then igual = false; break end end
+        if igual then for k,v in pairs(anterior) do if fila[k] ~= v then igual = false; break end end end
+        if igual then repetida = true; break end
+      end
+      if not repetida then grupo[#grupo+1] = fila; out[#out+1] = fila end
+    end
+  end
+  return out
+end
+
+function GL.BotinesDeJefes977(jefes)
+  local out = {}
+  for _, j in ipairs(jefes or {}) do
+    for _, o in ipairs(GL.NormalizarBotin977(j.botin)) do
+      o.origenGrupo977 = j.n
+      out[#out+1] = o
+    end
+  end
+  return GL.NormalizarBotin977(out)
+end
+
 local function TexturaSegura(v)
   if not Publico(v) then return nil end
   if type(v) == "number" and v > 0 and v < math.huge and v % 1 == 0 then return v end
@@ -44,6 +85,25 @@ local function Info(id)
   return info
 end
 
+-- La etiqueta visible puede usar el catálogo; el enlace y tooltip siguen siendo nativos.
+local function NombreBotinR11(o, info)
+  local nativo = info and TextoSeguro(info.nombre)
+  local base = TextoSeguro(o.nombreOriginal977) or TextoSeguro(o.n)
+  if GL.ingles == GL.clienteIngles and nativo then return nativo end
+  if base then
+    local traducido = L(base)
+    if not GL.ingles or traducido ~= base then return traducido end
+    if nativo and GL.clienteIngles then return nativo end
+    if GL.ingles then return (nativo or base) .. " (" .. L"traducción sin confirmar" .. ")" end
+    return base
+  end
+  if nativo then
+    return nativo .. (GL.ingles ~= GL.clienteIngles and (" (" .. L"idioma del cliente" .. ")") or "")
+  end
+  return L"Objeto " .. tostring(o.id or "?")
+end
+GL.NombreBotinR11 = NombreBotinR11
+
 local function ConsultarIcono(f, id)
   if type(f) ~= "function" then return nil end
   local ok, t = pcall(f, id)
@@ -63,23 +123,45 @@ local function ColorCalidad(q)
 end
 
 -- útil (lo puedes llevar) y mejor (puntúa más que lo que llevas en esa ranura)
-local function EsUtil(id, infoConsultada)
-  if type(id) ~= "number" or id <= 0 then return false, false end
+local function EvaluarBotin(id, infoConsultada)
+  if not IdValido(id) then return false, false end
   local u = GL.EquipoUtil
   local equipo = GL.RUTA and GL.RUTA.equipo
-  if not u or not equipo then return false, false end
+  if not u or not equipo then return false, false, false, false, "perfil" end
   local i = infoConsultada
   if i == nil then i = Info(id) end
   local enlace = i and i.enlace
   local info = enlace and u.InfoObjeto(enlace)
-  if not info or not u.Usable(info, equipo) then return false, false end
+  if not info then return false, false, false, true end
+  local nivel = type(UnitLevel) == "function" and UnitLevel("player") or nil
+  if not IdValido(nivel) then return false, false, false, false, "nivel" end
+  if not u.Usable(info, equipo, nivel) then return false, false end
+  local requisitos = u.RequisitosEspeciales and u.RequisitosEspeciales(enlace, info)
+  if requisitos == false then return false, false end
+  local aviso = requisitos ~= true and "requisitos" or nil
   local ranuras = u.RANURAS and u.RANURAS[info.ranura or ""]
-  if not ranuras or not u.PuntuacionEquipada then return true, false end
+  if not ranuras or not u.CosteSustitucion or not u.DiferenciaEquipo then return true, false, false, false, aviso or "comparacion" end
   local pesos = equipo.pesos or {}
-  local suya, mia = u.Puntuar(enlace, info, pesos), u.CosteSustitucion(info, equipo, pesos)
-  if mia == nil or suya == nil then return true, false, false end
-  return true, suya > mia, suya < mia   -- 9.4.2: también si es peor que lo que llevas
+  local suya = u.Puntuar(enlace, info, pesos)
+  local mia, _, piezas = u.CosteSustitucion(info, equipo, pesos)
+  if u.ComparacionParcial and u.ComparacionParcial(info, piezas) then return true, false, false, false, "parcial" end
+  local dif = u.DiferenciaEquipo(suya, mia)
+  if dif == nil then return true, false, false, false, aviso or "comparacion" end
+  return true, dif > 0, dif < 0, false, aviso
 end
+local function EsUtil(id, infoConsultada)
+  local ok, util, mejor, peor, pendiente, aviso = pcall(EvaluarBotin, id, infoConsultada)
+  if not ok then return false, false, false, false, "comparacion" end
+  return util, mejor, peor, pendiente, aviso
+end
+local function AvisoBotin(aviso)
+  if aviso == "requisitos" then return L"Requisitos especiales sin confirmar" end
+  if aviso == "parcial" then return L"Estadísticas o efectos sin valorar" end
+  if aviso == "nivel" then return L"Nivel del personaje sin confirmar" end
+  if aviso == "perfil" then return L"Perfil de equipo no disponible" end
+  if aviso == "comparacion" then return L"Comparación de equipo no disponible" end
+end
+GL.AvisoBotin977 = AvisoBotin
 GL.BotinUtil = EsUtil
 
 local function CrearFila(b)
@@ -99,9 +181,18 @@ local function CrearFila(b)
   f.nombre:SetPoint("RIGHT", f.pct, "LEFT", -4, 0)
   GL.UnaLinea(f.nombre)
   f:SetScript("OnEnter", function(self)
-    if not GameTooltip or not self.id then return end
+    if not GameTooltip or not self.objeto then return end
+    local o = self.objeto
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    if GameTooltip.SetItemByID then GameTooltip:SetItemByID(self.id) else GameTooltip:SetHyperlink("item:" .. self.id) end
+    if self.id then
+      if GameTooltip.SetItemByID then GameTooltip:SetItemByID(self.id) else GameTooltip:SetHyperlink("item:" .. self.id) end
+    elseif GameTooltip.SetText then GameTooltip:SetText(NombreBotinR11(o)) end
+    if o.origenGrupo977 then GameTooltip:AddLine(L(o.origenGrupo977), 1, 1, 1, true) end
+    if o.origen977 then GameTooltip:AddLine(L(o.origen977), 1, 1, 1, true) end
+    if o.pendiente977 then GameTooltip:AddLine(L"Asociación pendiente de contraste", 1, 0.8, 0, true) end
+    if self.aviso then GameTooltip:AddLine(AvisoBotin(self.aviso), 1, 0.8, 0, true) end
+    if o.mision977 then GameTooltip:AddLine(L"Objeto de misión", 1, 1, 1, true) end
+    if not self.id then GameTooltip:AddLine(L"Identificador de objeto sin confirmar.", 1, 0.8, 0, true) end
     GameTooltip:Show()
   end)
   f:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
@@ -139,19 +230,25 @@ GL.CrearBloqueBotin = function(padre)
     if self.alCambiar then self.alCambiar() else self:Mostrar(self.objetos) end
   end)
   b.Mostrar = function(self, objetos)
-    if objetos ~= self.objetos then self.desde = 0 end
-    self.objetos = objetos or {}
-    local lista, utiles = {}, 0
+    if objetos ~= self.objetos and objetos ~= self.fuenteObjetos then self.desde = 0 end
+    if objetos ~= self.objetos then self.fuenteObjetos = objetos end
+    self.objetos = GL.NormalizarBotin977(objetos)
+    local lista, utiles, pendientes, sinID, sinComparar = {}, 0, 0, 0, 0
     for i = 1, #self.objetos do
       local o = self.objetos[i]
       local util, mejor, peor = false, false, false
-      local info
+      local info, aviso
       if o.id then
         info = Info(o.id) or false
-        util, mejor, peor = EsUtil(o.id, info)
+        local pendiente
+        util, mejor, peor, pendiente, aviso = EsUtil(o.id, info)
+        if pendiente or not info or not info.enlace then pendientes = pendientes + 1 end
+        if aviso and not util then sinComparar = sinComparar + 1 end
       end
+      if not o.id then sinID = sinID + 1 end
+      if o.mision977 then mejor, peor = false, false end
       if util then utiles = utiles + 1 end
-      if self.modo == "todo" or util then table.insert(lista, { o = o, mejor = mejor, peor = peor, info = info }) end
+      if self.modo == "todo" or util then table.insert(lista, { o = o, mejor = mejor, peor = peor, info = info, aviso = aviso }) end
     end
     self.todo.texto:SetText(L"Todo el botín (" .. #self.objetos .. ")")
     self.util.texto:SetText(L"Útil para ti (" .. utiles .. ")")
@@ -167,11 +264,11 @@ GL.CrearBloqueBotin = function(padre)
       if not f then f = CrearFila(self); self.filas[i] = f end
       local o = lista[i].o
       local info = lista[i].info
-      f.id, f.enlace = o.id, info and info.enlace
+      f.id, f.enlace, f.objeto, f.aviso = o.id, info and info.enlace, o, lista[i].aviso
       f.icono:SetTexture(o.id and Icono(o.id, info) or "Interface\\Icons\\INV_Misc_QuestionMark")
       local tipo = info and ((info.ranura and info.ranura ~= "" and _G[info.ranura]) or info.subtipo) or nil
-      f.nombre:SetText((info and (ColorCalidad(info.calidad) .. info.nombre .. C.FIN) or (o.n and ("|cffffffff" .. o.n .. C.FIN)) or (C.GRIS .. L"Objeto " .. tostring(o.id or "?") .. C.FIN)) ..
-        (type(tipo) == "string" and (C.GRIS .. "  " .. tipo .. C.FIN) or "") .. (o.origen977 and (C.GRIS .. " — " .. L(o.origen977) .. C.FIN) or "") .. (lista[i].mejor and (C.VERDE .. L"  ▲ mejor" .. C.FIN) or "") .. (lista[i].peor and ("|cfff05050" .. L"  ▼ peor" .. C.FIN) or ""))
+      f.nombre:SetText((info and (ColorCalidad(info.calidad) .. NombreBotinR11(o, info) .. C.FIN) or (o.n and ("|cffffffff" .. NombreBotinR11(o) .. C.FIN)) or (C.GRIS .. L"Objeto " .. tostring(o.id or "?") .. C.FIN)) ..
+        (type(tipo) == "string" and (C.GRIS .. "  " .. tipo .. C.FIN) or "") .. (o.origenGrupo977 and (C.GRIS .. " — " .. L(o.origenGrupo977) .. C.FIN) or "") .. (o.origen977 and (C.GRIS .. " — " .. L(o.origen977) .. C.FIN) or "") .. (o.pendiente977 and (C.AMARILLO .. " [?]" .. C.FIN) or "") .. (o.mision977 and (C.GRIS .. " — " .. L"Objeto de misión" .. C.FIN) or "") .. (lista[i].aviso and (C.AMARILLO .. " — " .. AvisoBotin(lista[i].aviso) .. C.FIN) or "") .. (lista[i].mejor and ((lista[i].aviso and C.AMARILLO .. " · " .. L"posible mejora" or C.VERDE .. L"  ▲ mejor") .. C.FIN) or "") .. (lista[i].peor and not lista[i].aviso and ("|cfff05050" .. L"  ▼ peor" .. C.FIN) or ""))
       f.pct:SetText(C.GRIS .. (o.p and (o.p .. " %") or "") .. C.FIN)
       f:ClearAllPoints()
       f:SetPoint("TOPLEFT", self, "TOPLEFT", 4, y)
@@ -181,9 +278,18 @@ GL.CrearBloqueBotin = function(padre)
     end
     local txt = ""
     if #self.objetos == 0 then txt = C.GRIS .. L"No se conoce botín propio confirmado. El contenido de Forever pendiente de verificar se incorporará en próximas versiones." .. C.FIN
-    elseif #lista == 0 then txt = C.GRIS .. L"Nada útil para tu clase." .. C.FIN
+    elseif #lista == 0 and pendientes == 0 and sinID == 0 then txt = C.GRIS .. L"Nada útil para tu clase." .. C.FIN
     elseif #completa > MAX_FILAS then
       txt = C.GRIS .. (self.desde + 1) .. "-" .. (self.desde + #lista) .. L" de " .. #completa .. L" (rueda del ratón)" .. C.FIN
+    end
+    if pendientes > 0 then
+      txt = txt .. (txt ~= "" and " — " or "") .. C.GRIS .. L"Datos de botín pendientes de cargar." .. C.FIN
+    end
+    if sinComparar > 0 then
+      txt = txt .. (txt ~= "" and " — " or "") .. C.GRIS .. L"Comparación de equipo no disponible" .. C.FIN
+    end
+    if sinID > 0 then
+      txt = txt .. (txt ~= "" and " — " or "") .. C.GRIS .. L"Identificador de objeto sin confirmar." .. C.FIN
     end
     self.vacio:ClearAllPoints()   -- 9.4.2: debajo de las filas (con la rueda, aquí va «1-22 de 192»)
     self.vacio:SetPoint("TOPLEFT", self, "TOPLEFT", 8, y - 1)
@@ -209,7 +315,7 @@ GL.VerBotin = function(titulo, objetos)
     ven:RegisterForDrag("LeftButton")
     ven:SetScript("OnDragStart", function(self) self:StartMoving() end)
     ven:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
-    if UISpecialFrames then table.insert(UISpecialFrames, "GuiaAventureroBotin") end   -- 9.7.6: Esc la cierra
+    if UISpecialFrames then GL.RegistrarCierreEscapeR13("GuiaAventureroBotin") end   -- 9.7.6: Esc la cierra
     if GL.Caja and GL.COLOR then GL.Caja(ven, { 0.04, 0.05, 0.07, 0.97 }, GL.COLOR.botonBorde) end
     if GL.Acento then GL.Acento(ven, 2) end
     ven.titulo = GL.Texto(ven, "GameFontNormal")
@@ -238,7 +344,11 @@ local evBotin = CreateFrame("Frame")
 local pendienteBotin = false
 local bloquesPendientes = {}
 if GL.Evento then GL.Evento(evBotin, "GET_ITEM_INFO_RECEIVED") else pcall(evBotin.RegisterEvent, evBotin, "GET_ITEM_INFO_RECEIVED") end
-evBotin:SetScript("OnEvent", function(_, _, id, exito)
+for _, evento in ipairs({"PLAYER_EQUIPMENT_CHANGED", "PLAYER_LEVEL_UP", "SPELLS_CHANGED", "PLAYER_TALENT_UPDATE", "UPDATE_FACTION", "SKILL_LINES_CHANGED"}) do
+  if GL.Evento then GL.Evento(evBotin, evento) else pcall(evBotin.RegisterEvent, evBotin, evento) end
+end
+evBotin:SetScript("OnEvent", function(_, evento, id, exito)
+  if evento ~= "GET_ITEM_INFO_RECEIVED" then id, exito = nil, nil end
   -- Un evento de otro objeto no necesita repintar los paneles de botín.
   if not Publico(id) then id = nil end
   if not Publico(exito) then exito = nil end

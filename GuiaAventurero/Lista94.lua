@@ -240,7 +240,7 @@ function GL.VentanaLista(clave, titulo, ancho, alto)
     self.cuerpo:SetPoint("TOPLEFT", self, "TOPLEFT", 12, si and -60 or -34)
     self.cuerpo:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -12, 10)
   end
-  if UISpecialFrames then table.insert(UISpecialFrames, v:GetName()) end
+  if UISpecialFrames then GL.RegistrarCierreEscapeR13(v:GetName()) end
   v:Hide()
   ventanas[clave] = v
   return v

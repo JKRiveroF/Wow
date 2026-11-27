@@ -22,18 +22,7 @@ local sel = nil                  -- 6.2: misión pulsada (id), con los botones S
 ------------------------------------------------------------------------
 -- Mapas de la zona del jugador: el suyo y sus padres hasta el continente (sin incluirlo).
 local function MapasDeMiZona()
-  local mapas = {}
-  if not (C_Map and C_Map.GetBestMapForUnit) then return mapas end
-  local m = GL.Seguro(C_Map.GetBestMapForUnit("player"))
-  local vueltas = 0
-  while m and m > 0 and vueltas < 6 do
-    local info = C_Map.GetMapInfo and C_Map.GetMapInfo(m)
-    if not info or (info.mapType and info.mapType <= 2) then break end   -- 0 cosmos, 1 mundo, 2 continente
-    mapas[m] = true
-    m = info.parentMapID
-    vueltas = vueltas + 1
-  end
-  return mapas
+  return GL.MapasZonaR14()
 end
 
 -- "Recoger: Los enanos modistos (Sten Brazofuerte)" -> "Los enanos modistos"
@@ -399,8 +388,8 @@ GL.EstadoHogar = EstadoHogar
 
 local function Refrescar()
   if not panel or not panel:IsVisible() then return end
-  local zona = (GetZoneText and GetZoneText()) or ""
-  local sub = (GetSubZoneText and GetSubZoneText()) or ""
+  local zona = GL.ZonaTextoR14(GetZoneText)
+  local sub = GL.ZonaTextoR14(GetSubZoneText)
   local mapas = MapasDeMiZona()
   local clave = zona
   for m in pairs(mapas) do clave = clave .. ":" .. m end
@@ -805,8 +794,8 @@ local function ExploracionClara()
     return true
   end
   panel:Hide()
-  local zona = (GetZoneText and GetZoneText()) or ""
-  local sub = (GetSubZoneText and GetSubZoneText()) or ""
+  local zona = GL.ZonaTextoR14(GetZoneText)
+  local sub = GL.ZonaTextoR14(GetSubZoneText)
   local mapas = MapasDeMiZona()
   -- misiones de la guía en tu zona (sin tocar la lista de la vista de siempre)
   local guardada = lista
@@ -857,17 +846,7 @@ ui.Clara = ExploracionClara
 
 table.insert(GL.alIniciar, CrearPanel)
 
--- 6.9: al abrir el mapa de vuelo hablando con un PNJ, ese punto de vuelo queda activado
-local ev = CreateFrame("Frame")
-GL.Evento(ev, "TAXIMAP_OPENED")
-ev:SetScript("OnEvent", function()
-  local db = GuiaAventureroDB
-  local nombre = UnitName and UnitName("npc")
-  if type(db) == "table" and type(nombre) == "string" and nombre ~= "" then
-    db.vuelos = db.vuelos or {}
-    db.vuelos[nombre] = true
-  end
-end)
+-- El registro del maestro se centraliza en Vuelos94.lua; no inferir descubrimientos por cualquier nombre de PNJ.
 GL._vuelos = function() return VUELOS end
 GL._exploUI = ui   -- 9.0: Secciones9.lua pone el botón Tu viaje
 GL._zonas = { Cerca = function(v) modoCerca, modoTodas, zonaFija, claveZona = v, false, nil, nil end, Lista = function() return lista end,

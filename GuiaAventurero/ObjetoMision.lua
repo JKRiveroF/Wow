@@ -12,7 +12,7 @@ local C = GL.colores
 local CERCA = 219   -- yardas
 
 local function DB() return GuiaAventureroDB or {} end
-local function EnCombate() return InCombatLockdown and InCombatLockdown() end
+local function EnCombate() return not (GL.AccionProtegidaPermitidaR13 and GL.AccionProtegidaPermitidaR13()) end
 
 local function Bolsa(b, s)
   if C_Container and C_Container.GetContainerItemInfo then
@@ -107,6 +107,10 @@ end
 GL.ObjetoDeMisionAhora = Elegir
 
 local boton
+local enMundoR14 = true
+local function ContextoObjetoR14()
+  return enMundoR14 and GL.PersonajeVivoR14 and GL.PersonajeVivoR14()
+end
 local function Crear()
   boton = CreateFrame("Button", "GuiaAventureroObjetoMision", UIParent, "SecureActionButtonTemplate")
   boton:SetSize(36, 36)
@@ -135,11 +139,27 @@ local function Crear()
   boton:Hide()
 end
 
-local function Actualizar()
+local function OcultarObjetoR14()
+  if not boton then return end
+  local teniaAccion = boton.id ~= nil or boton:IsShown()
+  boton:Hide()
+  if teniaAccion then boton:SetAttribute("item", nil) end
+  boton.id, boton.nombre = nil, nil
+end
+local function ActualizarObjetoR14()
   if EnCombate() then return end
-  if not boton then Crear() end
+  -- R12: no consultar bolsas ni crear el botón protegido si no puede mostrarse.
+  if not ContextoObjetoR14() or DB().objetoMision == false or not GL.flecha or not GL.flecha:IsShown() then
+    OcultarObjetoR14()
+    return
+  end
   local o = Elegir()
-  if not o or not GL.flecha or not GL.flecha:IsShown() then boton:Hide(); boton.id = nil; return end
+  if EnCombate() then return end
+  if not ContextoObjetoR14() or not o then
+    OcultarObjetoR14()
+    return
+  end
+  if not boton then Crear() end
   if boton.id ~= o.id then
     boton:SetAttribute("item", "item:" .. o.id)
     boton.id, boton.nombre = o.id, o.nombre
@@ -156,15 +176,34 @@ local function Actualizar()
   boton:Show()
 end
 
+local function Actualizar()
+  local ok, err = pcall(ActualizarObjetoR14)
+  if not ok then
+    -- No dejar un botón de otro objeto activo tras una lectura interrumpida.
+    if not EnCombate() then pcall(OcultarObjetoR14) end
+    if GL.Fallo then GL.Fallo(L"objeto de misión", err) end
+  end
+end
+
 local ev = CreateFrame("Frame")
 GL.Evento(ev, "PLAYER_REGEN_ENABLED")
-GL.Evento(ev, "BAG_UPDATE_DELAYED")
-ev:SetScript("OnEvent", function() pcall(Actualizar) end)
+GL.Evento(ev, "BAG_UPDATE_DELAYED", "BAG_UPDATE")
+for _, evento in ipairs({ "PLAYER_LEAVING_WORLD", "PLAYER_ENTERING_WORLD", "PLAYER_DEAD", "PLAYER_ALIVE", "PLAYER_UNGHOST" }) do
+  GL.Evento(ev, evento)
+end
+ev:SetScript("OnEvent", function(_, evento)
+  if evento == "PLAYER_LEAVING_WORLD" then enMundoR14 = false
+  elseif evento == "PLAYER_ENTERING_WORLD" then enMundoR14 = true end
+  pcall(Actualizar)
+end)
 local reloj = 0
 ev:SetScript("OnUpdate", function(_, dt)
   reloj = reloj + (dt or 0)
   if reloj < 1 then return end
   reloj = 0
+  -- Si no hay botón visible ni posibilidad de mostrarlo, el reloj no tiene trabajo.
+  if (not boton or not boton:IsShown()) and
+      (not ContextoObjetoR14() or DB().objetoMision == false or not GL.flecha or not GL.flecha:IsShown()) then return end
   local ok, err = pcall(Actualizar)
   if not ok and GL.Fallo then GL.Fallo(L"objeto de misión", err) end
 end)

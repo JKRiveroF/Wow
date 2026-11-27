@@ -86,7 +86,8 @@ end
 ------------------------------------------------------------------------
 -- 17. Ayudas (tooltips) del addon con su estilo: fondo oscuro y borde del tema
 ------------------------------------------------------------------------
-local piel, tocada
+local piel, tocada, bordeTocado, alphaAnterior
+local ayudasEnganchadas = setmetatable({}, { __mode = "k" })
 local function EsNuestro(owner)
   if not owner then return false end
   if type(owner) == "table" and rawget(owner, "ayudaTitulo") ~= nil then return true end
@@ -99,7 +100,24 @@ local function EsNuestro(owner)
   return false
 end
 
+local function Desvestir()
+  if piel then piel:Hide() end
+  local borde, anterior = bordeTocado, alphaAnterior
+  tocada, bordeTocado, alphaAnterior = nil, nil, nil
+  if borde then
+    local ok, actual = pcall(borde.GetAlpha, borde)
+    local publica = true
+    if ok and type(issecretvalue) == "function" then
+      local bien, secreto = pcall(issecretvalue, actual)
+      publica = bien and not secreto
+    end
+    -- No sobrescribir una transparencia modificada después por otro addon.
+    if ok and publica and actual == 0 then pcall(borde.SetAlpha, borde, anterior) end
+  end
+end
+
 local function Vestir(tt)
+  Desvestir()
   if not Si("ayudasEstilo") or not EsNuestro(tt.GetOwner and tt:GetOwner()) then return end
   if not piel then
     piel = CreateFrame("Frame", nil, UIParent, PLANTILLA)
@@ -114,25 +132,41 @@ local function Vestir(tt)
   if piel.SetBackdropColor then piel:SetBackdropColor(c[1], c[2], c[3], 0.97); piel:SetBackdropBorderColor(a[1], a[2], a[3], 0.7) end
   piel.raya:SetColorTexture(a[1], a[2], a[3], 1)
   local nivel = tt:GetFrameLevel() or 1
-  if nivel < 2 then tt:SetFrameLevel(2); nivel = 2 end
-  piel:SetFrameLevel(nivel - 1)
+  piel:SetFrameLevel(math.max(0, nivel - 1))
   piel:ClearAllPoints()
   piel:SetAllPoints(tt)
   piel:Show()
   tocada = tt
-  if tt.NineSlice then tt.NineSlice:SetAlpha(0) end
-end
-
-local function Desvestir()
-  if piel then piel:Hide() end
-  if tocada and tocada.NineSlice then tocada.NineSlice:SetAlpha(1) end
-  tocada = nil
+  local borde = tt.NineSlice
+  if borde and type(borde.GetAlpha) == "function" and type(borde.SetAlpha) == "function" then
+    local ok, alpha = pcall(borde.GetAlpha, borde)
+    local publica = true
+    if ok and type(issecretvalue) == "function" then
+      local bien, secreto = pcall(issecretvalue, alpha)
+      publica = bien and not secreto
+    end
+    if ok and publica and type(alpha) == "number" and alpha >= 0 and alpha <= 1 then
+      bordeTocado, alphaAnterior = borde, alpha
+      borde:SetAlpha(0)
+    end
+  end
 end
 
 local function EngancharAyudas()
-  if not GameTooltip or not GameTooltip.HookScript then return end
-  GameTooltip:HookScript("OnShow", function(self) Probar(Vestir, "ayudas", self) end)
-  GameTooltip:HookScript("OnHide", function() Probar(Desvestir, "ayudas") end)
+  local tt = GameTooltip
+  if not tt or type(tt.HookScript) ~= "function" then return end
+  local estado = ayudasEnganchadas[tt] or {}
+  ayudasEnganchadas[tt] = estado
+  local function Hook(evento, fn)
+    if estado[evento] then return true end
+    local ok, valor = pcall(tt.HookScript, tt, evento, fn)
+    estado[evento] = ok and valor ~= false
+    return estado[evento]
+  end
+  -- No aplicar la piel si no se pudo registrar su limpieza.
+  if not Hook("OnHide", function(self) if tocada == self then Probar(Desvestir, "ayudas") end end) then return end
+  Hook("OnTooltipCleared", function(self) if tocada == self then Probar(Desvestir, "ayudas") end end)
+  Hook("OnShow", function(self) if self == GameTooltip then Probar(Vestir, "ayudas", self) end end)
 end
 
 ------------------------------------------------------------------------
@@ -189,15 +223,16 @@ local function Busca(texto, lista)
   return false
 end
 
-local cacheAltura = {}
+-- Solo importa el texto del destino activo y del paso actual, no su coordenada.
+local nombreAltura, pasoAltura, resultadoAltura
 local function Altura(d)
-  local clave = (GL.ClaveDestino and GL.ClaveDestino(d)) or d.n
-  if cacheAltura[clave] ~= nil then return cacheAltura[clave] end
   local _, p = GL.PasoActual()
-  local texto = string.lower((d.n or "") .. " " .. ((p and p.t) or ""))
+  local nombre, paso = d.n or "", (p and p.t) or ""
+  if resultadoAltura ~= nil and nombreAltura == nombre and pasoAltura == paso then return resultadoAltura end
+  local texto = string.lower(nombre .. " " .. paso)
   local r = false
   if Busca(texto, PALABRAS_ABAJO) then r = "abajo" elseif Busca(texto, PALABRAS_ARRIBA) then r = "arriba" end
-  cacheAltura[clave] = r
+  nombreAltura, pasoAltura, resultadoAltura = nombre, paso, r
   return r
 end
 

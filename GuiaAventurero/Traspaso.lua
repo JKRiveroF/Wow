@@ -14,95 +14,186 @@ local CLAVES = { "ruta", "seccion", "paso", "destino", "profesion", "notas", "po
 ------------------------------------------------------------------------
 -- Codificar y leer
 ------------------------------------------------------------------------
-local function Codificar(v, out)
-  local t = type(v)
-  if t == "number" then table.insert(out, "n" .. tostring(v) .. ";")
-  elseif t == "string" then table.insert(out, "s" .. #v .. ":" .. v)
-  elseif t == "boolean" then table.insert(out, v and "b1" or "b0")
+local MAX_BYTES, MAX_NODOS, MAX_PROF = 1048576, 100000, 8
+local function Finito(v) return type(v) == "number" and v == v and math.abs(v) < math.huge end
+local function Entero(v) return Finito(v) and v >= 1 and v <= 2147483647 and v % 1 == 0 end
+local function ClaveValida(k) return type(k) == "string" or Finito(k) end
+local function Codificar(v, out, estado, prof)
+  estado.n = estado.n + 1
+  if prof > MAX_PROF or estado.n > MAX_NODOS then error("limite") end
+  local t, trozo = type(v), nil
+  if Finito(v) then trozo = "n" .. tostring(v) .. ";"
+  elseif t == "string" then trozo = "s" .. #v .. ":" .. v
+  elseif t == "boolean" then trozo = v and "b1" or "b0"
   elseif t == "table" then
-    table.insert(out, "t")
+    if estado.vistos[v] then error("ciclo") end
+    estado.vistos[v] = true
+    estado.bytes = estado.bytes + 2
+    if estado.bytes > MAX_BYTES then error("limite") end
+    out[#out+1] = "t"
     for k, x in pairs(v) do
-      local tk, tx = type(k), type(x)
-      if (tk == "string" or tk == "number") and (tx == "string" or tx == "number" or tx == "boolean" or tx == "table") then
-        Codificar(k, out); Codificar(x, out)
-      end
+      if not ClaveValida(k) then error("clave") end
+      Codificar(k, out, estado, prof+1); Codificar(x, out, estado, prof+1)
     end
-    table.insert(out, "e")
-  end
+    out[#out+1] = "e"; estado.vistos[v] = nil; return
+  else error("tipo") end
+  estado.bytes = estado.bytes + #trozo
+  if estado.bytes > MAX_BYTES then error("limite") end
+  out[#out+1] = trozo
 end
-
-local function Leer(s, i, prof)
-  if prof > 8 then return nil, nil end
+local function CodificarSeguro(v)
+  local out = {}
+  if not pcall(Codificar, v, out, {n=0,bytes=0,vistos={}}, 0) then return nil end
+  return table.concat(out)
+end
+local function Leer(s, i, prof, estado)
+  estado.n = estado.n + 1
+  if prof > MAX_PROF or estado.n > MAX_NODOS or i > #s then return nil end
   local c = s:sub(i, i)
   if c == "n" then
     local fin = s:find(";", i, true)
-    if not fin then return nil, nil end
+    if not fin or fin-i > 64 then return nil end
     local n = tonumber(s:sub(i + 1, fin - 1))
-    if not n then return nil, nil end
+    if not Finito(n) then return nil end
     return n, fin + 1
   elseif c == "s" then
     local dos = s:find(":", i, true)
-    local largo = dos and tonumber(s:sub(i + 1, dos - 1))
-    if not largo or largo < 0 then return nil, nil end
+    if not dos or dos-i > 9 then return nil end
+    local digits = s:sub(i+1,dos-1)
+    if not digits:match("^%d+$") then return nil end
+    local largo = tonumber(digits)
+    if largo > #s-dos then return nil end
     return s:sub(dos + 1, dos + largo), dos + largo + 1
   elseif c == "b" then
-    return s:sub(i + 1, i + 1) == "1", i + 2
+    local bit = s:sub(i+1,i+1)
+    if bit ~= "0" and bit ~= "1" then return nil end
+    return bit == "1", i+2
   elseif c == "t" then
-    local t, j = {}, i + 1
-    while s:sub(j, j) ~= "e" do
-      if j > #s then return nil, nil end
-      local k, j2 = Leer(s, j, prof + 1)
-      if k == nil then return nil, nil end
-      local v, j3 = Leer(s, j2, prof + 1)
-      if v == nil then return nil, nil end
-      t[k] = v
-      j = j3
+    local t, j = {}, i+1
+    while s:sub(j,j) ~= "e" do
+      local k,j2 = Leer(s,j,prof+1,estado)
+      if not ClaveValida(k) or t[k] ~= nil then return nil end
+      local v,j3 = Leer(s,j2,prof+1,estado)
+      if v == nil then return nil end
+      t[k],j = v,j3
     end
-    return t, j + 1
+    return t,j+1
   end
-  return nil, nil
 end
-
+local function LeerCompleto(s,i)
+  if type(s) ~= "string" or not Entero(i) or i > 16 or #s-i+1 > MAX_BYTES then return nil end
+  local ok,v,fin = pcall(Leer,s,i,0,{n=0})
+  if ok and fin == #s+1 then return v end
+end
 local function Exportar()
   local db = GuiaAventureroDB
   if type(db) ~= "table" then return "" end
   local datos = { v = 1, ajustes = {} }
   for _, k in ipairs(CLAVES) do datos[k] = db[k] end
   for _, k in ipairs(GL.AJUSTES_COPIABLES or {}) do datos.ajustes[k] = db[k] end
-  local out = {}
-  Codificar(datos, out)
-  return PREFIJO .. table.concat(out)
+  local cuerpo = CodificarSeguro(datos)
+  return cuerpo and PREFIJO .. cuerpo or ""
 end
-
+local LIMITES = {escala={0.6,1.5},opacidad={0.2,1},escalaFlecha={0.6,2},tamTexto={0.8,1.5},alphaVentana={0.3,1}}
+local TEXTOS = {tema=true,estiloFlecha=true,marco=true,fuentePaso=true}
+-- No activar acciones automáticas por un código recibido de terceros.
+local ACCIONES = {rangosAuto=true,rangosBarras=true,modoPesca=true,autoSeguimiento=true}
+local function AjusteValido(k,v)
+  local lim = LIMITES[k]
+  if lim then return Finito(v) and v >= lim[1] and v <= lim[2] end
+  if TEXTOS[k] then return type(v)=="string" and #v>0 and #v<=128 end
+  return type(v)=="boolean"
+end
+local function RutaConocida(id)
+  if GL.RUTA and GL.RUTA.id == id then return GL.RUTA end
+  for _,r in ipairs(GuiaAventurero_Rutas or {}) do if r.id==id then return r end end
+end
+local function Validar(datos)
+  if type(datos) ~= "table" or datos.v ~= 1 then return nil,L"versión de código no compatible" end
+  if not Entero(datos.seccion) or not Entero(datos.paso) then return nil,L"al código le falta el paso" end
+  if datos.ruta ~= nil and (type(datos.ruta)~="string" or not RutaConocida(datos.ruta)) then return nil,L"la ruta del código no está instalada" end
+  for _,k in ipairs({"destino","profesion"}) do if datos[k]~=nil and not Entero(datos[k]) then return nil,L"datos de progreso o ajustes no válidos" end end
+  for _,k in ipairs({"notas","pospuestos","ignorados","vuelos"}) do
+    local t = datos[k]
+    if t ~= nil then
+      if type(t) ~= "table" then return nil,L"datos de progreso o ajustes no válidos" end
+      for clave,v in pairs(t) do
+        if type(clave)~="string" or (k=="notas" and type(v)~="string") or (k~="notas" and v~=true) then return nil,L"datos de progreso o ajustes no válidos" end
+      end
+    end
+  end
+  local ruta = datos.ruta and RutaConocida(datos.ruta) or GL.RUTA
+  if ruta and type(ruta.secciones)=="table" then
+    local sec = ruta.secciones[datos.seccion]
+    local paso = sec and sec.pasos and sec.pasos[datos.paso]
+    if not paso or (datos.destino and datos.destino > math.max(1,#(paso.wp or {}))) then return nil,L"el paso o destino no existe en la ruta" end
+  end
+  if datos.ajustes~=nil and type(datos.ajustes)~="table" then return nil,L"datos de progreso o ajustes no válidos" end
+  for _,k in ipairs(GL.AJUSTES_COPIABLES or {}) do
+    local v = datos.ajustes and datos.ajustes[k]
+    if v~=nil and not AjusteValido(k,v) then return nil,L"datos de progreso o ajustes no válidos" end
+  end
+  return true
+end
 local function LeerCodigo(texto)
-  texto = (texto or ""):gsub("^%s+", ""):gsub("%s+$", "")
+  if type(texto) ~= "string" or #texto > MAX_BYTES+#PREFIJO then return nil,L"el código está incompleto o cambiado" end
+  texto = texto:gsub("^%s+", ""):gsub("%s+$", "")
   if texto:sub(1, #PREFIJO) ~= PREFIJO then return nil, L"el código no empieza por " .. PREFIJO end
-  local ok, datos = pcall(Leer, texto, #PREFIJO + 1, 0)
-  if not ok or type(datos) ~= "table" then return nil, L"el código está incompleto o cambiado" end
-  if type(datos.seccion) ~= "number" or type(datos.paso) ~= "number" then return nil, L"al código le falta el paso" end
+  local datos = LeerCompleto(texto,#PREFIJO+1)
+  if type(datos) ~= "table" then return nil,L"el código está incompleto o cambiado" end
+  local ok,err = Validar(datos); if not ok then return nil,err end
   return datos
 end
-
+local function CopiaSuperficial(t)
+  local r = {}; for k,v in pairs(t) do r[k]=v end; return r
+end
 local function Importar(datos)
+  local valido,err = Validar(datos); if not valido then return false,err end
   local db = GuiaAventureroDB
+  if type(db)~="table" then return false,L"datos de progreso o ajustes no válidos" end
+  local anterior = Exportar()
+  if anterior=="" then return false,L"no se pudo conservar el progreso anterior" end
+  local cambios = CopiaSuperficial(db)
   local cambiaRuta = datos.ruta and GL.RUTA and datos.ruta ~= GL.RUTA.id
-  for _, k in ipairs(CLAVES) do if datos[k] ~= nil then db[k] = datos[k] end end
-  for k, v in pairs(datos.ajustes or {}) do db[k] = v end
   if cambiaRuta then
-    db.rutaElegida = datos.ruta
-    if GL.Mensaje then GL.Mensaje(L"progreso importado de otra ruta. Escribe /reload para cargarla.") end
-    return
+    if type(GL.PrepararProgresoImportadoR09)~="function" then return false,L"no se pudo conservar el progreso anterior" end
+    for _,k in ipairs({"progresoR09","reparacionesR09"}) do if type(db[k])=="table" then cambios[k]=CopiaSuperficial(db[k]) end end
+    local ok,hecho=pcall(GL.PrepararProgresoImportadoR09,cambios,datos)
+    if not ok or not hecho then return false,L"no se pudo conservar el progreso anterior" end
+    if datos.vuelos~=nil then cambios.vuelos=datos.vuelos end
+  else
+    for _,k in ipairs(CLAVES) do if datos[k]~=nil then cambios[k]=datos[k] end end
+    cambios.bloqueoPasoR09=nil
+    cambios.destino=datos.destino or 1
+    if datos.profesion then cambios.profesionSkill=nil end
   end
-  local secs = GL.RUTA and GL.RUTA.secciones
-  if secs then
-    if not secs[db.seccion] then db.seccion = 1 end
-    if not secs[db.seccion].pasos[db.paso] then db.paso = 1 end
+  for _,k in ipairs(GL.AJUSTES_COPIABLES or {}) do
+    local v = datos.ajustes and datos.ajustes[k]
+    if v~=nil and not ACCIONES[k] then cambios[k]=v end
   end
-  db.destino = db.destino or 1
-  if GL.CambiarTema then GL.CambiarTema(db.tema or "dorado") end
-  if GL.AplicarAjustes then GL.AplicarAjustes() end
-  if GL.Refrescar then GL.Refrescar() end
-  if GL.Mensaje then GL.Mensaje(L"progreso importado: sección " .. db.seccion .. L", paso " .. db.paso .. ".") end
+  -- Guardar el código previo del personaje sin tocar las copias de Respaldo.lua.
+  cambios.traspasoAnteriorR09=anterior
+  local previo=CopiaSuperficial(db)
+  for k in pairs(db) do if cambios[k]==nil then db[k]=nil end end
+  for k,v in pairs(cambios) do db[k]=v end
+  if not cambiaRuta then
+    local ok=pcall(function()
+      if GL.BloqueoPasoR09 then GL.BloqueoPasoR09(false) end
+      if GL.CambiarTema and db.tema then GL.CambiarTema(db.tema) end
+      if GL.AplicarAjustes then GL.AplicarAjustes() end
+      if GL.Refrescar then GL.Refrescar() end
+    end)
+    if not ok then
+      for k in pairs(db) do db[k]=nil end; for k,v in pairs(previo) do db[k]=v end
+      if GL.BloqueoPasoR09 then pcall(GL.BloqueoPasoR09,previo.bloqueoPasoR09 or false) end
+      return false,L"no se pudo aplicar la importación; recarga la interfaz"
+    end
+  end
+  if GL.Mensaje then
+    if cambiaRuta then GL.Mensaje(L"progreso importado de otra ruta. Escribe /reload para cargarla.")
+    else GL.Mensaje(L"progreso importado: sección " .. db.seccion .. L", paso " .. db.paso .. ".") end
+  end
+  return true
 end
 
 ------------------------------------------------------------------------
@@ -121,7 +212,7 @@ local function Ventana(modo)
     ven:RegisterForDrag("LeftButton")
     ven:SetScript("OnDragStart", function(self) self:StartMoving() end)
     ven:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
-    if UISpecialFrames then table.insert(UISpecialFrames, "GuiaAventureroTraspaso") end
+    if UISpecialFrames then GL.RegistrarCierreEscapeR13("GuiaAventureroTraspaso") end
     if GL.Caja and GL.COLOR then GL.Caja(ven, { 0.04, 0.05, 0.07, 0.97 }, GL.COLOR.botonBorde) end
     if GL.Acento then GL.Acento(ven, 2) end
     ven.titulo = GL.Texto(ven, "GameFontNormalLarge")
@@ -162,7 +253,11 @@ local function Ventana(modo)
         ven.aceptar.texto:SetText(L"Confirmar")
         return
       end
-      Importar(datos)
+      local ok,fallo = Importar(datos)
+      if not ok then
+        ven.pendiente=nil; ven.aceptar.texto:SetText(L"Aceptar")
+        ven.aviso:SetText(L"|cffff7070No se puede importar: " .. fallo .. ".|r"); return
+      end
       ven:Hide()
     end, nil, 22, "accion")
     ven.aceptar:SetWidth(110)
@@ -176,6 +271,7 @@ local function Ventana(modo)
     ven.codigo = Exportar()
     ven.titulo:SetText(C.AMARILLO .. L"Exportar progreso" .. C.FIN)
     ven.caja:SetText(ven.codigo)
+    if ven.codigo == "" then ven.aviso:SetText(L"No se pudo exportar: datos dañados o demasiado grandes.") end
     ven.ayuda:SetText(C.GRIS .. L"Pulsa Ctrl+C para copiarlo. En el otro ordenador: Opciones > Ajustes > Importar, Ctrl+V y Aceptar." .. C.FIN)
     ven.aceptar:Hide()
     ven:Show()
@@ -213,5 +309,5 @@ end
 
 -- Para las pruebas
 GL._traspaso = { Exportar = Exportar, Leer = LeerCodigo, Importar = Importar }
-GL.CodificarDatos = function(v) local out = {}; Codificar(v, out); return table.concat(out) end   -- 9.1: Editor de rutas
-GL.LeerDatos = function(s, i) local ok, v = pcall(Leer, s, i or 1, 0); if ok then return v end end
+GL.CodificarDatos = function(v) return CodificarSeguro(v) or "" end   -- 9.1: Editor de rutas
+GL.LeerDatos = function(s, i) return LeerCompleto(s, i or 1) end

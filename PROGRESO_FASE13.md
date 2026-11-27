@@ -43,9 +43,9 @@ El auditor registra **235 grupos de investigación** y **116 grupos de validaci�
 
 <!-- medicion-fase13:fin -->
 
-**Fase 13 completada localmente y preparada para integración, pendiente de validación real.**
+**Fase 13 integrada en la candidata 9.8.0, pendiente de validación real.**
 
-**Tarea actual** · Preparación local cerrada. El siguiente hito es incorporar este corte junto con las mejoras de Claude y ChatGPT para la futura 9.8.0 estable. [ZIP e inventario de cambios](auditor_fase13/INTEGRACION_FASE13.md).
+**Tarea actual** · Validar en WoW Forever la candidata 9.8.0 que combina la fase 13 y las mejoras de Claude y ChatGPT. [ZIP e inventario de cambios](auditor_fase13/INTEGRACION_FASE13.md) · [Protocolo](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -483,6 +483,11 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - El avance funcional local alcanza el **100 %** en los siete bloques. El funcional global queda en **75 %**, con **6 casos reales pendientes** para probar el corte combinado. Hay **0 P0/P1** y se conservan los pendientes P2/P3 de investigación y cliente. [Criterios de medición](PLAN_FASE13.md#progreso-funcional).
 - Verificado el ZIP de integración de **218 archivos**, junto con el inventario de **58 archivos modificados** respecto a 9.7.9. El ZIP original y su manifiesto se conservan. [Paquete, huellas e inventario](auditor_fase13/INTEGRACION_FASE13.md).
 
+## Integración de la candidata 9.8.0 · 27 de noviembre de 2026
+
+- Combinadas la fase 13 y la versión 9.7.9.9 aportada por JKRiveroF. Se resolvieron los tres conflictos de misiones alternativas, traducción de destinos y vuelos guardados entre idiomas. Los 47 archivos de ruta coinciden byte a byte con el corte local de la fase 13. [Inventario de integración](auditor_fase13/INTEGRACION_FASE13.md#candidata-980-para-pruebas).
+- Pasaron **149 de 149 pruebas**, incluida la ejecución de los **147 módulos** en orden TOC. La auditoría de las 47 rutas y 56 perfiles registra **0 errores**, **0 P0/P1** y los **56 avisos opcionales** conocidos de Kum’isha. El ZIP de **221 archivos** queda preparado para los seis casos reales. [Protocolo](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
+
 ## Comprobaciones que impiden cerrar la certificación de datos
 
 | Bloque | Investigación pendiente | Validación en Forever |
@@ -492,12 +497,12 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 | Cartografía | 2.532 destinos de misión únicos sin una referencia específica o cercana. Otros 3.420 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos los interiores de 1486 y 6563 y los dos casos compartidos de botín de Feralas y Un'Goro. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP de entrega pendiente de una muestra de progresión en 1.384 IDs, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Alternativas de transporte, requisitos de desbloqueo y escalas observadas que difieren por compilación. | Costes, acceso y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
-| Regresión y preparación | ZIP de integración verificado. El paquete de la 9.8.0 se preparará con el corte combinado. | Pruebas de juego, Questie, persistencia y textos ES/EN sobre el corte combinado. |
+| Regresión y preparación | ZIP de la candidata 9.8.0 preparado con el corte combinado. | Pruebas de juego, Questie, persistencia y textos ES/EN con la misma huella del addon. |
 
 ## Siguientes tareas
 
-1. En la integración autorizada, incorporar este corte junto a las mejoras de Claude y ChatGPT, revisar las coincidencias de archivos y ejecutar la regresión del conjunto. [Inventario de integración](auditor_fase13/INTEGRACION_FASE13.md#archivos-modificados-respecto-a-979).
-2. Con el paquete combinado de la futura 9.8.0, ejecutar los seis casos en Forever y registrar sus resultados y su huella. Resolver los P0/P1 que aparezcan durante la validación. [Protocolo funcional](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
+1. Con el ZIP de la candidata 9.8.0, ejecutar los seis casos en Forever y registrar sus resultados y su huella. [Protocolo funcional](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
+2. Resolver los P0/P1 que aparezcan durante la validación y repetir los casos afectados.
 
 ## Avance individual
 

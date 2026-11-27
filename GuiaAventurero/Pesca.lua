@@ -26,12 +26,32 @@ local CVARS = {
   { "Sound_MusicVolume", "0" }, { "Sound_AmbienceVolume", "0" }, { "Sound_DialogVolume", "0" },
   { "autoLootDefault", "1" }, { "SoftTargetInteract", "3" },
 }
+local function Publico(v)
+  if type(issecretvalue) ~= "function" then return true end
+  local ok, secreto = pcall(issecretvalue, v)
+  return ok and not secreto
+end
 local function LeerCVar(n)
   local ok, v = pcall(function() return (C_CVar and C_CVar.GetCVar and C_CVar.GetCVar(n)) or (GetCVar and GetCVar(n)) end)
-  return ok and v or nil
+  if not ok or not Publico(v) then return nil end
+  if type(v) == "string" or type(v) == "number" then return v end
+end
+local function IgualCVar(a, b)
+  if a == nil or b == nil then return false end
+  if tostring(a) == tostring(b) then return true end
+  local x, y = tonumber(a), tonumber(b)
+  return x ~= nil and y ~= nil and x == y
 end
 local function PonerCVar(n, v)
-  pcall(function() if C_CVar and C_CVar.SetCVar then C_CVar.SetCVar(n, v) elseif SetCVar then SetCVar(n, v) end end)
+  local fn = (C_CVar and C_CVar.SetCVar) or SetCVar
+  if type(fn) ~= "function" then return false end
+  local ok, resultado = pcall(fn, n, v)
+  return ok and Publico(resultado) and resultado ~= false
+end
+local function Despues(s, fn)
+  if not (C_Timer and type(C_Timer.After) == "function") then return false end
+  local ok, resultado = pcall(C_Timer.After, s, fn)
+  return ok and Publico(resultado) and resultado ~= false
 end
 
 local function NombrePesca()
@@ -84,14 +104,22 @@ end
 local turno = 0        -- cada lanzamiento nuevo anula la vuelta pendiente
 local pescado = false  -- el último lanzamiento trajo pez
 local reintentarArmas = false
+local restauracionTurno, intentoRestauracion
+local function EnCombate()
+  return not GL.AccionProtegidaPermitidaR13()
+end
 
 local function GuardarVolumenes()
   local g = DB().pescaGuardado or {}
   if not g.vol then
-    g.vol = {}
+    g.vol, g.volAplicado = {}, {}
     for _, c in ipairs(CVARS) do
       local v = LeerCVar(c[1])
-      if v ~= nil then g.vol[c[1]] = v; PonerCVar(c[1], c[2]) end
+      if v ~= nil and not IgualCVar(v, c[2]) then
+        -- Guardar antes de solicitar: un hook puede lanzar un error después de escribir.
+        g.vol[c[1]], g.volAplicado[c[1]] = v, c[2]
+        PonerCVar(c[1], c[2])
+      end
     end
   end
   if GuiaAventureroDB then GuiaAventureroDB.pescaGuardado = g end
@@ -100,43 +128,116 @@ end
 local function GuardarArmas()
   if CanaPuesta() then return end
   local g = DB().pescaGuardado or {}
-  g.armas = { [16] = ArmaPuesta(16), [17] = ArmaPuesta(17) }
+  -- No perder la mano izquierda si el jugador relanza antes de terminar la devolución.
+  if not g.armas or ArmaPuesta(16) ~= g.armas[16] then
+    -- Una nueva pesca tras un cambio manual de arma guarda el conjunto nuevo.
+    g.armas = { [16] = ArmaPuesta(16), [17] = ArmaPuesta(17) }
+  else
+    g.armas.restaurando = nil
+  end
+  reintentarArmas = false
   if GuiaAventureroDB then GuiaAventureroDB.pescaGuardado = g end
 end
 
 local function DevolverVolumenes()
   local g = DB().pescaGuardado
-  if not (g and g.vol) then return end
-  for n, v in pairs(g.vol) do PonerCVar(n, v) end
-  g.vol = nil
+  if not (g and type(g.vol) == "table") then return end
+  local aplicados = g.volAplicado
+  for _, c in ipairs(CVARS) do
+    local n, objetivo = c[1], c[2]
+    local anterior = g.vol[n]
+    if anterior ~= nil then
+      local esperado = type(aplicados) == "table" and aplicados[n] or objetivo
+      local actual = LeerCVar(n)
+      if actual ~= nil then
+        if IgualCVar(actual, anterior) or not IgualCVar(actual, esperado) then
+          -- Ya restaurado o cambiado por otro addon/jugador: no sobrescribirlo.
+          g.vol[n] = nil
+        else
+          PonerCVar(n, anterior)
+          if IgualCVar(LeerCVar(n), anterior) then g.vol[n] = nil end
+        end
+      end
+      if g.vol[n] == nil and type(aplicados) == "table" then aplicados[n] = nil end
+    end
+  end
+  if not next(g.vol) then g.vol, g.volAplicado = nil, nil end
 end
 
 local function DevolverArmas()
   local g = DB().pescaGuardado
-  if not (g and g.armas) or not CanaPuesta() then
-    if g then g.armas = nil end
+  local armas = g and g.armas
+  if type(armas) ~= "table" then reintentarArmas = false; return end
+  local a16, a17 = armas[16], armas[17]
+  local mio = turno
+  if restauracionTurno == mio then return end
+  local intento = {}
+  intentoRestauracion = intento
+  local function Vigente()
+    local actual = DB().pescaGuardado
+    return intentoRestauracion == intento and mio == turno and actual == g and actual.armas == armas
+  end
+  local function Terminar()
+    if not Vigente() then return end
+    g.armas = nil
+    reintentarArmas = false
+    restauracionTurno, intentoRestauracion = nil, nil
+  end
+  local function Pendiente()
+    if not Vigente() then return end
+    restauracionTurno, intentoRestauracion = nil, nil
+    if not reintentarArmas and GL.Mensaje then
+      GL.Mensaje(L"Modo pesca: armas pendientes de restaurar. Se reintentará al salir de combate o al volver a entrar.")
+    end
+    reintentarArmas = true
+  end
+  if EnCombate() or not GL.PersonajeVivoR14() then Pendiente(); return end
+  local principal = ArmaPuesta(16)
+  if not a16 then Terminar(); return end -- conserva la caña si antes no había arma
+  -- Respetar un cambio manual a otra arma, sin sobrescribirla con la copia antigua.
+  if not CanaPuesta() and principal ~= a16 then
+    if armas.restaurando and not principal then Pendiente() else Terminar() end
     return
   end
-  local a16, a17 = g.armas[16], g.armas[17]
-  if not a16 then g.armas = nil; return end   -- no llevabas arma: te quedas con la caña
-  if EquipItemByName then
-    pcall(EquipItemByName, a16, 16)
-    if a17 then C_Timer.After(0.3, function() pcall(EquipItemByName, a17, 17) end) end
+  local function CursorLibre()
+    if type(GetCursorInfo) ~= "function" then return false end
+    local ok, v = pcall(GetCursorInfo)
+    return ok and Publico(v) and v == nil
   end
-  C_Timer.After(1, function()
-    if CanaPuesta() then
-      if not reintentarArmas and GL.Mensaje then GL.Mensaje(L"Modo pesca: el juego no deja cambiar de arma ahora. Te las pongo al salir de combate.") end
-      reintentarArmas = true
-    else
-      reintentarArmas = false
-      local gg = DB().pescaGuardado
-      if gg then gg.armas = nil end
-    end
-  end)
+  local function PuedeEquipar()
+    local ok, pescando = pcall(Pescando)
+    return ok and Publico(pescando) and pescando == false and CursorLibre() and not EnCombate() and GL.PersonajeVivoR14()
+  end
+  if type(EquipItemByName) ~= "function" or not PuedeEquipar() then Pendiente(); return end
+  restauracionTurno = mio
+  armas.restaurando = true
+  local function Verificar()
+    if not Vigente() then return end
+    if not GL.PersonajeVivoR14() then Pendiente(); return end
+    if ArmaPuesta(16) ~= a16 then Pendiente(); return end
+    if not a17 or ArmaPuesta(17) == a17 then Terminar(); return end
+    if not PuedeEquipar() then Pendiente(); return end
+    -- Si el jugador ya puso otra pieza en la izquierda, no sustituirla.
+    if ArmaPuesta(17) then Terminar(); return end
+    local ok, resultado = pcall(EquipItemByName, a17, 17)
+    if not ok or not Publico(resultado) or resultado == false then Pendiente(); return end
+    if not Despues(1, function()
+      if not Vigente() then return end
+      if not GL.PersonajeVivoR14() then Pendiente(); return end
+      if ArmaPuesta(16) == a16 and ArmaPuesta(17) == a17 then Terminar()
+      else Pendiente() end
+    end) then Pendiente() end
+  end
+  if principal == a16 then Verificar(); return end
+  if not PuedeEquipar() then Pendiente(); return end
+  local ok, resultado = pcall(EquipItemByName, a16, 16)
+  if not ok or not Publico(resultado) or resultado == false then Pendiente(); return end
+  if not Despues(0.3, Verificar) then Pendiente() end
 end
 
 local function Devolver()
-  turno = turno + 1
+  -- Una segunda devolución no duplica una solicitud de equipo todavía en curso.
+  if restauracionTurno ~= turno then turno = turno + 1 end
   pescado = false
   DevolverVolumenes()
   DevolverArmas()
@@ -148,7 +249,8 @@ GL.DevolverPesca = Devolver
 local function DevolverEn(s)
   turno = turno + 1
   local mio = turno
-  C_Timer.After(s, function() if mio == turno and not Pescando() then Devolver() end end)
+  -- Si no se puede programar, conservar el respaldo para una devolución posterior.
+  Despues(s, function() if mio == turno and not Pescando() then Devolver() end end)
 end
 
 ------------------------------------------------------------------------
@@ -172,12 +274,12 @@ local function PuedeVerse()
   if not Activo() then return false end
   if UnitAffectingCombat and UnitAffectingCombat("player") then return false end
   if IsMounted and IsMounted() then return false end
-  if UnitIsDeadOrGhost and UnitIsDeadOrGhost("player") then return false end
+  if not GL.PersonajeVivoR14() then return false end
   return BuscarCana() ~= nil
 end
 
 local function Actualizar()
-  if not boton or (InCombatLockdown and InCombatLockdown()) then return end
+  if not boton or EnCombate() then return end
   if PuedeVerse() then
     boton:SetAttribute("type", "macro")
     boton:SetAttribute("macrotext", Macro())
@@ -260,10 +362,15 @@ local function CrearBoton()
 
   -- justo antes del clic: elegir qué hace (lanzar, ponerse la caña y lanzar, o recoger) y guardar lo tuyo
   boton:SetScript("PreClick", function(self, _, abajo)
-    if InCombatLockdown and InCombatLockdown() then return end
+    if EnCombate() then return end
+    if not PuedeVerse() or Macro() == "" then
+      self:SetAttribute("macrotext", "")
+      return
+    end
     if not Pescando() then
       turno = turno + 1       -- anula la vuelta pendiente: sigues pescando
       pescado = false
+      reintentarArmas = false
       GuardarArmas()
       GuardarVolumenes()
     end
@@ -336,7 +443,7 @@ ev:SetScript("OnEvent", function(_, e, unidad, _, id)
     if unidad == "player" and (PESCA_IDS[id] or Pescando()) then
       turno = turno + 1
       pescado = false
-      if not InCombatLockdown() then boton:SetAttribute("macrotext", Macro()) end
+      if not EnCombate() then boton:SetAttribute("macrotext", Macro()) end
       boton.Pintar()
     end
   elseif e == "UNIT_SPELLCAST_CHANNEL_STOP" then
@@ -346,23 +453,35 @@ ev:SetScript("OnEvent", function(_, e, unidad, _, id)
     -- si picó, enseguida llega el botín; si no (20 s sin pez, te moviste...), se devuelve ya
     turno = turno + 1
     local mio = turno
-    C_Timer.After(0.8, function()
+    Despues(0.8, function()
       if mio ~= turno or pescado or Pescando() then return end
       Devolver()
     end)
-    if not InCombatLockdown() then boton:SetAttribute("macrotext", Macro()) end
+    if not EnCombate() then boton:SetAttribute("macrotext", Macro()) end
     boton.Pintar()
   elseif e == "LOOT_OPENED" then
     if IsFishingLoot and IsFishingLoot() then pescado = true; turno = turno + 1 end
   elseif e == "LOOT_CLOSED" then
     if pescado then DevolverEn(ESPERA_PEZ); pescado = false end
     Actualizar()
+  elseif e == "PLAYER_DEAD" then
+    turno = turno + 1
+    restauracionTurno, intentoRestauracion = nil, nil
+    pescado = false
+    if DB().pescaGuardado then
+      DevolverVolumenes()
+      reintentarArmas = type(DB().pescaGuardado.armas) == "table"
+    end
+    Actualizar()
+  elseif e == "PLAYER_ALIVE" or e == "PLAYER_UNGHOST" then
+    if GL.PersonajeVivoR14() and DB().pescaGuardado then Devolver() end
+    Actualizar()
   elseif e == "PLAYER_REGEN_DISABLED" then
-    -- te atacan: música y armas de vuelta (si el juego deja cambiar de arma en combate)
+    -- te atacan: devolver volúmenes y aplazar armas hasta salir de combate
     if DB().pescaGuardado then Devolver() end
-    if not InCombatLockdown() then boton:Hide() end
+    if not EnCombate() then boton:Hide() end
   elseif e == "PLAYER_REGEN_ENABLED" then
-    if reintentarArmas then reintentarArmas = false; DevolverArmas() end
+    if reintentarArmas then DevolverArmas() end
     Actualizar()
   else
     Actualizar()

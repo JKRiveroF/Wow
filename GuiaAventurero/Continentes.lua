@@ -20,31 +20,63 @@ for m = 1438, 1452 do ZONA[m] = "Kalimdor" end
 GL.CONTINENTE_DE_ZONA = ZONA
 
 local cargados = {}
+local faccionCargada
 
-local function Faccion() return (UnitFactionGroup and UnitFactionGroup("player") == "Horde") and "Horde" or "Alliance" end
+-- R15: una facción todavía no disponible no significa Alianza.
+local function Faccion()
+  if type(UnitFactionGroup) ~= "function" then return nil end
+  local ok, f = pcall(UnitFactionGroup, "player")
+  if not ok then return nil end
+  if type(issecretvalue) == "function" then
+    local leido, secreto = pcall(issecretvalue, f)
+    if not leido or secreto then return nil end
+  end
+  if f == "Horde" or f == "Alliance" then return f end
+end
 
--- Junta los datos de un continente en GL.WH (las tablas que usa Opcionales.lua)
+-- Junta los datos de un continente en GL.WH (las tablas que usa Opcionales.lua).
+-- No liberar el origen hasta completar la traducción y validar todos los destinos.
 local function Juntar(c)
   local datos = GuiaAventurero_Datos and GuiaAventurero_Datos[c]
-  if type(datos) ~= "table" then return false end
-  local fn = datos[Faccion()]
-  GuiaAventurero_Datos[c] = nil   -- se suelta también lo de la otra facción
+  local fac = Faccion()
+  if type(datos) ~= "table" or not fac or (faccionCargada and faccionCargada ~= fac) then return false end
+  local fn = datos[fac]
+  local function fallo(err)
+    local aviso = L"datos de " .. c .. ": " .. tostring(err)
+    for _, anterior in ipairs(GL.erroresCarga) do if anterior == aviso then return false end end
+    table.insert(GL.erroresCarga, aviso)
+    return false
+  end
   if type(fn) == "string" then
-    local f, err = (loadstring or load)(fn, L"opcionales de " .. c)
-    if not f then table.insert(GL.erroresCarga, L"datos de " .. c .. ": " .. tostring(err)); return false end
+    local cargar = loadstring or load
+    if type(cargar) ~= "function" then return false end
+    local ok, f, err = pcall(cargar, fn, L"opcionales de " .. c)
+    if not ok or type(f) ~= "function" then return fallo(ok and err or f) end
     fn = f
   end
   if type(fn) ~= "function" then return false end
   local ok, t = pcall(fn)
-  if not ok or type(t) ~= "table" then table.insert(GL.erroresCarga, L"datos de " .. c .. ": " .. tostring(t)); return false end
-  if GL.TraducirDatos then GL.TraducirDatos(t) end   -- 9.3.5: en inglés (Idioma.lua)
-  GL.WH = GL.WH or {}
+  if not ok or type(t) ~= "table" then return fallo(t) end
+  if GL.TraducirDatos then
+    local bien, err = pcall(GL.TraducirDatos, t)
+    if not bien then return fallo(err) end
+  end
+  if not GL.WH then GL.WH = {} end
+  if type(GL.WH) ~= "table" then return fallo("WH") end
+  for tabla, lista in pairs(t) do
+    if type(lista) ~= "table" or (GL.WH[tabla] ~= nil and type(GL.WH[tabla]) ~= "table") then
+      return fallo(tabla)
+    end
+  end
+  if Faccion() ~= fac then return false end
   for tabla, lista in pairs(t) do
     GL.WH[tabla] = GL.WH[tabla] or {}
     for q, o in pairs(lista) do GL.WH[tabla][q] = o end
   end
   GL.RevisionCatalogo976 = (GL.RevisionCatalogo976 or 0) + 1
   cargados[c] = true
+  faccionCargada = fac
+  GuiaAventurero_Datos[c] = nil
   return true
 end
 
@@ -54,38 +86,43 @@ local function Cargar(c)
 end
 
 -- Al entrar: el texto de la otra facción se suelta en los tres (Kalimdor, Reinos y Otras)
+local otraFaccionLiberada
 local function SoltarOtraFaccion()
-  local f = Faccion()
+  local f = faccionCargada
+  if otraFaccionLiberada or not f or Faccion() ~= f then return end
   for _, c in ipairs({ "Kalimdor", "Reinos", "Otras" }) do
     local d = GuiaAventurero_Datos and GuiaAventurero_Datos[c]
     if type(d) == "table" then
       for fac in pairs(d) do if fac ~= f then d[fac] = nil end end
     end
   end
+  otraFaccionLiberada = true
 end
 GL.CargarContinente = Cargar
 
 -- Continente donde estás: subiendo por los mapas hasta el continente; si no, por la zona
 local function Donde()
-  if not (C_Map and C_Map.GetBestMapForUnit) then return nil end
-  local ok, m = pcall(C_Map.GetBestMapForUnit, "player")
-  if not ok then return nil end
-  for _ = 1, 8 do
-    if GL.Seguro then m = GL.Seguro(m) end
-    if type(m) ~= "number" or m ~= m or m <= 0 or m == math.huge then return nil end
-    if CONTINENTE[m] then return CONTINENTE[m] end
-    if ZONA[m] then return ZONA[m] end
-    if not C_Map.GetMapInfo then return nil end
-    local okInfo, info = pcall(C_Map.GetMapInfo, m)
-    if GL.Seguro then info = GL.Seguro(info) end
-    if not okInfo or type(info) ~= "table" then return nil end
-    m = info.parentMapID
+  local origen=GL.MapaUnidadR14()
+  local m=origen
+  local vistos={}
+  for _=1,8 do
+    if not m or vistos[m] then return nil end
+    vistos[m]=true
+    local c=CONTINENTE[m] or ZONA[m]
+    if c then
+      if GL.MapaUnidadR14()==origen then return c end
+      return nil
+    end
+    local _,padre=GL.InfoMapaR14(m)
+    m=padre
   end
-  return nil
 end
 GL.ContinenteDondeEstas = Donde
 
+local AnadidasSinDatos
 local function Mirar()
+  if not Faccion() then return end
+  Cargar("Otras")
   local c = Donde()
   if c then Cargar(c) end
   -- también el del paso de la guía (por si vas a ir allí) y, si no se sabe dónde estás, los dos
@@ -93,33 +130,37 @@ local function Mirar()
   local c2 = d and d.m and ZONA[d.m]
   if c2 then Cargar(c2) end
   if not c and not c2 then Cargar("Kalimdor"); Cargar("Reinos") end
+  if AnadidasSinDatos and AnadidasSinDatos() then Cargar("Kalimdor"); Cargar("Reinos") end
+  SoltarOtraFaccion()
 end
 GL.MirarContinente = Mirar
 
 GL.ContinenteActual = function()
   local l = {}
-  for _, c in ipairs({ "Kalimdor", "Reinos", "Otras" }) do if cargados[c] then table.insert(l, c) end end
-  return #l > 0 and table.concat(l, ", ") or "ninguno"
+  -- 9.7.9.1: nombres para enseñar (en inglés salían «Reinos, Otras»)
+  local nombre = { Kalimdor = "Kalimdor", Reinos = "Reinos del Este", Otras = "Otras" }
+  for _, c in ipairs({ "Kalimdor", "Reinos", "Otras" }) do if cargados[c] then table.insert(l, L(nombre[c])) end end
+  return #l > 0 and table.concat(l, ", ") or L"ninguno"
 end
 
 -- Las que añadiste tú (opcAnadidas) pueden ser de otro continente: si alguna no está cargada, se cargan los dos
-local function AnadidasSinDatos()
+AnadidasSinDatos = function()
   local a = GuiaAventureroDB and GuiaAventureroDB.opcAnadidas
   if type(a) ~= "table" then return false end
   local WH = GL.WH or {}
-  local h = Faccion() == "Horde"
+  local fac = Faccion()
+  if not fac then return false end
   for q in pairs(a) do
-    local esta = h and ((WH.opcionalesH or {})[q] or (WH.opcionalesNuevasH or {})[q]) or ((WH.opcionales or {})[q] or (WH.opcionalesNuevas or {})[q])
+    local esta
+    if fac == "Horde" then esta = (WH.opcionalesH or {})[q] or (WH.opcionalesNuevasH or {})[q]
+    else esta = (WH.opcionales or {})[q] or (WH.opcionalesNuevas or {})[q] end
     if not esta then return true end
   end
   return false
 end
 
 table.insert(GL.alIniciar, function()
-  SoltarOtraFaccion()
-  Cargar("Otras")
   pcall(Mirar)
-  if AnadidasSinDatos() then Cargar("Kalimdor"); Cargar("Reinos") end
   collectgarbage("collect")
 end)
 

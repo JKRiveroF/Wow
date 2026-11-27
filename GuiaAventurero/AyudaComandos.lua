@@ -8,37 +8,37 @@ local L = GL.L
 local C = GL.colores
 
 local TEMAS = {
-  { id = "ruta", n = L"Ruta", c = {
-    { "", L"muestra u oculta la ventana" },
-    { "nivel", L"va a la sección de tu nivel" },
-    { L"sig / ant", L"paso siguiente o anterior" },
-    { L"vista [n]", L"mira una sección sin mover tu progreso" },
-    { "preparar", L"lista «Antes de salir» de la zona" },
-    { "ignorados", L"vuelven a contar los objetivos ignorados" },
-    { "llegada", L"horas que te faltan para el 60 a tu ritmo" },
-    { "centro", L"herramientas de la guía con su comando" },
-    { L"resumen [n]", L"resumen de la última sección acabada (o de la n)" },
-    { L"rutas / ruta <id>", L"lista las rutas o elige otra (con /reload)" },
-    { "idioma es / en / auto", L"idioma de la guía: español, inglés o el del juego (con /reload)" },
+  { id = "ruta", n = "Ruta", c = {
+    { "", "muestra u oculta la ventana" },
+    { "nivel", "va a la sección de tu nivel" },
+    { "sig / ant", "paso siguiente o anterior" },
+    { "vista [n]", "mira una sección sin mover tu progreso" },
+    { "preparar", "lista «Antes de salir» de la zona" },
+    { "ignorados", "vuelven a contar los objetivos ignorados" },
+    { "llegada", "horas que te faltan para el 60 a tu ritmo" },
+    { "centro", "herramientas de la guía con su comando" },
+    { "resumen [n]", "resumen de la última sección acabada (o de la n)" },
+    { "rutas / ruta <id>", "lista las rutas o elige otra (con /reload)" },
+    { "idioma es / en / auto", "idioma de la guía: español, inglés o el del juego (con /reload)" },
   } },
-  { id = "personaje", n = L"Personaje", c = {
-    { "rangos", L"cambia en tus barras los rangos viejos por el más alto que conoces" },
+  { id = "personaje", n = "Personaje", c = {
+    { "rangos", "cambia en tus barras los rangos viejos por el más alto que conoces" },
   } },
-  { id = "profesiones", n = L"Profesiones", c = {
-    { L"recoleccion [parar]", L"ruta de recolección de Minería, Herboristería o Desuello" },
+  { id = "profesiones", n = "Profesiones", c = {
+    { "recoleccion [parar]", "ruta de recolección de Minería, Herboristería o Desuello" },
   } },
-  { id = "ventana", n = L"Ventana", c = {
-    { "tutorial", L"vuelve a ver el tutorial" },
-    { "reset", L"vuelve a colocar las ventanas" },
+  { id = "ventana", n = "Ventana", c = {
+    { "tutorial", "vuelve a ver el tutorial" },
+    { "reset", "vuelve a colocar las ventanas" },
   } },
-  { id = "datos", n = L"Datos", c = {
-    { L"restaurar [si | cuenta | copia]", L"copia de seguridad de lo guardado antes de una versión nueva" },
-    { "memoria", L"cuánto ocupa el addon y qué datos ha cargado" },
+  { id = "datos", n = "Datos", c = {
+    { "restaurar [si | cuenta | copia]", "copia de seguridad de lo guardado antes de una versión nueva" },
+    { "memoria", "cuánto ocupa el addon y qué datos ha cargado" },
   } },
-  { id = "diagnostico", n = L"Diagnóstico", c = {
-    { "informe", L"todo lo que hace falta para avisar de un fallo, para copiar" },
-    { L"atascado [nota | ver | borrar]", L"apunta el paso que no avanza" },
-    { L"depurar [errores]", L"diagnóstico completo; errores también en el chat" },
+  { id = "diagnostico", n = "Diagnóstico", c = {
+    { "informe", "todo lo que hace falta para avisar de un fallo, para copiar" },
+    { "atascado [nota | ver | borrar]", "apunta el paso que no avanza" },
+    { "depurar [errores]", "diagnóstico completo; errores también en el chat" },
   } },
 }
 GL.TEMAS_AYUDA = TEMAS
@@ -101,9 +101,9 @@ GL.comandos["ayuda"] = function(tema)
   if not M then return end
   tema = Quitar(tema or "")
   for _, t in ipairs(TEMAS) do
-    if tema ~= "" and (t.id == tema or Quitar(t.n) == tema) then
-      M(C.AMARILLO .. t.n .. C.FIN .. ":")
-      for _, c in ipairs(t.c) do M("  /ga " .. C.BLANCO .. c[1] .. C.FIN .. (c[1] ~= "" and " · " or "") .. c[2]) end
+    if tema ~= "" and (t.id == tema or Quitar(t.n) == tema or Quitar(L(t.n)) == tema) then
+      M(C.AMARILLO .. L(t.n) .. C.FIN .. ":")
+      for _, c in ipairs(t.c) do M("  /ga " .. C.BLANCO .. c[1] .. C.FIN .. (c[1] ~= "" and " · " or "") .. L(c[2])) end
       return
     end
   end

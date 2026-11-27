@@ -335,6 +335,8 @@ GL.D94 = {
     } },
   },
   bandas = {
+    { n = "Cavernas del Túmulo", ing = "Barrow Deeps", jugadores = 10, nivel = 60, anuncioForever977 = true, nota = "Monte Hyjal; conexiones desde Hyjal, Cuna del Invierno y Bastión Faucenegra. Coordenadas y acceso pendientes de comprobar." },
+    { n = "Cima Hyjal", ing = "Hyjal Summit", jugadores = 20, nivel = 60, anuncioForever977 = true, nota = "Monte Hyjal, cerca de Nordrassil. Coordenadas y acceso pendientes de comprobar." },
     { n = "Núcleo de Magma", ing = "Molten Core", jugadores = 40, nivel = 60, e = { m = 1428, x = 29.4, y = 38.0, z = "Las Estepas Ardientes" }, nota = "Dentro de la Montaña Roca Negra, por las Profundidades. Para entrar: Acceso al Núcleo (un fragmento del fondo de las Profundidades).", acceso = {
       { lado = nil, pasos = {
         { q = 7848, n = "Armonización con el Núcleo", ing = "Attunement to the Core", nivel = 60, wp = { { a = "A", q = 7848, m = 1428, x = 29.4, y = 38.0, z = "Las Estepas Ardientes", n = "Recoger: Armonización con el Núcleo (Lothos Levantagrietas)" }, { a = "T", q = 7848, m = 1428, x = 29.4, y = 38.0, z = "Las Estepas Ardientes", n = "Entregar: Armonización con el Núcleo (Lothos Levantagrietas)" } } },

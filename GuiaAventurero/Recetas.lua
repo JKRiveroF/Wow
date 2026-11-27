@@ -18,6 +18,7 @@ local comprando = false
 local sesionInstructor = 0
 local sesionAbierta, autoSesion = false, false
 local rutaSesion, compraPendiente
+local ejecutandoCompra = false
 
 
 local function DB() return GuiaAventureroDB end
@@ -47,12 +48,21 @@ local function ObjetoDelServicio(i)
   return nil
 end
 
--- Nombre (normalizado) de la habilidad que pide ese servicio: en un instructor de sastrería, "sastreria".
+-- Identificador del hechizo, si el cliente ofrece un enlace de servicio.
+local function HechizoDelServicio(i)
+  if not GetTrainerServiceSpellLink then return nil end
+  local ok, enlace = pcall(GetTrainerServiceSpellLink, i)
+  if ok and type(enlace) == "string" then return tonumber(enlace:match("spell:(%d+)")) end
+end
+
+-- Habilidad y nivel requeridos por el servicio, cuando el cliente los informa.
 local function HabilidadQuePide(i)
   if not GetTrainerServiceSkillReq then return nil end
-  local ok, nombre = pcall(GetTrainerServiceSkillReq, i)
-  if ok and type(nombre) == "string" and nombre ~= "" then return Normalizar(nombre) end
-  return nil
+  local ok, nombre, nivel = pcall(GetTrainerServiceSkillReq, i)
+  if not ok then return nil end
+  local clave = type(nombre) == "string" and Normalizar(nombre) or nil
+  if clave == "" then clave = nil end
+  return clave, type(nivel) == "number" and nivel >= 0 and nivel < math.huge and nivel or nil
 end
 
 -- Rangos de profesión tal como salen junto al nombre en el instructor.
@@ -63,79 +73,116 @@ for _, r in ipairs({ "Aprendiz", "Oficial", "Experto", "Artesano", "Maestro", "G
 -- Lo que les hace falta a los pasos que aún te quedan de una profesión: lo que fabrican, sus materiales
 -- (una madeja de paño, por ejemplo) y las recetas sin objeto (los encantamientos). Guarda el primer paso que lo pide.
 local function Necesidades(prof, nivel)
-  local objetos, nombres = {}, {}
+  local necesidades = {}
   for j, paso in ipairs(prof.pasos or {}) do
     if paso.h > nivel then
-      for _, id in ipairs(paso.crea or {}) do objetos[id] = objetos[id] or { j = j } end
-      for _, mat in ipairs(paso.mat or {}) do
-        if mat[1] then objetos[mat[1]] = objetos[mat[1]] or { j = j, material = true } end
-      end
+      local n = { j = j, paso = paso, hechizo = paso.sp975, objetos = {}, materiales = {}, nombres = {} }
+      for _, id in ipairs(paso.crea or {}) do n.objetos[id] = true end
+      for _, mat in ipairs(paso.mat or {}) do if mat[1] then n.materiales[mat[1]] = true end end
       for _, r in ipairs(paso.recetas or {}) do
         local k = Normalizar(r)
-        nombres[k] = nombres[k] or { j = j }
+        if k ~= "" then n.nombres[k] = true end
+        -- Las rutas antiguas guardan nombres españoles incluso en cliente inglés.
+        -- Solo añadir equivalencias existentes en el diccionario (sin inferir IDs).
+        local en = GL.clienteIngles and GL.EnIngles and GL.EnIngles(r)
+        if type(en) == "string" and en ~= r then
+          local alias = Normalizar(en)
+          if alias ~= "" then n.nombres[alias] = true end
+        end
       end
+      necesidades[#necesidades + 1] = n
     end
   end
-  return objetos, nombres
+  return necesidades
 end
 
--- Profesiones de la ruta que ya tienes, con tu nivel en cada una y lo que les falta.
 local function MisProfesiones()
   local lista = {}
   if not (GL.RUTA and GL.NivelProfesion) then return lista end
   for _, prof in ipairs(GL.RUTA.profesiones or {}) do
     local ok, nivel, tope = pcall(GL.NivelProfesion, prof)
-    if ok and nivel then
-      local objetos, nombres = Necesidades(prof, nivel)
+    if ok and type(nivel) == "number" and nivel > 0 and nivel < math.huge then
       table.insert(lista, { prof = prof, nivel = nivel, tope = tope, clave = Normalizar(prof.nombre),
-        objetos = objetos, nombres = nombres })
+        necesidades = Necesidades(prof, nivel) })
     end
   end
   return lista
 end
 
--- Lo que la guía quiere de este instructor: el rango siguiente primero y luego las recetas por orden de paso.
--- El rango de aprendiz no está aquí: solo se sube lo que ya tienes (elegir profesión es cosa tuya).
+-- Un ID explícito contradictorio no se sustituye por un nombre o producto coincidente.
+-- Los componentes indirectos solo se compran si se conoce la profesión requerida.
+local function Coincidencia(m, clave, sub, objeto, hechizo, pide)
+  if GL.RequisitoEspecialidad975 then
+    if GL.RequisitoEspecialidad975(clave) or (clave==m.clave and GL.RequisitoEspecialidad975(sub)) then return nil end
+    local sk,ix=GL.RequisitoEspecialidad975(pide)
+    if sk then
+      if sk~=m.prof.skill or not GL.EstadoEspecialidades975 then return nil end
+      local estado,_,indices=GL.EstadoEspecialidades975(sk)
+      if estado~="aprendida" or not indices[ix] then return nil end
+      pide=m.clave
+    end
+  end
+  if pide and pide ~= m.clave then return nil end
+  if not objeto and RANGOS[Normalizar(sub)] and (clave == m.clave or pide == m.clave)
+      and m.prof.skill ~= 40 and m.prof.skill ~= 633 and (not m.tope or m.tope < 300) then
+    return { orden = 0, m = m, rango = true, fuerza = 4 }
+  end
+  local mejor
+  for _, n in ipairs(m.necesidades) do
+    local fuerza, material
+    if hechizo and n.hechizo == hechizo then fuerza = 3
+    elseif not (hechizo and n.hechizo) and n.nombres[clave] then fuerza = 2
+    elseif not (hechizo and n.hechizo) and objeto and n.objetos[objeto] then fuerza = 1
+    elseif objeto and pide == m.clave and n.materiales[objeto] and not n.objetos[objeto] then fuerza, material = 1, true end
+    if fuerza and (not mejor or fuerza > mejor.fuerza) then
+      mejor = { orden = n.j, m = m, paso = n.paso, material = material, fuerza = fuerza }
+    end
+  end
+  return mejor
+end
+
 local function Servicios()
-  local filas = {}
-  local otras, luego = {}, {}          -- 9.7.4: lo que no hace falta comprar y lo que la guía querrá más adelante
-  local mias = MisProfesiones()
-  if not GetNumTrainerServices then return filas, otras, luego, mias end
+  local filas, otras, luego, mias = {}, {}, {}, MisProfesiones()
+  local sinConfirmar = 0
+  if not (GetNumTrainerServices and GetTrainerServiceInfo) then return filas, otras, luego, mias, sinConfirmar end
   for i = 1, (GetNumTrainerServices() or 0) do
     local nombre, sub, tipo = GetTrainerServiceInfo(i)
-    if tipo == "unavailable" and nombre then
-      local clave = Normalizar(nombre)
-      local objeto = ObjetoDelServicio(i)
+    if nombre and (tipo == "available" or tipo == "unavailable") then
+      local clave, objeto, hechizo = Normalizar(nombre), ObjetoDelServicio(i), HechizoDelServicio(i)
+      local pide, nivelPide = HabilidadQuePide(i)
+      local elegido, ambiguo, contradiccion
       for _, m in ipairs(mias) do
-        if (objeto and m.objetos[objeto]) or m.nombres[clave] then
-          local okR, _, nivelPide = pcall(GetTrainerServiceSkillReq or function() end, i)
-          table.insert(luego, { nombre = nombre, sub = sub, pide = okR and nivelPide or nil, prof = m.prof })
-          break
+        local n = Coincidencia(m, clave, sub, objeto, hechizo, pide)
+        if not n and hechizo and (not pide or pide == m.clave) then
+          for _, necesidad in ipairs(m.necesidades) do
+            if necesidad.hechizo and necesidad.hechizo ~= hechizo and
+                (necesidad.nombres[clave] or (objeto and necesidad.objetos[objeto])) then contradiccion = true; break end
+          end
+        end
+        if n then
+          if not elegido or n.fuerza > elegido.fuerza then elegido, ambiguo = n, false
+          elseif n.fuerza == elegido.fuerza and n.m ~= elegido.m then ambiguo = true end
         end
       end
-    elseif tipo == "available" and nombre then
-      local clave = Normalizar(nombre)
-      local objeto = ObjetoDelServicio(i)
-      local pide = HabilidadQuePide(i)
-      local elegido
-      for _, m in ipairs(mias) do
-        local esRango = clave == m.clave or (not objeto and RANGOS[Normalizar(sub)] and pide == m.clave)
-        if esRango then
-          elegido = { orden = 0, m = m, rango = true }
-          break
-        end
-        local n = (objeto and m.objetos[objeto]) or m.nombres[clave]
-        if n and (not elegido or n.j < elegido.orden) then
-          elegido = { orden = n.j, m = m, paso = m.prof.pasos[n.j], material = n.material }
-        end
+      if not elegido and GL.RequisitoEspecialidad975 and
+          (GL.RequisitoEspecialidad975(pide) or GL.RequisitoEspecialidad975(clave) or GL.RequisitoEspecialidad975(sub)) then
+        contradiccion = true -- requisito o desbloqueo de especialización: revisar manualmente
       end
-      local precio = (GetTrainerServiceCost and GetTrainerServiceCost(i)) or 0
-      if elegido then
-        table.insert(filas, { i = i, nombre = nombre, sub = sub, precio = precio, orden = elegido.orden,
-          prof = elegido.m.prof, tope = elegido.m.tope, paso = elegido.paso, rango = elegido.rango,
-          material = elegido.material })
-      else
-        table.insert(otras, { i = i, nombre = nombre, sub = sub, precio = precio })
+      if ambiguo then elegido = nil end
+      if elegido and (tipo == "unavailable" or (nivelPide and nivelPide > elegido.m.nivel)) then
+        table.insert(luego, { nombre = nombre, sub = sub, pide = nivelPide, prof = elegido.m.prof })
+      elseif tipo == "available" then
+        local okP, precio = pcall(GetTrainerServiceCost or function() end, i)
+        if okP and type(precio) == "number" and precio >= 0 and precio < math.huge then
+          if elegido then
+            table.insert(filas, { i = i, nombre = nombre, sub = sub, precio = precio, orden = elegido.orden,
+              prof = elegido.m.prof, tope = elegido.m.tope, paso = elegido.paso, rango = elegido.rango,
+              material = elegido.material, hechizo = hechizo, objeto = objeto, habilidad = pide })
+          elseif not ambiguo and not contradiccion then
+            table.insert(otras, { i = i, nombre = nombre, sub = sub, precio = precio })
+          end
+        elseif elegido then sinConfirmar = sinConfirmar + 1 end
+        if not elegido and (ambiguo or contradiccion) then sinConfirmar = sinConfirmar + 1 end
       end
     end
   end
@@ -143,19 +190,21 @@ local function Servicios()
     if a.orden ~= b.orden then return a.orden < b.orden end
     return a.i < b.i
   end)
-  return filas, otras, luego, mias
+  return filas, otras, luego, mias, sinConfirmar
 end
 
 -- 9.7.4: ¿la guía tiene plan para la profesión de este instructor? (por la habilidad que piden sus recetas)
 local function ProfesionDelInstructor(mias)
   if not GetNumTrainerServices then return nil, false end
+  local primera
   for i = 1, (GetNumTrainerServices() or 0) do
     local pide = HabilidadQuePide(i)
     if pide then
+      primera = primera or pide
       for _, m in ipairs(mias) do if m.clave == pide then return pide, true end end
-      return pide, false
     end
   end
+  if primera then return primera, false end
   return nil, #mias > 0
 end
 
@@ -231,7 +280,7 @@ end
 
 local function Actualizar()
   if not panel then CrearPanel() end
-  local filas, otras, luego, mias = Servicios()
+  local filas, otras, luego, mias, sinConfirmar = Servicios()
   local _, conPlan = ProfesionDelInstructor(mias or {})
   local coste = 0
   local y = -44
@@ -255,6 +304,8 @@ local function Actualizar()
   if not conPlan then
     pie = C.AMARILLO .. L"La guía no tiene plan para esta profesión con tu personaje." .. C.FIN .. "\n" ..
       C.GRIS .. L"Compra solo las recetas de lo que vayas a fabricar o vender." .. C.FIN
+  elseif #filas == 0 and sinConfirmar > 0 then
+    pie = ""
   elseif #filas == 0 then
     pie = C.VERDE .. L"Ya tienes todo lo que la guía usa de este instructor: no hace falta comprar nada ahora." .. C.FIN
   else
@@ -265,6 +316,9 @@ local function Actualizar()
     if AutoActivo() then
       pie = pie .. "\n" .. C.GRIS .. L"La guía lo aprende sola al abrir el instructor (Mayús para no hacerlo)." .. C.FIN
     end
+  end
+  if sinConfirmar > 0 then
+    pie = pie .. (pie ~= "" and "\n" or "") .. C.AMARILLO .. L"Hay recetas con identidad o coste sin confirmar. Revísalas manualmente." .. C.FIN
   end
   -- 9.7.4: lo que no hace falta y lo que vendrá, para saber qué comprar y qué no
   if conPlan and otras and #otras > 0 then
@@ -300,13 +354,48 @@ local function TextoFaltan(faltan)
   return t
 end
 
+local function EnCombateCompra()
+  return (InCombatLockdown and InCombatLockdown()) or (UnitAffectingCombat and UnitAffectingCombat("player"))
+end
+
+local function SaldoCompra(manual)
+  local ok, total = pcall(GetMoney or function() end)
+  if not ok or type(total) ~= "number" or total < 0 or total >= math.huge or total ~= total then return nil end
+  if manual then return total end
+  if GL.ReservaOro then
+    local valido, reserva = pcall(GL.ReservaOro, true)
+    if not valido or type(reserva) ~= "number" or reserva < 0 or reserva >= math.huge or reserva ~= reserva then return nil end
+    return math.max(0, total - reserva)
+  end
+  if GL.DineroParaComprar then
+    local valido, saldo = pcall(GL.DineroParaComprar, false)
+    if valido and type(saldo) == "number" and saldo >= 0 and saldo < math.huge then return math.min(total, saldo) end
+    return nil
+  end
+  return total
+end
+
+local function CompraPermitida(manual, sesion)
+  if EnCombateCompra() or not sesionAbierta or sesion ~= sesionInstructor or not GL.RUTA or GL.RUTA ~= rutaSesion then return false end
+  if not manual and (not autoSesion or not AutoActivo() or (IsShiftKeyDown and IsShiftKeyDown())) then return false end
+  if ClassTrainerFrame and ClassTrainerFrame.IsShown and not ClassTrainerFrame:IsShown() then return false end
+  if IsTradeskillTrainer then
+    local ok, profesion = pcall(IsTradeskillTrainer)
+    if not ok or (not not profesion) ~= true then return false end
+  else return false end
+  return true
+end
+
 -- Aprende en orden lo que pide la guía. Si no llega el dinero para algo, lo salta y sigue con lo siguiente que se
 -- pueda pagar: el rango va primero, así que nunca se queda sin él por comprar recetas, y una receta barata que ya
 -- puedes usar no espera a que tengas el oro del rango.
-Aprender = function(manual)
+local function SolicitarCompra(manual)
+  local sesion = sesionInstructor
+  if not CompraPermitida(manual, sesion) then return 0 end
   if not (GetNumTrainerServices and GetTrainerServiceInfo and BuyTrainerService) then return 0 end
   local filas = Servicios()
-  local dinero = (GL.DineroParaComprar and GL.DineroParaComprar(manual)) or (GetMoney and GetMoney()) or 0   -- 9.1: reserva para el 40
+  local dinero = SaldoCompra(manual)
+  if type(dinero) ~= "number" or dinero < 0 or dinero >= math.huge or dinero ~= dinero then return 0 end
   local elegidos, faltan, gasto = {}, {}, 0
   for _, f in ipairs(filas) do
     if gasto + f.precio <= dinero then
@@ -325,17 +414,47 @@ Aprender = function(manual)
     end
     return 0
   end
-  local nombres = {}
-  for _, f in ipairs(elegidos) do table.insert(nombres, NombreServicio(f)) end
-  -- de la última fila a la primera, para que una compra no mueva el número de las demás
+  local nombres, solicitado = {}, 0
+  -- Revalidar cada fila: una compra o un evento puede cambiar el diálogo, el índice o el precio.
   table.sort(elegidos, function(a, b) return a.i > b.i end)
-  for _, f in ipairs(elegidos) do pcall(BuyTrainerService, f.i) end
-  comprando = true
-  GL.Mensaje(L"aprendo en el instructor de profesión: " .. table.concat(nombres, ", ") .. " (" .. Dinero(gasto) .. ").")
-  if #faltan > 0 then
+  for _, f in ipairs(elegidos) do
+    if not CompraPermitida(manual, sesion) then break end
+    local ok, nombre, sub, tipo = pcall(GetTrainerServiceInfo, f.i)
+    local okP, precio = pcall(GetTrainerServiceCost or function() end, f.i)
+    if not ok or nombre ~= f.nombre or sub ~= f.sub or tipo ~= "available" or not okP or precio ~= f.precio then break end
+    local vigente
+    for _, actual in ipairs(Servicios()) do
+      if actual.i == f.i and actual.nombre == f.nombre and actual.sub == f.sub and actual.precio == f.precio
+          and actual.prof == f.prof and actual.paso == f.paso and actual.rango == f.rango
+          and actual.hechizo == f.hechizo and actual.objeto == f.objeto and actual.habilidad == f.habilidad then
+        vigente = true; break
+      end
+    end
+    if not vigente then break end
+    local saldo = SaldoCompra(manual)
+    if type(saldo) ~= "number" or saldo ~= saldo or saldo < precio or saldo >= math.huge or not CompraPermitida(manual, sesion) then break end
+    local pedido, resultado = pcall(BuyTrainerService, f.i)
+    if not pedido or resultado == false then break end
+    table.insert(nombres, NombreServicio(f))
+    solicitado = solicitado + precio
+  end
+  if #nombres > 0 then
+    if sesionAbierta and sesion == sesionInstructor then comprando = true end
+    GL.Mensaje(L"solicito aprender en el instructor de profesión: " .. table.concat(nombres, ", ") .. " (" .. Dinero(solicitado) .. ").")
+  end
+  if #nombres == #elegidos and #faltan > 0 then
     GL.Mensaje(L"no te llega el dinero para " .. TextoFaltan(faltan) .. L": vuelve cuando lo tengas.")
   end
-  return #elegidos
+  return #nombres
+end
+
+Aprender = function(manual)
+  if ejecutandoCompra then return 0 end
+  ejecutandoCompra = true
+  local ok, n = pcall(SolicitarCompra, manual)
+  ejecutandoCompra = false
+  if not ok then error(n) end
+  return n
 end
 
 local function MostrarPanel()
@@ -350,11 +469,15 @@ end
 
 local function CompraAutomatica()
   if not (sesionAbierta and autoSesion and GL.RUTA and GL.RUTA == rutaSesion) then return end
-  if not AutoActivo() or oleadas >= MAX_OLEADAS then return end
+  if not CompraPermitida(false, sesionInstructor) or oleadas >= MAX_OLEADAS then return end
   if not EsInstructorDeProfesion() then return end
   oleadas = oleadas + 1
   local ok, n = pcall(Aprender, false)
   if not ok and GL.Fallo("recetas", n) then GL.Mensaje(L"error: " .. tostring(n)) end
+end
+
+function GL.CancelarCompraRecetas()
+  autoSesion, compraPendiente = false, nil
 end
 
 local function ProgramarCompra()
@@ -393,7 +516,7 @@ eventos:SetScript("OnEvent", function(self, event)
     oleadas = 0
     comprando = false
     local conMayus = IsShiftKeyDown and IsShiftKeyDown()
-    sesionAbierta, autoSesion, rutaSesion = true, not conMayus, GL.RUTA
+    sesionAbierta, autoSesion, rutaSesion = true, not conMayus and AutoActivo(), GL.RUTA
     if DB().instructor ~= false then MostrarPanel() end
     ProgramarCompra()
     return
@@ -412,6 +535,7 @@ GL.AprenderRecetas = Aprender
 GL.comandos["autorecetas"] = function()
   local db = DB()
   db.autoRecetas = (db.autoRecetas == false)
+  if not db.autoRecetas then GL.CancelarCompraRecetas() end
   GL.Mensaje(db.autoRecetas and L"aprender solas las recetas de la guía en el instructor de profesión: activado (Mayús al abrirlo para no hacerlo)."
     or L"aprender solas las recetas de la guía en el instructor de profesión: desactivado (usa el botón del panel).")
 end

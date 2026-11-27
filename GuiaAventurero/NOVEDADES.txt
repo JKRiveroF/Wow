@@ -1,3 +1,144 @@
+Versión 9.8.0 (candidata pendiente de validación en WoW Forever)
+  Integra la auditoría de las 47 rutas con las mejoras de la 9.7.9.9.
+
+  - Revisadas cadenas, requisitos, coordenadas e instrucciones ES/EN.
+  - Separados del itinerario principal los canjes opcionales sin experiencia.
+  - Corregidos destinos de vuelo, nodos guardados en otro idioma, arranques
+    y desbloqueos de clase.
+  - La instalación, guardados, Questie, rutas y viajes se validarán en el cliente.
+
+Versión 9.7.9.9 (de prueba: falta probarla en el juego)
+  Revisión de estabilidad R11–R15 sobre lo de la 9.7.9.8.
+
+  - Más textos en inglés (interfaz, tutorial, buscador, primera ayuda);
+    se traducen al enseñarlos. Zonas de destino en el idioma de la guía.
+  - Combate, muerte y valores secretos revisados antes de equipar,
+    vender, comprar o poner talentos; si no se puede leer, espera.
+  - Datos guardados, cuenta, mazmorras, equipo, profesiones, mascotas
+    y mapa más robustos frente a otros addons.
+  - Pesca: los volúmenes solo vuelven si nadie los cambió; al morir o
+    resucitar, armas y sonido vuelven cuando se puede.
+
+Versión 9.7.9.8 (de prueba: falta probarla en el juego)
+  El tutorial te enseña dónde está cada botón y la compacta lleva los
+  iconos de la barra.
+
+  - Cada pantalla marca en amarillo, con su nombre, el botón del que
+    habla: pestaña Guía, Atrás, Mi nivel, Siguiente, ?, la flecha,
+    la barra de la izquierda entera, Ajustes y Tamaño.
+  - La ventana del tutorial va al lado de la guía, sin taparla.
+  - Donde decía «Saltar paso» ahora dice «Siguiente».
+  - Ventana compacta: fila de iconos debajo; cada uno abre la ventana
+    grande en su pestaña y «‹ Volver a compacta» te devuelve.
+  - El panel de «¡Nivel N!» es de un solo color.
+
+Versión 9.7.9.7 (de prueba: falta probarla en el juego)
+  Botones arriba y misiones plegadas en la pestaña Guía.
+
+  - Atrás, Mi nivel, Siguiente y ? (¿Atascado?) debajo de la barra de
+    la ruta, siempre a la vista.
+  - Con varias misiones en el paso, todas plegadas: una línea con lo
+    que toca (Coger, Hacer con contador, Entregar, Entregada) y
+    Llévame; al pulsarla se abre entera.
+  - Sin números en Coger, Hacer y Entregar.
+
+Versión 9.7.9.6 (de prueba: falta probarla en el juego)
+  Revisión de estabilidad de toda la guía.
+
+  - Paneles, ventanas y datos guardados más robustos; copias dañadas
+    o de otro personaje no se usan.
+  - Personajes reconocidos por su GUID; sin reino se siguen guardando.
+  - Mazmorras, profesiones y equipo revisados.
+  - Vender lo gris solo si lo activas en Ajustes; compras al
+    instructor y modo pesca más seguros.
+
+Versión 9.7.9.5 (de prueba: falta probarla en el juego)
+  La ruta ya no cambia de paso sola a cada rato.
+
+  Recalcular la ruta
+  - Un paso de después solo cuenta como hecho si sus misiones están
+    entregadas (no basta con tenerlas cogidas); las misiones extra no
+    cuentan; si ya has empezado el paso de ahora, hacen falta 5.
+
+Versión 9.7.9.4 (de prueba: falta probarla en el juego)
+  Planes de talentos nuevos por rol y rangos de las barras más seguros.
+
+  Talentos
+  - Planes nuevos de 51 puntos para las nueve clases, por rol; el
+    druida con Feral (gato) y Feral (oso) por separado.
+  - Cada talento enseña el nombre y la descripción de tu árbol y un
+    resumen de la guía.
+  - Más nombres de Forever reconocidos; /ga informe › TALENTOS da los
+    identificadores de cada nodo.
+
+  Hechizos, instructor y misiones de clase
+  - Habilidades de talentos en Hechizos; consejos del instructor según
+    tu especialización; misiones de clase revisadas; habilidades de
+    los demonios y rangos de bestias revisados.
+
+  Rangos en las barras
+  - Solo cambia al rango exacto de tu libro; si no puede, dice cuántos
+    quedan y por qué.
+
+  Falta probar en el juego
+  - Con cada clase: que los nombres del plan coinciden con tu árbol
+    (/ga informe › TALENTOS).
+  - Que la descripción del talento sale al pasar el ratón y que
+    Sustituir cambia los botones al rango nuevo.
+
+Versión 9.7.9.3 (de prueba: falta probarla en el juego)
+  Rangos en las barras y nombres de talentos de Forever.
+
+  Rangos en las barras
+  - Al cambiar un rango, comprueba que el botón ha cambiado. Si el
+    juego no la deja, lo dice en el chat y queda en /ga informe.
+
+  Talentos
+  - Último recurso se reconoce como Última posición, su nombre en
+    Forever.
+  - /ga informe › TALENTOS lista también los talentos sin puntos.
+
+Versión 9.7.9.2 (de prueba: falta probarla en el juego)
+  Talentos según tu árbol y el número de Profesiones.
+
+  Talentos según tu árbol
+  - Cada talento del plan lleva el icono de tu árbol.
+  - Si uno del plan no está en tu árbol con ese nombre, lo avisa y lo
+    salta; /ga informe dice cuáles son y qué tienes puesto.
+
+  Profesiones
+  - El número del botón Profesiones se quita al abrirla.
+
+  Falta probar en el juego
+  - Con el guerrero tanque: iconos, lo ya puesto como hecho y la
+    sección TALENTOS de /ga informe.
+
+Versión 9.7.9.1 (de prueba: falta probarla en el juego)
+  Profesiones con menos texto y /ga memoria más clara.
+
+  Profesiones
+  - Arriba solo sale el aviso de aprender el rango siguiente cuando ya
+    puedes; la explicación completa, al pasar el ratón por el icono.
+  - En los tramos, solo qué fabricar y con qué; en el tuyo, además, de
+    dónde sale la receta y el instructor del rango si aún te falta.
+
+  Talentos y botones
+  - Las ramas de Talentos usan todo el ancho; si el nombre no cabe,
+    salen los puntos y el nombre va en la ayuda.
+  - Las profesiones secundarias vuelven a tener su icono.
+
+  Memoria
+  - /ga memoria dice dos cifras: la que da el juego y la que la guía
+    usa de verdad después de limpiar la basura de Lua, sin tener que
+    escribir un /run.
+
+  Inglés
+  - /ga memoria y /ga informe dicen los datos cargados en inglés.
+
+  Falta probar en el juego
+  - Que /ga memoria da las dos cifras y que la segunda es mucho menor.
+  - Que en Profesiones se lee bien y no falta nada que necesites.
+
 Versión 9.7.9 — Fase 12: auditoría y arreglos de la 9.7.7 (de prueba: falta probarla en el juego)
   ES: Reconocimiento de instancias y jefes, requisitos de bandas, botín y equipo revisados. Inventario desconocido diferenciado de cero, reservas y compras de profesiones reforzadas. Navegación, minimapa, vuelos y transportes revisados. Buscador, perfiles, talentos, traducciones y convivencia con Questie reforzados. Actualizaciones selectivas y consultas redundantes reducidas.
   EN: Reviewed instance and boss recognition, raid requirements, loot and gear. Unknown inventory distinguished from zero, improved profession reserves and shopping. Reviewed navigation, minimap, flights and transport. Improved search, profiles, talents, translations and Questie coexistence. Selective updates and fewer redundant queries.

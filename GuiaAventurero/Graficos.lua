@@ -285,7 +285,7 @@ local function CrearAnillo(fl)
   anillo.letras = {}
   for i = 1, 4 do
     local l = anillo:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    l:SetText(LETRAS[i])
+    l:SetText(i == 4 and GL.ingles and "W" or LETRAS[i])
     l:SetShadowOffset(1, -1)
     anillo.letras[i] = l
   end
@@ -304,10 +304,18 @@ end
 
 local function PintarAnillo(frac, r, g, b)
   local encendidos = math.floor(frac * PUNTOS + 0.5)
+  -- R12: la distancia se actualiza igual; solo cambian los puntos cuyo color cambia.
+  local previo = anillo.encendidos
+  local mismoColor = anillo.r == r and anillo.g == g and anillo.b == b
+  if previo == encendidos and mismoColor then return end
   for i = 1, PUNTOS do
-    if i <= encendidos then anillo.puntos[i]:SetVertexColor(r, g, b, 1)
-    else anillo.puntos[i]:SetVertexColor(1, 1, 1, 0.14) end
+    local activo = i <= encendidos
+    if previo == nil or activo ~= (i <= previo) or (activo and not mismoColor) then
+      if activo then anillo.puntos[i]:SetVertexColor(r, g, b, 1)
+      else anillo.puntos[i]:SetVertexColor(1, 1, 1, 0.14) end
+    end
   end
+  anillo.encendidos, anillo.r, anillo.g, anillo.b = encendidos, r, g, b
 end
 
 local function EstiloFlecha()
@@ -342,7 +350,9 @@ function GL.TrasFlecha(fl)
     -- solo la flecha y los metros, sin marco ni nombre
     if fl.SetBackdropColor then fl:SetBackdropColor(0, 0, 0, 0); fl:SetBackdropBorderColor(0, 0, 0, 0) end
     if rawget(fl, "fondoCaja") then fl.fondoCaja:SetAlpha(0) end
-    fl.texto:Hide()
+    -- Sin destino navegable, el aviso es la única información útil de la flecha.
+    local estado = rawget(fl, "estado")
+    GL.Mostrar(fl.texto, not fl.tex:IsShown() and (not estado or not estado.llegado))
   elseif rawget(fl, "fondoCaja") then
     fl.fondoCaja:SetAlpha(1)
   end
@@ -538,10 +548,10 @@ local function AplicarFuente()
   end
   local opciones = original[2]
   if DB().fuenteContorno == true then opciones = "OUTLINE" end
-  ui.fuentePaso, ui.opcionesPaso = elegida, opciones
-  local ok, puesto = pcall(ui.pasoTexto.SetFont, ui.pasoTexto, elegida, 13, opciones)
-  if not ok or puesto == false then ui.fuentePaso, ui.opcionesPaso = original[1], original[2] end
-  if GL.AplicarTamTexto then GL.AplicarTamTexto() end
+  -- Aplicar directamente al tamaño configurado y publicar solo la fuente aceptada.
+  if GL.AplicarTamTexto and not GL.AplicarTamTexto(elegida, opciones) then
+    if original[1] then GL.AplicarTamTexto(original[1], original[2]) end
+  end
 end
 
 ------------------------------------------------------------------------

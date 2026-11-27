@@ -11,6 +11,110 @@ local function Ver(n) return (GL.ingles and n.en) or n end
 
 -- De la más nueva a la más antigua. Cada grupo: t = título (si tiene) y las cosas nuevas.
 local NOVEDADES = {
+  { v = "9.8.0", resumen = "Auditoría de las 47 rutas y mejoras de estabilidad e interfaz. Candidata pendiente de probar en WoW Forever.", grupos = {
+      { t = "Rutas de leveo", "Revisadas cadenas, requisitos, coordenadas e instrucciones en español e inglés. Los canjes opcionales sin experiencia se distinguen del itinerario principal." },
+      { t = "Viajes y perfiles", "Corregidos destinos de vuelo y el reconocimiento de nodos guardados en otro idioma. Actualizados arranques y desbloqueos de clase." },
+      { t = "Prueba en Forever", "Esta versión integra las mejoras de la 9.7.9.9. Falta validar en el cliente la instalación, los guardados, Questie, las rutas y los desplazamientos." },
+  }, en = { resumen = "Audit of the 47 routes and interface and stability improvements. Release candidate awaiting WoW Forever testing.", grupos = {
+      { t = "Leveling routes", "Reviewed quest chains, requirements, coordinates and instructions in Spanish and English. Optional turn-ins with no experience are identified separately from the main route." },
+      { t = "Travel and profiles", "Corrected flight destinations and recognition of flight paths saved in another language. Updated starting quests and class unlocks." },
+      { t = "Forever testing", "This version includes the 9.7.9.9 improvements. Installation, saved progress, Questie, routes and travel still need to be tested in the client." },
+  } } },
+  { v = "9.7.9.9", resumen = "Revisión de estabilidad R11–R15 sobre lo de la 9.7.9.8. Versión de prueba.", grupos = {
+      { t = "Idioma", "Más textos de la interfaz, del tutorial, del buscador y de la primera ayuda en inglés; se traducen al enseñarlos, así que valen aunque el idioma se elija después de cargar.", "Las zonas de los destinos salen en el idioma de la guía y, si un nombre viene del cliente en otro idioma, lo dice." },
+      { t = "Estabilidad", "Combate, muerte y valores secretos del cliente revisados antes de equipar, vender, comprar o poner talentos; si algo no se puede leer, la guía espera y lo reintenta en vez de adivinar.", "Datos guardados, cuenta, mazmorras, equipo, profesiones, mascotas y mapa más robustos frente a otros addons." },
+      { t = "Pesca", "Al acabar, los volúmenes solo vuelven si nadie los ha cambiado; al morir o resucitar, las armas y el sonido vuelven cuando se puede." },
+      { t = "Falta probar en el juego", "Lo de la 9.7.9.7 y la 9.7.9.8 (botones arriba, misiones plegadas, tutorial con marcas, iconos de la compacta) junto con esta revisión.", "Pescar y volver a poner las armas; cambiar el idioma de la guía y abrir el tutorial." },
+  }, en = { resumen = "R11–R15 stability review on top of 9.7.9.8. Test build.", grupos = {
+      { t = "Language", "More interface, tutorial, search and first-help texts in English; they are translated when shown, so they work even if the language is chosen after loading.", "Destination zones are shown in the guide's language and, if a name comes from the client in another language, it says so." },
+      { t = "Stability", "Combat, death and client secret values are checked before equipping, selling, buying or setting talents; if something can't be read, the guide waits and retries instead of guessing.", "Saved data, account, dungeons, gear, professions, pets and map are sturdier against other addons." },
+      { t = "Fishing", "When you finish, volumes only go back if nobody changed them; on death or resurrection, weapons and sound go back when possible." },
+      { t = "Still to test in game", "The 9.7.9.7 and 9.7.9.8 changes (buttons on top, folded quests, tutorial highlights, compact window icons) together with this review.", "Fishing and putting your weapons back; changing the guide language and opening the tutorial." },
+  } } },
+  { v = "9.7.9.8", resumen = "El tutorial te enseña dónde está cada botón y la compacta lleva los iconos de la barra. Versión de prueba.", grupos = {
+      { t = "Tutorial", "Cada pantalla marca en amarillo, con su nombre, el botón del que habla: la pestaña Guía, Atrás, Mi nivel, Siguiente y ?, la flecha, toda la barra de la izquierda, Ajustes y Tamaño.", "La ventana del tutorial se pone al lado de la guía en vez de encima, para que se vea lo marcado.", "Donde decía «Saltar paso» ahora dice «Siguiente»." },
+      { t = "Ventana compacta", "Debajo lleva una fila con los iconos de la barra lateral: cada uno abre la ventana grande en esa pestaña.", "«‹ Volver a compacta», encima de la ventana grande, te devuelve a la compacta tal como estaba; también al cerrar la grande o al pulsar Guía." },
+      { t = "Subir de nivel", "El panel de «¡Nivel N!» es de un solo color (antes la parte de arriba tenía una franja dorada)." },
+      { t = "Falta probar en el juego", "Que los marcos caen justo encima de cada botón y desaparecen al cerrar el tutorial (/ga tutorial).", "Que la fila de iconos se ve bajo la compacta y que Volver a compacta deja el paso y la flecha igual." },
+  }, en = { resumen = "The tutorial shows you where each button is and the compact window has the sidebar icons. Test build.", grupos = {
+      { t = "Tutorial", "Each screen highlights in yellow, with its name, the button it talks about: the Guide tab, Back, My level, Next and ?, the arrow, the whole left bar, Settings and Size.", "The tutorial window sits next to the guide instead of on top of it, so you can see what is highlighted.", "Where it said «Skip step» it now says «Next»." },
+      { t = "Compact window", "Below it there is a row with the sidebar icons: each one opens the big window on that tab.", "«‹ Back to compact», above the big window, takes you back to the compact window as it was; so does closing the big window or clicking Guide." },
+      { t = "Level up", "The «Level N!» panel is a single colour (the top used to have a gold band)." },
+      { t = "Still to test in game", "That the frames land right on each button and go away when the tutorial closes (/ga tutorial).", "That the icon row shows under the compact window and that Back to compact keeps the step and the arrow." },
+  } } },
+  { v = "9.7.9.7", resumen = "Botones arriba y misiones plegadas en la pestaña Guía. Versión de prueba.", grupos = {
+      { t = "Botones", "Atrás, Mi nivel y Siguiente (antes «Saltar paso») van arriba, justo debajo de la barra de la ruta, siempre a la vista. «¿Atascado? Comprobar paso» es el botón «?» de la misma fila." },
+      { t = "Pasos con varias misiones", "Todas salen plegadas, una línea por misión con lo que toca: Coger (a quién y dónde), Hacer (el contador de cada objetivo), Entregar («lista para entregar») o Entregada (en verde).", "Llévame lleva la flecha a esa misión para hacerla antes. Al pulsar la línea se abre la misión entera (Coger, Hacer, Entregar); al pulsarla otra vez se pliega.", "La línea de la misión a la que apunta la flecha lleva una raya amarilla." },
+      { t = "Coger, Hacer, Entregar", "Sin números: lo hecho lleva la marca y lo que toca, un cuadro morado." },
+      { t = "Falta probar en el juego", "Que los botones de arriba se ven en todos los pasos y que con muchas misiones la pestaña se lee bien.", "Que Llévame mueve la flecha y que al entregar una misión la flecha pasa a la siguiente." },
+  }, en = { resumen = "Buttons on top and folded quests in the Guide tab. Test build.", grupos = {
+      { t = "Buttons", "Back, My level and Next (formerly «Skip step») are at the top, right under the route bar, always in view. «Stuck? Check step» is the «?» button on the same row." },
+      { t = "Steps with several quests", "They all show folded, one line per quest with what is left: Accept (who and where), Do (each objective's counter), Turn in («ready to turn in») or Turned in (green).", "Take me points the arrow at that quest so you can do it first. Clicking the line opens the whole quest (Accept, Do, Turn in); clicking again folds it.", "The quest the arrow points at has a yellow bar." },
+      { t = "Accept, Do, Turn in", "No numbers: done rows have the check mark and the current one a purple box." },
+      { t = "Still to test in game", "That the top buttons show on every step and that steps with many quests read well.", "That Take me moves the arrow and that turning in a quest moves the arrow to the next one." },
+  } } },
+  { v = "9.7.9.6", resumen = "Revisión de estabilidad de toda la guía. Versión de prueba.", grupos = {
+      { t = "Más estable", "Los paneles se crean una vez y, si uno falla, la guía lo dice en vez de quedarse en blanco.", "Abrir la guía desde un botón o comando cambia el tamaño de la ventana en lugar de abrir otra encima.", "Los datos guardados se reparan al cargar si alguno está dañado; las copias incompletas o de otro personaje no se usan." },
+      { t = "Cuenta y personajes", "Cada personaje se reconoce por su identificador del juego (GUID); si se repite con otro nombre o reino, el viejo se archiva en vez de borrarse.", "Sin reino (como en Forever) se siguen guardando los personajes." },
+      { t = "Mazmorras, profesiones y equipo", "Mazmorras y bandas: plantas, jefes y salas de cada instancia sin mezclar las que se llaman igual.", "Profesiones: la selección se mantiene al aprender u olvidar otra; materiales del tramo agrupados por objeto.", "Equipo: no compara con objetos de misión ni con botín sin confirmar." },
+      { t = "Automatismos", "Vender lo gris ya no se activa solo: hay que encenderlo en Ajustes. Solo vende chatarra gris confirmada.", "Compras al instructor y de recetas: se comprueba cada fila antes de comprar.", "Modo pesca: no pierde el arma de la mano izquierda al volver a cambiar." },
+      { t = "Falta probar en el juego", "Que todas las pestañas se abren bien y Cuenta › Personajes guarda tus personajes.", "Que vender lo gris, comprar al instructor y el modo pesca funcionan como antes." },
+  }, en = { resumen = "Stability review of the whole guide. Test build.", grupos = {
+      { t = "More stable", "Panels are built once and, if one fails, the guide says so instead of staying blank.", "Opening the guide from a button or command resizes the window instead of opening another one on top.", "Saved data is repaired on load if damaged; incomplete backups or those of another character are not used." },
+      { t = "Account and characters", "Each character is identified by its game ID (GUID); if repeated under another name or realm, the old entry is archived instead of deleted.", "Characters are still saved with no realm name (as in Forever)." },
+      { t = "Dungeons, professions and gear", "Dungeons and raids: floors, bosses and rooms per instance, without mixing up instances with the same name.", "Professions: your selection stays when you learn or drop another one; materials grouped by item.", "Gear: no comparison with quest items or unconfirmed loot." },
+      { t = "Automation", "Selling grey items no longer turns on by itself: switch it on in Settings. Only confirmed grey junk is sold.", "Trainer and recipe purchases: each row is checked before buying.", "Fishing mode: no longer loses your off-hand when swapping back." },
+      { t = "Still to test in game", "That every tab opens fine and Account › Characters saves your characters.", "That selling greys, trainer purchases and fishing mode work as before." },
+  } } },
+  { v = "9.7.9.5", resumen = "La ruta ya no cambia de paso sola a cada rato. Versión de prueba.", grupos = {
+      { t = "Recalcular la ruta", "La guía te pasaba de paso sola aunque estuvieras haciendo el de ahora: contaba como hechos los pasos siguientes en cuanto tenías sus misiones cogidas, y también las misiones extra.", "Ahora un paso de después solo cuenta si sus misiones están entregadas, las misiones extra no cuentan y, si ya has empezado el paso de ahora, hacen falta 5 pasos entregados por delante (no 3)." },
+      { t = "Falta probar en el juego", "Que al coger varias misiones de golpe la guía se queda en el paso en el que estás.", "Que si de verdad te saltas pasos (entregas misiones de más adelante) la guía sigue pasándote, con Deshacer en la pestaña Guía." },
+  }, en = { resumen = "The route no longer keeps changing step on its own. Test build.", grupos = {
+      { t = "Route recalculation", "The guide moved you to another step even while you were doing the current one: it counted later steps as done as soon as you had their quests, and extra quests too.", "Now a later step only counts if its quests are turned in, extra quests do not count and, if you have already started the current step, 5 turned-in steps ahead are needed (not 3)." },
+      { t = "Still to test in game", "That picking up several quests at once keeps the guide on your current step.", "That if you really skip steps (turn in quests further ahead) the guide still moves you, with Undo in the Guide tab." },
+  } } },
+  { v = "9.7.9.4", resumen = "Planes de talentos nuevos por rol y rangos de las barras más seguros. Versión de prueba.", grupos = {
+      { t = "Talentos", "Planes nuevos de 51 puntos para las nueve clases, por rol (tanque, sanación o daño), con los árboles actuales de Forever. El druida tiene Feral (gato) y Feral (oso) por separado.", "Cada talento del plan enseña el nombre y la descripción que tiene en tu árbol (si el juego está en el mismo idioma que la guía) y un resumen corto de la guía.", "Más nombres de Forever reconocidos (por ejemplo Control de furia, Embestir mejorado, Cólera desbocada, Manía sangrienta) y /ga informe › TALENTOS da también los identificadores de cada nodo." },
+      { t = "Hechizos, instructor y misiones de clase", "Hechizos enseña las habilidades que salen de talentos, con el nivel de la fila.", "El instructor da consejos según tu especialización (qué comprar y qué es opcional).", "Misiones de clase revisadas (guerrero, paladín, cazador y más) con los destinos de tu ruta.", "Mascotas: habilidades de los demonios del brujo; rangos de las bestias del cazador revisados, sin llevarte a bestias con coordenadas sin comprobar." },
+      { t = "Rangos en las barras", "Solo cambia un botón por el rango exacto de tu libro de hechizos (ya no por el nombre a secas), no toca macros ni objetos y no hace nada en combate o con barras de vehículo.", "Si no puede, dice en el chat cuántos quedan pendientes y por qué, y lo vuelve a intentar." },
+      { t = "Falta probar en el juego", "Con cada clase: que los nombres del plan coinciden con tu árbol (/ga informe › TALENTOS, «del plan no están»).", "Que la descripción del talento sale al pasar el ratón.", "Que al pulsar Sustituir los botones pasan al rango nuevo." },
+  }, en = { resumen = "New talent plans by role and safer bar ranks. Test build.", grupos = {
+      { t = "Talents", "New 51-point plans for all nine classes, by role (tank, healer or damage), based on Forever's current trees. Druids get Feral (cat) and Feral (bear) separately.", "Each plan talent shows the name and description from your tree (when the game and the guide use the same language) plus a short guide summary.", "More Forever names recognised, and /ga informe › TALENTS also gives the IDs of each node." },
+      { t = "Spells, trainer and class quests", "Spells lists the abilities that come from talents, with the row level.", "The trainer gives advice for your specialization (what to buy and what is optional).", "Class quests reviewed (warrior, paladin, hunter and more) using your route's destinations.", "Pets: warlock demon abilities; hunter beast ranks reviewed, without sending you to beasts with unchecked coordinates." },
+      { t = "Ranks on action bars", "A button is only swapped for the exact rank in your spellbook (no longer by name alone); macros and items are never touched, and nothing happens in combat or with vehicle bars.", "If it cannot, chat says how many are pending and why, and it tries again." },
+      { t = "Still to test in game", "With each class: that plan names match your tree (/ga informe › TALENTS).", "That the talent description shows on hover.", "That pressing Replace moves the buttons to the new rank." },
+  } } },
+  { v = "9.7.9.3", resumen = "Rangos en las barras y nombres de talentos de Forever. Versión de prueba.", grupos = {
+      { t = "Rangos en las barras", "Al cambiar el rango de un hechizo en la barra (botón Sustituir, Siempre solo o automático), la guía comprueba que el botón ha cambiado de verdad. Si el juego no la deja, lo dice en el chat con el motivo y queda en /ga informe.", "Usa también la forma nueva del juego para coger el hechizo (C_Spell.PickupSpell), por si Forever no tiene la antigua." },
+      { t = "Talentos", "Último recurso del plan se reconoce como Última posición, su nombre en Forever.", "/ga informe › TALENTOS lista también los talentos de tu árbol sin puntos, para ajustar los nombres de los planes a los de Forever." },
+      { t = "Falta probar en el juego", "Que al pulsar Sustituir los botones de la barra pasan al rango nuevo; si no, qué dice el chat y /ga informe.", "Que con el guerrero Última posición sale como hecha y que /ga informe enseña todo tu árbol." },
+  }, en = { resumen = "Ranks on action bars and Forever talent names. Test build.", grupos = {
+      { t = "Ranks on action bars", "When the guide swaps a spell rank on your bars (Replace button, Always on its own or automatic), it checks the button really changed. If the game does not allow it, it says why in chat and it shows in /ga informe.", "It also uses the game's newer way to pick up the spell (C_Spell.PickupSpell), in case Forever lacks the old one." },
+      { t = "Talents", "The plan's Last Stand is recognised under its Forever Spanish name, Última posición.", "/ga informe › TALENTS also lists the talents in your tree with no points, to match the plans to Forever's names." },
+      { t = "Still to test in game", "That pressing Replace moves the bar buttons to the new rank; if not, what chat and /ga informe say.", "That with the warrior Last Stand shows as done and that /ga informe shows your whole tree." },
+  } } },
+  { v = "9.7.9.2", resumen = "Talentos según tu árbol y el número de Profesiones. Versión de prueba.", grupos = {
+      { t = "Talentos según tu árbol", "Cada talento del plan lleva el icono que tiene en tu árbol (antes, en los planes de especialización, todos el de la rama).", "Si un talento del plan no está en tu árbol con ese nombre, lo avisa y lo salta: ya no se queda pidiéndolo como siguiente. /ga informe dice cuáles son y qué tienes puesto." },
+      { t = "Profesiones", "El número del botón Profesiones se quita al abrirla y solo vuelve si cambia." },
+      { t = "Falta probar en el juego", "Con el guerrero tanque: iconos de los talentos, que lo que ya tienes puesto sale como hecho y qué dice /ga informe en TALENTOS.", "Que el número de Profesiones se quita al abrirla." },
+  }, en = { resumen = "Talents from your tree and the Professions number. Test build.", grupos = {
+      { t = "Talents from your tree", "Each plan talent shows its icon from your tree (before, specialization plans showed the branch icon for all).", "If a plan talent is not in your tree under that name, the guide says so and skips it instead of asking for it as the next one. /ga informe lists them and what you have spent." },
+      { t = "Professions", "The number on the Professions button goes away once you open it and only comes back if it changes." },
+      { t = "Still to test in game", "With the tank warrior: talent icons, that what you already have shows as done, and what /ga informe says under TALENTS.", "That the Professions number goes away when you open it." },
+  } } },
+  { v = "9.7.9.1", resumen = "Profesiones con menos texto y /ga memoria más clara. Versión de prueba.", grupos = {
+      { t = "Profesiones", "Arriba ya no sale la explicación larga: solo el aviso de aprender el rango siguiente cuando ya puedes. La explicación completa sale al pasar el ratón por el icono de la profesión.", "En los tramos, solo qué fabricar y con qué. En el tramo en el que estás, además, de dónde sale la receta y, si aún no tienes el rango que pide, el instructor de tu facción." },
+      { t = "Talentos y botones", "Las ramas de arriba de Talentos usan todo el ancho cuando no está el botón Poner talentos; si el nombre no cabe, salen solo los puntos y el nombre va en la ayuda.", "Las profesiones secundarias vuelven a tener su icono." },
+      { t = "Memoria", "/ga memoria dice dos cifras: la que da el juego y la que la guía usa de verdad después de limpiar la basura de Lua. Así no hace falta escribir un /run, que el juego avisa como script personalizado." },
+      { t = "Inglés", "/ga memoria y /ga informe dicen los datos cargados como Eastern Kingdoms y Other, no «Reinos, Otras»." },
+      { t = "Falta probar en el juego", "Que /ga memoria da las dos cifras y que la segunda es mucho menor que la primera.", "Que en Profesiones se lee bien y no falta nada que necesites a tu nivel." },
+  }, en = { resumen = "Professions with less text and clearer /ga memoria. Test build.", grupos = {
+      { t = "Professions", "The long explanation at the top is gone: only the notice to learn the next rank once you can. The full explanation shows when you hover over the profession icon.", "Steps show only what to craft and with what. The step you are on also shows where the recipe comes from and, if you still lack the rank it needs, your faction's trainer." },
+      { t = "Talents and buttons", "The branches at the top of Talents use the full width when the Apply talents button is hidden; if the name does not fit, only the points show and the name goes in the tooltip.", "Secondary professions have their icon again." },
+      { t = "Memory", "/ga memoria gives two figures: the one the game reports and the one the guide actually uses after Lua garbage is collected. No /run needed, which the game flags as a custom script." },
+      { t = "English", "/ga memoria and /ga informe show loaded data as Eastern Kingdoms and Other, not «Reinos, Otras»." },
+      { t = "Still to test in game", "That /ga memoria gives both figures and the second is much lower than the first.", "That Professions reads well and nothing you need at your level is missing." },
+  } } },
   { v = "9.7.9", resumen = "Fase 12: auditoría de todo lo de la 9.7.7 y arreglos. Revisión local cerrada; versión de prueba.", grupos = {
       { t = "Mazmorras y equipo", "Reconocimiento de instancias y jefes, requisitos de bandas, consultas de botín y comparación de equipo reforzados." },
       { t = "Profesiones y viajes", "Inventario desconocido diferenciado de existencias cero; reservas y compras revisadas. Navegación, minimapa y consultas de transporte más robustos." },
@@ -899,8 +1003,10 @@ end
 
 function GL.AbrirNovedades()
   local db = GuiaAventureroDB
-  if db.compacto and GL.SalirCompacto then GL.SalirCompacto() end
+  if GL.MostrarVentanaCompletaR10 then GL.MostrarVentanaCompletaR10() else
+    if db.compacto and GL.SalirCompacto then GL.SalirCompacto() end
   if GL.frame then GL.frame:Show(); db.oculto = false end
+  end
   if barra then barra:SetValue(0) end
   GL.AbrirModo("novedades")
 end
@@ -909,15 +1015,11 @@ end
 -- Aviso en el chat cuando el addon se ha actualizado
 ------------------------------------------------------------------------
 -- Las variables guardadas se cargan justo antes de ADDON_LOADED: ahí se ve con qué versión jugaste la última vez.
-local carga = CreateFrame("Frame")
-GL.Evento(carga, "ADDON_LOADED")
-carga:SetScript("OnEvent", function(self, event, nombre)
-  if nombre ~= nombreAddon then return end
-  self:UnregisterEvent("ADDON_LOADED")
+GL.LeerVersionAnteriorR13 = function()
   if type(GuiaAventureroDB) == "table" and next(GuiaAventureroDB) ~= nil then
     previa = GuiaAventureroDB.version or "3.2"   -- hasta la 3.2 no se guardaba la versión
   end
-end)
+end
 
 table.insert(GL.alIniciar, function()
   CrearPanel()
@@ -925,6 +1027,8 @@ table.insert(GL.alIniciar, function()
   if GL.ui and GL.ui.autor then
     GL.ui.autor:SetText(C.GRIS .. L"Versión " .. GL.VERSION .. "  ·  " .. GL.AUTOR .. C.FIN)
   end
+  -- Una versión anterior no debe cambiar la procedencia de un esquema posterior.
+  if GL.GuardadosEsquemaPosterior then return end
   if previa and previa ~= GL.VERSION then
     -- si te has saltado alguna versión, también se dice lo de esas (como mucho las tres últimas)
     local function Avisar()

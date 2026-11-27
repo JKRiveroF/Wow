@@ -16,6 +16,7 @@ local C = GL.colores
 local PLANTILLA = BackdropTemplateMixin and "BackdropTemplate" or nil
 
 local MIN_SALTADOS = 3       -- pasos ya hechos por delante para dar por saltado el de ahora
+local MIN_EMPEZADO = 5       -- 9.7.9.4: los mismos, si el paso de ahora ya está empezado
 local MIRAR = 25             -- pasos por delante que se miran
 local MUERTES, VENTANA_MUERTES = 3, 600
 local ADELANTO = 2           -- niveles por encima del máximo de la sección
@@ -24,7 +25,7 @@ local ESPERA = 60            -- segundos entre dos recalculados
 local function DB() return GuiaAventureroDB or {} end
 local function Ahora() return (GetTime and GetTime()) or 0 end
 local function Modo() return DB().recalcular or "auto" end
-local function Nivel() local n = UnitLevel and UnitLevel("player"); n = GL.Seguro and GL.Seguro(n) or n; return type(n) == "number" and n or 1 end
+local function Nivel() return GL.NivelJugadorR14() end
 
 local muertes = {}           -- momentos de las muertes en el paso actual
 local claveMuertes
@@ -32,6 +33,7 @@ local ultimo = -1000         -- último recalculado
 local elegidoAMano = {}      -- pasos a los que volviste tú: no se tocan
 local descartados = {}       -- "clave:motivo" que deshiciste o no quisiste
 local indiceAntes
+local enMundoR14, generacionR14 = true, 0
 local pendiente              -- propuesta o cambio hecho: { motivo, texto, s, p, desde = {s, p, d}, hecho }
 
 local function Clave() local db = DB(); return tostring(db.seccion) .. ":" .. tostring(db.paso) end
@@ -51,6 +53,35 @@ end
 ------------------------------------------------------------------------
 -- Los tres casos: cada uno devuelve la propuesta o nil
 ------------------------------------------------------------------------
+-- 9.7.9.4 (Quini: «la ruta cambia el paso automáticamente si ya tienes completados algunos posteriores todo el rato»).
+-- Antes contaba como hecho un paso de Recoger con solo tener la misión en el diario: al coger varias misiones de golpe
+-- en un campamento, los pasos de Recoger de después salían hechos y la guía te sacaba del paso en el que estabas.
+-- Ahora un paso solo prueba que te lo saltaste si sus misiones están ENTREGADAS (o ignoradas a mano); no cuentan las
+-- misiones extra (REFUERZO_97, se hacen en cualquier orden), y si el paso de ahora ya está empezado (misión cogida o
+-- algún destino hecho) hacen falta MIN_EMPEZADO pasos entregados por delante, no 3.
+local function Extra(p)
+  local t = p and p.t
+  -- El texto de la ruta ya puede estar traducido por Idioma.lua.
+  return type(t) == "string" and (t:find("^Misión extra") ~= nil or t:find("^Extra quest") ~= nil)
+end
+local function Entregado(p)
+  local alguna = false
+  for _, d in ipairs((p and p.wp) or {}) do
+    if d.q then
+      alguna = true
+      local ignorado = GL.Marcado and GL.Marcado("ignorados", d)
+      if not ignorado and not (GL.MisionCompletada and GL.MisionCompletada(d.q)) then return false end
+    end
+  end
+  return alguna
+end
+local function Empezado(p)
+  for _, d in ipairs((p and p.wp) or {}) do
+    if d.q and (GL.DestinoHecho(d) == true or (GL.MisionEnDiario and GL.MisionEnDiario(d.q))) then return true end
+  end
+  return false
+end
+
 local function Saltados()
   local db = DB()
   local R = GL.RUTA
@@ -63,9 +94,9 @@ local function Saltados()
     s, q = GL.PasoDespues(s, q)
     if not s then break end
     local paso = R.secciones[s].pasos[q]
-    if ConMisiones(paso) and GL.EstadoPaso(paso) == "hecho" then hechos = hechos + 1; ultimoHecho = { s, q } end
+    if ConMisiones(paso) and not Extra(paso) and Entregado(paso) then hechos = hechos + 1; ultimoHecho = { s, q } end
   end
-  if hechos < MIN_SALTADOS or not ultimoHecho then return nil end
+  if hechos < (Empezado(p) and MIN_EMPEZADO or MIN_SALTADOS) or not ultimoHecho then return nil end
   local ds, dq = GL.PasoDespues(ultimoHecho[1], ultimoHecho[2])
   if not ds then return nil end
   return { motivo = "saltados", s = ds, p = dq,
@@ -79,6 +110,7 @@ local function Muertes()
   local db = DB()
   local sec = GL.RUTA.secciones[db.seccion]
   local nivel = Nivel()
+  if not nivel then return nil end
   if sec and nivel < sec.min then
     local s = GL.SeccionPorNivel(nivel)
     if s and s < db.seccion then
@@ -96,7 +128,7 @@ local function Adelantado()
   local db = DB()
   local sec = GL.RUTA.secciones[db.seccion]
   local nivel = Nivel()
-  if not sec or nivel < (sec.max or 60) + ADELANTO then return nil end
+  if not nivel or not sec or nivel < (sec.max or 60) + ADELANTO then return nil end
   local s = GL.SeccionPorNivel(nivel)
   if not s or s <= db.seccion then return nil end
   return { motivo = "nivel", s = s, p = 1,
@@ -107,7 +139,13 @@ end
 -- Hacer, deshacer
 ------------------------------------------------------------------------
 local function Aplicar(prop)
+  if not enMundoR14 or not GL.PersonajeVivoR14() or not Nivel() or not GL.TransitoLibreR14() then return false end
   local db = DB()
+  if prop.clave and prop.clave ~= Clave() then return false end
+  if prop.motivo == "nivel" then
+    local vigente = Adelantado()
+    if not vigente or vigente.s ~= prop.s or vigente.p ~= prop.p then return false end
+  end
   prop.desde = { db.seccion, db.paso, db.destino }
   if prop.posponer then
     local _, p = GL.PasoActual()
@@ -137,11 +175,12 @@ local function Deshacer()
 end
 
 local function Mirar()
+  if not enMundoR14 then return end
   if not GL.RUTA or not GL.frame or not GL.EstadoPaso or not GL.SaltarA then return end
   if Modo() == "no" then pendiente = nil; return end
+  if not GL.PersonajeVivoR14() or not Nivel() then return end
   if InCombatLockdown and InCombatLockdown() then return end
-  if IsInInstance and IsInInstance() then return end
-  if UnitOnTaxi and UnitOnTaxi("player") then return end
+  if not GL.TransitoLibreR14() then return end
   local db = DB()
   local clave = Clave()
   -- volver atrás no lo hace la guía: si el paso retrocede, lo has elegido tú
@@ -151,7 +190,11 @@ local function Mirar()
   if clave ~= claveMuertes then claveMuertes = clave; muertes = {} end
   if pendiente and not pendiente.hecho then
     -- la propuesta ya no vale si te has movido
-    if pendiente.clave ~= clave then pendiente = nil end
+    if pendiente.clave ~= clave then pendiente = nil
+    elseif pendiente.motivo == "nivel" then
+      local vigente = Adelantado()
+      if not vigente or vigente.s ~= pendiente.s or vigente.p ~= pendiente.p then pendiente = nil end
+    end
   end
   if pendiente and pendiente.hecho and Ahora() - ultimo > 300 then pendiente = nil end   -- el aviso de lo hecho se va solo
   if Ahora() - ultimo < ESPERA then return end
@@ -200,6 +243,7 @@ local function Tarjeta(panel, y, ancho)
     tarjeta.si = GL.CrearBoton(tarjeta, L"Deshacer", function()
       if pendiente and not pendiente.hecho then
         local prop = pendiente
+        if not GL.PersonajeVivoR14() then return end
         if Aplicar(prop) then pendiente = prop else pendiente = nil end
         if GL.Refrescar then GL.Refrescar() end
       else
@@ -242,15 +286,39 @@ table.insert(GL.tarjetasGuia, 1, Tarjeta)
 ------------------------------------------------------------------------
 local ev = CreateFrame("Frame")
 GL.Evento(ev, "PLAYER_DEAD")
+GL.Evento(ev, "PLAYER_ALIVE")
+GL.Evento(ev, "PLAYER_UNGHOST")
 GL.Evento(ev, "PLAYER_LEVEL_UP")
 GL.Evento(ev, "QUEST_TURNED_IN")
 GL.Evento(ev, "ZONE_CHANGED_NEW_AREA")
+GL.Evento(ev, "PLAYER_LEAVING_WORLD")
+GL.Evento(ev, "PLAYER_ENTERING_WORLD")
 ev:SetScript("OnEvent", function(_, evento)
+  if evento == "PLAYER_LEAVING_WORLD" then
+    enMundoR14 = false
+    generacionR14 = generacionR14 + 1
+    if pendiente and not pendiente.hecho then pendiente = nil end
+    return
+  elseif evento == "PLAYER_ENTERING_WORLD" then
+    enMundoR14 = true
+    generacionR14 = generacionR14 + 1
+  end
+  if not enMundoR14 then return end
   if evento == "PLAYER_DEAD" then
     if Clave() ~= claveMuertes then claveMuertes = Clave(); muertes = {} end
     table.insert(muertes, Ahora())
   end
-  if C_Timer and C_Timer.After then C_Timer.After(2, function() pcall(Mirar) end) else pcall(Mirar) end
+  local generacion = generacionR14
+  local ejecutado = false
+  local function ejecutar()
+    if ejecutado or not enMundoR14 or generacion ~= generacionR14 then return end
+    ejecutado = true
+    pcall(Mirar)
+  end
+  if C_Timer and C_Timer.After then
+    local ok, resultado = pcall(C_Timer.After, 2, ejecutar)
+    if not ok or resultado == false then ejecutar() end
+  else ejecutar() end
 end)
 local reloj = 0
 ev:SetScript("OnUpdate", function(_, dt)

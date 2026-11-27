@@ -1,3 +1,13 @@
+9.8.0 candidata: auditoría de las 47 rutas y mejoras de interfaz y estabilidad de la 9.7.9.9. Pendiente de validación en WoW Forever.
+9.7.9.9: revisión de estabilidad R11–R15 (idioma, combate y muerte, valores secretos del cliente, datos guardados, pesca) sobre lo de la 9.7.9.8.
+9.7.9.8: el tutorial marca en amarillo, con su nombre, cada botón del que habla y se coloca al lado de la ventana de la guía, sin taparla; la ventana compacta lleva debajo los iconos de la barra lateral, que abren la ventana grande en su pestaña, con «Volver a compacta».
+9.7.9.7: Atrás, Mi nivel, Siguiente y ? (¿Atascado?) arriba, debajo de la barra de la ruta; en un paso con varias misiones, todas plegadas en una línea con lo que toca y Llévame; sin números en Coger, Hacer y Entregar.
+9.7.9.6: revisión de estabilidad de toda la guía (paneles, ventanas, datos guardados y copias, cuenta, mazmorras, profesiones, compras y ventas automáticas, pesca); vender lo gris solo si lo activas tú.
+9.7.9.5: la ruta ya no te cambia de paso a cada rato: solo cuentan como saltados los pasos con las misiones entregadas (no las que solo tienes cogidas ni las misiones extra), y si ya has empezado el paso hacen falta 5.
+9.7.9.4: planes de talentos nuevos para todas las clases (de 51 puntos, por rol: tanque, sanación o daño; el druida con gato y oso por separado), con el nombre y la descripción del talento de tu árbol; consejos del instructor según tu especialización; rangos de las barras más seguros (solo con el hechizo exacto de tu libro).
+9.7.9.3: los rangos nuevos se ponen en las barras y, si el juego no deja, lo dice; el guerrero reconoce Última posición (Último recurso en Forever); /ga informe lista todos los talentos de tu árbol.
+9.7.9.2: talentos con el icono de tu árbol y sin quedarse en los que no están en él; el número de Profesiones se quita al abrirla.
+9.7.9.1: Profesiones con menos texto (solo lo de tu nivel; lo demás en la ayuda del icono); ramas de Talentos sin cortar; icono de las profesiones secundarias; /ga memoria dice también la memoria que la guía usa de verdad, tras limpiar la basura de Lua; los datos cargados salen en inglés con la guía en inglés.
 9.7.9 — Fase 12: auditoría de todo lo de la 9.7.7 y arreglos; revisión local cerrada, falta probarla en WoW Forever.
 9.7.9 — Phase 12: audit and fixes of everything in 9.7.7; local review closed, WoW Forever testing pending.
 
@@ -22,7 +32,7 @@ No automatic auction scans. No keyboard bindings. See NOVEDADES.txt; historical 
 
 NOTA DE VERSIÓN 9.7.4: consulta NOVEDADES.txt para limitaciones de prueba y datos sin certificar. Sin atajos de teclado.
 
-IMPORTANTE — VERSIÓN 9.7.9 DE PRUEBA
+IMPORTANTE — VERSIÓN 9.8.0 CANDIDATA
 Esta compilación NO está verificada dentro del juego. Lee NOVEDADES.txt para
 ver qué datos NO están confirmados, especialmente las rutas 1–60, el botín
 y las profesiones. Conserva tus SavedVariables antes de probarla.
@@ -35,15 +45,15 @@ INSTALACIÓN DE PRUEBA
   de WTF (cuenta y personaje).
 - Extrae el ZIP en Interface/AddOns, de forma que quede
   Interface/AddOns/GuiaAventurero/GuiaAventurero.toc.
-- No mezcles archivos de versiones anteriores con los de la 9.7.9.
+- No mezcles archivos de versiones anteriores con los de la 9.8.0.
 - Entra con un personaje de pruebas y abre la guía con /ga.
 - Si aparecen fallos, restaura tanto el addon anterior como sus variables.
 
 GUÍA DEL AVENTURERO 1-60  (WoW Forever, en español o en inglés)
 Creado por JKRiveroF
 
-Versión 9.7.9 de prueba: sin atajos de teclado por decisión del autor.
-Puedes navegar con los botones Atrás, Mi nivel y Saltar paso y consultar
+Versión 9.8.0 candidata.
+Puedes navegar con los botones Atrás, Mi nivel y Siguiente y consultar
 un paso bloqueado con «¿Atascado? Comprobar paso».
 «Solo ruta» no propone opcionales y puede requerir matar enemigos para subir.
 Gnomo mago: Memorándum tras Los enanos modistos; Mercenarios
@@ -244,7 +254,7 @@ Ventana
                misión (entrenar, volar, hogar) es una tarjeta con un paso «Ir».
                El texto largo del paso sale al pasar el ratón por la tarjeta.
                «Otras misiones cerca» despliega las opcionales cercanas. Abajo,
-               la línea «Luego» y los botones Atrás, Mi nivel y Saltar paso.
+               la línea «Luego» y los botones Atrás, Mi nivel y Siguiente.
                En el tutorial eliges «Automático» (la guía avanza y pone los
                talentos sola) o «Lo hago yo» (tú avanzas y los pones); viene
                «Lo hago yo» y se cambia en Ajustes › Automatismos.

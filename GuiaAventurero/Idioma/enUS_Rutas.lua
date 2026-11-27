@@ -4073,4 +4073,4 @@ return {
 ["Úsalo justo antes de la Perdición de agonía: esa hace mucho más daño."]="Use it right before Curse of Agony: that one deals much more damage.",
 ["Útil sobre todo contra jugadores."]="Useful mostly against players.",
 }
-]==])
+]==], nil, "rutas")

@@ -10,117 +10,194 @@ local L = GL.L
 local C = GL.colores
 local PLANTILLA = BackdropTemplateMixin and "BackdropTemplate" or nil
 local BLANCO8 = "Interface\\Buttons\\WHITE8X8"
-local function DB() return GuiaAventureroDB or {} end
-local function Num(v) v = (GL.Seguro and GL.Seguro(v)) or v; return type(v) == "number" and v or nil end
-local function Miles(n)
-  return GL.FormatoMiles(n)
+local function DB() return type(GuiaAventureroDB) == "table" and GuiaAventureroDB or {} end
+local function Num(v)
+  if issecretvalue and issecretvalue(v) then return nil end
+  if GL.Seguro then v = GL.Seguro(v) end
+  return type(v) == "number" and v == v and math.abs(v) <= 9007199254740991 and v or nil
 end
+local function Contador(v, signo)
+  v = Num(v)
+  return v and (signo or v >= 0) and v or nil
+end
+local function Texto(v)
+  return not (issecretvalue and issecretvalue(v)) and type(v) == "string" and v:find("%S") and v or nil
+end
+local function Consulta(fn, ...)
+  if type(fn) ~= "function" then return nil end
+  local ok, v = pcall(fn, ...)
+  if ok and not (issecretvalue and issecretvalue(v)) then return v end
+end
+local function Miles(n) return GL.FormatoMiles(n) end
 local function Duracion(seg)
-  seg = math.floor((seg or 0) + 0.5)
+  seg = math.floor((Contador(seg) or 0) + 0.5)
   if seg < 60 then return seg .. " s" end
   local m = math.floor(seg / 60)
   if m < 60 then return m .. L" min" end
   return math.floor(m / 60) .. " h " .. (m % 60) .. L" min"
 end
-local function Hoy()
-  local ok, d = pcall(function() return date and date("%Y-%m-%d") end)
-  return (ok and type(d) == "string") and d or "hoy"
+local function FechaValida(v)
+  if not Texto(v) then return nil end
+  local y,m,d = v:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)$")
+  y,m,d = tonumber(y),tonumber(m),tonumber(d)
+  if not y or y < 1 or m < 1 or m > 12 or d < 1 then return nil end
+  local dias = ({31, (y%4==0 and (y%100~=0 or y%400==0)) and 29 or 28,31,30,31,30,31,31,30,31,30,31})[m]
+  return d <= dias and v or nil
 end
-local function Franja()   -- cuarto de hora del día (0-95)
-  local ok, t = pcall(function() return date and date("*t") end)
-  if not ok or type(t) ~= "table" or not Num(t.hour) or not Num(t.min) then return 0 end
-  return math.floor((t.hour * 60 + t.min) / 15)
+local function Hoy() return FechaValida(Consulta(date, "%Y-%m-%d")) end
+local function Franja()
+  local t = Consulta(date, "*t")
+  local h,m = type(t)=="table" and Num(t.hour), type(t)=="table" and Num(t.min)
+  if not h or not m or h < 0 or h >= 24 or m < 0 or m >= 60 or h%1~=0 or m%1~=0 then return nil end
+  return math.floor((h*60+m)/15)
 end
-local function Clave()
-  local n = UnitName and UnitName("player")
-  local r = GetRealmName and GetRealmName()
-  return (n or "?") .. "-" .. (r or "")
+local function GUID(v) return Texto(v) and v:match("^Player%-%w+%-%w+$") and v or nil end
+local function Identidad()
+  local k,n,r,g
+  if type(GL.ClavePersonajeCuenta)=="function" then
+    local ok; ok,k,n,r,g=pcall(GL.ClavePersonajeCuenta)
+    if not ok then return nil end
+  end
+  if not Texto(k) or not Texto(n) or not Texto(r) or not GUID(g) then return nil end
+  return "guid:"..g,n,r,g
 end
 
 ------------------------------------------------------------------------
 -- Datos
 ------------------------------------------------------------------------
-local function Dias()
-  if type(GuiaAventureroCuenta) ~= "table" then GuiaAventureroCuenta = {} end
+-- Los registros sin GUID se conservan como históricos independientes.
+-- Nunca asociar automáticamente un nombre reutilizado a un GUID nuevo.
+local function Archivar(k,v)
   local c = GuiaAventureroCuenta
-  if type(c.dias9) ~= "table" then c.dias9 = {} end
-  return c.dias9
+  if type(c) ~= "table" then return false end
+  if c.dias9Recuperacion9794 == nil then c.dias9Recuperacion9794 = {} end
+  local a = c.dias9Recuperacion9794
+  if type(a) ~= "table" then return false end
+  if a[k] == nil then a[k] = v end
+  return true
 end
-
+local function Dias(escribir)
+  if GuiaAventureroCuenta == nil and escribir then GuiaAventureroCuenta = {} end
+  if type(GuiaAventureroCuenta) ~= "table" then if escribir then return nil end; return {} end
+  local c = GuiaAventureroCuenta
+  if type(c.dias9) == "table" then return c.dias9 end
+  if not escribir then return {} end
+  if c.dias9 ~= nil and not Archivar("dias9",c.dias9) then return nil end
+  c.dias9 = {}; return c.dias9
+end
 local function Limpiar()
-  if not time then return end
-  local dias = Dias()
-  local limite = date("%Y-%m-%d", time() - 8 * 86400)
-  for k in pairs(dias) do if type(k) == "string" and k < limite then dias[k] = nil end end
+  local ahora = Num(Consulta(time))
+  local limite = ahora and FechaValida(Consulta(date,"%Y-%m-%d",ahora - 8*86400))
+  if not limite then return end
+  for k in pairs(Dias()) do if FechaValida(k) and k < limite then Dias()[k] = nil end end
 end
-
-local function Mio()
-  local dias = Dias()
-  local h = Hoy()
-  if type(dias[h]) ~= "table" then dias[h] = {} end
-  local k = Clave()
-  local p = dias[h][k]
-  if type(p) ~= "table" then
-    local _, clase = UnitClass and UnitClass("player")
-    p = { xp = 0, n0 = Num(UnitLevel and UnitLevel("player")) or 1, oro = 0, q = 0, pasos = 0, t = 0, b = {}, clase = clase,
-      nombre = UnitName and UnitName("player") }
-    dias[h][k] = p
+local CAMPOS = {"xp","oro","q","pasos","t"}
+local function FranjaClave(k)
+  local n = type(k)=="string" and tonumber(k) or Num(k)
+  return n and n>=0 and n<=95 and n%1==0 and string.format("%d",n) or nil
+end
+local function Vista(p)
+  if type(p) ~= "table" then return nil end
+  local v = { b={}, nombre=Texto(p.nombre), clase=Texto(p.clase), guid=GUID(p.guid), reino=Texto(p.reino) }
+  for _, k in ipairs(CAMPOS) do v[k] = Contador(p[k],k=="oro") or 0 end
+  v.n0,v.n1 = Contador(p.n0),Contador(p.n1)
+  if type(p.b)=="table" then
+    for k,x in pairs(p.b) do local f=FranjaClave(k); if f and Contador(x) then v.b[f]=(v.b[f] or 0)+x end end
   end
-  p.n1 = Num(UnitLevel and UnitLevel("player")) or p.n0
+  return v
+end
+local function Mio()
+  local h=Hoy(); local k,n,r,g=Identidad()
+  if not h or not k then return nil end
+  local dias=Dias(true); if not dias then return nil end
+  if type(dias[h]) ~= "table" then
+    if dias[h]~=nil and not Archivar(h,dias[h]) then return nil end
+    dias[h]={}
+  end
+  local d=dias[h]; local p=d[k]; local pref=h..":"..k
+  if type(p)~="table" or GUID(p.guid)~=g then
+    if p~=nil and not Archivar(pref,p) then return nil end
+    p={guid=g};d[k]=p
+  end
+  local function Reparar(campo,valor)
+    if p[campo]~=nil and not Archivar(pref..":"..campo,p[campo]) then return false end
+    p[campo]=valor;return true
+  end
+  for _,campo in ipairs(CAMPOS) do
+    if not Contador(p[campo],campo=="oro") and not Reparar(campo,0) then return nil end
+  end
+  local nv=Contador(Consulta(UnitLevel,"player"))
+  if not Contador(p.n0) and not Reparar("n0",nv or 1) then return nil end
+  if type(p.b)~="table" and not Reparar("b",{}) then return nil end
+  -- Normalizar solo la tabla de franjas si contiene datos inválidos o claves numéricas antiguas.
+  local cambio=false
+  for f,v in pairs(p.b) do if FranjaClave(f)~=f or not Contador(v) then cambio=true;break end end
+  if cambio and not Reparar("b",Vista(p).b) then return nil end
+  if p.n1~=nil and not Contador(p.n1) and not Reparar("n1",nv or p.n0) then return nil end
+  if nv and nv>0 then p.n1=nv end
+  p.nombre,p.reino,p.guid=n,r,g
+  if type(UnitClass)=="function" then local ok,_,clase=pcall(UnitClass,"player"); if ok and Texto(clase) then p.clase=clase end end
   return p
 end
 
-local xpAntes, xpMaxAntes, nivelAntes, oroAntes = nil, nil, nil, nil
+local xpAntes,xpMaxAntes,nivelAntes,oroAntes,claveAnt,identAnterior
+local function Contexto()
+  local k=Identidad()
+  if k~=identAnterior then xpAntes,xpMaxAntes,nivelAntes,oroAntes,claveAnt=nil,nil,nil,nil,nil;identAnterior=k end
+  return k
+end
 local function LeerXP()
-  local xp, max, nv = Num(UnitXP and UnitXP("player")), Num(UnitXPMax and UnitXPMax("player")), Num(UnitLevel and UnitLevel("player")) or 1
-  if not xp or not max then return end
+  if not Contexto() then return end
+  local xp,max,nv=Contador(Consulta(UnitXP,"player")),Contador(Consulta(UnitXPMax,"player")),Contador(Consulta(UnitLevel,"player"))
+  if not xp or not max or not nv or xp>max or nv<1 then xpAntes,xpMaxAntes,nivelAntes=nil,nil,nil;return end
   if xpAntes then
-    local d = 0
-    if nv > (nivelAntes or nv) then d = (xpMaxAntes - xpAntes) + xp elseif xp > xpAntes then d = xp - xpAntes end
-    if d > 0 then
-      local p = Mio()
-      p.xp = p.xp + d
-      local f = tostring(Franja())
-      p.b[f] = (p.b[f] or 0) + d
-    end
+    local d=0
+    if nv==nivelAntes+1 then d=(xpMaxAntes-xpAntes)+xp elseif nv==nivelAntes and xp>xpAntes then d=xp-xpAntes end
+    if d>0 then local p=Mio(); if p then p.xp=p.xp+d; local f=Franja(); if f then f=tostring(f);p.b[f]=(p.b[f] or 0)+d end end end
   end
-  xpAntes, xpMaxAntes, nivelAntes = xp, max, nv
+  xpAntes,xpMaxAntes,nivelAntes=xp,max,nv
 end
-
 local function LeerOro()
-  local o = Num(GetMoney and GetMoney())
-  if not o then return end
-  if oroAntes then local p = Mio(); p.oro = p.oro + (o - oroAntes) end
-  oroAntes = o
+  if not Contexto() then return end
+  local o=Contador(Consulta(GetMoney))
+  if not o then oroAntes=nil;return end
+  if oroAntes then local p=Mio();if p then p.oro=p.oro+(o-oroAntes) end end
+  oroAntes=o
 end
-
-local claveAnt
 local function MirarPaso()
-  local db = DB()
-  if not db.seccion or not db.paso then return end
-  local clave = db.seccion * 1000 + db.paso
-  if claveAnt and clave > claveAnt then local p = Mio(); p.pasos = p.pasos + 1 end
-  claveAnt = clave
+  if not Contexto() then return end
+  local db=DB(); local sec,paso=Contador(db.seccion),Contador(db.paso)
+  if not sec or not paso then claveAnt=nil;return end
+  local clave=sec*1000+paso
+  if claveAnt and clave>claveAnt then local p=Mio();if p then p.pasos=p.pasos+1 end end
+  claveAnt=clave
 end
-
--- suma de un día (o de varios) de todos los personajes
 local function Sumar(dias)
-  local r = { xp = 0, oro = 0, q = 0, pasos = 0, t = 0, b = {}, pj = {}, n0 = nil, n1 = nil }
-  for _, d in ipairs(dias) do
-    for k, p in pairs(d) do
-      if type(p) == "table" then
-        r.xp, r.oro, r.q, r.pasos, r.t = r.xp + (p.xp or 0), r.oro + (p.oro or 0), r.q + (p.q or 0), r.pasos + (p.pasos or 0), r.t + (p.t or 0)
-        for f, v in pairs(p.b or {}) do r.b[f] = (r.b[f] or 0) + v end
-        local e = r.pj[k]
-        if not e then e = { nombre = p.nombre or k, clase = p.clase, xp = 0, q = 0, t = 0, n0 = p.n0, n1 = p.n1 }; r.pj[k] = e end
-        e.xp, e.q, e.t = e.xp + (p.xp or 0), e.q + (p.q or 0), e.t + (p.t or 0)
-        e.n0 = math.min(e.n0 or p.n0 or 1, p.n0 or 1); e.n1 = math.max(e.n1 or p.n1 or 1, p.n1 or 1)
+  local r={xp=0,oro=0,q=0,pasos=0,t=0,b={},pj={}}
+  for _,d in ipairs(dias) do
+    if type(d)=="table" then for k,p in pairs(d) do
+      local v=Vista(p)
+      if v and type(k)=="string" then
+        for _,campo in ipairs(CAMPOS) do r[campo]=r[campo]+v[campo] end
+        for f,x in pairs(v.b) do r.b[f]=(r.b[f] or 0)+x end
+        local id=v.guid and ("guid:"..v.guid) or ("historico:"..k)
+        local e=r.pj[id]
+        if not e then e={xp=0,q=0,t=0,n0=v.n0,n1=v.n1};r.pj[id]=e end
+        e.nombre,e.clase,e.reino=v.nombre or k,v.clase or e.clase,v.reino or e.reino
+        e.xp,e.q,e.t=e.xp+v.xp,e.q+v.q,e.t+v.t
+        if v.n0 then e.n0=math.min(e.n0 or v.n0,v.n0) end
+        if v.n1 then e.n1=math.max(e.n1 or v.n1,v.n1) end
       end
-    end
+    end end
   end
-  local yo = r.pj[Clave()]
-  if yo then r.n0, r.n1 = yo.n0, yo.n1 end
+  local k=Identidad();local yo=k and r.pj[k]
+  if yo then r.n0,r.n1=yo.n0,yo.n1 end
   return r
+end
+local function RitmoPropio()
+  local k=Identidad();if not k then return 0,0 end
+  local lista={};for h,d in pairs(Dias()) do if FechaValida(h) and type(d)=="table" then lista[#lista+1]=d end end
+  local p=Sumar(lista).pj[k];return p and p.xp or 0,p and p.t or 0
 end
 
 ------------------------------------------------------------------------
@@ -181,8 +258,11 @@ local function Crear(f)
 end
 
 local function ColorClase(clase)
-  local c = clase and ((C_ClassColor and C_ClassColor.GetClassColor and C_ClassColor.GetClassColor(clase)) or (RAID_CLASS_COLORS and RAID_CLASS_COLORS[clase]))
-  if c and c.r then return string.format("|cff%02x%02x%02x", c.r * 255, c.g * 255, c.b * 255) end
+  local c=Texto(clase) and (Consulta(C_ClassColor and C_ClassColor.GetClassColor,clase) or (RAID_CLASS_COLORS and RAID_CLASS_COLORS[clase]))
+  if type(c)=="table" and Num(c.r) and Num(c.g) and Num(c.b) then
+    local function Canal(v) return math.floor(math.max(0,math.min(1,v))*255+0.5) end
+    return string.format("|cff%02x%02x%02x",Canal(c.r),Canal(c.g),Canal(c.b))
+  end
   return C.BLANCO
 end
 
@@ -212,17 +292,18 @@ function GL.PintarHoy(f)
   ui.c:Show()
   local dias = Dias()
   local lista, etiquetas = {}, {}
-  if semana and time then
+  local ahora=Num(Consulta(time))
+  if semana and ahora then
     for i = 6, 0, -1 do
-      local k = date("%Y-%m-%d", time() - i * 86400)
-      table.insert(lista, dias[k] or {})
-      table.insert(etiquetas, date("%d/%m", time() - i * 86400))
+      local k = FechaValida(Consulta(date,"%Y-%m-%d",ahora-i*86400))
+      table.insert(lista, k and dias[k] or {})
+      table.insert(etiquetas, Texto(Consulta(date,"%d/%m",ahora-i*86400)) or "—")
     end
   else
     table.insert(lista, dias[Hoy()] or {})
   end
   local r = Sumar(lista)
-  local se = GL.SesionActual and GL.SesionActual()
+  local se = Vista(Consulta(GL.SesionActual))
   ui.titulo:SetText(semana and L"Esta semana" or L"Hoy")
   ui.sub:SetText(C.GRIS .. (se and (L"Sesión de " .. Duracion(se.t)) or "") .. (r.t > 0 and (L"  ·  jugado " .. (semana and L"en la semana " or L"hoy ") .. Duracion(r.t)) or "") .. C.FIN)
   -- teselas (3 x 2)
@@ -254,7 +335,7 @@ function GL.PintarHoy(f)
   if semana then
     for i, d in ipairs(lista) do valoresG[i] = Sumar({ d }).xp; etiq[i] = etiquetas[i] end
   else
-    local primero, ultimo = nil, Franja()
+    local primero, ultimo = nil, Franja() or 0
     for k, v in pairs(r.b) do local n = tonumber(k); if n and v > 0 and (not primero or n < primero) then primero = n end end
     primero = primero or ultimo
     if ultimo - primero > 31 then primero = ultimo - 31 end
@@ -309,7 +390,7 @@ function GL.PintarHoy(f)
     t:SetPoint("TOPLEFT", f, "TOPLEFT", 4, -y)
     t:SetPoint("TOPRIGHT", f, "TOPRIGHT", -4, -y)
     local niv = (p.n0 and p.n1 and p.n1 > p.n0) and (p.n0 .. " " .. GL.Icono("→") .. " " .. p.n1) or tostring(p.n1 or "?")
-    t:SetText(ColorClase(p.clase) .. (p.nombre or "?") .. C.FIN .. C.GRIS .. L"  nivel " .. niv .. "  ·  " .. C.FIN ..
+    t:SetText(ColorClase(p.clase) .. (p.nombre or "?") .. (p.reino and (" - "..p.reino) or "") .. C.FIN .. C.GRIS .. L"  nivel " .. niv .. "  ·  " .. C.FIN ..
       "|cffa48cff" .. Miles(p.xp) .. " XP" .. C.FIN .. C.GRIS .. "  ·  " .. (p.q or 0) .. L" misiones  ·  " .. Duracion(p.t or 0) .. C.FIN)
     t:Show()
     y = y + 15
@@ -338,12 +419,13 @@ function GL.PintarHoy(f)
     ui.sesion:SetText(C.GRIS .. "—" .. C.FIN)
   end
   y = y + 16
-  local an = DB().sesionAnterior
+  local an = Vista(DB().sesionAnterior)
+  if an then an.fin=Contador(DB().sesionAnterior.fin) end
   ui.anterior:ClearAllPoints()
   ui.anterior:SetPoint("TOPLEFT", f, "TOPLEFT", 4, -y)
   ui.anterior:SetPoint("TOPRIGHT", f, "TOPRIGHT", -4, -y)
   if GL.UnaLinea then GL.UnaLinea(ui.anterior) end
-  ui.anterior:SetText(an and (C.GRIS .. L"Sesión anterior" .. (date and an.fin and (" (" .. date("%d/%m", an.fin) .. ")") or "") .. ": " ..
+  ui.anterior:SetText(an and (C.GRIS .. L"Sesión anterior" .. (an.fin and (" (" .. (Texto(Consulta(date,"%d/%m",an.fin)) or "—") .. ")") or "") .. ": " ..
     Duracion(an.t) .. ", " .. Miles(an.xp) .. L" XP, " .. ((GL.DineroConSigno and GL.DineroConSigno(an.oro or 0)) or "") .. ", " .. (an.q or 0) .. L" misiones" .. C.FIN) or "")
   y = y + 18
   ui.compartir:ClearAllPoints()
@@ -355,22 +437,37 @@ end
 -- Eventos
 ------------------------------------------------------------------------
 table.insert(GL.alIniciar, function()
-  pcall(Limpiar)
-  pcall(Mio)
-  pcall(LeerXP); pcall(LeerOro); pcall(MirarPaso)
-  local f = CreateFrame("Frame")
-  for _, e in ipairs({ "PLAYER_XP_UPDATE", "PLAYER_LEVEL_UP", "PLAYER_MONEY", "QUEST_TURNED_IN" }) do f:RegisterEvent(e) end
-  f:SetScript("OnEvent", function(_, evento)
-    if evento == "PLAYER_MONEY" then pcall(LeerOro)
-    elseif evento == "QUEST_TURNED_IN" then pcall(function() local p = Mio(); p.q = p.q + 1 end)
+  pcall(Limpiar);pcall(Mio);pcall(LeerXP);pcall(LeerOro);pcall(MirarPaso)
+  local f=CreateFrame("Frame")
+  for _,e in ipairs({"PLAYER_XP_UPDATE","PLAYER_LEVEL_UP","PLAYER_MONEY","QUEST_TURNED_IN","PLAYER_ENTERING_WORLD","PLAYER_LOGOUT"}) do pcall(f.RegisterEvent,f,e) end
+  local reloj,acumulado,registro,dia,ident=0,0,Mio(),Hoy(),Identidad()
+  local function Volcar()
+    if registro and acumulado>0 then registro.t=(Contador(registro.t) or 0)+acumulado end
+    acumulado=0
+  end
+  f:SetScript("OnEvent",function(_,evento)
+    if evento=="PLAYER_LOGOUT" then Volcar();return end
+    if evento=="PLAYER_ENTERING_WORLD" then
+      Volcar();registro,dia,ident=nil,nil,nil;reloj=0
+      xpAntes,xpMaxAntes,nivelAntes,oroAntes,claveAnt=nil,nil,nil,nil,nil
+      pcall(LeerXP);pcall(LeerOro);pcall(MirarPaso);return
+    end
+    if evento=="PLAYER_MONEY" then pcall(LeerOro)
+    elseif evento=="QUEST_TURNED_IN" then pcall(function() local p=Mio();if p then p.q=p.q+1 end end)
     else pcall(LeerXP) end
   end)
-  local reloj = 0
-  f:SetScript("OnUpdate", function(_, dt)
-    reloj = reloj + (dt or 0)
-    if reloj >= 30 then pcall(function() local p = Mio(); p.t = p.t + reloj end); reloj = 0 end
+  f:SetScript("OnUpdate",function(_,dt)
+    dt=Contador(dt);if not dt or dt>60 then return end
+    reloj=reloj+dt;if reloj<1 then return end
+    local h,k=Hoy(),Identidad()
+    if h~=dia or k~=ident then
+      Volcar();registro,dia,ident=nil,h,k
+      if h and k then registro=Mio();pcall(Limpiar) end
+    elseif registro then acumulado=acumulado+reloj;if acumulado>=30 then Volcar() end
+    elseif h and k then registro=Mio() end
+    reloj=0
   end)
 end)
-GL.trasRefrescar = GL.trasRefrescar or {}
-table.insert(GL.trasRefrescar, function() pcall(MirarPaso) end)
-GL._hoy = { Sumar = Sumar, Dias = Dias, Mio = Mio }
+GL.trasRefrescar=GL.trasRefrescar or {}
+table.insert(GL.trasRefrescar,function() pcall(MirarPaso) end)
+GL._hoy={Sumar=Sumar,Dias=Dias,Mio=Mio,RitmoPropio=RitmoPropio,Limpiar=Limpiar,FechaValida=FechaValida,LeerXP=LeerXP,LeerOro=LeerOro,MirarPaso=MirarPaso}

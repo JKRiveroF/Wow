@@ -126,7 +126,12 @@ end
 ------------------------------------------------------------------------
 local tal = {}
 
-local function NombreTalento(t) return string.match(t.nombre or "", "^(.-)%s*%(.-%)%s*$") or t.nombre or "?" end
+local function NombreTalento(t, real, plan)
+  if real and real.nombres then
+    for i, x in ipairs(plan or {}) do if x == t and real.nombres[i] then return real.nombres[i] end end
+  end
+  return string.match(t.nombre or "", "^(.-)%s*%(.-%)%s*$") or t.nombre or "?"
+end
 
 -- Talento del plan para un nivel: el que cubre ese nivel o, si ninguno, el siguiente.
 local function TalentoDeNivel(plan, nivel)
@@ -159,13 +164,15 @@ function GL.PintarTalentoAhora(panel, y, ancho, refrescar)
   local real = GL.EstadoTalentosReal and GL.EstadoTalentosReal() or nil
   local function Siguiente(desde)
     if not real then return nil end
-    for i = desde or 1, #plan do if not real.hecho[i] then return plan[i], i end end
+    for i = desde or 1, #plan do if not real.hecho[i] and not (real.falta and real.falta[i]) then return plan[i], i end end
     return nil
   end
   if real then t = real.primero and plan[real.primero] or nil end
   local function Linea(x)
     local pts = x.puntos and (C.GRIS .. "  " .. x.puntos .. C.FIN) or ""
-    return Icono(x.icono) .. C.BLANCO .. NombreTalento(x) .. C.FIN .. pts .. "\n" .. C.GRIS .. (x.rama or "") ..
+    local ic = x.icono
+    if real and real.icono then for i = 1, #plan do if plan[i] == x then ic = real.icono[i] or ic; break end end end   -- 9.7.9.1
+    return Icono(ic) .. C.BLANCO .. NombreTalento(x, real, plan) .. C.FIN .. pts .. "\n" .. C.GRIS .. (x.rama or "") ..
       (x.fila and (L", fila " .. x.fila) or "") .. ". " .. (x.nota or "") .. C.FIN
   end
   local poner = { L"Poner", function() if GL.PonerTalentos then GL.PonerTalentos(true) end; if refrescar then refrescar() end end, 80 }
@@ -173,21 +180,28 @@ function GL.PintarTalentoAhora(panel, y, ancho, refrescar)
     titulo = C.AMARILLO .. L"Los talentos empiezan al nivel 10." .. C.FIN
     local p = plan[1]
     texto = p and (L"Tu primer punto: " .. Linea(p)) or ""
+  elseif not real then
+    titulo = C.AMARILLO .. (GL.ingles and "Actual talents not verified" or "Talentos reales sin verificar") .. C.FIN
+    texto = t and ((GL.ingles and "Suggested plan:" or "Plan orientativo:") .. "\n" .. Linea(t)) or ""
+    botones = { poner }
   elseif libres == 0 then
     local sig = TalentoDeNivel(plan, nivel + 1)
     if real then sig = t end
     titulo = C.VERDE .. L"Nada que poner ahora" .. C.FIN
-    texto = sig and (L"Tu siguiente punto llega al nivel " .. (nivel + 1) .. ":\n" .. Linea(sig)) or L"Ya tienes todo el plan."
+    texto = sig and (L"Tu siguiente punto llega al nivel " .. (nivel + 1) .. ":\n" .. Linea(sig)) or (real.completo and L"Ya tienes todo el plan." or (GL.ingles and "Plan incomplete or talents not identified." or "Plan incompleto o talentos sin identificar."))
   elseif t then
     titulo = C.AMARILLO .. ((libres and libres > 0) and (L"Ahora: " .. libres .. (libres == 1 and L" punto libre" or L" puntos libres")) or L"Ahora") .. C.FIN
     local sig = TalentoDeNivel(plan, (t.h or nivel) + 1)
     if real then sig = Siguiente((real.primero or 0) + 1) end
-    texto = Linea(t) .. (sig and sig ~= t and ("\n" .. C.GRIS .. L"Siguiente: " .. NombreTalento(sig) ..
+    texto = Linea(t) .. (sig and sig ~= t and ("\n" .. C.GRIS .. L"Siguiente: " .. NombreTalento(sig, real, plan) ..
       (real and "" or (L" al " .. (sig.d or "?"))) .. "." .. C.FIN) or "")
     botones = { poner }
-  else
+  elseif real.completo then
     titulo = C.VERDE .. L"Ya tienes todo el plan." .. C.FIN
     texto = ""
+  else
+    titulo = C.AMARILLO .. (GL.ingles and "Plan incomplete or blocked" or "Plan incompleto o bloqueado") .. C.FIN
+    texto = GL.ingles and "Check the full plan and your talent tree." or "Revisa el plan completo y tu árbol de talentos."
   end
   local h = tal.tarjeta:Pintar(y, ancho, titulo, C.GRIS .. L"nivel " .. nivel .. C.FIN, texto, botones)
   y = y + h + 8

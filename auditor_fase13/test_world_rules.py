@@ -4,9 +4,8 @@ import re
 import unittest
 from zipfile import ZipFile
 
-from lupa.lua51 import LuaRuntime
-
 from lua_routes import load_routes
+from test_perfiles_forever import lua_for_addon
 from world_rules import XP_OPCIONAL, audit_world, valid_xp_sample
 
 
@@ -29,7 +28,8 @@ def sample(waypoints, text="", minimum=1, maximum=60):
 
 def engine_functions(*names):
     source = (ADDON / "GuiaAventurero.lua").read_text(encoding="utf-8-sig")
-    functions = [re.search(rf"^local function {name}\([^\n]*\)\n.*?^end\b", source, re.M | re.S) for name in names]
+    functions = [re.search(rf"^(?:local )?function {re.escape(name)}\([^\n]*\)\n.*?^end\b", source, re.M | re.S)
+                 for name in names]
     return "\n".join(function[0] for function in functions)
 
 
@@ -104,7 +104,9 @@ class RouteHotfixTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.routes, cls.findings = load_routes(ADDON)
-        cls.lua = LuaRuntime()
+        cls.lua, guide, load = lua_for_addon()
+        cls.lua.globals().GL = guide
+        load("Idioma.lua")
         translations = cls.lua.execute("""
             Diccionario = {}
             return {AnadirIngles = function(t)
@@ -117,17 +119,17 @@ class RouteHotfixTest(unittest.TestCase):
     def test_kumisha_and_stonetalon_can_be_omitted_in_the_real_route_engine(self):
         advance = self.lua.execute("""
             local GuiaAventureroDB, RUTA, bloqueo
-            local GL, entregadas = {}, {}
+            local entregadas = {}
             local function NumSecciones() return #RUTA.secciones end
             local function Refrescar() end
             local function Marcado() return false end
             local function ComprobacionesHechas() return nil end
-            local C_QuestLog = {
+            C_QuestLog = {
               IsQuestFlaggedCompleted = function() return false end,
-              GetLogIndexForQuestID = function() return nil end,
+              GetLogIndexForQuestID = function() return 0 end,
               IsComplete = function() return false end,
             }
-            """ + engine_functions("MisionCompletada", "MisionEnDiario", "ObjetivosListos", "DestinoHecho",
+            """ + engine_functions("GL.BloqueoPasoR09", "MisionEnDiario", "MisionCompletada", "ObjetivosListos", "DestinoHecho",
                                      "EstadoPaso", "Siguiente") + """
             return function(step, nextStep)
               GuiaAventureroDB = {seccion = 1, paso = 1, destino = 4}
@@ -191,17 +193,16 @@ class RouteHotfixTest(unittest.TestCase):
         simulate = self.lua.execute(
             """
             local accepted, completed, objective
-            local GL = {}
             local entregadas = {}
-            local C_QuestLog = {
+            C_QuestLog = {
               IsQuestFlaggedCompleted = function(q) return completed and q == 3520 end,
-              GetLogIndexForQuestID = function(q) return accepted and q == 3520 and 1 or nil end,
+              GetLogIndexForQuestID = function(q) return accepted and q == 3520 and 1 or 0 end,
               IsComplete = function(q) return objective and q == 3520 end,
             }
             local function Marcado() return false end
             local function ComprobacionesHechas() return nil end
             """
-            + engine_functions("MisionCompletada", "MisionEnDiario", "ObjetivosListos", "DestinoHecho", "EstadoPaso")
+            + engine_functions("MisionEnDiario", "MisionCompletada", "ObjetivosListos", "DestinoHecho", "EstadoPaso")
             + """
             return function(step, a, o, c)
               accepted, objective, completed = a, o, c

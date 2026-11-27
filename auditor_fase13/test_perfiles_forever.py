@@ -42,6 +42,15 @@ class ForeverProfilesTest(unittest.TestCase):
         module["TraducirDestino"](waypoint)
         self.assertEqual(waypoint["n"], "Turn in: Return to Quinn (Again) (Quinn Yorick)")
 
+    def test_waypoint_translates_a_nested_npc_name_after_the_mission_title(self):
+        lua, module, load = lua_for_addon("Horde")
+        load("Idioma.lua")
+        module["AnadirIngles"](lua.table_from({"Nombre de misión (variación)": "Quest Name (Variant)",
+                                             "Guía (veterano)": "Guide (Veteran)"}))
+        waypoint = lua.table_from({"n": "Entregar: Nombre de misión (variación) (Guía (veterano))"})
+        module["TraducirDestino"](waypoint)
+        self.assertEqual(waypoint["n"], "Turn in: Quest Name (Variant) (Guide (Veteran))")
+
     def test_ten_skyborne_training_texts_translate_with_addon_engine(self):
         lua, module, load = lua_for_addon()
         load("Idioma.lua")

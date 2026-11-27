@@ -1,6 +1,7 @@
 """Integridad de la base y regresiones locales de guardados y Questie."""
 
 import hashlib
+from io import BytesIO
 import json
 import re
 import subprocess
@@ -21,19 +22,7 @@ HUNTER_STAGES = {
     "SkyborneCazador.lua": (94013, 94050), "TaurenCazador.lua": (6088, 6089),
 }
 MANIFEST = Path(__file__).with_name("SHA256_ORIGINALES.sha256")
-ALLOWED_MODULES = {
-    "GuiaAventurero/Datos94.lua",
-    "GuiaAventurero/GuiaAventurero.lua",
-    "GuiaAventurero/Idioma.lua",
-    "GuiaAventurero/Idioma/enUS_Datos.lua",
-    "GuiaAventurero/Idioma/enUS_Interfaz.lua",
-    "GuiaAventurero/Idioma/enUS_Refuerzos97.lua",
-    "GuiaAventurero/Idioma/enUS_Rutas.lua",
-    "GuiaAventurero/Opcionales.lua",
-    "GuiaAventurero/OpcionalesKalimdor.lua",
-    "GuiaAventurero/OpcionalesOtras.lua",
-    "GuiaAventurero/OpcionalesReinos.lua",
-}
+INTEGRATION = json.loads(Path(__file__).with_name("entradas_integracion_980.json").read_text(encoding="utf-8"))
 NO_XP_TEXT_QUESTS = {
     734, 777, 975, 1191, 2582, 2584, 2586, 2602, 2604, 2662, 3503, 4463, 5150,
     *range(4381, 4387), *range(4481, 4485), *range(4801, 4808),
@@ -257,12 +246,19 @@ class IntegridadTest(unittest.TestCase):
 
     def test_distribucion_conserva_archivos_y_limites_de_cambios(self):
         packaged = {path.relative_to(ROOT).as_posix() for path in ADDON.rglob("*") if path.is_file()}
-        self.assertEqual(packaged, self.files)
+        incoming = INTEGRATION["archivos_solo_entrada"]
+        self.assertEqual(packaged, self.files | incoming.keys())
         self.assertEqual(len(self.routes), 47)
-        self.assertLessEqual(ALLOWED_MODULES, packaged)
-        for name in sorted(packaged - self.routes - ALLOWED_MODULES):
-            with self.subTest(path=name):
-                self.assertEqual(_sha(ROOT / name), self.originals[name])
+        reconciled = set(INTEGRATION["archivos_compartidos"] + INTEGRATION["archivos_version"])
+        self.assertEqual(len(reconciled), 11)
+        snapshot = subprocess.check_output(["git", "archive", "--format=zip", INTEGRATION["fase13"], "GuiaAventurero"], cwd=ROOT)
+        with ZipFile(BytesIO(snapshot)) as phase:
+            for name in sorted(packaged - reconciled):
+                with self.subTest(path=name):
+                    expected = incoming.get(name)
+                    if expected is None:
+                        expected = hashlib.sha256(phase.read(name)).hexdigest()
+                    self.assertEqual(_sha(ROOT / name), expected)
 
     def test_las_rutas_conservan_todo_fuera_de_los_cambios_revisados(self):
         with ZipFile(ROOT / BASE_ZIP) as original:
@@ -275,14 +271,16 @@ class IntegridadTest(unittest.TestCase):
     def test_toc_version_guardados_y_recursos(self):
         lines = _source("GuiaAventurero.toc").splitlines()
         metadata = dict(line[3:].split(": ", 1) for line in lines if line.startswith("## "))
-        self.assertEqual(metadata["Version"], "9.7.9")
+        self.assertEqual(metadata["Version"], "9.8.0")
         self.assertEqual(metadata["Interface"], "16001")
         self.assertEqual(metadata["Author"], "JKRiveroF")
         self.assertEqual(metadata["SavedVariables"], "GuiaAventureroCuenta, GuiaAventureroRespaldo")
         self.assertEqual(metadata["SavedVariablesPerCharacter"], "GuiaAventureroDB")
         modules = [f"GuiaAventurero/{line.replace(chr(92), '/')}" for line in lines if line.endswith(".lua")]
-        self.assertEqual(len(modules), 144)
-        self.assertEqual(set(modules), {name for name in self.files if name.endswith(".lua")})
+        self.assertRegex(_source("Novedades.lua"), r'local NOVEDADES = \{\s*\{ v = "9\.8\.0"')
+        self.assertEqual(len(modules), 147)
+        self.assertEqual(set(modules), {name for name in self.files | INTEGRATION["archivos_solo_entrada"].keys()
+                                       if name.endswith(".lua")})
         self.assertEqual({name for name in modules if name in self.routes}, self.routes)
         for extension, count in ((".blp", 61), (".tga", 9)):
             assets = [name for name in self.files if name.endswith(extension)]
@@ -687,10 +685,14 @@ class QuestieTest(unittest.TestCase):
             function GL.Evento() end
             function GL.Fallo(_, mensaje) error(mensaje) end
             function CreateFrame()
-                return { SetScript = function(_, _, handler) evento_mision = handler end }
+                return { RegisterEvent = function() end, SetScript = function(_, _, handler) evento_mision = handler end }
             end
             function GetQuestID() return 101 end
             function IsQuestCompletable() return true end
+            function GetNumQuestChoices() return 0 end
+            function UnitIsDeadOrGhost() return false end
+            function InCombatLockdown() return false end
+            function UnitAffectingCombat() return false end
             llamadas = { acepta = 0, completa = 0, recompensa = 0 }
             function AcceptQuest() llamadas.acepta = llamadas.acepta + 1 end
             function CompleteQuest() llamadas.completa = llamadas.completa + 1 end
@@ -702,7 +704,7 @@ class QuestieTest(unittest.TestCase):
             GuiaAventureroDB = { questie976 = true, autoMisiones = true, autoSeguimiento = true }
             GL.RUTA = { secciones = {{ pasos = {{ wp = {{ q = 101, a = "A" }, { q = 101, a = "T" }} }} }} }
         ''')
-        for name in ("Asistente97.lua", "Revision976.lua", "Misiones.lua"):
+        for name in ("Idioma.lua", "Asistente97.lua", "Revision976.lua", "Misiones.lua"):
             _load(self.runtime, name)
         self.runtime.execute("GL.alIniciar[1]()")
 
@@ -722,6 +724,7 @@ class QuestieTest(unittest.TestCase):
             assert(llamadas.acepta == 0 and llamadas.completa == 0 and llamadas.recompensa == 0)
             cargado = false
             assert(not GL.QuestieConvivencia976())
+            dialogo()
             dialogo()
             assert(llamadas.acepta == 1 and llamadas.completa == 1 and llamadas.recompensa == 1)
         ''')

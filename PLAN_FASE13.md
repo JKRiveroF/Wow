@@ -182,6 +182,7 @@ La certificación de datos conserva sus pendientes. Las incidencias P2 y P3 qued
 - [x] Incorporar las trazas esES de 2972, 4222 y 6609 y contrastarlas con las etiquetas de las rutas.
 - [ ] Revisar los requisitos de perfil y buscar evidencia para los títulos que siguen sin fuente.
 - [x] Completar la preparación funcional local de los siete bloques, verificar el ZIP de integración e inventariar los cambios frente a 9.7.9. [Paquete e inventario](auditor_fase13/INTEGRACION_FASE13.md).
-- [ ] Cuando se autorice la integración, revisar los archivos coincidentes, actualizar las novedades ES/EN y ejecutar la regresión del corte combinado de la 9.8.0.
-- [ ] Tras integrar la fase 13 con las demás mejoras, ejecutar en Forever los seis casos del protocolo reducido sobre la futura 9.8.0 estable. Anotar la huella del corte probado.
+- [x] Integrar la fase 13 con la 9.7.9.9, revisar los archivos coincidentes y actualizar las novedades ES/EN en la candidata 9.8.0. [Inventario de integración](auditor_fase13/INTEGRACION_FASE13.md).
+- [x] Ejecutar la regresión local de la candidata 9.8.0 y verificar su ZIP de 221 archivos.
+- [ ] Ejecutar en Forever los seis casos del protocolo reducido sobre la candidata 9.8.0 y anotar la huella del corte probado.
 - [ ] Verificar el paquete de la versión combinada tras la validación real. La fusión y las Releases requieren autorización expresa.

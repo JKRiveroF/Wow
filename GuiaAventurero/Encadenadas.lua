@@ -23,24 +23,38 @@ end
 
 local si = {}          -- ya dadas por hechas (no vuelven atrás)
 local no, cuando = {}, {}
-local function Ahora() return (GetTime and GetTime()) or 0 end
+local function Ahora()
+  if type(GetTime) ~= "function" then return nil end
+  local ok, t = pcall(GetTime)
+  if not ok then return nil end
+  if type(issecretvalue) == "function" then
+    local leido, secreto = pcall(issecretvalue, t)
+    if not leido or secreto then return nil end
+  end
+  if type(t) == "number" and t >= 0 and t < math.huge then return t end
+end
 
 -- true si alguna misión posterior o alternativa de q está hecha. f = la función del juego que dice si una misión
 -- está hecha. Lo que sale «no» se vuelve a mirar a los 5 segundos.
 function GL.MisionImplicita(q, f)
-  if not q or not f then return false end
+  if not GL.IdMisionR14(q) or type(f) ~= "function" then return false end
   if si[q] then return true end
   local t = Ahora()
-  if no[q] and t - (cuando[q] or 0) < 5 then return false end
+  if t and no[q] and t >= (cuando[q] or 0) and t - (cuando[q] or 0) < 5 then return false end
   local l = Tabla()[q]
+  local conocida = true
   if l then
     for i = 1, #l do
-      local ok, r = pcall(f, l[i])
-      if ok and r then si[q] = true; return true end
+      local r = GL.ConsultarMisionR14(f, l[i])
+      if r == true then si[q] = true; return true end
+      if r == nil then conocida = false end
     end
   end
-  no[q], cuando[q] = true, t
+  if conocida and t then no[q], cuando[q] = true, t end
   return false
 end
 
-function GL.OlvidarImplicitas() no, cuando = {}, {} end
+function GL.OlvidarImplicitas(todas)
+  no, cuando = {}, {}
+  if todas then si = {} end
+end

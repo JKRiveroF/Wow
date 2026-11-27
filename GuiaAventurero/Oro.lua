@@ -279,7 +279,7 @@ end
 GL.perezosos = GL.perezosos or {}
 GL.perezosos.oro = CrearPanel
 GL.comandos = GL.comandos or {}
-GL.comandos["oro"] = function() if GL.AbrirModo then GL.frame:Show(); GL.AbrirModo("oro") end end
+GL.comandos["oro"] = function() if GL.AbrirModo then if GL.MostrarVentanaCompletaR10 then GL.MostrarVentanaCompletaR10() elseif GL.frame then GL.frame:Show() end; GL.AbrirModo("oro") end end
 
 -- Botón de la barra lateral, tras los de Mazmorras y bandas, Reputación... (antes que Mascotas y Grupo)
 table.insert(GL.alIniciar, 1, function()

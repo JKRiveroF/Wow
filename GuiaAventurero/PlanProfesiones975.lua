@@ -449,30 +449,132 @@ local function DB()
   if type(db.planProfesiones975)~="table" then db.planProfesiones975={} end
   return db.planProfesiones975
 end
-local function RutaAntigua(skill)
-  local r=GL.RUTA
+local function RutaAntigua(skill, ruta)
+  local r=ruta or GL.RUTA
   if r then for _,p in ipairs(r.profesionesRuta or {}) do if p.skill==skill then return true end end end
 end
 local ETIQUETAS={referencia="Referencia",fundicion="Fundición",carne="Carne",pescadocarne="Pescado hasta 225 + carne",carnepescado="Carne hasta 225 + pescado",hombreras="Hombreras 280-300",sinpexmit="Sin Pexmit 250-300",sedalternativa="Seda alternativa",hombrerasseda="Hombreras + seda alternativa",sinpexmitseda="Sin Pexmit + seda alternativa",sindesencantar="Sin desencantar 2-20",sinmision="Sin misión final 270-300",almofar="Almófar 215-225",sinarcanita="Sin arcanita ni Pexmit",almofarsinarcanita="Almófar + sin arcanita",cobre="Cobre alternativo",cobrealmofar="Cobre + almófar",cobresinarcanita="Cobre + sin arcanita",cobrealmofarsinarcanita="Cobre + almófar + sin arcanita",ingtubocobre="Tubos de cobre 51-75",ingproyectiles="Proyectiles de torio 285-300",ingcombinado="Tubos de cobre + proyectiles",pielsinbrazales="Sin patrón de brazales 255-260",pielmenospellejos="Menos pellejos bastos 270-300",pielcombinado="Sin brazales + menos pellejos",ruta="Plan anterior"}
-function GL.ModalidadesProfesion975(skill)
+function GL.ModalidadesProfesion975(skill, ruta)
   local res={"referencia"}
   for _,m in ipairs({"fundicion","carne","pescadocarne","carnepescado","hombreras","sinpexmit","sedalternativa","hombrerasseda","sinpexmitseda","sindesencantar","sinmision","almofar","sinarcanita","almofarsinarcanita","cobre","cobrealmofar","cobresinarcanita","cobrealmofarsinarcanita","ingtubocobre","ingproyectiles","ingcombinado","pielsinbrazales","pielmenospellejos","pielcombinado"}) do if MODOS[skill] and MODOS[skill][m] then res[#res+1]=m end end
-  if RutaAntigua(skill) then res[#res+1]="ruta" end
+  if RutaAntigua(skill, ruta) then res[#res+1]="ruta" end
   return res
 end
 function GL.EtiquetaPlan975(m) return T(ETIQUETAS[m] or m) end
-function GL.ModoProfesion975(skill)
-  local db=DB(); local m=db and db[skill]
-  for _,v in ipairs(GL.ModalidadesProfesion975(skill)) do if m==v then return m end end
+function GL.ModoProfesion975(skill, ruta)
+  local db=DB(); local m=db and (db[skill] or db[tostring(skill)])
+  for _,v in ipairs(GL.ModalidadesProfesion975(skill, ruta)) do if m==v then return m end end
   return "referencia"
 end
+-- Los nombres son candidatos de búsqueda, no una afirmación de que todos los
+-- desbloqueos existan en el servidor. Solo un hechizo reconocido por el cliente
+-- y aprendido en el libro del jugador confirma una especialización vigente.
+local ESPEC = {
+  [202]={{"Ingeniería gnómica","Gnomish Engineer","Gnomish Engineering","Gnome Engineering","Ingeniero gnómico"},
+         {"Ingeniería goblin","Goblin Engineer","Goblin Engineering","Ingeniero goblin"}},
+  [165]={{"Peletería elemental","Elemental Leatherworking"},{"Peletería tribal","Tribal Leatherworking"},
+         {"Peletería de escamas de dragón","Dragonscale Leatherworking"}},
+  [164]={{"Forjador de armaduras","Armorsmith"},{"Forjador de armas","Weaponsmith"},
+         {"Maestro forjador de hachas","Master Axesmith"},{"Maestro forjador de martillos","Master Hammersmith"},
+         {"Maestro forjador de espadas","Master Swordsmith"}},
+}
+local function ClaveEspecialidad(s)
+  if (issecretvalue and issecretvalue(s)) or type(s)~="string" then return nil end
+  if GL.Normalizar then return GL.Normalizar(s) end
+  return s:lower()
+end
+function GL.RequisitoEspecialidad975(nombre)
+  local k=ClaveEspecialidad(nombre); if not k or k=="" then return nil end
+  for skill,grupos in pairs(ESPEC) do for i,g in ipairs(grupos) do
+    for _,alias in ipairs(g) do if k==ClaveEspecialidad(alias) then return skill,i end end
+  end end
+end
+local function LeerEspecialidad(skill,i,g)
+  local negativa=false
+  for _,alias in ipairs(g) do
+    local nombre,id
+    if C_Spell and type(C_Spell.GetSpellInfo)=="function" then
+      local ok,v=pcall(C_Spell.GetSpellInfo,alias)
+      if ok and type(v)=="table" then nombre,id=v.name,v.spellID end
+    end
+    if not id and type(GetSpellInfo)=="function" then
+      local ok,n,_,_,_,_,_,sid=pcall(GetSpellInfo,alias)
+      if ok then nombre,id=n,sid end
+    end
+    local sk,ix=GL.RequisitoEspecialidad975(nombre)
+    if sk==skill and ix==i and not (issecretvalue and issecretvalue(id)) and type(id)=="number" and id>0 and id<math.huge and id%1==0 then
+      local function probar(f,...)
+        if type(f)~="function" then return false end
+        local ok,v=pcall(f,id,...)
+        if not ok or (issecretvalue and issecretvalue(v)) then return false end
+        if v==true then return true end
+        if v==false then negativa=true end
+        return false
+      end
+      local banco=Enum and Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Player
+      if probar(C_SpellBook and C_SpellBook.IsSpellKnown,banco) or probar(IsPlayerSpell) or probar(IsSpellKnown,false) then return true end
+    end
+  end
+  if negativa then return false end
+  return nil
+end
+function GL.EstadoEspecialidades975(skill)
+  local grupos=ESPEC[skill]; if not grupos then return nil end
+  local aprendidas,indices,desconocida={}, {}, false
+  for i,g in ipairs(grupos) do
+    local v=LeerEspecialidad(skill,i,g)
+    if v==true then aprendidas[#aprendidas+1]=g[1];indices[i]=true
+    elseif v==nil then desconocida=true end
+  end
+  local conflicto=#aprendidas>1
+  if skill==164 then
+    local hijas=(indices[3] and 1 or 0)+(indices[4] and 1 or 0)+(indices[5] and 1 or 0)
+    conflicto=(indices[1] and (indices[2] or hijas>0)) or hijas>1
+  end
+  return conflicto and "conflicto" or (#aprendidas>0 and "aprendida" or (desconocida and "desconocida" or "ninguna")),aprendidas,indices
+end
+function GL.AvisoEspecialidades975(skill)
+  local estado,lista=GL.EstadoEspecialidades975(skill)
+  if not estado then return nil end
+  if estado=="aprendida" then
+    local nombres={};for _,n in ipairs(lista) do nombres[#nombres+1]=T(n) end
+    return T("Especialización detectada: ")..table.concat(nombres,", ")
+  elseif estado=="conflicto" then return T("Especializaciones contradictorias: comprueba el libro de hechizos.")
+  elseif estado=="ninguna" then return T("No se detecta una especialización aprendida en el libro de hechizos.")
+  else return T("Especialización actual sin confirmar; consulta el libro de hechizos.") end
+end
+-- Requisitos de fabricación y alternativas propias de Forever, separados de
+-- reactivos. Referencias: hotfixes de Blizzard (noviembre 2026) y fichas de
+-- Forever de los hechizos 7421, 7418, 1245320 y 19047. No certifican posesión.
+local AVISOS_FOREVER975 = {
+  primera = "Compra la primera Mota de magia (247786) a un vendedor de suministros de Encantamiento para fabricar la vara de cobre rúnico. No dependas de la conversión de polvo antes de tener la vara.",
+  motas = "Alternativa de Forever: De polvo a motas (1245320) convierte 1 Polvo extraño en 3 Motas de magia y requiere la vara de cobre rúnico. Compra las motas o conviértelas si tienes la receta y la herramienta; no se suman ambas opciones a la lista.",
+  curtido = "Para curar este pellejo necesitas un expositor de curtido (Tanning Rack). Desde la corrección de noviembre de 2026, su requisito de Peletería es 125 en lugar de 140. Comprueba la estación antes de fabricar.",
+  pulir = "La piedra de pulir burda (Coarse Grinding Stone) puede dar puntos hasta 90 según la corrección de noviembre de 2026. Es una alternativa opcional; comprueba el color y los materiales antes de cambiar de receta.",
+  arcano = "El recuperador arcano (Arcane Salvager) requiere la vara de oro rúnico, no la de veraplata, según la corrección de noviembre de 2026. Las herramientas y estaciones no son reactivos consumidos por cada fabricación.",
+  hoguera = "El kit de hoguera de Oficial (Journeyman Campfire Kit) requiere Cocina 90 para colocarlo, igual que su receta, según la corrección de noviembre de 2026. Los campamentos son opcionales y sus materiales no están incluidos en el plan de subida.",
+  forja = "La forja y el yunque de Toron Rockhoof en Summit of Eternity fueron reparados según la corrección del 25 de noviembre de 2026. Comprueba su disponibilidad en el cliente.",
+}
+function GL.RequisitosFabricacion975(sp)
+  local claves = ({[7421]={"primera"},[7418]={"motas"},[19047]={"curtido"},[3326]={"pulir"}})[sp]
+  if not claves then return nil end
+  local textos={}; for _,k in ipairs(claves) do textos[#textos+1]=T(AVISOS_FOREVER975[k]) end
+  return table.concat(textos," ")
+end
+local function AyudaFabricacionForever(skill)
+  local claves = ({[333]={"primera","motas","arcano"},[165]={"curtido"},[164]={"pulir","forja"},[186]={"forja"},[185]={"hoguera"}})[skill]
+  if not claves then return "" end
+  local textos={};for _,k in ipairs(claves) do textos[#textos+1]=T(AVISOS_FOREVER975[k]) end
+  return "\n"..table.concat(textos,"\n")
+end
 function GL.AyudaPlan975(skill, modo)
-  local texto = T("Plan: ")..GL.EtiquetaPlan975(modo or "referencia")..". "..T(AYUDA[skill])
+  local texto = T("Plan: ")..GL.EtiquetaPlan975(modo or "referencia")..". "..T(AYUDA[skill])..AyudaFabricacionForever(skill)
   if skill==202 then texto=texto.."\n"..T("Especialización gnómica (opcional): nivel de personaje 30 e Ingeniería 200. Alianza: Maestro manitas Sobrechispa, Forjaz (misión 3641). Horda: Oglethorpe Obnoticus, Bahía del Botín (misión 3643). Tras aceptar la promesa del secreto, entrega 6 tubos de mitril, 2 muñecos-diana avanzados y 1 mira de precisión. Reserva los tubos del plan; los otros objetos son adicionales y no están incluidos en la compra general. No necesitas especializarte para seguir el plan 1-300.") end
   if skill==202 then texto=texto.."\n"..T("Especialización goblin (opcional): nivel de personaje 30 e Ingeniería 200. Ambas facciones: Nixx Muellepiñón, Gadgetzan, Tanaris (52.5, 27.3). Promesa del secreto (3638) y Muestra tu trabajo (3639): entrega 20 bombas grandes de hierro, 20 dinamitas sólidas y 5 ovejas explosivas. Reserva 5 ovejas del tramo 160-175 si las has fabricado; adquiere las que falten. Los demás objetos son adicionales y no están incluidos en la compra general. No necesitas especializarte para seguir el plan 1-300.") end
   if skill==165 then texto=texto.."\n"..T("Peletería elemental (opcional): nivel de personaje 40 y habilidad 225 (confirma el requisito en el cliente). Alianza: Sarah Tanner, Garganta de Fuego (63.6, 75.8), misión 5144. Horda: Brumm Pezuña Invernal, Tierras Altas de Arathi (28.2, 45.0), misión 5146. Entrega 2 corazones de fuego, 2 globos de agua, 2 núcleos de tierra y 2 alientos de viento. Estos materiales son adicionales a la compra general. Elige solo una especialización; no es necesaria para subir a 300.") end
   if skill==165 then texto=texto.."\n"..T("Peletería tribal (opcional): nivel de personaje 40 y habilidad 225 (confirma la habilidad en el cliente). Completa primero Maestro del cuero salvaje. Alianza: Caryssia Moonhunter, Feralas (89.4, 46.4), misión 5143; patrones de las misiones 2849 y 2850. Horda: Se'Jib, Vega de Tuercespina (36.5, 34.1), misión 5148; patrones de las misiones 2856 y 2857. Entrega 1 jubón de cuero salvaje y 1 yelmo de cuero salvaje. Materiales adicionales a la compra general. Elige solo una especialización.") end
   if skill==165 then texto=texto.."\n"..T("Peletería de escamas de dragón (opcional): nivel de personaje 40 y habilidad 225 (confirma la habilidad en el cliente). Alianza: Peter Galen, Azshara (37.4, 65.4), misión 5141. Horda: Thorkaf Dragonojo, Tierras Inhóspitas (62.6, 57.4), misión 5145. Entrega 2 petos de escórpido resistente, 2 guantes de escórpido resistente y 10 escamas de dragón desgastadas. Para fabricar los cuatro objetos: 36 cueros gruesos, 40 escamas de escórpido y 12 hilos de seda. Patrones de bandidos y ladrones de Tanaris o subasta. Compra los objetos terminados o sus reactivos, no ambos. Elige solo una especialización.") end
+  if skill==164 then texto=texto.."\n"..T("Herrería: las ramas documentadas son armaduras y armas; armas tiene ramas de hachas, martillos y espadas. Confirma los desbloqueos y requisitos en Forever. No se elige ninguna automáticamente.") end
   local a=GL.ModalidadesProfesion975(skill)
   if #a>1 then texto=texto.." "..T("Cambia de plan en la tarjeta de profesión.") end
   return texto
@@ -487,30 +589,86 @@ function GL.CambiarPlanProfesion975(skill, modo)
   if GL.Refrescar then GL.Refrescar() end
   return true
 end
+-- Avisos basados en el límite real. No atribuir a todas las profesiones los
+-- mismos requisitos de personaje o un instructor: algunas requieren libros/misiones.
+function GL.IndiceTramoProfesion975(prof,nivel)
+  if not prof or type(prof.pasos)~="table" or #prof.pasos==0 or type(nivel)~="number" then return nil end
+  for i,p in ipairs(prof.pasos) do if nivel<p.h then return i end end
+  return #prof.pasos
+end
+function GL.AvisoRangoProfesion975(prof,nivel,tope)
+  if not prof or type(nivel)~="number" or type(tope)~="number" or tope>=300 then return nil end
+  if prof.skill==40 or prof.skill==633 then
+    if nivel>=tope then return T("Límite de habilidad alcanzado: sube de nivel de personaje para seguir avanzando.") end
+    return nil
+  end
+  local umbral=({[75]=50,[150]=125,[225]=200})[tope]
+  if nivel>=tope then
+    return T("Límite de profesión alcanzado. Consulta los requisitos del siguiente rango en la ayuda de esta profesión.")
+  elseif umbral and nivel>=umbral then
+    return T("Comprueba los requisitos del siguiente rango en la ayuda de esta profesión antes de alcanzar el límite.")
+  end
+end
+
 -- Estimación por tramo, no punto garantizado. Cálculo proporcional de fabricaciones
 -- restantes, redondeado hacia arriba; al comienzo mantiene el total original exacto.
+local function EnteroPositivo(v)
+  return type(v)=="number" and v>0 and v<math.huge and v%1==0
+end
 local function Fabricaciones(d,h,c,nivel)
-  if not c or c<=0 or h<=d then return nil end
-  if not nivel or nivel<=d then return c end
+  if not EnteroPositivo(d) or not EnteroPositivo(h) or not EnteroPositivo(c) or h<=d then return nil end
+  if nivel==nil then nivel=d end
+  if not EnteroPositivo(nivel) then return nil end
+  if nivel<=d then return c end
   if nivel>=h then return 0 end
   return math.min(c,math.ceil(c*(h-nivel)/(h-d)))
 end
 GL.FabricacionesProfesion975=Fabricaciones
+local function CantidadReactivo(c,total,por,n)
+  -- Una fabricación consume reactivos enteros. No inventar una cantidad si el
+  -- total o el coste unitario del catálogo son incompatibles.
+  if not EnteroPositivo(c) or not EnteroPositivo(total) or total%c~=0 then return nil end
+  local unidad=total/c
+  if por~=nil and por~=unidad then return nil end
+  return math.floor(n*unidad)
+end
 function GL.NecesarioProfesion975(p,m,nivel)
-  if not m or not m[2] or m[2]<=0 then return 0 end
-  if p.c975 and m.total975 then
+  if type(p)~="table" or type(m)~="table" or not EnteroPositivo(m[1]) then return nil end
+  if not EnteroPositivo(p.d) or not EnteroPositivo(p.h) or p.h<=p.d then return nil end
+  if nivel==nil then nivel=p.d end
+  if not EnteroPositivo(nivel) then return nil end
+  if nivel>=p.h then return 0 end
+  if p.c975~=nil or m.total975~=nil then
     local n=Fabricaciones(p.d,p.h,p.c975,nivel)
-    if not n then return 0 end
-    if n==p.c975 then return m.total975 end
-    return math.ceil(n*m.total975/p.c975)
+    if n==nil then return nil end
+    return CantidadReactivo(p.c975,m.total975,m[2],n)
   end
-  return math.ceil(m[2]*math.max(0,p.h-math.max(p.d,nivel or p.d)))
+  if not EnteroPositivo(m[2]) then return nil end
+  return m[2]*(p.h-math.max(p.d,nivel))
 end
 function GL.MaterialBiblioteca975(t,m,nivel)
   local n=Fabricaciones(t.d,t.h,t.c,nivel)
-  if n==nil then return m[2] end
-  if n==t.c then return m[2] end
-  return math.ceil(n*m[2]/t.c)
+  if n==nil or not EnteroPositivo(m[1]) then return nil end
+  return CantidadReactivo(t.c,m[2],nil,n)
+end
+-- Agrupar una vez por identificador: las apariciones repetidas comparten inventario.
+-- Una cantidad desconocida no equivale a cero; conservar el mínimo conocido.
+function GL.MaterialesTramo975(p,nivel)
+  local lista,porId={},{}
+  local incompleto=false
+  if p.mat~=nil and type(p.mat)~="table" then return lista,true end
+  for _,m in ipairs(p.mat or {}) do
+    if type(m)=="table" and EnteroPositivo(m[1]) then
+      local fila=porId[m[1]]
+      if not fila then
+        fila={id=m[1],nombre=m[3] or tostring(m[1]),cantidad=0}
+        porId[m[1]]=fila; lista[#lista+1]=fila
+      end
+      local n=GL.NecesarioProfesion975(p,m,nivel)
+      if n==nil then fila.incompleto=true; incompleto=true else fila.cantidad=fila.cantidad+n end
+    else incompleto=true end
+  end
+  return lista,incompleto
 end
 local function CantidadSegura(f,id)
   if type(f)~="function" then return nil end
@@ -518,16 +676,47 @@ local function CantidadSegura(f,id)
   if not ok or (issecretvalue and issecretvalue(n)) or type(n)~="number" or n~=n or n<0 or n==math.huge or n%1~=0 then return nil end
   return n
 end
-local function Inventario(id)
-  local moderno=C_Item and C_Item.GetItemCount
-  local n=CantidadSegura(function(i) return moderno(i,true) end,id)
-  if n~=nil then return n end
-  if type(GetItemCount)=="function" and GetItemCount~=moderno then
-    return CantidadSegura(function(i) return GetItemCount(i,true) end,id)
-  end
-  return nil
+-- Para fabricar ahora solo cuentan las bolsas. Para comprar, consultar también
+-- el banco personal mientras esté abierto; no usar instantáneas de otros personajes.
+local bancoAbierto, bancoSuspendidoR14 = false, false
+function GL.EventoBancoProfesion975(evento)
+  if evento=="PLAYER_LEAVING_WORLD" or evento=="PLAYER_LOGOUT" then bancoAbierto,bancoSuspendidoR14=false,true
+  elseif evento=="PLAYER_LOGIN" or evento=="PLAYER_ENTERING_WORLD" then bancoAbierto,bancoSuspendidoR14=false,false
+  elseif evento=="BANKFRAME_CLOSED" then bancoAbierto=false
+  elseif evento=="BANKFRAME_OPENED" and not bancoSuspendidoR14 then bancoAbierto=true end
 end
-GL.InventarioProfesion975=Inventario
+function GL.AmbitoCompraProfesion975()
+  return T(bancoAbierto and "Compra (instantánea): bolsas y banco personal consultado si el cliente devuelve datos válidos. Vuelve a generar la lista tras mover materiales." or
+    "Compra (instantánea): solo bolsas; banco sin comprobar. Abre el banco y vuelve a generar la lista.")
+end
+local function LeerCuenta(f,id,banco)
+  if type(f)~="function" then return nil end
+  local bolsas=CantidadSegura(function(i) return f(i,false,false) end,id)
+  if not banco then return bolsas end
+  if bolsas==nil then return nil end
+  local total=CantidadSegura(function(i) return f(i,true,false) end,id)
+  if total~=nil and total>=bolsas and bancoAbierto then return total end
+end
+local function Inventario(id, banco)
+  if not EnteroPositivo(id) then return nil end
+  local incluir=banco==true and bancoAbierto
+  local moderno=C_Item and C_Item.GetItemCount
+  local n=LeerCuenta(moderno,id,incluir)
+  if n~=nil then return n end
+  if GetItemCount~=moderno then return LeerCuenta(GetItemCount,id,incluir) end
+end
+function GL.BolsasProfesion975(id) return Inventario(id,false) end
+local function InventarioCompra(id) return Inventario(id,true) end
+GL.InventarioCompraProfesion975=InventarioCompra
+-- Mantener el lector de propiedad usado por la lista de equipo de Bandas;
+-- la planificación de profesiones usa exclusivamente los lectores anteriores.
+function GL.InventarioProfesion975(id)
+  if not EnteroPositivo(id) then return nil end
+  local moderno=C_Item and C_Item.GetItemCount
+  local n=CantidadSegura(function(i) return moderno(i,true,false) end,id)
+  if n~=nil then return n end
+  if GetItemCount~=moderno then return CantidadSegura(function(i) return GetItemCount(i,true,false) end,id) end
+end
 -- Mantener la incertidumbre incluso al reutilizar el stock simulado.
 local stockIncierto=setmetatable({}, {__mode="k"})
 local function ExistenciasReserva(stock,contar,id)
@@ -544,8 +733,9 @@ end
 -- conservadora de las cantidades del plan, no predicción exacta de skill-ups.
 function GL.ComprasProfesion975(prof,nivel,contar)
   local stock, faltan, datos, orden = {}, {}, {}, {}
-  nivel=tonumber(nivel) or 1
-  contar=contar or Inventario
+  nivel=tonumber(nivel)
+  if not EnteroPositivo(nivel) then return {}, #(prof.pasos or {}), true, stock end
+  contar=contar or InventarioCompra
   local desconocido=false
   local inciertos={}
   stockIncierto[stock]=inciertos
@@ -561,23 +751,27 @@ function GL.ComprasProfesion975(prof,nivel,contar)
   local sinDatos=0
   for _,p in ipairs(prof.pasos or {}) do
     if nivel<p.h then
-      local tramoSinDatos=not p.mat or #p.mat==0
-      for _,m in ipairs(p.mat or {}) do
-        if type(m[1])=="number" and m[1]>0 and m[1]%1==0 and type(m[2])=="number" and m[2]>0 then
-          Inicializar(m[1],m[3]); local n=GL.NecesarioProfesion975(p,m,nivel)
-          local sobra=math.max(0,stock[m[1]]-n)
-          local falta=math.max(0,n-stock[m[1]])
-          stock[m[1]]=sobra
-          datos[m[1]].usado=datos[m[1]].usado+n
-          datos[m[1]].falta=datos[m[1]].falta+falta
-        else tramoSinDatos=true end
+      local materiales,incompleto=GL.MaterialesTramo975(p,nivel)
+      local tramoSinDatos=incompleto or #materiales==0
+      for _,m in ipairs(materiales) do
+        if m.cantidad>0 then
+          Inicializar(m.id,m.nombre); local n=m.cantidad
+          local falta=math.max(0,n-stock[m.id])
+          stock[m.id]=math.max(0,stock[m.id]-n)
+          datos[m.id].usado=datos[m.id].usado+n
+          datos[m.id].falta=datos[m.id].falta+falta
+        end
       end
       if tramoSinDatos then sinDatos=sinDatos+1 end
-      -- Only known outputs and reference counts; no assumptions for legacy routes.
-      if p.c975 and p.produce975 and p.crea and p.crea[1] then
-        local id=p.crea[1]; Inicializar(id)
-        local n=(Fabricaciones(p.d,p.h,p.c975,nivel) or 0)*p.produce975
-        stock[id]=stock[id]+n; datos[id].producido=datos[id].producido+n
+      -- No acreditar producción de una fabricación cuyos reactivos no se han
+      -- podido cuantificar. La lista es una simulación tras comprar los faltantes.
+      if not tramoSinDatos and EnteroPositivo(p.produce975) and p.crea and EnteroPositivo(p.crea[1]) then
+        local fabricaciones=Fabricaciones(p.d,p.h,p.c975,nivel)
+        if fabricaciones then
+          local id=p.crea[1]; Inicializar(id)
+          local n=fabricaciones*p.produce975
+          stock[id]=stock[id]+n; datos[id].producido=datos[id].producido+n
+        end
       end
     end
   end
@@ -621,20 +815,23 @@ end
 -- Optional alternatives, each calculated independently against remaining plan stock.
 function GL.ReservasIngenieria977(prof,nivel,fac,contar,hecha,stock)
   if prof.skill~=202 or (fac~="Alliance" and fac~="Horde") then return {} end
-  contar=contar or Inventario
+  contar=contar or InventarioCompra
   hecha=hecha or (C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted) or IsQuestFlaggedCompleted
   local function done(q)
     if not hecha then return false end
     local ok,v=pcall(hecha,q); return ok and (v==true or v==1)
   end
   local q=fac=="Alliance" and 3641 or 3643
-  if done(3641) or done(3643) or done(3639) then return {} end
+  local estado=GL.EstadoEspecialidades975(202)
+  if estado=="aprendida" or estado=="conflicto" then return {} end
   if not stock then local _,_,_,r=GL.ComprasProfesion975(prof,nivel,contar); stock=r end
   local out={}
   for _,grupo in ipairs({{nombre="Ingeniería gnómica",q=q,items={{10559,6,"Tubo de mitril"},{4392,2,"Muñeco-diana avanzado"},{4407,1,"Mira de precisión"}}},{nombre="Ingeniería goblin",q=3639,items={{4394,20,"Bomba grande de hierro"},{10507,20,"Dinamita sólida"},{4384,5,"Oveja explosiva"}}}}) do
-    for _,m in ipairs(grupo.items) do
-      local n,incierto=ExistenciasReserva(stock,contar,m[1])
-      out[#out+1]={grupo=grupo.nombre,q=grupo.q,id=m[1],nombre=m[3],cantidad=m[2],falta=math.max(0,m[2]-n),desconocido=incierto}
+    if not done(grupo.q) then
+      for _,m in ipairs(grupo.items) do
+        local n,incierto=ExistenciasReserva(stock,contar,m[1])
+        out[#out+1]={grupo=grupo.nombre,q=grupo.q,id=m[1],nombre=m[3],cantidad=m[2],falta=math.max(0,m[2]-n),desconocido=incierto}
+      end
     end
   end
   return out
@@ -642,10 +839,13 @@ end
 -- Reservas independientes de Peletería: objetos de entrega, no reactivos duplicados.
 function GL.ReservasPeleteria977(prof,nivel,fac,contar,hecha,stock)
   if prof.skill~=165 or (fac~="Alliance" and fac~="Horde") then return {} end
-  contar=contar or Inventario
+  contar=contar or InventarioCompra
   hecha=hecha or (C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted) or IsQuestFlaggedCompleted
-  for _,q in ipairs({5141,5143,5144,5145,5146,5148}) do
-    if hecha then local ok,v=pcall(hecha,q); if ok and (v==true or v==1) then return {} end end
+  local estado=GL.EstadoEspecialidades975(165)
+  if estado=="aprendida" or estado=="conflicto" then return {} end
+  local function done(q)
+    if not hecha then return false end
+    local ok,v=pcall(hecha,q); return ok and (v==true or v==1)
   end
   if not stock then local _,_,_,r=GL.ComprasProfesion975(prof,nivel,contar); stock=r end
   local a=fac=="Alliance"
@@ -655,9 +855,11 @@ function GL.ReservasPeleteria977(prof,nivel,fac,contar,hecha,stock)
     {nombre="Peletería tribal",q=a and 5143 or 5148,items={{8211,1,"Jubón de cuero salvaje"},{8214,1,"Yelmo de cuero salvaje"}}},
     {nombre="Peletería de escamas de dragón",q=a and 5141 or 5145,items={{8203,2,"Peto de escórpido resistente"},{8204,2,"Guantes de escórpido resistente"},{8165,10,"Escama de dragón desgastada"}}}
   }) do
-    for _,m in ipairs(g.items) do
-      local n,incierto=ExistenciasReserva(stock,contar,m[1])
-      out[#out+1]={grupo=g.nombre,q=g.q,id=m[1],nombre=m[3],cantidad=m[2],falta=math.max(0,m[2]-n),desconocido=incierto}
+    if not done(g.q) then
+      for _,m in ipairs(g.items) do
+        local n,incierto=ExistenciasReserva(stock,contar,m[1])
+        out[#out+1]={grupo=g.nombre,q=g.q,id=m[1],nombre=m[3],cantidad=m[2],falta=math.max(0,m[2]-n),desconocido=incierto}
+      end
     end
   end
   return out
@@ -686,7 +888,7 @@ end
 -- El límite aprendido, no la habilidad actual, determina si falta el libro.
 function GL.LibroCocina977(prof,nivel,tope,contar)
   if prof.skill~=185 or type(tope)~="number" or tope<=0 or tope>150 or (tonumber(nivel) or 0)>=225 then return nil end
-  local n=CantidadSegura(contar or Inventario,16072)
+  local n=CantidadSegura(contar or InventarioCompra,16072)
   return {id=16072, cantidad=1, falta=math.max(0,1-(n or 0)), desconocido=n==nil}
 end
 -- Cocina Artesano: reserva independiente de los reactivos de fabricación.
@@ -694,7 +896,7 @@ function GL.ReservaCocinaArtesano977(prof,nivel,tope,contar,hecha,stock)
   if prof.skill~=185 or type(tope)~="number" or tope<=0 or tope>225 or (tonumber(nivel) or 0)>=300 then return {} end
   hecha=hecha or (C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted) or IsQuestFlaggedCompleted
   if hecha then local ok,v=pcall(hecha,6610); if ok and (v==true or v==1) then return {} end end
-  contar=contar or Inventario
+  contar=contar or InventarioCompra
   local out={}
   for _,m in ipairs({{12207,12,"Huevo gigante"},{7974,10,"Carne de almeja sabrosa"},{8932,20,"Queso suizo de Alterac"}}) do
     local n,incierto=ExistenciasReserva(stock,contar,m[1])
@@ -706,7 +908,7 @@ GL.comandos.compraprofesion=function()
   local p=Seleccionada(); if not p then return Mostrar({T("Abre Profesiones y selecciona una profesión aprendida.")}) end
   local nivel,tope=GL.NivelProfesion(p); if not nivel then return Mostrar({T("No tienes esta profesión.")}) end
   local lista,sinDatos,desconocido,stock=GL.ComprasProfesion975(p,nivel)
-  local l={T("COMPRA ESTIMADA HASTA 300")..": "..p.nombre.." "..nivel.."/300"}
+  local l={T("COMPRA ESTIMADA HASTA 300")..": "..p.nombre.." "..nivel.."/300", GL.AmbitoCompraProfesion975()}
   if tope and tope<300 then l[#l+1]=T("Límite actual de habilidad: ")..tope..". "..T("Aprende el siguiente rango antes de alcanzarlo.") end
   local libro=GL.LibroCocina977(p,nivel,tope)
   if libro then
@@ -720,17 +922,19 @@ GL.comandos.compraprofesion=function()
   end
   local faltantes=0
   for _,m in ipairs(lista) do
-    if m.falta>0 then faltantes=faltantes+1; l[#l+1]=T(m.nombre)..": "..T("faltan ")..m.falta.." ("..T("producción prevista: ")..m.producido..")" end
+    if m.falta>0 then faltantes=faltantes+1; l[#l+1]=T(m.nombre)..": "..T("faltan ")..m.falta..(m.tengo==nil and " (?)" or "").." ("..T("producción prevista: ")..m.producido..")" end
   end
   if #lista==0 and sinDatos==0 then l[#l+1]=T("No hay materiales de fabricación en los tramos restantes.")
-  elseif faltantes==0 and not desconocido then l[#l+1]=T("Tienes los materiales cuantificados necesarios para la fabricación estimada.") end
+  elseif faltantes==0 and not desconocido and sinDatos==0 then l[#l+1]=T("Tienes los materiales cuantificados necesarios para la fabricación estimada.") end
   if desconocido then l[#l+1]=T("Inventario no disponible para algunos objetos; se ha supuesto cero para la estimación.") end
   l[#l+1]=T("Tramos sin materiales cuantificados: ")..sinDatos
   l[#l+1]=T("Estimación, no compra garantizada: revisa la habilidad, recetas aprendidas, existencias, límites de rango y precios. Los componentes producidos en el plan se descuentan solo después de fabricarlos en la simulación. No se descuentan los materiales de las misiones de desbloqueo.")
   for _,aviso in ipairs(GL.AvisoMaterialesMisionAlquimia977(p,nivel,UnitFactionGroup and UnitFactionGroup("player"))) do l[#l+1]=aviso end
   local reservas=GL.ReservasIngenieria977(p,nivel,UnitFactionGroup and UnitFactionGroup("player"),nil,nil,stock)
   if p.skill==165 then reservas=GL.ReservasPeleteria977(p,nivel,UnitFactionGroup and UnitFactionGroup("player"),nil,nil,stock) end
-  if #reservas>0 then l[#l+1]=T("Especializaciones opcionales: elige solo una. Faltantes tras completar el plan, no disponibles necesariamente ahora.") end
+  local especialidad=GL.AvisoEspecialidades975(p.skill)
+  if especialidad then l[#l+1]=especialidad end
+  if #reservas>0 then l[#l+1]=T("Reservas opcionales orientativas. Una misión completada no acredita una especialización vigente. Confirma el desbloqueo antes de comprar.") end
   for _,m in ipairs(reservas) do l[#l+1]=T(m.grupo).." - "..T(m.nombre)..": "..T("faltan ")..m.falta..(m.desconocido and " (?)" or "") end
   return Mostrar(l)
 end

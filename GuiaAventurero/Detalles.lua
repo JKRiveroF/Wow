@@ -110,11 +110,11 @@ local iconosRec = {}
 local function IndiceEnDiario(q)
   if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
     local ok, i = pcall(C_QuestLog.GetLogIndexForQuestID, q)
-    if ok and Num(i) then return i end
+    if ok and Num(i) and i > 0 and i < math.huge and i % 1 == 0 then return i end
   end
   if GetQuestLogIndexByID then
     local ok, i = pcall(GetQuestLogIndexByID, q)
-    if ok and Num(i) and i > 0 then return i end
+    if ok and Num(i) and i > 0 and i < math.huge and i % 1 == 0 then return i end
   end
   return nil
 end
@@ -125,19 +125,20 @@ local function Recompensas(p)
     if d.a == "T" and d.q and not GL.DestinoHecho(d) then
       local idx = IndiceEnDiario(d.q)
       if idx then
-        local antes = GetQuestLogSelection and GetQuestLogSelection()
-        SelectQuestLogEntry(idx)
-        local lista = {}
-        for i = 1, math.min(GetNumQuestLogChoices() or 0, 6) do
-          local _, tex, cuantos, q = GetQuestLogChoiceInfo(i)
-          table.insert(lista, { tex = tex, n = cuantos, q = q, enlace = GetQuestLogItemLink("choice", i), elegir = true })
-        end
-        for i = 1, math.min((GetNumQuestLogRewards and GetNumQuestLogRewards()) or 0, 6 - #lista) do
-          local _, tex, cuantos, q = GetQuestLogRewardInfo(i)
-          table.insert(lista, { tex = tex, n = cuantos, q = q, enlace = GetQuestLogItemLink("reward", i) })
-        end
-        if antes and antes > 0 then SelectQuestLogEntry(antes) end
-        if #lista > 0 then return lista end
+        local ok, lista = GL.ConSeleccionMisionR13(idx, function()
+          local totalOpciones = GetNumQuestLogChoices() or 0
+          local lista = { incompleta = totalOpciones > 6 }
+          for i = 1, math.min(totalOpciones, 6) do
+            local _, tex, cuantos, q = GetQuestLogChoiceInfo(i)
+            table.insert(lista, { tex = tex, n = cuantos, q = q, enlace = GetQuestLogItemLink("choice", i), elegir = true })
+          end
+          for i = 1, math.min((GetNumQuestLogRewards and GetNumQuestLogRewards()) or 0, 6 - #lista) do
+            local _, tex, cuantos, q = GetQuestLogRewardInfo(i)
+            table.insert(lista, { tex = tex, n = cuantos, q = q, enlace = GetQuestLogItemLink("reward", i) })
+          end
+          return lista
+        end)
+        if ok and lista and #lista > 0 then return lista end
       end
     end
   end
@@ -147,20 +148,9 @@ end
 -- La mejor para tu equipo según los pesos de la ruta (lo mismo que hace Misiones.lua al entregar).
 local function Recomendada(lista)
   local U, equipo = GL.EquipoUtil, GL.RUTA and GL.RUTA.equipo
-  if not U or not equipo then return nil end
-  local mejor, mejora = nil, 0
-  for i, r in ipairs(lista) do
-    if r.elegir and r.enlace then
-      local info = U.InfoObjeto(r.enlace)
-      local ranuras = info and U.RANURAS[info.ranura or ""]
-      if info and ranuras and U.Usable(info, equipo) then
-        local coste = U.CosteSustitucion(info, equipo, equipo.pesos or {})
-        local nota = U.Puntuar(r.enlace, info, equipo.pesos or {})
-        local m = coste and nota and (nota - coste)
-        if m and m > mejora then mejor, mejora = i, m end
-      end
-    end
-  end
+  if not U or not U.ElegirRecompensa or not equipo then return nil end
+  -- La vista previa solo destaca mejoras de equipo, no recompensas para vender.
+  local mejor = U.ElegirRecompensa(lista, equipo)
   return mejor
 end
 

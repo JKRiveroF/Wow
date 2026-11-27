@@ -90,6 +90,39 @@ GL.XPCompletadas, GL.XPDeMision = XPCompletadas, XPDeMision
 ------------------------------------------------------------------------
 -- La barra
 ------------------------------------------------------------------------
+local function NumeroVisual(v)
+  if issecretvalue and issecretvalue(v) then return nil end
+  if type(v) == "number" and v == v and v >= 0 and v < math.huge then return v end
+end
+local function LeerVisual(fn, ...)
+  if type(fn) ~= "function" then return nil end
+  local ok, v = pcall(fn, ...)
+  if ok then return NumeroVisual(v) end
+end
+local function TooltipPropio(f)
+  if not GameTooltip then return false end
+  if GameTooltip.IsOwned then return GameTooltip:IsOwned(f) end
+  return GameTooltip.GetOwner and GameTooltip:GetOwner() == f
+end
+local function CerrarTooltip(f)
+  if TooltipPropio(f) then GameTooltip:Hide() end
+end
+local function TooltipXP(f)
+  local d = f.datos
+  if not GameTooltip or not d then CerrarTooltip(f); return end
+  GameTooltip:SetOwner(f, "ANCHOR_BOTTOM")
+  GameTooltip:SetText(L"Experiencia · nivel " .. d.nivel, 1, 0.82, 0)
+  GameTooltip:AddLine(Miles(d.actual) .. L" de " .. Miles(d.maximo) .. L"  (te faltan " .. Miles(d.maximo - d.actual) .. ")", 1, 1, 1)
+  GameTooltip:AddLine(COL.misionTexto .. L"Misiones completadas sin entregar: " .. d.cuantas .. " · +" .. Miles(d.mision) .. L" XP|r", 1, 1, 1)
+  GameTooltip:AddLine(COL.descansadaTexto .. L"Descansada: " .. Miles(d.desc) .. L" XP|r", 1, 1, 1)
+  if d.subira then GameTooltip:AddLine(L"|cff40d959Al entregarlas subes al nivel " .. (d.nivel + 1) .. "|r", 1, 1, 1) end
+  GameTooltip:Show()
+end
+local function QuitarBrillo(f)
+  f.brillo:Hide()
+  f.brilloT = nil
+  f:SetScript("OnUpdate", nil)
+end
 local barra
 local mini = {}   -- barras pequeñas (ventana compacta y franja)
 local function Capa(padre, nivel, r, g, b, a)
@@ -156,18 +189,9 @@ local function Construir(padre, nombre, alto)
   barra.combate:SetText(L"|cffff5050COMBATE|r")
   barra.combate:Hide()
   barra:EnableMouse(true)
-  barra:SetScript("OnEnter", function(self)
-    if not GameTooltip or not self.datos then return end
-    local d = self.datos
-    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-    GameTooltip:SetText(L"Experiencia · nivel " .. d.nivel, 1, 0.82, 0)
-    GameTooltip:AddLine(Miles(d.actual) .. L" de " .. Miles(d.maximo) .. L"  (te faltan " .. Miles(d.maximo - d.actual) .. ")", 1, 1, 1)
-    GameTooltip:AddLine(COL.misionTexto .. L"Misiones completadas sin entregar: " .. d.cuantas .. " · +" .. Miles(d.mision) .. L" XP|r", 1, 1, 1)
-    GameTooltip:AddLine(COL.descansadaTexto .. L"Descansada: " .. Miles(d.desc) .. L" XP|r", 1, 1, 1)
-    if d.subira then GameTooltip:AddLine(L"|cff40d959Al entregarlas subes al nivel " .. (d.nivel + 1) .. "|r", 1, 1, 1) end
-    GameTooltip:Show()
-  end)
-  barra:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+  barra:SetScript("OnEnter", TooltipXP)
+  barra:SetScript("OnLeave", CerrarTooltip)
+  barra:SetScript("OnHide", function(self) CerrarTooltip(self); QuitarBrillo(self) end)
   return barra
 end
 GL.ConstruirBarraXP = function(padre, alto)
@@ -193,7 +217,7 @@ end
 
 local ultimaXP
 local function Pintar(barra, d, brillar)
-  local ancho = (barra.b:GetWidth() or 0) - 2
+  local ancho = (NumeroVisual(barra.b:GetWidth()) or 0) - 2
   local actual, maximo, mision, desc = d.actual, d.maximo, d.mision, d.desc
   local f1 = math.min(1, actual / maximo)
   local f2 = math.min(1, (actual + mision) / maximo)
@@ -206,6 +230,7 @@ local function Pintar(barra, d, brillar)
   end
   if ancho > 0 then
     barra.xp:SetWidth(math.max(1, ancho * f1))
+    GL.Mostrar(barra.xp, f1 > 0)
     barra.xp:SetVertexColor(COL.xp[1], COL.xp[2], COL.xp[3], 1)
     Tramo(barra.mision, f1, f2); GL.Mostrar(barra.mision, f2 > f1)
     barra.mision:SetVertexColor(COL.mision[1], COL.mision[2], COL.mision[3], 0.85)
@@ -217,7 +242,7 @@ local function Pintar(barra, d, brillar)
       barra.marcas[i]:SetPoint("LEFT", barra.b, "LEFT", 1 + ancho * i / 10, 0)
     end
     -- 9.0: el trozo recién ganado brilla y se apaga (Ajustes › Efectos › Brillo en la barra)
-    if brillar and Si("brilloBarra") then
+    if brillar and Si("brilloBarra") and (not barra.IsVisible or barra:IsVisible()) then
       local d0 = math.min(f1, brillar / maximo)
       Tramo(barra.brillo, d0, f1)
       barra.brillo:SetAlpha(0.85); barra.brillo:Show()
@@ -225,7 +250,7 @@ local function Pintar(barra, d, brillar)
       barra:SetScript("OnUpdate", function(self, dt)
         self.brilloT = (self.brilloT or 0) + dt
         local a = 0.85 * (1 - self.brilloT / 0.9)
-        if a <= 0 then self.brillo:Hide(); self:SetScript("OnUpdate", nil) else self.brillo:SetAlpha(a) end
+        if a <= 0 then QuitarBrillo(self) else self.brillo:SetAlpha(a) end
       end)
     end
   end
@@ -233,34 +258,47 @@ local function Pintar(barra, d, brillar)
   barra.izq:SetText(C.BLANCO .. L"Nivel " .. d.nivel .. C.FIN)
   barra.centro:SetText(Miles(actual) .. " / " .. Miles(maximo) .. C.GRIS .. " (" .. Miles(maximo - actual) .. ")" .. C.FIN)
   barra.der:SetText(Porcentaje(p1) .. " %" .. (mision > 0 and (C.GRIS .. " (" .. Porcentaje(p2) .. " %)" .. C.FIN) or ""))
-  -- con poco ancho, el centro se quita para que no se pisen los textos; en la barrita de la franja, ninguno
-  local fina = (barra.b:GetHeight() or 16) < 10
-  GL.Mostrar(barra.centro, not fina and (barra.b:GetWidth() or 0) >= 300)
-  GL.Mostrar(barra.izq, not fina); GL.Mostrar(barra.der, not fina)
+  -- Medir los textos reales (también en otros idiomas y escalas de fuente).
+  local fina = (NumeroVisual(barra.b:GetHeight()) or 0) < 10
+  local w = math.max(0, ancho - 10)
+  local function Medida(t)
+    return t.GetStringWidth and NumeroVisual(t:GetStringWidth()) or nil
+  end
+  local izq, centro, der = Medida(barra.izq), Medida(barra.centro), Medida(barra.der)
+  local verDer = not fina and (der or 85) <= w
+  local verIzq = not fina and (izq or 70) + (verDer and ((der or 85) + 8) or 0) <= w
+  local verCentro = verIzq and verDer and (centro or 200) + 2 * (math.max(izq or 70, der or 85) + 8) <= w
+  GL.Mostrar(barra.centro, verCentro)
+  GL.Mostrar(barra.izq, verIzq); GL.Mostrar(barra.der, verDer)
   barra.pie:SetText(C.GRIS .. L"Completadas " .. C.FIN .. COL.misionTexto .. Porcentaje(mision / maximo * 100) .. " %|r" ..
     C.GRIS .. L"  ·  Descansada " .. C.FIN .. COL.descansadaTexto .. Porcentaje(desc / maximo * 100) .. " %|r")
   barra.datos = d
+  if TooltipPropio(barra) and GameTooltip:IsShown() then TooltipXP(barra) end
 end
 
 local function RefrescarBarraXP()
   if not barra then return end
-  local nivel = Num(UnitLevel and UnitLevel("player")) or 1
-  local actual, maximo = Num(GL.Seguro and GL.Seguro(UnitXP and UnitXP("player"))), Num(GL.Seguro and GL.Seguro(UnitXPMax and UnitXPMax("player")))
+  local nivel = LeerVisual(UnitLevel, "player")
+  local actual, maximo = LeerVisual(UnitXP, "player"), LeerVisual(UnitXPMax, "player")
   local todas = { barra }
   for i = 1, #mini do todas[#todas + 1] = mini[i] end
-  if not Si("barraXP") or not actual or not maximo or maximo <= 0 or nivel >= NIVEL_MAX then
-    for i = 1, #todas do todas[i]:Hide(); todas[i].datos = nil end
+  if not Si("barraXP") or not nivel or nivel < 1 or nivel % 1 ~= 0 or not actual or not maximo or maximo <= 0 or actual > maximo or nivel >= NIVEL_MAX then
+    ultimaXP = nil
+    for i = 1, #todas do
+      todas[i].datos = nil; CerrarTooltip(todas[i]); QuitarBrillo(todas[i]); todas[i]:Hide()
+    end
     return
   end
   local mision, cuantas = 0, 0
   local okM, m, c = pcall(XPCompletadas)
-  if okM then mision, cuantas = m or 0, c or 0 end
-  local desc = Num(GetXPExhaustion and GetXPExhaustion()) or 0
+  if okM then mision, cuantas = NumeroVisual(m) or 0, NumeroVisual(c) or 0 end
+  local desc = LeerVisual(GetXPExhaustion) or 0
   local d = { nivel = nivel, actual = actual, maximo = maximo, mision = mision, cuantas = cuantas, desc = desc,
     subira = actual + mision >= maximo }
   local brillar = (ultimaXP and ultimaXP.nivel == nivel and actual > ultimaXP.actual) and ultimaXP.actual or nil
   ultimaXP = { nivel = nivel, actual = actual }
   for i = 1, #todas do
+    if not todas[i].datos or todas[i].datos.nivel ~= nivel or actual < todas[i].datos.actual or not Si("brilloBarra") then QuitarBrillo(todas[i]) end
     todas[i]:Show()
     Pintar(todas[i], d, brillar)
   end
@@ -277,14 +315,19 @@ local function BarraACombate(si)
     if enCombate or not barra:IsShown() then return end
     local izq, arriba = barra:GetLeft(), barra:GetTop()
     local ancho = barra:GetWidth()
-    if not (izq and arriba and ancho) then return end
-    local escala = (GL.frame:GetEffectiveScale() or 1) / (UIParent:GetEffectiveScale() or 1)
+    local function finito(v) return type(v) == "number" and v == v and math.abs(v) < math.huge end
+    if not (finito(izq) and finito(arriba) and finito(ancho) and ancho > 0) then return end
+    local a, b = barra:GetEffectiveScale(), UIParent:GetEffectiveScale()
+    if not (type(a) == "number" and a > 0 and a < math.huge and type(b) == "number" and b > 0 and b < math.huge) then return end
+    local escala = a / b
+    if not (escala > 0 and escala < math.huge) then return end
     enCombate = true
     barra:SetParent(UIParent)
+    barra:SetScale(escala)
     barra:ClearAllPoints()
-    barra:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", izq * escala, arriba * escala)
-    barra:SetWidth(ancho * escala)
-    barra:SetScale(GL.frame:GetScale() or 1)
+    -- Las coordenadas y el ancho ya están expresados en unidades de la barra.
+    barra:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", izq, arriba)
+    barra:SetWidth(ancho)
     barra:SetFrameStrata("MEDIUM")
     barra.fondo:Show()
     barra.combate:Show()
@@ -304,7 +347,7 @@ end
 
 local original = GL.ModoDiscretoCombate
 GL.ModoDiscretoCombate = function(entra)
-  local estabaVisible = GL.frame and GL.frame:IsShown()
+  local estabaVisible = GL.frame and (not GL.frame.IsVisible or GL.frame:IsVisible()) and GL.frame:IsShown()
   if entra and estabaVisible and Si("xpEnCombate") and (DB().discretoCombate == true) then Probar(BarraACombate, L"barra en combate", true) end
   if original then original(entra) end
   if not entra then Probar(BarraACombate, L"barra en combate", false) end
@@ -408,23 +451,28 @@ local function CrearFranja()
     bx:SetHeight(4)
     bx:EnableMouse(false)
   end
-  franja:SetScale(db.escala or 1)
+  GL.EscalaVisibleR10(franja, db.escala or 1)
   franja:Hide()
 end
 
-function GL.PonerTamano(t)
+function GL.PonerTamano(t, restaurar)
+  if t ~= "compacto" and t ~= "franja" and t ~= "completo" then return end
   local db = DB()
+  db.volverCompacto = nil   -- 9.7.9.8: cambiar de tamaño a mano olvida el «Volver a compacta»
+  if GL.ActualizarVolverCompacta then GL.ActualizarVolverCompacta() end
   CrearFranja()
   if t == "compacto" then
     if franja then franja:Hide() end
     db.franja = false
     if GL.EntrarCompacto then GL.EntrarCompacto() end
   elseif t == "franja" then
-    if db.compacto and GL.SalirCompacto then GL.SalirCompacto() end
+    if db.compacto and GL.SalirCompacto then GL.SalirCompacto(true) end
     if GL.frame then GL.frame:Hide() end
     db.franja = true
-    franja:Show()
-    Probar(RefrescarFranja, "franja")
+    if not restaurar then db.ocultoFranja = false end
+    if db.ocultoFranja == true then franja:Hide() else
+      franja:Show(); Probar(RefrescarFranja, "franja")
+    end
   else
     db.franja = false
     if franja then franja:Hide() end
@@ -442,7 +490,8 @@ end
 local alternarAntes = GL.AlternarVentana
 function GL.AlternarVentana()
   if DB().franja and franja then
-    if franja:IsShown() then franja:Hide() else franja:Show(); Probar(RefrescarFranja, "franja") end
+    if franja:IsShown() then franja:Hide(); DB().ocultoFranja = true
+    else franja:Show(); DB().ocultoFranja = false; Probar(RefrescarFranja, "franja") end
     return
   end
   if alternarAntes then alternarAntes() end
@@ -458,21 +507,29 @@ GL.comandos["tamano"] = function() GL.SiguienteTamano() end
 local IMAN = 16
 local function Imanes(f)
   local ui = UIParent
-  local escala = (f:GetEffectiveScale() or 1) / (ui:GetEffectiveScale() or 1)
+  local function finito(v) return type(v) == "number" and v == v and math.abs(v) < math.huge end
+  local a, b = f:GetEffectiveScale(), ui:GetEffectiveScale()
+  if not (finito(a) and a > 0 and finito(b) and b > 0) then return nil end
+  local escala = a / b
+  if not finito(escala) or escala <= 0 then return nil end
   local izq, der, arriba, abajo = f:GetLeft(), f:GetRight(), f:GetTop(), f:GetBottom()
-  if not (izq and der and arriba and abajo) then return nil end
+  if not (finito(izq) and finito(der) and finito(arriba) and finito(abajo)) or der <= izq or arriba <= abajo then return nil end
   izq, der, arriba, abajo = izq * escala, der * escala, arriba * escala, abajo * escala
-  local W, H = ui:GetWidth() or 0, ui:GetHeight() or 0
+  local W, H = ui:GetWidth(), ui:GetHeight()
+  if not (finito(W) and W > 0 and finito(H) and H > 0 and finito(izq) and finito(der) and finito(arriba) and finito(abajo)) then return nil end
   local x, y, que = nil, nil, nil
   if math.abs(izq) <= IMAN then x = 0; que = "borde" elseif math.abs(W - der) <= IMAN then x = W - (der - izq); que = "borde" end
   if math.abs(H - arriba) <= IMAN then y = H; que = "borde" elseif math.abs(abajo) <= IMAN then y = arriba - abajo; que = "borde" end
-  local mm = Minimap and Minimap.GetBottom and Minimap:IsShown() and Minimap
-  if mm and mm:GetBottom() then
-    local me = (mm:GetEffectiveScale() or 1) / (ui:GetEffectiveScale() or 1)
-    local mAbajo, mIzq, mDer = mm:GetBottom() * me, mm:GetLeft() * me, mm:GetRight() * me
-    local bajo = mAbajo - 30   -- deja sitio para el texto de la zona del minimapa
-    if math.abs(arriba - bajo) <= IMAN * 2 and der > mIzq - IMAN and izq < mDer + IMAN then
-      y = bajo; x = x or (W - (der - izq) - 4); que = "minimapa"
+  local mm = Minimap and Minimap.GetBottom and Minimap.GetLeft and Minimap.GetRight and Minimap.GetEffectiveScale and Minimap:IsShown() and Minimap
+  if mm then
+    local me, mAbajo, mIzq, mDer = mm:GetEffectiveScale(), mm:GetBottom(), mm:GetLeft(), mm:GetRight()
+    if finito(me) and me > 0 and finito(mAbajo) and finito(mIzq) and finito(mDer) then
+      me = me / b
+      mAbajo, mIzq, mDer = mAbajo * me, mIzq * me, mDer * me
+      local bajo = mAbajo - 30   -- deja sitio para el texto de la zona del minimapa
+      if finito(bajo) and finito(mIzq) and finito(mDer) and bajo >= arriba - abajo and math.abs(arriba - bajo) <= IMAN * 2 and der > mIzq - IMAN and izq < mDer + IMAN then
+        y = bajo; x = x or (W - (der - izq) - 4); que = "minimapa"
+      end
     end
   end
   if not que then return nil end
@@ -481,6 +538,7 @@ end
 
 local guia
 local function MostrarGuia(f, si)
+  if not guia and not si then return end
   if not guia then
     guia = CreateFrame("Frame", nil, UIParent, PLANTILLA)
     guia:SetFrameStrata("HIGH")
@@ -497,22 +555,34 @@ end
 local function Pegable(f, guardar)
   if not f or rawget(f, "gIman") then return end
   f.gIman = true
+  local anterior, seguimiento
+  local function Terminar(self)
+    if not seguimiento then return false end
+    if self:GetScript("OnUpdate") == seguimiento then self:SetScript("OnUpdate", anterior) end
+    anterior, seguimiento = nil, nil
+    MostrarGuia(self, false)
+    return true
+  end
   f:HookScript("OnDragStart", function(self)
-    if DB().imanes == false then return end
+    if DB().imanes == false or DB().bloqueada or seguimiento then return end
     self.gT = 0
-    self:SetScript("OnUpdate", function(me, dt)
+    anterior = self:GetScript("OnUpdate")
+    seguimiento = function(me, dt)
+      if anterior then anterior(me, dt) end
+      if not seguimiento then return end
+      if DB().imanes == false or DB().bloqueada then Terminar(me); return end
       me.gT = me.gT + dt
       if me.gT < 0.05 then return end
       me.gT = 0
       local _, _, que = Imanes(me)
       MostrarGuia(me, que ~= nil)
       if guia and que then guia.texto:SetText(que == "minimapa" and L"Se pega bajo el minimapa" or L"Se pega al borde") end
-    end)
+    end
+    self:SetScript("OnUpdate", seguimiento)
   end)
+  f:HookScript("OnHide", Terminar)
   f:HookScript("OnDragStop", function(self)
-    self:SetScript("OnUpdate", nil)
-    MostrarGuia(self, false)
-    if DB().imanes == false then return end
+    if not Terminar(self) or DB().imanes == false or DB().bloqueada then return end
     local x, y = Imanes(self)
     if x and y then
       self:ClearAllPoints()
@@ -543,7 +613,7 @@ end
 table.insert(GL.alIniciar, function()
   CrearBarraXP()
   CrearFranja()
-  if DB().franja then GL.PonerTamano("franja") end
+  if DB().franja then GL.PonerTamano("franja", true) end
   GL.Pegable = Pegable   -- 9.0: también el modo mazmorra
   GL.franja = franja
   Pegable(GL.frame, function(f) local p, _, rp, x, y = f:GetPoint(); DB().pos = { p, rp, x, y } end)
@@ -566,6 +636,16 @@ table.insert(GL.alIniciar, function()
   Todo()
 end)
 table.insert(GL.trasRefrescar, Todo)
+
+-- El reset de ventanas incluye la franja, aunque esté oculta.
+table.insert(GL.alReiniciar, function()
+  local db = DB()
+  db.posFranja = nil
+  if franja then
+    franja:ClearAllPoints()
+    franja:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -220, -200)
+  end
+end)
 
 local ev = CreateFrame("Frame")
 GL.Evento(ev, "PLAYER_XP_UPDATE")
