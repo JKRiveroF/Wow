@@ -109,7 +109,7 @@ QUEST_SORT_SOURCE = f"https://wago.tools/db2/QuestSort/csv?build={NEW_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
 RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
 PLAYABLE_PROFILES = frozenset(RACES.values())
-LOOT_ENTITY = re.compile(r"(npc|object):([1-9]\d*)")
+LOOT_ENTITY = re.compile(r"(npc|object):([1-9]\d*)(\|quest(?:\|group)?)?")
 LOOT_TYPES = {"npc": "pnj", "object": "objeto"}
 
 
@@ -315,18 +315,39 @@ def _import_creatures(targets, data, source):
             _index_target(targets, "monster", key, positions, source)
 
 
-def _import_loot(items, targets, data, source):
+def _positive_loot(row):
+    windows = row.get("windows")
+    if not row.get("sources") or type(windows) is not int or windows <= 0:
+        return
+    for item, result in row.get("items", {}).items():
+        drops = result.get("drops")
+        if item.isdecimal() and int(item) > 0 and type(drops) is int and 0 < drops <= windows:
+            yield int(item)
+
+
+def _import_loot(items, quest_items, targets, data, source):
     for key, row in data["sources"].items():
         if not (match := LOOT_ENTITY.fullmatch(key)) or not row.get("sources"):
             continue
         kind, entity = LOOT_TYPES[match[1]], int(match[2])
-        windows = row.get("windows")
-        if type(windows) is not int or windows <= 0:
-            continue
-        for item, result in row.get("items", {}).items():
-            drops = result.get("drops")
-            if item.isdecimal() and int(item) > 0 and type(drops) is int and 0 < drops <= windows:
-                items[int(item)][kind, entity] = {"tipo": kind, "id": entity, "fuente": source["fuente"]}
+        proof = {"tipo": kind, "id": entity, "fuente": source["fuente"]}
+        if match[3]:
+            registered = []
+            for quest, observed in row.get("quests", {}).items():
+                if quest.isdecimal() and int(quest) > 0:
+                    registered.extend((quest, item) for item in _positive_loot(observed))
+            if not registered:
+                continue
+            for quest, item in registered:
+                scoped = quest_items.setdefault(quest, {}).setdefault(item, {})
+                previous = scoped.get((kind, entity))
+                if not previous or previous["registro_botin"].endswith("|group") or match[3] == "|quest":
+                    scoped[kind, entity] = {**proof, "registro_botin": key, "mision_botin": int(quest)}
+        else:
+            if type(row.get("windows")) is not int or row["windows"] <= 0:
+                continue
+            for item in _positive_loot(row):
+                items[item][kind, entity] = proof
         if positions := _positions(row.get("positions", [])):
             _index_target(targets, f"botin_{kind}", entity, positions, source)
 
@@ -416,6 +437,7 @@ def import_eg_link(directory):
     profiles = {}
     targets = defaultdict(dict)
     loot = defaultdict(dict)
+    quest_loot = {}
     xp_table, xp_source = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
     quest_sort = _read_optional_table(directory, "QuestSort", NEW_BUILD, QUEST_SORT_HASH, "SortName_lang")
@@ -440,7 +462,7 @@ def import_eg_link(directory):
         elif dataset == "creatures":
             _import_creatures(targets, data, source)
         elif dataset == "loot":
-            _import_loot(loot, targets, data, source)
+            _import_loot(loot, quest_loot, targets, data, source)
         elif dataset == "objectives":
             _import_objectives(missions, data, source)
         elif dataset == "turn_ins":
@@ -473,4 +495,6 @@ def import_eg_link(directory):
             contacts[roles[kind]][entity] = list(points.values())
     flight_data = {**flights[-1], "instantaneas": flights, "tabla_nodos": load_taxi_nodes(directory)} if flights else {}
     return {"misiones": missions, "pnj": npcs, "vuelos_observados": flight_data, "entidades_interaccion": contacts,
-            "botin_observado": {item: list(entities.values()) for item, entities in loot.items()}}
+            "botin_observado": {item: list(entities.values()) for item, entities in loot.items()},
+            "botin_por_mision": {quest: {item: list(entities.values()) for item, entities in items.items()}
+                                for quest, items in quest_loot.items()}}

@@ -50,7 +50,7 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 
 `████████░░░░░░░░░░░░`
 
-**Progreso efectivo global · 57,18 %**
+**Progreso efectivo global · 57,2 %**
 
 `███████████░░░░░░░░░`
 
@@ -58,14 +58,14 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
 | Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,34 % | 46,34 % | 0 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,34 % | 46,41 % | +0,07 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 47,32 % | 50 % | +2,68 pp |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 56,78 % | 57,18 % | +0,4 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,18 % | 57,2 % | +0,01 pp |
 
-**Última actualización de la medición · 2026-11-26 23:54:16+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 07:27:07+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -81,6 +81,7 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Generar fichas por ID para las misiones originales y las incorporadas, cruzar trazas y reglas estáticas, y separar inferencias, documentación y pruebas del cliente.
 - [x] Contrastar los comienzos de las 47 rutas y los 56 perfiles. Deducir ventanas compartidas de los 22 avisos de agrupamiento y contrastar sus dependencias disponibles.
 - [ ] Completar la evidencia por misión y perfil, especialmente las cadenas, restricciones, objetos, desbloqueos y títulos ES/EN. Validar posiciones, ganancias de XP y alternativas de viaje donde falten observaciones.
+- [x] Contrastar la XP observada de entrega por raza, facción e intervalo. Excluir de la medición las muestras al nivel máximo o con la XP desactivada.
 - [x] Resolver las exclusiones `324/526` y `94484/94493` y los requisitos `98221 → 465` y `93680 → 545`.
 - [x] Cruzar el registro de misiones y las observaciones de Efficient Games por ID y compilación con los títulos, requisitos, objetivos, XP y vuelos de las rutas.
 - [x] Identificar los 29 nodos por nombre y facción con TaxiNodes, corregir la asociación de Molino Tarren y verificar los tres nombres que muestra el cliente esES.
@@ -98,7 +99,7 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Contrastar por acción las posiciones de recogida y entrega con las trazas de entidades, las observaciones de Forever y el catálogo estático de QuestieDB. Conservar la procedencia del vínculo y de cada posición.
 - [x] Aplicar las correcciones de botín de QuestieDB, contrastar los 39 candidatos del cruce por objeto y entidad e incorporar el destino adicional de 92553.
 - [x] Contrastar los 11 candidatos preliminares de botín de Efficient Games y ampliar la comprobación a nueve instantáneas. Conservar por separado el vínculo al origen y la posición observada de la entidad.
-- [ ] Contrastar los 151 destinos donde el catálogo heredado propone una fuente de botín cerca de una posición observada. Priorizar los siete destinos compartidos por las 47 rutas y buscar evidencia del vínculo con el objeto en Forever.
+- [ ] Contrastar los 151 destinos donde el catálogo heredado propone una fuente de botín cerca de una posición observada. Los siete destinos compartidos ya tienen contraste cercano a partir del botín vinculado a la misión activa. Queda la comprobación exacta y el contraste de los destinos restantes.
 - [ ] Verificar el punto exacto y el acceso a los destinos con contraste parcial. Para los puntos aún sin observación cercana, priorizar posiciones documentadas de iniciadores, receptores y objetivos compartidos.
 - [ ] Verificar en Forever los ocho pares de aprendizaje pendientes o parciales, con prioridad para el desbloqueo de 18960 y los efectos de recompensa de mago, paladín y chamán.
 - [x] Cruzar objetos auxiliares y exclusiones heredadas con registros de Forever y añadir las marcas expresas de repetición documentadas en el corte.

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-26T23:54:16+01:00",
+  "actualizado": "2026-11-27T07:27:07+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -48,8 +48,8 @@
         141
       ],
       "efectivo": [
-        53,
-        112
+        1,
+        2
       ]
     },
     "6": {
@@ -78,8 +78,8 @@
         120
       ],
       "efectivo": [
-        5405312558983,
-        9519250536960
+        38104916834233,
+        66634753758720
       ]
     }
   },
@@ -457,7 +457,7 @@
           141
         ],
         "efectivo": [
-          10603477,
+          10618645,
           22880928
         ],
         "criterios": [
@@ -476,7 +476,7 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              2976501,
+              2991669,
               7626976
             ],
             "familias": [
@@ -501,16 +501,16 @@
                 "unidades": 6034,
                 "estados": {
                   "confirmada": 84,
-                  "parcial": 3261,
+                  "parcial": 3357,
                   "inferencia": 0,
-                  "investigacion": 2689,
+                  "investigacion": 2593,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 3429,
+                "comprobaciones_superadas": 3525,
                 "comprobaciones_aplicables": 12068,
                 "etapas": {
                   "confirmadas": 84,
-                  "contrastadas": 3345
+                  "contrastadas": 3441
                 }
               },
               {
@@ -604,8 +604,8 @@
           141
         ],
         "efectivo": [
-          15869,
-          29616
+          3967,
+          7404
         ],
         "criterios": [
           {
@@ -682,8 +682,8 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              1085,
-              9872
+              271,
+              2468
             ],
             "familias": [
               {
@@ -722,16 +722,16 @@
                 "nombre": "Entregas con XP efectiva observada por ID",
                 "unidades": 2468,
                 "estados": {
-                  "confirmada": 1085,
+                  "confirmada": 1084,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
-                  "cliente": 1383
+                  "cliente": 1384
                 },
-                "comprobaciones_superadas": 1085,
+                "comprobaciones_superadas": 1084,
                 "comprobaciones_aplicables": 2468,
                 "etapas": {
-                  "confirmadas": 1085
+                  "confirmadas": 1084
                 }
               }
             ]
@@ -1074,18 +1074,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 117,
+                "unidades": 120,
                 "estados": {
-                  "confirmada": 117,
+                  "confirmada": 120,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 117,
-                "comprobaciones_aplicables": 117,
+                "comprobaciones_superadas": 120,
+                "comprobaciones_aplicables": 120,
                 "etapas": {
-                  "confirmadas": 117
+                  "confirmadas": 120
                 }
               }
             ]
@@ -1167,13 +1167,13 @@
         120
       ],
       "efectivo": [
-        38104916834233,
+        38113413911809,
         66634753758720
       ]
     },
     "regresion": {
-      "ejecutadas": 117,
-      "superadas": 117,
+      "ejecutadas": 120,
+      "superadas": 120,
       "correcta": true
     },
     "casos_cliente": [
@@ -1234,8 +1234,8 @@
         1
       ],
       "efectivo": [
-        0,
-        1
+        2,
+        3017
       ]
     },
     "4": {
@@ -1244,8 +1244,8 @@
         1
       ],
       "efectivo": [
-        0,
-        1
+        -1,
+        29616
       ]
     },
     "5": {
@@ -1254,8 +1254,8 @@
         1
       ],
       "efectivo": [
-        3,
-        112
+        0,
+        1
       ]
     },
     "6": {
@@ -1284,8 +1284,8 @@
         1
       ],
       "efectivo": [
-        9,
-        2240
+        75959,
+        595676480
       ]
     }
   }

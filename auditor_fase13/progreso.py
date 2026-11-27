@@ -10,7 +10,7 @@ import subprocess
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from mission_rules import _waypoints
-from world_rules import _catalog_entry, _dict, _id, _matches_observation, _matches_positions, _position, _positions_by_action, _source
+from world_rules import _catalog_entry, _dict, _id, _matches_observation, _matches_positions, _position, _positions_by_action, _source, valid_xp_sample
 
 
 BLOCKS = {
@@ -277,8 +277,8 @@ def measure(routes, findings, catalog, inventory, flights, clustering, regressio
     curve_family = family("Curva 1–60", (_state(_source(curve, "niveles") and _id(thresholds.get(str(lvl))))
                                         for lvl in range(1, 60)))
     practical_xp = family("Entregas con XP efectiva observada por ID", (_state(
-        any(type(sample.get("xp")) is int and type(sample.get("level")) is int
-            for sample in mission["evidencia"].get("entregas_observadas", {}).get("valor", [])), "cliente")
+        any(valid_xp_sample(sample) for sample in mission["evidencia"].get("entregas_observadas", {}).get("valor", [])),
+        "cliente")
         for mission in missions if "T" in mission["acciones"]))
     combat_states, combat_covered = [], set()
     for route_id, route in routes_by_id.items():

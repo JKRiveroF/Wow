@@ -20,12 +20,30 @@ class EGLinkTests(unittest.TestCase):
         data = {"sources": {"npc:7": row, "npc:8|group": row, "object:7": {**row, "positions": []},
                             "object:9": {**row, "sources": 0}, "npc:9": {**row, "windows": None},
                             "fishing:1429": row}}
-        _import_loot(observed, targets, data, source)
+        _import_loot(observed, {}, targets, data, source)
         self.assertEqual(set(observed), {100})
         self.assertEqual(set(observed[100]), {("pnj", 7), ("objeto", 7)})
         self.assertEqual(observed[100]["objeto", 7]["fuente"], source["fuente"])
         self.assertEqual(set(targets), {("botin_pnj", 7)})
         self.assertEqual(targets["botin_pnj", 7][1429, 45, 44]["build"], NEW_BUILD)
+
+    def test_loot_quest_context_requires_a_positive_record_for_the_exact_quest(self):
+        observed, quests, targets = defaultdict(dict), {}, defaultdict(dict)
+        source = _source(NEW_BUILD, "loot")
+        point = {"uiMap": 1429, "mapX": 0.45, "mapY": 0.44}
+        positive = {"sources": 1, "windows": 2, "items": {"100": {"drops": 1}}}
+        row = {"sources": 1, "windows": 2, "items": {"999": {"drops": 1}}, "positions": [point],
+               "quests": {"7": positive, "8": {**positive, "items": {"100": {"drops": 0}}}}}
+        data = {"sources": {"npc:11|quest": row, "npc:11|quest|group": row, "npc:12|quest|group": row,
+                            "npc:13|quest": {**row, "quests": {}}, "npc:14|group": row}}
+        _import_loot(observed, quests, targets, data, source)
+        self.assertEqual(observed, {})
+        self.assertEqual(set(quests), {"7"})
+        self.assertEqual(set(quests["7"]), {100})
+        self.assertEqual(quests["7"][100]["pnj", 12]["registro_botin"], "npc:12|quest|group")
+        self.assertEqual(quests["7"][100]["pnj", 11]["mision_botin"], 7)
+        self.assertEqual(quests["7"][100]["pnj", 11]["registro_botin"], "npc:11|quest")
+        self.assertEqual(set(targets), {("botin_pnj", 11), ("botin_pnj", 12)})
 
     def test_objective_positions_require_matching_entity_type_and_positive_sample(self):
         build = "1.60.1.71139"

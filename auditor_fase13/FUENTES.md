@@ -294,6 +294,14 @@ Se contrastó el nombre esES y la marca de facción de cada nodo en TaxiNodes de
 
 Las nueve instantáneas del cliente en vivo van de 70790 a 71139. Se conservan por compilación el sentido, las escalas, el talento, los precios, los tiempos y la fuente. Las 228 conexiones reflejan los extremos usados por las rutas y pueden incluir escalas. En 99 hay al menos una duración observada. Gadgetzan (Alianza), Theramore y Puesto del Veneno tienen fila del cliente sin observación del maestro en estas instantáneas. La bandera del mapa acredita dónde se muestra el nodo. El desbloqueo individual y la vigencia de cada conexión se comprueban en juego. [Observaciones de vuelo por compilación](https://github.com/JIVESCORP/eg-link-output-wowf/tree/1339ce5600bbc2b12e8f1081e584f548f62fa57f/data/wowf) · [Campos de Efficient Games](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/DATASETS.md#flights).
 
+## Botín con misión activa
+
+El lector conserva por separado los registros de botín general y los que Efficient Games vincula con la misión activa, incluidos los de grupo. El contraste exige el ID del objeto entre los objetivos de esa misión, al menos una ventana con botín y una posición compatible de la entidad. Se respetan las correcciones de QuestieDB. Las coordenadas recogen la posición observada del jugador o de la entidad y acreditan cercanía. [Esquema de botín y procedencia](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/DATASETS.md#loot).
+
+## XP de entrega por perfil
+
+Las muestras de entrega válidas registran XP y un nivel entre 1 y 59. Se omiten las marcas de nivel máximo o XP desactivada. Un cero observado con XP habilitada sigue siendo un dato. Cada perfil se cruza con la raza y facción de la ruta y el intervalo inclusivo en el mínimo y exclusivo en el máximo. Se cuenta una entrega obligatoria por ID, aplicando las ramas raciales y alternativas de la ruta. Las observaciones históricas no acreditan el saldo del tramo ni la XP de combate. [Campos de entrega de Efficient Games](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/DATASETS.md#turn_ins).
+
 ## Pendiente de verificación
 
 - Vigencia de la curva de XP en el cliente actual y XP efectiva por nivel y actividad. Las estimaciones de combate y los posibles bloqueos siguen pendientes hasta contar con registros por tramo comparables.

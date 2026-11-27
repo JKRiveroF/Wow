@@ -72,6 +72,13 @@ def _matches_observation(entry, action, position, tolerance):
                              "posiciones_reproyectadas", "referencias_interaccion", "posiciones_trazas", "referencias_botin"))
 
 
+def valid_xp_sample(sample):
+    xp, level, sources = (sample.get(field) for field in ("xp", "level", "sources"))
+    return (type(xp) is int and xp >= 0 and type(level) is int and 1 <= level < 60
+            and type(sources) is int and sources > 0
+            and not sample.get("maxLevel") and not sample.get("xpDisabled"))
+
+
 class WorldAudit:
     def __init__(self, route, context):
         self.route = route
@@ -262,6 +269,8 @@ class WorldAudit:
         # Contamos una entrega por ID y por raza porque AdaptarARaza elimina destinos.
         races = _list(self.route.get("razas")) or [None]
         observed = []
+        coverage = {}
+        faction = self.route.get("_faccion")
         combat_catalog = _catalog_entry(self.catalog.get("xp_combates"), self.route.get("id"))
         combat_sections = _dict(combat_catalog.get("tramos"))
         for race in races:
@@ -269,6 +278,7 @@ class WorldAudit:
             race_xp = 0
             combat_xp = 0
             known = 0
+            sampled = 0
             optional_count = 0
             optional_xp = 0
             below, above = [], []
@@ -280,6 +290,11 @@ class WorldAudit:
                     counted.add(quest_id)
                     record = _catalog_entry(self.catalog.get("misiones"), quest_id)
                     optional_count += int(optional)
+                    if (levels and not optional and _source(record, "entregas_observadas")
+                            and any(valid_xp_sample(row) and row.get("race") == race and row.get("faction") == faction
+                                    and levels[0] <= row["level"] < levels[1]
+                                    for row in _list(record.get("entregas_observadas")))):
+                        sampled += 1
                     if _source(record, "xp") and type(record.get("xp")) is int and record["xp"] >= 0:
                         if optional:
                             optional_xp += record["xp"]
@@ -299,20 +314,25 @@ class WorldAudit:
                         below.append(index)
                     elif section_xp + estimate > needed:
                         above.append(index)
-            if known or combat_xp or optional_xp:
-                detail = f"{race or 'ruta'}: {race_xp} XP de misión registrada ({known}/{len(counted) - optional_count} entregas)"
+            mandatory = len(counted) - optional_count
+            coverage[race or "ruta"] = {"observadas": sampled, "aplicables": mandatory}
+            if known or combat_xp or optional_xp or sampled:
+                detail = f"{race or 'ruta'}: {race_xp} XP de misión registrada ({known}/{mandatory} entregas)"
                 if optional_count:
                     detail += f", {optional_xp} XP documentada aparte en misiones opcionales"
                 if combat_xp:
                     detail += f", {combat_xp} XP de combate estimada en los tramos documentados"
                 if thresholds:
                     detail += f", subtotal inferior al intervalo en {len(below)} tramos y superior en {len(above)}"
+                if mandatory:
+                    detail += f", {sampled}/{mandatory} entregas con muestra de XP para la raza y facción en el intervalo"
                 observed.append(detail)
         if observed:
             self.add(4, "pendiente", "xp_escenario_misiones",
                      ". ".join(observed) + ". Escenario parcial con una entrega por ID y perfil, "
                      "que toma la primera alternativa de cada par. "
                      "Requiere validar la XP efectiva, las actividades adicionales y el nivel inicial de cada tramo.")
+            self.findings[-1]["cobertura_xp_por_perfil"] = coverage
 
     def check_travel(self):
         flight_index = _dict(self.catalog.get("vuelos"))

@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from lupa.lua51 import LuaRuntime
 
 from lua_routes import load_routes
-from world_rules import audit_world
+from world_rules import audit_world, valid_xp_sample
 
 
 HERE = Path(__file__).resolve().parent
@@ -53,6 +53,24 @@ class WorldRulesTest(unittest.TestCase):
         self.assertIn("100 XP de misión registrada (1/1 entregas)", assessment["detalle"])
         self.assertIn("70 XP de combate estimada", assessment["detalle"])
         self.assertEqual(assessment["gravedad"], "pendiente")
+
+    def test_xp_delivery_samples_require_enabled_progression_in_the_level_range(self):
+        valid = {"level": 30, "xp": 0, "sources": 1, "faction": "Alliance", "race": "Human"}
+        self.assertTrue(valid_xp_sample(valid))
+        for patch in ({"level": 60}, {"xpDisabled": True}, {"maxLevel": True}, {"sources": 0}, {"xp": -1}):
+            self.assertFalse(valid_xp_sample({**valid, **patch}), patch)
+
+        route = sample([waypoint("T", quest) for quest in (10, 11, 12, 13, 14, 15, 10)], minimum=30, maximum=35)
+        route["secciones"][0]["pasos"].append({"t": "Misión opcional: entrega adicional", "wp": [waypoint("T", 16)]})
+        rows = {10: valid, 11: {**valid, "race": "Dwarf"}, 12: {**valid, "faction": "Horde"},
+                13: {**valid, "level": 35}, 14: {**valid, "xpDisabled": True},
+                15: {**valid, "level": 29}, 16: valid}
+        source = {"estado": "forever", "fuente": "fixture"}
+        catalog = {"misiones": {str(quest): {**source, "xp": 10, "entregas_observadas": [row]}
+                               for quest, row in rows.items()}}
+        finding = next(item for item in audit_world(route, catalog) if item["codigo"] == "xp_escenario_misiones")
+        self.assertEqual(finding["cobertura_xp_por_perfil"], {"Human": {"observadas": 1, "aplicables": 6}})
+        self.assertIn("1/6 entregas con muestra", finding["detalle"])
 
     def test_map_coordinates_and_phase_followup(self):
         invalid = waypoint("A", 10, map_id=True, x=float("inf"), y=-1)
