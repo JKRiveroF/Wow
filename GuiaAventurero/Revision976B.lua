@@ -37,16 +37,16 @@ function GL.ComprasJuntas976(planes, contar)
   end
  end
  local out={}; for id,a in pairs(sum) do
-  local n=cantidad(call(contar,id)); if n==nil then unknown=true; n=0 end
+  local n=cantidad(call(contar,id)); if n==nil then unknown=true; a.desconocido=true; n=0 end
   a.tengo=math.max(0,n); a.falta=math.max(0,a.necesito-a.tengo); out[#out+1]=a
  end
  table.sort(out,function(a,b)return a.id<b.id end); return out,missing,unknown
 end
 local function inventario(id)
- if type(GL.InventarioProfesion975)=="function" then return cantidad(call(GL.InventarioProfesion975,id)) end
+ if type(GL.InventarioCompraProfesion975)=="function" then return cantidad(call(GL.InventarioCompraProfesion975,id)) end
  local moderno=C_Item and C_Item.GetItemCount
- local n=cantidad(call(moderno,id,true)); if n~=nil then return n end
- if GetItemCount~=moderno then return cantidad(call(GetItemCount,id,true)) end
+ local n=cantidad(call(moderno,id,false)); if n~=nil then return n end
+ if GetItemCount~=moderno then return cantidad(call(GetItemCount,id,false)) end
 end
 local function planes()
  local a={}; for _,p in ipairs(GL.RUTA and GL.RUTA.profesiones or {}) do
@@ -71,9 +71,13 @@ function GL.PrecioSubastaVisible976(id)
 end
 -- Spell API positive evidence only. Missing/false isn't proof of unknown profession recipe.
 function GL.RecetaConocida976(id)
- if type(id)~='number' then return nil end
- for _,f in pairs({a=IsPlayerSpell,b=IsSpellKnown,c=C_SpellBook and C_SpellBook.IsSpellInSpellBook}) do if call(f,id)==true then return true end end
- if call(GL.HechizoConocido,id)==true then return true end
+ id=cantidad(id); if not id or id==0 then return nil end
+ local banco=Enum and Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Player
+ if banco~=nil and C_SpellBook then
+  if visible(call(C_SpellBook.IsSpellKnown,id,banco))==true or visible(call(C_SpellBook.IsSpellInSpellBook,id,banco))==true then return true end
+ end
+ if visible(call(IsPlayerSpell,id))==true or visible(call(IsSpellKnown,id,false))==true then return true end
+ if visible(call(GL.HechizoConocido,id))==true then return true end
  return nil
 end
 -- Preserve sequence, group only consecutive identical destinations; never move a future quest across a prerequisite.
@@ -130,8 +134,9 @@ cmd.profesionesjuntas=function()
  local pp=planes(); local t={L'Compra conjunta estimada (sin duplicar existencias)'}
  for _,p in ipairs(pp) do t[#t+1]=tostring(p.prof.nombre)..' '..p.nivel..'/300' end
  if #pp==0 then t[#t+1]=L'No hay planes aprendidos activos.'; return show(t) end
+ if GL.AmbitoCompraProfesion975 then t[#t+1]=GL.AmbitoCompraProfesion975() end
  local lista,n,u=GL.ComprasJuntas976(pp,inventario); local db=GuiaAventureroDB or {}; local cost,mp=GL.Coste976(lista,db.precios976)
- for _,a in ipairs(lista) do if a.falta>0 then t[#t+1]=L(a.nombre or tostring(a.id))..' #'..a.id..' x'..a.falta end end
+ for _,a in ipairs(lista) do if a.falta>0 then t[#t+1]=L(a.nombre or tostring(a.id))..' #'..a.id..' x'..a.falta..(a.desconocido and ' (?)' or '') end end
  t[#t+1]=L'Tramos sin datos: '..n; t[#t+1]=L'Coste parcial estimado (cobre): '..cost; t[#t+1]=L'Materiales sin precio: '..mp
  if u then t[#t+1]=L'Inventario incompleto; comprueba las existencias.' end
  t[#t+1]=L'No se descuenta producción entre profesiones ni se garantizan los puntos de habilidad.'
@@ -140,7 +145,15 @@ cmd.profesionesjuntas=function()
 end
 cmd.recetasconocidas=function()
  local out={L'Recetas del plan: conocimiento confirmado por el cliente'}
- for _,p in ipairs(planes()) do for _,t in ipairs(p.prof.pasos or {}) do if t.h>p.nivel and t.sp975 then out[#out+1]=tostring(t.r975 or t.sp975)..' #'..t.sp975..' — '..(GL.RecetaConocida976(t.sp975) and L'Confirmada' or L'No confirmada') end end end
+ for _,p in ipairs(planes()) do
+  local vistas={}
+  for _,t in ipairs(p.prof.pasos or {}) do
+   if t.h>p.nivel and cantidad(t.sp975) and t.sp975>0 and not vistas[t.sp975] then
+    vistas[t.sp975]=true
+    out[#out+1]=tostring(t.r975 or t.sp975)..' #'..t.sp975..' — '..(GL.RecetaConocida976(t.sp975) and L'Confirmada' or L'No confirmada')
+   end
+  end
+ end
  out[#out+1]=L'No confirmada no significa que no esté aprendida.'; return show(out)
 end
 cmd.preciosubasta=function(q)
@@ -164,6 +177,7 @@ cmd.compararplanes=function()
  local out={L"Comparación de planes disponibles"}
  local nv=p and call(GL.NivelProfesion,p)
  if not p or not p.skill or type(nv)~="number" or nv<=0 then return show({L"Abre Profesiones y selecciona una profesión aprendida."}) end
+ if GL.AmbitoCompraProfesion975 then out[#out+1]=GL.AmbitoCompraProfesion975() end
  local best,bestName
  for _,mode in ipairs(call(GL.ModalidadesProfesion975,p.skill) or {}) do
   if mode~="ruta" then

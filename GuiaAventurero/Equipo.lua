@@ -9,24 +9,27 @@ local C = GL.colores
 local ALTO_FILA = 16
 local ROJO = "|cffff7070"
 local NOMBRES_RANURA = {
-  [1] = L"Cabeza", [2] = L"Cuello", [3] = L"Hombros", [5] = L"Pecho", [6] = L"Cintura", [7] = L"Piernas", [8] = L"Pies",
-  [9] = L"Muñecas", [10] = L"Manos", [11] = L"Anillo 1", [12] = L"Anillo 2", [13] = L"Abalorio 1", [14] = L"Abalorio 2",
-  [15] = L"Espalda", [16] = L"Mano derecha", [17] = L"Mano izquierda", [18] = L"A distancia",
+  [1] = "Cabeza", [2] = "Cuello", [3] = "Hombros", [5] = "Pecho", [6] = "Cintura", [7] = "Piernas", [8] = "Pies",
+  [9] = "Muñecas", [10] = "Manos", [11] = "Anillo 1", [12] = "Anillo 2", [13] = "Abalorio 1", [14] = "Abalorio 2",
+  [15] = "Espalda", [16] = "Mano derecha", [17] = "Mano izquierda", [18] = "A distancia",
 }
 local ORDEN = { 1, 2, 3, 15, 5, 9, 10, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18 }
 -- nombres de las estadísticas que más usan los pesos de las rutas (si el juego no da el suyo)
 local NOMBRES_STAT = {
-  ITEM_MOD_STRENGTH_SHORT = L"Fuerza", ITEM_MOD_AGILITY_SHORT = L"Agilidad", ITEM_MOD_STAMINA_SHORT = L"Aguante",
-  ITEM_MOD_INTELLECT_SHORT = L"Intelecto", ITEM_MOD_SPIRIT_SHORT = L"Espíritu", RESISTANCE0_NAME = L"armadura",
-  ITEM_MOD_DAMAGE_PER_SECOND_SHORT = L"daño por segundo", DPS = L"daño del arma", VARITA = L"daño de varita",
-  DISTANCIA = L"daño a distancia",
+  ITEM_MOD_STRENGTH_SHORT = "Fuerza", ITEM_MOD_AGILITY_SHORT = "Agilidad", ITEM_MOD_STAMINA_SHORT = "Aguante",
+  ITEM_MOD_INTELLECT_SHORT = "Intelecto", ITEM_MOD_SPIRIT_SHORT = "Espíritu", RESISTANCE0_NAME = "armadura",
+  ITEM_MOD_DAMAGE_PER_SECOND_SHORT = "daño por segundo", DPS = "daño del arma", VARITA = "daño de varita",
+  DISTANCIA = "daño a distancia",
   -- 7.9.5: las que faltaban (salían como ITEM_MOD_..._SHORT si el juego no las traía)
-  ITEM_MOD_ATTACK_POWER_SHORT = L"poder de ataque", ITEM_MOD_RANGED_ATTACK_POWER_SHORT = L"poder de ataque a distancia",
-  ITEM_MOD_CRIT_RATING_SHORT = L"crítico", ITEM_MOD_HIT_RATING_SHORT = L"golpe",
-  ITEM_MOD_CRIT_SPELL_RATING_SHORT = L"crítico con hechizos", ITEM_MOD_HIT_SPELL_RATING_SHORT = L"golpe con hechizos",
-  ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = L"defensa", ITEM_MOD_DODGE_RATING_SHORT = L"esquivar",
-  ITEM_MOD_MANA_REGENERATION_SHORT = L"maná cada 5 s", ITEM_MOD_SPELL_DAMAGE_DONE_SHORT = L"daño con hechizos",
-  ITEM_MOD_SPELL_POWER_SHORT = L"poder con hechizos",
+  ITEM_MOD_ATTACK_POWER_SHORT = "poder de ataque", ITEM_MOD_RANGED_ATTACK_POWER_SHORT = "poder de ataque a distancia",
+  ITEM_MOD_CRIT_RATING_SHORT = "crítico", ITEM_MOD_HIT_RATING_SHORT = "golpe",
+  ITEM_MOD_CRIT_SPELL_RATING_SHORT = "crítico con hechizos", ITEM_MOD_HIT_SPELL_RATING_SHORT = "golpe con hechizos",
+  ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = "defensa", ITEM_MOD_DODGE_RATING_SHORT = "esquivar",
+  ITEM_MOD_MANA_REGENERATION_SHORT = "maná cada 5 s", ITEM_MOD_SPELL_DAMAGE_DONE_SHORT = "daño con hechizos",
+  ITEM_MOD_SPELL_POWER_SHORT = "poder con hechizos",
+  ITEM_MOD_HEALING_DONE_SHORT = "poder de sanación",
+  ITEM_MOD_PARRY_RATING_SHORT = "índice de parada",
+  ITEM_MOD_BLOCK_RATING_SHORT = "índice de bloqueo",
 }
 
 local function DB() return GuiaAventureroDB end
@@ -51,13 +54,13 @@ local function Durabilidad(id)
 end
 
 local function NombreStat(clave)
-  local g = NOMBRES_STAT[clave] or _G[clave]
+  local g = NOMBRES_STAT[clave] and L(NOMBRES_STAT[clave]) or _G[clave]
   if type(g) == "string" and g ~= "" and not string.find(g, "%%") then return g end
-  return NOMBRES_STAT[clave] or (string.find(clave, "^[A-Z0-9_]+$") and "" or clave)   -- 7.9.5: nunca un código
+  return (NOMBRES_STAT[clave] and L(NOMBRES_STAT[clave])) or (string.find(clave, "^[A-Z0-9_]+$") and "" or clave)   -- 7.9.5: nunca un código
 end
 
 local function Equipo() return GL.RUTA and GL.RUTA.equipo end
-local AVISO_REQUISITOS = L"Requisitos especiales sin confirmar"
+local AVISO_REQUISITOS = "Requisitos especiales sin confirmar"
 local function RequisitosSinConfirmar(u, enlace)
   return not u.RequisitosEspeciales or u.RequisitosEspeciales(enlace) == nil
 end
@@ -78,13 +81,24 @@ local function Comparar(tooltip)
   if not ok or not enlace then return end
   local u, equipo = U(), Equipo()
   local info = u.InfoObjeto(enlace)
-  if not info then return end
+  if not info or not u.RANURAS[info.ranura or ""] then return end
+  -- Mostrar el requisito aunque todavía no pueda compararse la ranura.
+  local nivel = Leer(UnitLevel, "player")
+  if not NumeroValido(nivel) or nivel < 1 or nivel % 1 ~= 0 then return end
+  local nivelReq = u.NivelEquipo(info, equipo)
+  if nivelReq > nivel then
+    tooltip:AddLine(" ")
+    tooltip:AddLine(L"Guía del Aventurero", 0.41, 0.80, 0.94)
+    tooltip:AddLine(L"Aún no la puedes usar: requiere nivel " .. nivelReq .. ".", 0.6, 0.6, 0.6, true)
+    tooltip:Show()
+    return
+  end
   local valorEq, _, piezas = u.CosteSustitucion(info, equipo, equipo.pesos or {})
   if valorEq == nil then return end
   for _, e in ipairs(piezas) do if e == enlace then return end end
   local enlaceEq = piezas[1]
   tooltip:AddLine(" ")
-  local nombreEq = enlaceEq and (u.InfoObjeto(enlaceEq) or {}).nombre
+  local nombreEq = enlaceEq and ((u.InfoObjeto(enlaceEq) or {}).nombre or enlaceEq)
   if piezas[2] then nombreEq = (nombreEq or enlaceEq or "?") .. " + " .. ((u.InfoObjeto(piezas[2]) or {}).nombre or piezas[2]) end
   tooltip:AddLine(L"Guía del Aventurero" .. "  " .. C.GRIS .. (nombreEq and (L"frente a tu " .. nombreEq .. ":") or L"frente a la ranura vacía:") .. C.FIN,
     0.41, 0.80, 0.94)
@@ -94,7 +108,12 @@ local function Comparar(tooltip)
     return
   end
   if RequisitosSinConfirmar(u, enlace) then
-    tooltip:AddLine(AVISO_REQUISITOS, 1, 0.82, 0, true)
+    tooltip:AddLine(L(AVISO_REQUISITOS), 1, 0.82, 0, true)
+  end
+  local parcial = u.ComparacionParcial and u.ComparacionParcial(info, piezas)
+  if parcial then
+    tooltip:AddLine(L"Estadísticas o efectos sin valorar; compara manualmente.", 1, 0.82, 0, true)
+    tooltip:Show()
   end
   -- diferencias de estadísticas
   local nuevas = u.Estadisticas(enlace)
@@ -124,29 +143,26 @@ local function Comparar(tooltip)
       table.insert(partes, (d > 0 and (GL.Icono("▲") .. C.VERDE .. "+") or (GL.Icono("▼") .. ROJO)) .. Formato(d) .. " " .. NombreStat(k) .. C.FIN)
     end
   end
-  tooltip:AddLine(#partes > 0 and table.concat(partes, ", ") or (C.GRIS .. L"Mismas estadísticas." .. C.FIN), 1, 1, 1, true)
+  tooltip:AddLine(#partes > 0 and table.concat(partes, ", ") or (C.GRIS .. (parcial and L"Sin diferencias en las estadísticas mostradas." or L"Mismas estadísticas.") .. C.FIN), 1, 1, 1, true)
+  if parcial then tooltip:Show(); return end
   local nota = u.Puntuar(enlace, info, equipo.pesos or {})
   if nota == nil then return end
-  local dif = nota - valorEq
+  local dif, pct = u.DiferenciaEquipo(nota, valorEq)
+  if dif == nil then return end
   local veredicto
-  -- 9.4.2: en % frente a lo que llevas (antes, puntos de la nota interna, que no se entendían)
-  local base = valorEq or 0
-  local pct = base > 0.05 and ((dif >= 0 and 1 or -1) * math.floor(math.abs(dif / base * 100) + 0.5)) or nil
-  if dif > 0.05 and (not pct or pct >= 1) then
-    veredicto = GL.Icono("▲") .. " " .. C.VERDE .. (pct and (L"mejor (+" .. pct .. " %)") or L"mejor (tienes la ranura vacía)") .. C.FIN
-  elseif dif < -0.05 and (not pct or pct <= -1) then
-    veredicto = GL.Icono("▼") .. " " .. ROJO .. (pct and (L"peor (" .. pct .. " %)") or L"peor") .. C.FIN
+  -- No mostrar +0 % ni confundir una pieza de puntuación cero con una ranura vacía.
+  local pctTexto = pct and math.abs(pct) >= 0.05 and Formato(pct) or nil
+  if dif > 0 then
+    veredicto = GL.Icono("▲") .. " " .. C.VERDE .. (pctTexto and (L"mejor (+" .. pctTexto .. " %)") or (#piezas == 0 and L"mejor (tienes la ranura vacía)" or L"mejor")) .. C.FIN
+  elseif dif < 0 then
+    veredicto = GL.Icono("▼") .. " " .. ROJO .. (pctTexto and (L"peor (" .. pctTexto .. " %)") or L"peor") .. C.FIN
   else veredicto = L"igual" end
-  tooltip:AddLine(L"Según lo que busca la guía para tu clase: " .. veredicto, 1, 0.82, 0, true)
-  local nivel = UnitLevel and UnitLevel("player") or 1
-  if (info.nivelReq or 0) > nivel then
-    tooltip:AddLine(L"Aún no la puedes usar: requiere nivel " .. info.nivelReq .. ".", 0.6, 0.6, 0.6, true)
-  end
+  tooltip:AddLine(L"Puntuación orientativa de equipo: " .. veredicto, 1, 0.82, 0, true)
   tooltip:Show()
 end
 
 -- 7.9.1: en este cliente el tooltip puede no tener OnTooltipSetItem; si falla, el resto del archivo (la pestaña) se carga igual
-GL.EngancharTooltipObjeto(function(t) pcall(Comparar, t) end, L"comparador de Equipo")
+GL.EngancharTooltipObjeto(Comparar, L"comparador de Equipo", function() return L"Guía del Aventurero" end, true)
 
 ------------------------------------------------------------------------
 -- Personaje > Equipo
@@ -186,6 +202,7 @@ local cacheMejores, cacheT, cacheContexto = nil, -100, nil
 local function Antes(a, b)
   if a.futura ~= b.futura then return not a.futura end
   if a.requisitosSinConfirmar ~= b.requisitosSinConfirmar then return not a.requisitosSinConfirmar end
+  if a.parcial ~= b.parcial then return not a.parcial end
   if a.gana ~= b.gana then return a.gana > b.gana end
   if a.nivelReq ~= b.nivelReq then return a.nivelReq < b.nivelReq end
   if a.mision ~= b.mision then return a.mision == true end
@@ -193,16 +210,30 @@ local function Antes(a, b)
   return a.id < b.id
 end
 local function MejoresANivel()
-  local ahora = (GetTime and GetTime()) or 0
+  local ahora = Leer(GetTime)
+  if not NumeroValido(ahora) then ahora = nil end
   local u, equipo = U(), Equipo()
   local res = {}
   if not (u and equipo) then return res end
-  local nivel = (UnitLevel and UnitLevel("player")) or 1
+  local nivel = Leer(UnitLevel, "player")
+  if not NumeroValido(nivel) or nivel < 1 or nivel % 1 ~= 0 then return res end
+  local limite = nivel + 2
   local pesos = equipo.pesos or {}
   local db = DB()
+  local identidadDB = db
   if type(db) ~= "table" then db = {} end
-  local contexto = table.concat({tostring(GL.RUTA), tostring(equipo), tostring(pesos), tostring(nivel), tostring(db.especializacion), tostring(db.seccion)}, "|")
-  if cacheMejores and cacheContexto == contexto and ahora >= cacheT and ahora - cacheT < 10 then return cacheMejores end
+  local contexto = table.concat({tostring(GL.RUTA), tostring(equipo), tostring(pesos), tostring(nivel), tostring(db.especializacion), tostring(db.seccion), tostring(identidadDB), tostring(GL.ingles)}, "|")
+  if ahora and cacheMejores and cacheContexto == contexto and ahora >= cacheT and ahora - cacheT < 10 then return cacheMejores end
+  -- Solo durante esta búsqueda: una respuesta ausente puede estar pendiente de GET_ITEM_INFO_RECEIVED.
+  local infoPorID = {}
+  local function InfoUnaVez(id)
+    if id == nil then return nil end
+    local info = infoPorID[id]
+    if info then return info end
+    info = u.InfoObjeto(id)
+    if info then infoPorID[id] = info end
+    return info
+  end
   local function Ranuras(info)
     if not info then return nil end
     if equipo.dobleArma and info.ranura == "INVTYPE_WEAPON" then return u.DOS_MANOS_ARMA end
@@ -211,20 +242,29 @@ local function MejoresANivel()
   local ok, datos = false, nil
   if GL.WH and GL.WH.jefes and GL.DatosMazmorras then ok, datos = pcall(GL.DatosMazmorras) end
   local mejor = {}
+  -- El nivel del objeto y el nivel orientativo de su fuente son independientes.
+  local function Planificar(info, nivelFuente)
+    if not Ranuras(info) then return nil end
+    local requerido = u.NivelEquipo(info, equipo)
+    if requerido > limite or not u.Usable(info, equipo, limite) then return nil end
+    local futura = requerido > nivel or nivelFuente > nivel
+    return requerido, futura
+  end
   for _, m in ipairs((ok and datos) or {}) do
-    if m.min <= nivel + 2 and m.max >= nivel - 4 then
+    if m.min <= limite and m.max >= nivel - 4 then
       for _, j in ipairs((GL.JefesVisibles976 and GL.JefesVisibles976(m.clave or m.n)) or (GL.WH and GL.WH.jefes and GL.WH.jefes[m.clave or m.n]) or {}) do
         for _, o in ipairs(j.botin or {}) do
-          local info = u.InfoObjeto(o.id)
+          -- No promover botín cuya procedencia está pendiente ni objetos de misión.
+          local info = not o.pendiente977 and not o.mision977 and InfoUnaVez(o.id) or nil
           local enlace = info and info.enlace
-          local ranuras = Ranuras(info)
-          if ranuras and info.nivelReq <= nivel and u.Usable(info, equipo) then
-            local coste, r = u.CosteSustitucion(info, equipo, pesos)
+          local requerido, futura = Planificar(info, m.min)
+          if requerido then
+            local coste, r, piezas = u.CosteSustitucion(info, equipo, pesos)
             local nota = u.Puntuar(enlace, info, pesos)
-            local gana = coste and nota and (nota - coste)
+            local gana = u.DiferenciaEquipo(nota, coste)
             if r and gana and gana > 0 then
               local e = { r = r, id = o.id, enlace = enlace, gana = gana, m = m, jefe = j.n,
-                futura = false, nivelReq = info.nivelReq, mision = false, requisitosSinConfirmar = RequisitosSinConfirmar(u, enlace) }
+                futura = futura, nivelReq = requerido, nivelFuente = m.min, mision = false, requisitosSinConfirmar = RequisitosSinConfirmar(u, enlace), parcial = u.ComparacionParcial and u.ComparacionParcial(info, piezas) or false }
               if not mejor[r] or Antes(e, mejor[r]) then mejor[r] = e end
             end
           end
@@ -239,22 +279,22 @@ local function MejoresANivel()
   if secs and GL.RecompensasMision then
     for s = s0, #secs do
       local sec = secs[s]
-      if (sec.min or 1) > nivel + 2 then break end
+      if (sec.min or 1) > limite then break end
       for _, paso in ipairs(sec.pasos or {}) do
         for _, d in ipairs(paso.wp or {}) do
           if d.a == "T" and d.q and not (GL.MisionCompletada and GL.MisionCompletada(d.q)) then
             for _, id in ipairs(GL.RecompensasMision(d.q) or {}) do
-              local info = u.InfoObjeto(id)
+              local info = InfoUnaVez(id)
               local enlace = info and info.enlace
-              local ranuras = Ranuras(info)
-              if ranuras and info.nivelReq <= nivel + 2 and u.Usable(info, equipo, nivel + 2) then
-                local coste, r = u.CosteSustitucion(info, equipo, pesos)
+              local requerido, futura = Planificar(info, sec.min or 1)
+              if requerido then
+                local coste, r, piezas = u.CosteSustitucion(info, equipo, pesos)
                 local nota = u.Puntuar(enlace, info, pesos)
-            local gana = coste and nota and (nota - coste)
+                local gana = u.DiferenciaEquipo(nota, coste)
                 if r and gana and gana > 0 then
                   local nombre = tostring(d.n or ""):match("^%S+: (.-) %(") or tostring(d.n or L"Misión")
                   local e = { r = r, id = id, enlace = enlace, gana = gana, m = { n = sec.titulo or L"Ruta" }, jefe = nombre,
-                    mision = true, futura = info.nivelReq > nivel or not u.Usable(info, equipo, nivel), nivelReq = math.max(info.nivelReq, (equipo.nivelArmadura or {})[info.clase == 4 and info.subclase or -1] or 0), requisitosSinConfirmar = RequisitosSinConfirmar(u, enlace) }
+                    mision = true, futura = futura, nivelReq = requerido, nivelFuente = sec.min or 1, requisitosSinConfirmar = RequisitosSinConfirmar(u, enlace), parcial = u.ComparacionParcial and u.ComparacionParcial(info, piezas) or false }
                   if not mejor[r] or Antes(e, mejor[r]) then mejor[r] = e end
                 end
               end
@@ -266,7 +306,7 @@ local function MejoresANivel()
   end
   for _, v in pairs(mejor) do table.insert(res, v) end
   table.sort(res, Antes)
-  cacheMejores, cacheT, cacheContexto = res, ahora, contexto
+  cacheMejores, cacheT, cacheContexto = ahora and res or nil, ahora or -100, ahora and contexto or nil
   return res
 end
 GL.MejorEquipoANivel976 = MejoresANivel
@@ -286,13 +326,15 @@ local function PintarMejores()
   -- 7.6: mejor a tu nivel
   local okM, mejores = pcall(MejoresANivel)
   mejores = (okM and mejores) or {}
-  ui.mejorTitulo:SetText(L"Mejor a tu nivel " .. C.GRIS .. "(" .. ((UnitLevel and UnitLevel("player")) or 1) .. L", mazmorras y misiones de tu ruta)" .. C.FIN)
+  local nivel = Leer(UnitLevel, "player")
+  if not NumeroValido(nivel) or nivel < 1 or nivel % 1 ~= 0 then nivel = nil end
+  ui.mejorTitulo:SetText(L"Mejor a tu nivel " .. C.GRIS .. "(" .. (nivel or "?") .. L", mazmorras y misiones de tu ruta)" .. C.FIN)
   for i = 1, MEJORES do
     local fm, e = ui.mejor[i], mejores[i]
     fm.e = e
     if e then
-      fm.texto:SetText((NOMBRES_RANURA[e.r] or "?") .. ": " .. e.enlace .. " " .. C.VERDE .. "+" .. math.floor(e.gana + 0.5) .. C.FIN ..
-        C.GRIS .. (e.futura and (" · " .. L"Nivel requerido" .. " " .. e.nivelReq) or "") .. (e.requisitosSinConfirmar and (" · " .. AVISO_REQUISITOS) or "") .. " · " .. e.m.n .. " (" .. e.jefe .. ")" .. C.FIN)
+      fm.texto:SetText(L(NOMBRES_RANURA[e.r] or "?") .. ": " .. e.enlace .. " " .. ((e.parcial or e.requisitosSinConfirmar or e.futura) and C.GRIS or C.VERDE) .. "+" .. Formato(e.gana) .. C.FIN ..
+        C.GRIS .. (e.futura and (" · " .. L"Mejora futura") or "") .. (nivel and e.nivelReq > nivel and (" · " .. L"Nivel requerido" .. " " .. e.nivelReq) or "") .. (nivel and e.nivelFuente > nivel and (" · " .. L"Nivel orientativo de la fuente" .. " " .. e.nivelFuente) or "") .. (e.requisitosSinConfirmar and (" · " .. L(AVISO_REQUISITOS)) or "") .. (e.parcial and (" · " .. L"Estadísticas o efectos sin valorar") or "") .. " · " .. e.m.n .. " (" .. e.jefe .. ")" .. C.FIN)
       fm:Show()
     else
       fm:Hide()
@@ -306,7 +348,7 @@ local LADO, PASO_R = 26, 28
 local IZQ_R = { 1, 2, 3, 15, 5, 4, 19, 9 }
 local DER_R = { 10, 6, 7, 8, 11, 12, 13, 14 }
 local ABAJO_R = { 16, 17, 18 }
-local NOMBRE_EXTRA = { [4] = L"Camisa", [19] = L"Tabardo" }
+local NOMBRE_EXTRA = { [4] = "Camisa", [19] = "Tabardo" }
 local function Ranura(padre, id)
   local b = CreateFrame("Button", nil, padre, BackdropTemplateMixin and "BackdropTemplate" or nil)
   b:SetSize(LADO, LADO)
@@ -327,7 +369,7 @@ local function Ranura(padre, id)
     if not GameTooltip then return end
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     local hay = GameTooltip.SetInventoryItem and GameTooltip:SetInventoryItem("player", self.id)
-    if not hay then GameTooltip:AddLine(NOMBRES_RANURA[self.id] or NOMBRE_EXTRA[self.id] or L"Ranura", 1, 1, 1); GameTooltip:AddLine(L"Vacía", 0.6, 0.6, 0.6) end
+    if not hay then GameTooltip:AddLine(L(NOMBRES_RANURA[self.id] or NOMBRE_EXTRA[self.id] or "Ranura"), 1, 1, 1); GameTooltip:AddLine(L"Vacía", 0.6, 0.6, 0.6) end
     if self.mejora then
       GameTooltip:AddLine(" ")
       GameTooltip:AddLine(L"Mejora cerca: " .. (self.mejora.enlace or "?"), 0.25, 0.9, 0.35)
@@ -378,7 +420,7 @@ local function PintarMuneco(y)
   if m.modelo and m.modelo.SetUnit then pcall(m.modelo.SetUnit, m.modelo, "player") end
   local mejoras = {}
   local okM, lista = pcall(MejoresANivel)
-  for _, e in ipairs((okM and lista) or {}) do if e.r and not e.futura and not e.requisitosSinConfirmar and not mejoras[e.r] then mejoras[e.r] = e end end
+  for _, e in ipairs((okM and lista) or {}) do if e.r and not e.futura and not e.requisitosSinConfirmar and not e.parcial and not mejoras[e.r] then mejoras[e.r] = e end end
   local suma, n = 0, 0
   local fInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
   for id, b in pairs(m.ranuras) do
@@ -449,7 +491,7 @@ local function PintarLlevas()
   for _, r in ipairs(ORDEN) do
     local e = Leer(GetInventoryItemLink, "player", r)
     if type(e) == "string" then
-      local nombre = string.match(e, "%[(.-)%]") or NOMBRES_RANURA[r]
+      local nombre = string.match(e, "%[(.-)%]") or L(NOMBRES_RANURA[r])
       local nivelObj
       local f = (C_Item and C_Item.GetItemInfo) or GetItemInfo
       if f then local ok, _, _, _, ni = pcall(f, e); if ok and NumeroValido(ni) then nivelObj = ni end end
@@ -457,7 +499,7 @@ local function PintarLlevas()
       local dur = proporcion and math.floor(proporcion * 100 + 0.5)
       table.insert(filas, { nombre = Color(e) .. nombre .. C.FIN, nivel = nivelObj, dur = dur, orden = dur or 101 })
     else
-      table.insert(vacias, NOMBRES_RANURA[r])
+      table.insert(vacias, L(NOMBRES_RANURA[r]))
     end
   end
   table.sort(filas, function(a, b) return a.orden < b.orden end)
@@ -610,8 +652,16 @@ GL.Evento(eventos, "UPDATE_INVENTORY_DURABILITY")
 GL.Evento(eventos, "PLAYER_MONEY")
 GL.Evento(eventos, "QUEST_TURNED_IN")
 GL.Evento(eventos, "QUEST_LOG_UPDATE")
-eventos:SetScript("OnEvent", function(_, evento)
-  if evento == "PLAYER_EQUIPMENT_CHANGED" or evento == "PLAYER_LEVEL_UP" or evento == "GET_ITEM_INFO_RECEIVED" or evento == "QUEST_TURNED_IN" or evento == "QUEST_LOG_UPDATE" then cacheMejores=nil end
+local cambiosEquipo = { SPELLS_CHANGED=true, PLAYER_TALENT_UPDATE=true, UPDATE_FACTION=true, SKILL_LINES_CHANGED=true }
+for e in pairs(cambiosEquipo) do GL.Evento(eventos, e) end
+-- R13: configuraciones y grupos de talentos también cambian desde gestores externos.
+-- Los eventos opcionales se registran por separado y no exigen API de Retail.
+local cambiosConfigR13 = { TRAIT_CONFIG_UPDATED=true, ACTIVE_TALENT_GROUP_CHANGED=true, CHARACTER_POINTS_CHANGED=true, PLAYER_SPECIALIZATION_CHANGED=true }
+for e in pairs(cambiosConfigR13) do pcall(eventos.RegisterEvent, eventos, e) end
+eventos:SetScript("OnEvent", function(_, evento, unidad)
+  if evento == "PLAYER_SPECIALIZATION_CHANGED" and unidad ~= nil and unidad ~= "player" then return end
+  if cambiosConfigR13[evento] then cacheMejores=nil end
+  if cambiosEquipo[evento] or evento == "PLAYER_EQUIPMENT_CHANGED" or evento == "PLAYER_LEVEL_UP" or evento == "GET_ITEM_INFO_RECEIVED" or evento == "QUEST_TURNED_IN" or evento == "QUEST_LOG_UPDATE" then cacheMejores=nil end
   if evento == "MERCHANT_SHOW" and type(GuiaAventureroDB) == "table" and CanMerchantRepair and GetRepairAllCost then
     local ok, puede = pcall(CanMerchantRepair)
     if ok and Publico(puede) and (puede == true or puede == 1) then

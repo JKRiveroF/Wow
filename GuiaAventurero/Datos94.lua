@@ -241,8 +241,8 @@ GL.D94 = {
     { clase = "PRIEST", nivel = 20, lado = "A", razas = 1, titulo = "La reacción Arcana", nota = "Te enseña Reacción: quema maná al lanzador que te ataque.", pasos = {
       { q = 5676, n = "La reacción Arcana", ing = "Arcane Feedback", nivel = 20, wp = { { a = "A", q = 5676, m = 1453, x = 38.5, y = 26.9, z = "Ciudad de Ventormenta", n = "Recoger: La reacción Arcana (Hermano Joshua)" }, { a = "T", q = 5676, m = 1453, x = 38.6, y = 26.1, z = "Ciudad de Ventormenta", n = "Entregar: La reacción Arcana (Suma Sacerdotisa Laurena)" } } },
     } },
-    { clase = "PRIEST", nivel = 20, lado = "A", razas = 4, titulo = "Custodia de miedo", nota = "Te enseña Custodia de miedo: inmune al próximo miedo. Muy buscada en bandas.", pasos = {
-      { q = 5645, n = "Sin miedo", ing = "A Lack of Fear", nivel = 20, wp = { { a = "A", q = 5645, m = 1455, x = 25.2, y = 10.8, z = "Forjaz", n = "Recoger: Sin miedo (Toldren Acerhondo)" }, { a = "T", q = 5645, m = 1455, x = 24.7, y = 8.2, z = "Forjaz", n = "Entregar: Sin miedo (Sumo Sacerdote Rohan)" } } },
+    { clase = "PRIEST", nivel = 20, lado = "A", razas = 4, titulo = "Castigar", nota = "Te enseña Castigo, tu hechizo racial del nivel 20.", pasos = {
+      { q = 5645, n = "Castigar", ing = "Chastise", nivel = 20, wp = { { a = "A", q = 5645, m = 1455, x = 25.2, y = 10.8, z = "Forjaz", n = "Recoger: Castigar (Toldren Acerhondo)" }, { a = "T", q = 5645, m = 1455, x = 24.7, y = 8.2, z = "Forjaz", n = "Entregar: Castigar (Sumo Sacerdote Rohan)" } } },
     } },
     { clase = "PRIEST", nivel = 20, lado = "A", razas = 8, titulo = "La Gracia de Elune", nota = "Te enseña La Gracia de Elune: esquivas más los ataques a distancia.", pasos = {
       { q = 5674, n = "La Gracia de Elune", ing = "Elune's Grace", nivel = 20, wp = { { a = "A", q = 5674, m = 1457, x = 38.3, y = 81.0, z = "Darnassus", n = "Recoger: La Gracia de Elune (Astarii Buscaestelar)" }, { a = "T", q = 5674, m = 1457, x = 39.5, y = 81.2, z = "Darnassus", n = "Entregar: La Gracia de Elune (Sacerdotisa Alathea)" } } },
@@ -250,8 +250,8 @@ GL.D94 = {
     { clase = "PRIEST", nivel = 20, lado = "H", razas = 128, titulo = "Guardia de las Sombras", nota = "Te enseña Guardia de las Sombras: daña a quien te pega.", pasos = {
       { q = 5680, n = "Guardia de las Sombras", ing = "Shadowguard", nivel = 20, wp = { { a = "A", q = 5680, m = 1454, x = 35.7, y = 86.9, z = "Orgrimmar", n = "Recoger: Guardia de las Sombras (Zayus)" }, { a = "T", q = 5680, m = 1454, x = 35.6, y = 87.8, z = "Orgrimmar", n = "Entregar: Guardia de las Sombras (Ur'kyo)" } } },
     } },
-    { clase = "PRIEST", nivel = 20, lado = "H", razas = 16, titulo = "Peste devoradora", nota = "Te enseña Peste devoradora: daño de sombras que te cura.", pasos = {
-      { q = 5679, n = "Peste devoradora", ing = "Devouring Plague", nivel = 20, wp = { { a = "A", q = 5679, m = 1458, x = 49.1, y = 14.6, z = "Entrañas", n = "Recoger: Peste devoradora (Padre Lankester)" }, { a = "T", q = 5679, m = 1458, x = 49.3, y = 17.1, z = "Entrañas", n = "Entregar: Peste devoradora (Aelthalyste)" } } },
+    { clase = "PRIEST", nivel = 20, lado = "H", razas = 16, titulo = "Sacrificio oscuro", nota = "Te enseña Sacrificio oscuro, tu hechizo racial del nivel 20.", pasos = {
+      { q = 5679, n = "Sacrificio oscuro", ing = "Dark Sacrifice", nivel = 20, wp = { { a = "A", q = 5679, m = 1458, x = 49.1, y = 14.6, z = "Entrañas", n = "Recoger: Sacrificio oscuro (Padre Lankester)" }, { a = "T", q = 5679, m = 1458, x = 49.3, y = 17.1, z = "Entrañas", n = "Entregar: Sacrificio oscuro (Aelthalyste)" } } },
     } },
     { clase = "MAGE", nivel = 15, lado = "A", razas = 65, titulo = "Toga Tejemaná", nota = "Una toga de mago muy buena para tu nivel. Empieza en Forjaz o en Ventormenta.", pasos = {
       { q = 1919, n = "Preséntate ante Jennea", ing = "Report to Jennea", nivel = 15, wp = { { a = "A", q = 1919, m = 1455, x = 27.2, y = 8.6, z = "Forjaz", n = "Recoger: Preséntate ante Jennea (Dink)" }, { a = "T", q = 1919, m = 1453, x = 38.6, y = 79.3, z = "Ciudad de Ventormenta", n = "Entregar: Preséntate ante Jennea (Jennea Cannon)" } } },
@@ -335,6 +335,8 @@ GL.D94 = {
     } },
   },
   bandas = {
+    { n = "Cavernas del Túmulo", ing = "Barrow Deeps", jugadores = 10, nivel = 60, anuncioForever977 = true, nota = "Monte Hyjal; conexiones desde Hyjal, Cuna del Invierno y Bastión Faucenegra. Coordenadas y acceso pendientes de comprobar." },
+    { n = "Cima Hyjal", ing = "Hyjal Summit", jugadores = 20, nivel = 60, anuncioForever977 = true, nota = "Monte Hyjal, cerca de Nordrassil. Coordenadas y acceso pendientes de comprobar." },
     { n = "Núcleo de Magma", ing = "Molten Core", jugadores = 40, nivel = 60, e = { m = 1428, x = 29.4, y = 38.0, z = "Las Estepas Ardientes" }, nota = "Dentro de la Montaña Roca Negra, por las Profundidades. Para entrar: Acceso al Núcleo (un fragmento del fondo de las Profundidades).", acceso = {
       { lado = nil, pasos = {
         { q = 7848, n = "Armonización con el Núcleo", ing = "Attunement to the Core", nivel = 60, wp = { { a = "A", q = 7848, m = 1428, x = 29.4, y = 38.0, z = "Las Estepas Ardientes", n = "Recoger: Armonización con el Núcleo (Lothos Levantagrietas)" }, { a = "T", q = 7848, m = 1428, x = 29.4, y = 38.0, z = "Las Estepas Ardientes", n = "Entregar: Armonización con el Núcleo (Lothos Levantagrietas)" } } },
@@ -398,9 +400,9 @@ GL.D94 = {
     DRUID = { { id = 16720, n = "Capucha Corazón salvaje", ing = "Wildheart Cowl", fuente = "Scholomance (Maestro oscuro Gandling)" }, { id = 18510, n = "Pellejo de las fieras", ing = "Hide of the Wild", fuente = "Peletería" }, { id = 15063, n = "Guanteletes de demosaurio", ing = "Devilsaur Gauntlets", fuente = "Peletería" }, { id = 12930, n = "Junco maderahelecho", ing = "Briarwood Reed", fuente = "Cumbre de Roca Negra (Jed Observarrunas)" }, { id = 13385, n = "Escrito sobre Conocimiento", ing = "Tome of Knowledge", fuente = "Stratholme (Archivista Galford)" } },
   },
   vuelos = {
-    { npc = 352, n = "Dungar Tragolargo", ing = "Dungar Longdrink", lado = "A", m = 1453, x = 66.3, y = 62.1, z = "Ciudad de Ventormenta" },
+    { npc = 352, n = "Dungar Tragolargo", ing = "Dungar Longdrink", lado = "A", m = 1453, x = 71.3, y = 72.2, z = "Ciudad de Ventormenta" },
     { npc = 523, n = "Thor", ing = "Thor", lado = "A", m = 1436, x = 56.5, y = 52.6, z = "Páramos de Poniente" },
-    { npc = 931, n = "Ariena Tempespluma", ing = "Ariena Stormfeather", lado = "A", m = 1433, x = 30.6, y = 59.4, z = "Montañas Crestagrana" },
+    { npc = 931, n = "Ariena Tempespluma", ing = "Ariena Stormfeather", lado = "A", m = 1433, x = 25.5, y = 59.4, z = "Montañas Crestagrana" },
     { npc = 1387, n = "Thysta", ing = "Thysta", lado = "H", m = 1434, x = 32.5, y = 29.4, z = "Vega de Tuercespina" },
     { npc = 1571, n = "Shellei Brondir", ing = "Shellei Brondir", lado = "A", m = 1437, x = 9.5, y = 59.7, z = "Los Humedales" },
     { npc = 1572, n = "Thorgrum Borrelson", ing = "Thorgrum Borrelson", lado = "A", m = 1432, x = 33.9, y = 51.0, z = "Loch Modan" },

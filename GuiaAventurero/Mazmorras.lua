@@ -77,14 +77,14 @@ local function CargarDatos()
         { n = "Unstable Magic", q = 96603, d = L"Archimaga Celindra, en Montañas de Alterac", nueva = true },
         { n = L"El sabor del hogar", q = 96609, d = L"Arille Mirada Azur, en Montañas de Alterac", nueva = true },
         { n = "Thicker Than Water", q = 96812, d = L"Sergeant Danneth, dentro de la mazmorra", nueva = true } },
-      nota = L"Alianza: entrada interior sin llave; la llave de alcantarillas es opcional. Horda: consigue la llave con la cadena de Trabalomas o entra con un grupo que la tenga. Comprueba el acceso antes de viajar." },
+      },
     { n = "Monasterio Escarlata", min = 30, max = 46, z = L"Claros de Tirisfal", e = { m = 1420, x = 83.5, y = 32.0 },
       misiones = { { n = L"Mitología de los Titanes", q = 1050, d = L"Bibliotecaria Mae Palipolvo, en Forjaz (Biblioteca)" },
         { n = L"Fuera de plazo", q = 96800, d = L"Magus Olvek, en Dalaran (Biblioteca)" },
         { n = L"Hermano Antón", q = 6141, d = L"Hermano Cuerviz, en la catedral de Ventormenta (opcional)" },
         { n = L"El sendero Escarlata", q = 261, d = L"Hermano Antón, en la Atalaya de Nijel (Desolace)" },
         { n = L"En el nombre de la Luz", q = 1053, d = L"Raleigh el Devoto, en Costasur (Catedral)" } },
-      nota = L"Cementerio 30–38 y Biblioteca 33–41: acceso libre. Armería 36–44 y Catedral 38–46: cerradura; usa la Llave Escarlata del cofre de Doan o una apertura compatible de pícaro o herrero." },
+      },
     { n = "Gnomeregan", min = 29, max = 38, z = "Dun Morogh", e = { m = 1426, x = 30.5, y = 36.3 },
       misiones = { { n = L"¡Salva el cerebro de Techrobot!", q = 2922, d = L"Maestro manitas Sobrechispa, en Forjaz (Ciudad Manitas)" },
         { n = "Gnogaine", q = 2926, d = L"Oci Voltiflop, en Kharanos" },
@@ -94,7 +94,7 @@ local function CargarDatos()
         { n = L"Rescatar los datos", q = 2930, d = L"Maestro mecánico Funditubo, en Forjaz (Ciudad Manitas)" },
         { n = L"La gran traición", q = 2929, d = L"Manitas mayor Mekkatorque, en Forjaz (Ciudad Manitas)" },
         { n = L"Un buen lío", q = 2904, d = L"Kernobee, dentro de la mazmorra (escolta)" } },
-      nota = L"La entrada lateral requiere la llave del taller, de Electrocutor 6000." },
+      },
     { n = "Horado Rajacieno", min = 30, max = 40, z = L"Los Baldíos (sur)", e = { m = 1413, x = 42.6, y = 88.5 },
       misiones = { { n = L"Los tubérculos hojazul", q = 1221, d = L"Mebok Mizzyrix, en Trinquete" },
         { n = L"Decaída mortal", q = 1142, d = L"Heralath Arroyobarbecho, dentro de la mazmorra" },
@@ -150,7 +150,7 @@ local function CargarDatos()
     { n = "Prisión de Alcaz", min = 48, max = 53, z = L"Marjal Revolcafango (Isla de Alcaz)", e = { m = 1445, x = 75.0, y = 15.0 }, nueva = true,
       misiones = { { n = "The Dragon's Journal", q = 96772, d = L"Se consigue en Dalaran" },
         { n = "The Man in the Iron Chains", q = 96335, d = L"Mason Connery, dentro (con la llave que suelta El Interrogador)" } },
-      nota = L"Jefes sacados de los archivos del juego. Blizzard aún no ha publicado su botín ni su mapa." },
+      estadoForever977 = L"Prisión de Alcaz: disponible en Forever. Botín parcial documentado; mapa pendiente de comprobar." },
     { n = "Templo de Atal'Hakkar", min = 50, max = 60, z = L"Pantano de las Penas (en el lago)", e = { m = 1435, x = 69.6, y = 53.2 },
       misiones = { { n = L"En El Templo de Atal'Hakkar", q = 1475, d = L"Brohann Barriliga, en Ventormenta" },
         { n = L"El profeta Jammal'an", q = 1446, d = L"Exiliado Atal'ai, en Tierras del Interior" },
@@ -211,9 +211,9 @@ local function CargarDatos()
         { n = L"La parte izquierda del amuleto de Lord Valthalak", q = 8966, d = L"Bodley, dentro de la mazmorra", nueva = true },
         { n = L"La parte derecha del amuleto de Lord Valthalak", q = 8989, d = L"Bodley, dentro de la mazmorra", nueva = true },
         { n = "Mea Culpa, Lord Valthalak", q = 8995, d = L"Bodley, dentro de la mazmorra", nueva = true } },
-      nota = L"Dos partes: inferior (55-60) y superior (58-60, hace falta el Sello de Ascensión)." },
-    { n = "Bastión Faucenegra", min = 55, max = 60, z = L"Azshara (túnel de los furbolgs; portal en Cuna del Invierno 66.6, 84.4)", e = { m = 1447, x = 38.7, y = 33.4 }, nueva = true, misiones = {},
-      nota = L"Aún no está abierta en Forever: no tiene misiones conocidas y nadie ha publicado su botín ni su mapa. Su único jefe conocido es Varrox Bleakhoof (reto Legado)." },
+      },
+    { n = "Bastión Faucenegra", min = 55, max = 60, z = L"Azshara (al oeste del Bastión Fauces de Madera)", e = { m = 1447, x = 38.7, y = 33.4 }, nueva = true, misiones = { { n = "Blackmaw Reclamation", q = 92065, d = L"Gatekeeper Rageroar, en Ursolan (Azshara). Después de Blackmaw Counter-Offensive; lleva la cabeza de Varrox. Comprueba la reputación requerida." } },
+      estadoForever977 = L"Bastión Faucenegra: disponible en Forever. Catálogo parcial; botín, mapa y misiones restantes pendientes de contraste." },
     { n = "La Masacre", min = 56, max = 60, z = "Feralas", e = { m = 1444, x = 58.9, y = 41.5 },
       misiones = { { n = L"La Membrana de Lethtendris", q = 7488, d = L"Latronicus Lanzaluna, en el Bastión Plumaluna (Este)" },
         { n = L"Pusillín y el ancestro Azj'Tordin", q = 7441, d = L"Azj'Tordin, en el Pabellón de Lariss (Este)" },
@@ -247,7 +247,7 @@ local function CargarDatos()
         { n = L"El encantamiento del provocador", q = 8950, d = L"Falrin Tallarbol, dentro de la mazmorra", nueva = true },
         { n = L"La parte izquierda del amuleto de Lord Valthalak", q = 8967, d = L"Bodley, dentro de la mazmorra", nueva = true },
         { n = L"La parte derecha del amuleto de Lord Valthalak", q = 8990, d = L"Bodley, dentro de la mazmorra", nueva = true } },
-      nota = L"Tres alas: Este, Oeste y Norte." },
+      },
     { n = "Scholomance", min = 58, max = 60, z = L"Tierras de la Peste del Oeste (Castel Darrow)", e = { m = 1422, x = 69.8, y = 76.0 },
       misiones = { { n = L"Crías de dragón apestadas", q = 5529, d = L"Betina Bigglezink, en la Capilla de la Esperanza de la Luz" },
         { n = L"Escama sana de dragón", q = 5582, d = L"La suelta un Trampedor infestado" },
@@ -307,7 +307,7 @@ end
 -- Warcraft Tavern (Forever). Las compartidas llevan el mismo texto que en la lista de la Alianza. Sin comprobar en el juego.
 -- NOTA_HORDA: nota que sustituye a la de la mazmorra con la Horda (false = ninguna).
 ------------------------------------------------------------------------
-local MISIONES_HORDA = {
+local function MisionesHordaR11() return {
     ["Sima Ígnea"] = {
       { n = L"Enemigos ocultos", q = 5728, d = L"Thrall, en Orgrimmar" },
       { n = L"Matar a la bestia", q = 5761, d = L"Neeru Hojafuego, en Orgrimmar" },
@@ -404,6 +404,7 @@ local MISIONES_HORDA = {
       { n = L"Fragmentos Oscuros", q = 7068, d = L"Uthel'nay, en Orgrimmar" },
       { n = L"La corrupción de Lenguavil", q = 7029, d = L"Vark Marcaguerra, en Desolace" },
       { n = L"Corrupción de la tierra y de la semilla", q = 7064, d = L"Selendra, en Desolace" } },
+    ["Bastión Faucenegra"] = { { n = "Blackmaw Reclamation", q = 92065, d = L"Gatekeeper Rageroar, en Ursolan (Azshara). Después de Blackmaw Counter-Offensive; lleva la cabeza de Varrox. Comprueba la reputación requerida." } },
     ["Prisión de Alcaz"] = {
       { n = "A Little Payback", q = 96332, d = L"Sargento Ulka, en la Isla de Alcaz (70.3, 19.0)" },
       { n = "Blood Red Bandanas", q = 96334, d = L"Sargento Ulka, en la Isla de Alcaz" },
@@ -463,10 +464,9 @@ local MISIONES_HORDA = {
       { n = L"Una petición aterradora", q = 92401, d = L"Tabitha Heartweaver, en Bosque de Argénteos" },
       { n = L"El blasón de Lordaeron", q = 95204, d = L"Empieza con un emblema que aparece dentro, en sitios al azar" },
       { n = "Unending Torment", q = 97288, d = L"La suelta el Barón, dentro" } },
-}
-local NOTA_HORDA = {
-  ["Gnomeregan"] = L"Horda: acepta Las guerras de la plataforma (25), habla con Sovik y después con Scooty en Bahía del Botín. Conserva el transpondedor goblin para usar el teletransportador. La entrada lateral requiere la llave del taller, de Electrocutor 6000.",
-  ["Ciudad de Dalaran"] = L"Alianza: entrada interior sin llave; la llave de alcantarillas es opcional. Horda: consigue la llave con la cadena de Trabalomas o entra con un grupo que la tenga. Comprueba el acceso antes de viajar.",
+} end
+local function NotaHordaR11() return {
+  ["Gnomeregan"] = L"Horda: acepta Las guerras de la plataforma (25), habla con Sovik y después con Scooty en Bahía del Botín. Conserva el transpondedor goblin para usar el teletransportador.",
   ["Las Minas de la Muerte"] = L"Está en los Páramos de Poniente: la Horda no tiene misiones aquí.",
   ["Mazmorras de Ventormenta"] = L"Está dentro de Ventormenta: la Horda no puede entrar.",
   ["Salón de los Feudales"] = L"Está debajo de Forjaz: la Horda no tiene misiones aquí.",
@@ -474,7 +474,7 @@ local NOTA_HORDA = {
   ["Ruinas de Lordaeron"] = L"La Horda entra desde la puerta de Entrañas.",
   ["Bastión Krol'dok"] = L"Misiones de la guía de Warcraft Tavern (aún no están en QuestieDB).",
   ["Prisión de Alcaz"] = L"Misiones de la guía de Warcraft Tavern (aún no están en QuestieDB).",
-}
+} end
 
 local function EsHorda()
   return UnitFactionGroup and UnitFactionGroup("player") == "Horde"
@@ -487,42 +487,53 @@ end
 -- Reinos del Este (1415). Si el juego no lo encuentra, la mazmorra se queda sin entrada (sin Marcar ni Llevarme).
 local function ResolverMapas(datos)
   for _, m in ipairs(datos) do
-    if m.e and not m.e.m and m.e.nombres then
+    local e = m.entradaPendienteR15 or m.e
+    if e and not e.m and e.nombres then
       local ok, hijos = pcall(function() return C_Map.GetMapChildrenInfo(1415, nil, true) end)
       for _, h in ipairs((ok and type(hijos) == "table") and hijos or {}) do
-        for _, nombre in ipairs(m.e.nombres) do if h.name == nombre then m.e.m = h.mapID end end
+        if type(h) == "table" and type(h.mapID) == "number" and h.mapID > 0 and h.mapID < math.huge and h.mapID % 1 == 0 then
+          for _, nombre in ipairs(e.nombres) do if h.name == nombre then e.m = h.mapID end end
+        end
       end
-      if not m.e.m then m.e = nil end
+      if e.m then m.e, m.entradaPendienteR15 = e, nil
+      else m.e, m.entradaPendienteR15 = nil, e end
     end
   end
 end
 
-local function NivelJugador() return (UnitLevel and UnitLevel("player")) or 1 end
+local function NivelJugador() return GL.NivelJugadorR14() end
 
 -- Color según tu nivel, como el de las misiones: gris (fácil) a rojo (muy alta).
 local function ColorNivel(m)
-  local d = math.floor((m.min + m.max) / 2) - NivelJugador()
+  local nivel = NivelJugador()
+  if not nivel then return C.GRIS end
+  local d = math.floor((m.min + m.max) / 2) - nivel
   if d >= 5 then return "|cffff4040" elseif d >= 3 then return "|cffff8040" elseif d >= -2 then return "|cffffd100"
   elseif d >= -8 then return "|cff40c040" end
   return "|cff9d9d9d"
 end
 
 local function Destino(m)
-  if not m.e then return nil end
-  return { m = m.e.m, x = m.e.x, y = m.e.y, n = L"Entrada de " .. m.n }
+  if not m or type(m.e) ~= "table" or type(m.n) ~= "string" then return nil end
+  local e = m.e
+  local function Coord(v) return type(v) == "number" and v >= 0 and v <= 100 end
+  if type(e.m) ~= "number" or e.m <= 0 or e.m >= math.huge or e.m % 1 ~= 0 or not Coord(e.x) or not Coord(e.y) then return nil end
+  return { m = e.m, x = e.x, y = e.y, z = type(m.z) == "string" and m.z or m.n, n = L"Entrada de " .. m.n, mazmorraEntrada = m.clave or m.n }
 end
 
 local function MarcarEntrada(m)
-  if not m.e then return end
-  if not (C_Map and C_Map.SetUserWaypoint and UiMapPoint and UiMapPoint.CreateFromCoordinates) then
+  local d = Destino(m)
+  if not d then return end
+  if not GL.MarcarEntradaR13 then
     GL.Mensaje(L"este cliente no deja poner puntos en el mapa.")
     return
   end
-  local ok = pcall(function()
-    C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(m.e.m, m.e.x / 100, m.e.y / 100))
-    if C_SuperTrack and C_SuperTrack.SetSuperTrackedUserWaypoint then C_SuperTrack.SetSuperTrackedUserWaypoint(true) end
-  end)
-  GL.Mensaje(ok and (L"marcada la entrada de " .. m.n .. L" en el mapa.") or L"no se pudo poner la marca en el mapa.")
+  local ok, motivo = GL.MarcarEntradaR13(d)
+  if motivo == "externa" or motivo == "desconocida" then
+    GL.Mensaje(L"Conserva el marcador existente; retíralo antes de marcar la entrada.")
+    return
+  end
+  GL.Mensaje(ok and (L"marcada la entrada de " .. L(m.n) .. L" en el mapa.") or L"no se pudo poner la marca en el mapa.")
 end
 
 local function Jefes(m)
@@ -735,14 +746,15 @@ local function PintarJefes(d, m, arriba)
     end
     local j = jefes[i]
     -- También accesible desde la lista completa, no solo en el mapa ampliado.
-    f.ayudaTitulo = j.n or "?"
+    local nombre = GL.NombreJefeGuiaR11 and GL.NombreJefeGuiaR11(j) or j.n or "?"
+    f.ayudaTitulo = nombre
     f.ayudaTexto = L"Clic: su botín."
     local ubicacion = GL.TextoUbicacionJefe977(j)
     if ubicacion ~= "" then f.ayudaTexto = f.ayudaTexto .. "\n" .. ubicacion end
     f.indice = i
     f.texto:SetPoint("RIGHT", f, "RIGHT", -4, 0); GL.UnaLinea(f.texto)   -- 7.6.1
     local utiles = (GL.UtilesDeJefe and GL.UtilesDeJefe(j)) or 0   -- 9.0: cuántos objetos te sirven
-    f.texto:SetText((jefeAbierto == i and C.AMARILLO or "") .. i .. ". " .. (j.n or "?") .. (jefeAbierto == i and C.FIN or "") ..
+    f.texto:SetText((jefeAbierto == i and C.AMARILLO or "") .. i .. ". " .. nombre .. (jefeAbierto == i and C.FIN or "") ..
       (j.nivel and (C.GRIS .. L"  · nivel " .. j.nivel .. C.FIN) or "") ..
       ((utiles > 0) and (C.VERDE .. "  · " .. utiles .. (utiles == 1 and L" útil para ti" or L" útiles para ti") .. C.FIN) or ""))
     GL.Mostrar(f.marca, jefeAbierto == i)
@@ -777,6 +789,44 @@ local function PestanaDetalle(m)
   return GuiaAventureroDB.pestanaDetMaz or "misiones"
 end
 
+local ACCESO_MAZ977 = {
+  ["Monasterio Escarlata"] = { texto = "Referencia Classic: Cementerio y Biblioteca no requieren llave; Armería y Catedral tienen cerradura. Llave Escarlata del cofre de Doan o apertura compatible. Comprueba los requisitos en Forever." },
+  ["Gnomeregan"] = { texto = "Referencia Classic: la llave del taller de Electrocutor 6000 abre la entrada lateral; no es requisito de la entrada principal." },
+  ["Profundidades de Roca Negra"] = { texto = "Referencia Classic: la llave de Forjatiniebla abre atajos interiores; no es un requisito general del portal." },
+  ["Cumbre de Roca Negra"] = { texto = "La parte superior requiere que un miembro del grupo abra la puerta con el Sello de Ascensión; no confundir con el acceso inferior." },
+  ["La Masacre"] = { texto = "Este: acceso separado; Oeste y Norte: Llave creciente de Pusillín (o apertura compatible). Referencia de guía: confirma las cerraduras en el cliente." },
+  ["Scholomance"] = { texto = "La llave esquelética se obtiene mediante la cadena de tu facción; un compañero o una apertura compatible puede abrir la puerta.", id = 13704 },
+  ["Stratholme"] = { texto = "La llave de la ciudad abre el acceso lateral no-muerto; la entrada principal es distinta. La Llave Escarlata abre puertas del bastión interior. Comprueba las cerraduras en Forever." },
+  ["Maraudon"] = { texto = "Referencia Classic: el Cetro de Celebras permite un atajo interior; no es requisito general del portal." },
+  ["Uldaman"] = { texto = "Referencia Classic: el Bastón de Prehistoria activa un encuentro interior; no es una llave del portal." },
+  ["Prisión de Alcaz"] = { texto = "La llave del Interrogador se utiliza en una misión interior; no se ha confirmado que sea requisito del portal." },
+}
+local function FaccionMaz977()
+  if type(UnitFactionGroup) ~= "function" then return nil end
+  local ok, f = pcall(UnitFactionGroup, "player")
+  if not ok or (issecretvalue and issecretvalue(f)) then return nil end
+  if f == "Alliance" or f == "Horde" then return f end
+end
+local function AccesoDetalle(m)
+  local clave = m.clave or m.n
+  local dato = ACCESO_MAZ977[clave]
+  local texto, id
+  if clave == "Ciudad de Dalaran" then
+    local f = FaccionMaz977()
+    texto = (f == "Alliance" and L"Alianza: empieza con Una petición alarmante en Costasur o habla con la Imagen de la archimaga Modera junto a las alcantarillas para conseguir la llave." or (f == "Horde" and L"Horda: empieza Key to the City y Prison Break-In con Magus Wordeen Voidglare en Molino Tarren; sigue Dalaran Patrols, Blood in the Streets y El corazón de la perturbación." or L"Facción sin confirmar: consulta la cadena de acceso correspondiente.")) .. " " .. L"Al menos un jugador debe poder abrir la reja de las alcantarillas con la llave; no implica acceso libre a la ciudad exterior."
+    id = 277507
+  elseif dato then texto, id = L(dato.texto), dato.id
+  else return L"Requisitos de acceso no documentados aquí; el rango recomendado no garantiza la entrada." end
+  if id then
+    local ok, n = false, nil
+    if type(GL.BolsasProfesion975) == "function" then ok, n = pcall(GL.BolsasProfesion975, id) end
+    -- Una lectura de bolsas negativa no acredita ausencia en el llavero ni en el grupo.
+    local presente = ok and not (issecretvalue and issecretvalue(n)) and type(n) == "number" and n > 0 and n < math.huge and n % 1 == 0
+    texto = texto .. " " .. (presente and L"Llave detectada en el inventario del personaje." or L"Llave no confirmada: comprueba también el llavero y los miembros del grupo.")
+  end
+  return texto
+end
+
 local function ZonaDetalle(m)
   local donde = m.e and (L" · entrada en " .. string.format("%.1f, %.1f", m.e.x, m.e.y)) or L" · entrada sin coordenadas comprobadas"
   return C.GRIS .. m.z .. donde .. C.FIN
@@ -788,12 +838,15 @@ local function TextoDetalle(m, pestana)
   if pestana == "jefes" then
     local l = { C.AMARILLO .. L"Jefes" .. C.FIN .. (#Jefes(m) > 0 and (C.GRIS .. L" (clic para ver el botín)" .. C.FIN)
       or ("  " .. C.GRIS .. L"aún no se conocen (mazmorra nueva)." .. C.FIN)) }
+    table.insert(l, C.GRIS .. AccesoDetalle(m) .. C.FIN)
+    if m.estadoForever977 then table.insert(l, C.GRIS .. m.estadoForever977 .. C.FIN) end
     if aviso then table.insert(l, aviso) end
     return table.concat(l, "\n"), #l
   end
-  local horda = EsHorda()
-  local lista = m.misiones
-  local l = { C.AMARILLO .. (horda and L"Misiones de la Horda" or L"Misiones de la Alianza") .. C.FIN }
+  local faccion = FaccionMaz977()
+  local horda = faccion == "Horde"
+  local lista = faccion and m.misiones or {}
+  local l = { C.AMARILLO .. (faccion and (horda and L"Misiones de la Horda" or L"Misiones de la Alianza") or L"Facción sin confirmar: consulta la cadena de acceso correspondiente.") .. C.FIN }
   if #lista == 0 then table.insert(l, C.GRIS .. L"Aún no se conocen misiones." .. C.FIN) end
   for i = 1, #lista do
     local q = lista[i]
@@ -802,9 +855,11 @@ local function TextoDetalle(m, pestana)
     elseif q.q and GL.MisionEnDiario and GL.MisionEnDiario(q.q) then estado = C.VERDE .. L" (en el diario)" .. C.FIN end
     table.insert(l, "• " .. C.AMARILLO .. "[" .. q.n .. "]" .. C.FIN .. " " .. C.GRIS .. q.d .. C.FIN .. estado)
   end
+  table.insert(l, C.GRIS .. AccesoDetalle(m) .. C.FIN)
   if m.nota then table.insert(l, C.GRIS .. m.nota .. C.FIN) end
+  if m.estadoForever977 then table.insert(l, C.GRIS .. m.estadoForever977 .. C.FIN) end
   if aviso then table.insert(l, aviso) end
-  table.insert(l, C.GRIS .. (horda and L"Fuente: QuestieDB y Warcraft Tavern (Forever)." or L"Fuente: Wowhead y QuestieDB (Forever) · misiones comprobadas con QuestieDB.") .. C.FIN)
+  if faccion then table.insert(l, C.GRIS .. (horda and L"Fuente: QuestieDB y Warcraft Tavern (Forever)." or L"Fuente: Wowhead y QuestieDB (Forever) · misiones comprobadas con QuestieDB.") .. C.FIN) end
   return table.concat(l, "\n"), #l
 end
 
@@ -815,12 +870,17 @@ end
 -- sus misiones (MISIONES_HORDA) y sus notas (NOTA_HORDA) en lugar de las de la Alianza.
 local function CargarLista()
   local datos = CargarDatos()
-  local horda = EsHorda()
+  local faccion = FaccionMaz977()
+  local horda = faccion == "Horde"
+  local MISIONES_HORDA, NOTA_HORDA
+  if horda then MISIONES_HORDA, NOTA_HORDA = MisionesHordaR11(), NotaHordaR11() end
   for i = #datos, 1, -1 do
     local m = datos[i]
     m.clave = m.n
     m.n = L(m.n)   -- 9.3.5: el nombre en el idioma de la guía (la clave sigue en español)
-    if horda then
+    if not faccion then
+      m.misiones = {}; m.nota = nil
+    elseif horda then
       if m.clave == "Scholomance" then
         -- Las misiones neutrales se conservan; solo se sustituyen las de facción.
         local comunes = {}
@@ -846,6 +906,26 @@ local function CargarLista()
   return datos
 end
 
+local faccionDatos
+local ultimoMapaR15
+local function AsegurarDatos()
+  local faccion = FaccionMaz977()
+  if DATOS and faccionDatos == faccion then
+    -- Reintentar solo entradas pendientes, con intervalo para no cargar la UI.
+    local ok, ahora = pcall(function() return GetTime() end)
+    if ok and type(ahora) == "number" and ahora >= 0 and ahora < math.huge and (not ultimoMapaR15 or ahora < ultimoMapaR15 or ahora - ultimoMapaR15 >= 5) then
+      ultimoMapaR15 = ahora
+      for _, m in ipairs(DATOS) do if m.entradaPendienteR15 then ResolverMapas(DATOS); break end end
+    end
+    return
+  end
+  local anterior = DATOS and abierta and DATOS[abierta]
+  DATOS = CargarLista(); faccionDatos = faccion; ultimoMapaR15 = nil
+  table.sort(DATOS, function(a, b) return a.min < b.min or (a.min == b.min and a.max < b.max) end)
+  abierta, jefeAbierto = nil, nil
+  if anterior then for i, m in ipairs(DATOS) do if m.clave == anterior.clave then abierta = i; break end end end
+end
+
 local function Refrescar()
   if not panel or not panel:IsShown() then return end
   if ui.bandas then   -- 9.4: pestaña Bandas
@@ -861,7 +941,7 @@ local function Refrescar()
       return
     end
   end
-  if not DATOS then DATOS = CargarLista(); table.sort(DATOS, function(a, b) return a.min < b.min or (a.min == b.min and a.max < b.max) end) end
+  AsegurarDatos()
   -- 9.6: con la Guía clara, arriba «Para tu nivel ahora» y la lista entera en un desplegable
   if ui.Clara then
     local arriba, abiertoTodo = ui.Clara()
@@ -1002,6 +1082,7 @@ end
 ------------------------------------------------------------------------
 local function ParaTuNivel()
   local nivel, lista = NivelJugador(), {}
+  if not nivel then return lista end
   for i, m in ipairs(DATOS or {}) do
     if m.e and nivel >= m.min - 1 and nivel <= m.max then
       local coger, diario, hechas, total = 0, 0, 0, 0
@@ -1030,7 +1111,7 @@ local function ParaTuNivel()
   end)
   return lista
 end
-GL._paraTuNivel = function() if not DATOS then DATOS = CargarLista() end return ParaTuNivel() end   -- para las pruebas
+GL._paraTuNivel = function() AsegurarDatos(); return ParaTuNivel() end   -- para las pruebas
 
 local function Clara()
   if not (GL.PestanasClaras and GL.PestanasClaras() and GL.CrearTarjeta96) then
@@ -1073,6 +1154,8 @@ local function Clara()
         Refrescar()
       end, 96 },
     }
+  elseif not nivel then
+    texto = C.GRIS .. L"Nivel del personaje sin confirmar" .. C.FIN
   else
     local sig
     for _, m in ipairs(DATOS or {}) do if m.e and m.min > nivel then sig = m; break end end
@@ -1080,7 +1163,7 @@ local function Clara()
       (sig and ("\n" .. L"La siguiente: " .. C.AMARILLO .. sig.n .. C.FIN .. C.GRIS .. L" desde el nivel " .. sig.min .. "." .. C.FIN) or "")
   end
   local y = 22
-  y = y + clara.tarjeta:Pintar(y, ancho, C.AMARILLO .. L"Para tu nivel ahora" .. C.FIN, C.GRIS .. L"nivel " .. nivel .. C.FIN, texto, botones) + 8
+  y = y + clara.tarjeta:Pintar(y, ancho, C.AMARILLO .. L"Para tu nivel ahora" .. C.FIN, C.GRIS .. (nivel and (L"nivel " .. nivel) or L"Nivel del personaje sin confirmar") .. C.FIN, texto, botones) + 8
   y = y + clara.desp:Pintar(y, L"Todas las mazmorras por nivel", #(DATOS or {})) + 6
   return y, clara.desp:Abierto()
 end
@@ -1243,14 +1326,30 @@ GL._mapasAddon = MAPAS_ADDON
 
 -- Plantas de la mazmorra: { { id, nombre }, ... } ordenadas de arriba abajo.
 local PlantasJuego
+local function EnteroMapa(v)
+  if issecretvalue and issecretvalue(v) then return nil end
+  return type(v) == "number" and v > 0 and v < math.huge and v == math.floor(v) and v or nil
+end
 local function ArteJuego(id)
-  if not (C_Map and C_Map.GetMapArtLayers and C_Map.GetMapArtLayerTextures) then return end
+  if not (C_Map and C_Map.GetMapArtLayers and C_Map.GetMapArtLayerTextures) or not EnteroMapa(id) then return end
   local ok, capas = pcall(C_Map.GetMapArtLayers, id)
   local capa = ok and type(capas) == "table" and capas[1]
-  if not capa or not (type(capa.layerWidth) == "number" and capa.layerWidth > 0 and type(capa.layerHeight) == "number" and capa.layerHeight > 0 and type(capa.tileWidth) == "number" and capa.tileWidth > 0 and type(capa.tileHeight) == "number" and capa.tileHeight > 0) then return end
+  if type(capa) ~= "table" or not (EnteroMapa(capa.layerWidth) and EnteroMapa(capa.layerHeight) and EnteroMapa(capa.tileWidth) and EnteroMapa(capa.tileHeight)) then return end
+  local cantidad = math.ceil(capa.layerWidth / capa.tileWidth) * math.ceil(capa.layerHeight / capa.tileHeight)
+  if cantidad > 1024 then return end -- límite defensivo de recursos, no un dato del juego
   local okT, texturas = pcall(C_Map.GetMapArtLayerTextures, id, 1)
-  if not okT or type(texturas) ~= "table" or #texturas < math.ceil(capa.layerWidth / capa.tileWidth) * math.ceil(capa.layerHeight / capa.tileHeight) then return end
+  if not okT or type(texturas) ~= "table" or #texturas ~= cantidad then return end
+  for i = 1, cantidad do
+    local t = texturas[i]
+    if (issecretvalue and issecretvalue(t)) or not (EnteroMapa(t) or (type(t) == "string" and t ~= "")) then return end
+  end
   return capa, texturas
+end
+local function GeometriaLoseta(capa,i)
+  local cols = math.ceil(capa.layerWidth / capa.tileWidth)
+  local x,y = ((i-1)%cols)*capa.tileWidth, math.floor((i-1)/cols)*capa.tileHeight
+  local w,h = math.min(capa.tileWidth,capa.layerWidth-x),math.min(capa.tileHeight,capa.layerHeight-y)
+  return x,y,w,h,w/capa.tileWidth,h/capa.tileHeight
 end
 local function Plantas(m, preferirJuego)
   local propias = PlantasAddon(m)
@@ -1265,9 +1364,21 @@ local function Plantas(m, preferirJuego)
 end
 GL._plantasCartografia = Plantas
 local function CoordMapa(x, y)
+  if issecretvalue and (issecretvalue(x) or issecretvalue(y)) then return false end
   return type(x) == "number" and type(y) == "number" and x >= 0 and x <= 1 and y >= 0 and y <= 1
 end
 GL._coordMapaValida = CoordMapa
+function GL._posicionPlantaMazmorra(id)
+  if not EnteroMapa(id) then return end
+  local ok, x, y = pcall(function()
+    if not (C_Map and C_Map.GetBestMapForUnit and C_Map.GetPlayerMapPosition) then return end
+    local actual = EnteroMapa(C_Map.GetBestMapForUnit("player"))
+    if actual ~= id then return end
+    local pos = C_Map.GetPlayerMapPosition(id, "player")
+    if pos and pos.GetXY then return pos:GetXY() end
+  end)
+  if ok and CoordMapa(x,y) and (x~=0 or y~=0) then return x,y end
+end
 PlantasJuego = function(m)
   local idx = IndiceMapas()
   local nombreCliente = m.mapaNombre or (GL.LC and GL.LC(m.clave or m.n)) or m.n
@@ -1275,14 +1386,33 @@ PlantasJuego = function(m)
   -- Sin coincidencia exacta no se elige una mazmorra distinta por prefijo.
   if not ids then return {} end
   local plantas, vistos = {}, {}
-  local ok, grupo = pcall(C_Map.GetMapGroupID, ids[1])
-  if ok and grupo then
-    local ok2, miembros = pcall(C_Map.GetMapGroupMembersInfo, grupo)
-    if ok2 and type(miembros) == "table" then
-      table.sort(miembros, function(a, b) return (a.relativeHeightIndex or 0) > (b.relativeHeightIndex or 0) end)
+  local function Grupo(id)
+    if not C_Map.GetMapGroupID then return nil end
+    local ok,g = pcall(C_Map.GetMapGroupID,id)
+    return ok and EnteroMapa(g) or nil
+  end
+  local grupo = Grupo(ids[1])
+  -- Nombres idénticos no prueban que las plantas pertenezcan a la misma instancia.
+  if #ids > 1 then
+    if not grupo then return {} end
+    for i=2,#ids do if Grupo(ids[i]) ~= grupo then return {} end end
+  end
+  if grupo and C_Map.GetMapGroupMembersInfo then
+    local ok, miembros = pcall(C_Map.GetMapGroupMembersInfo, grupo)
+    if ok and type(miembros) == "table" then
+      local orden = {}
       for _, f in ipairs(miembros) do
-        if f.mapID and not vistos[f.mapID] then vistos[f.mapID] = true; table.insert(plantas, { id = f.mapID, n = f.name }) end
+        if type(f) == "table" and EnteroMapa(f.mapID) and Grupo(f.mapID) == grupo then
+          local okM, info = pcall(C_Map.GetMapInfo, f.mapID)
+          if okM and type(info) == "table" and (info.mapType == 4 or info.mapType == 5) then
+            local h = f.relativeHeightIndex
+            if (issecretvalue and issecretvalue(h)) or type(h) ~= "number" or h ~= h or math.abs(h) == math.huge then h = 0 end
+            orden[#orden+1] = {id=f.mapID,n=f.name,h=h}
+          end
+        end
       end
+      table.sort(orden,function(a,b) if a.h==b.h then return a.id<b.id end return a.h>b.h end)
+      for _, f in ipairs(orden) do if not vistos[f.id] then vistos[f.id]=true; plantas[#plantas+1]=f end end
     end
   end
   for _, id in ipairs(ids) do if not vistos[id] then vistos[id] = true; table.insert(plantas, { id = id }) end end
@@ -1292,24 +1422,35 @@ end
 
 -- Jefe de DatosWowhead que corresponde a un nombre del diario (sin el prefijo "Cementerio: " y sin "(raro)").
 local function ClaveCartografica(n)
-  if type(n) ~= "string" then return nil end
+  if type(n) ~= "string" or (issecretvalue and issecretvalue(n)) then return nil end
   n = n:gsub("^[^:]+: ", "")
   if GL.EnIngles then n = GL.EnIngles(n) end
   n = n:gsub(" %(.*%)$", "")
   if GL.EnIngles then n = GL.EnIngles(n) end
   return Minus(n):gsub(" %(.*%)$", "")
 end
+-- Primero la identidad completa (incluida el ala); solo después el nombre corto.
+local function IdentidadJefeMapa(n)
+  if type(n) ~= "string" or (issecretvalue and issecretvalue(n)) then return nil end
+  if GL.EnIngles then n = GL.EnIngles(n) end
+  return Minus(n)
+end
 local function JefePorNombre(m, nombre)
-  local buscado = ClaveCartografica(nombre)
+  local completa, buscado = IdentidadJefeMapa(nombre), ClaveCartografica(nombre)
   if not buscado or buscado == "" then return nil end
-  local encontrado
-  for _, j in ipairs(Jefes(m)) do
-    if ClaveCartografica(j.n) == buscado or ClaveCartografica(j.ing) == buscado or ClaveCartografica(j.nombreOriginal977) == buscado then
-      if encontrado and encontrado ~= j then return nil end -- nunca elegir un encuentro ambiguo
-      encontrado = j
+  local function Buscar(clave, fn)
+    local encontrado
+    for _, j in ipairs(Jefes(m)) do
+      if fn(j.n) == clave or fn(j.ing) == clave or fn(j.nombreOriginal977) == clave then
+        if encontrado and encontrado ~= j then return nil, true end
+        encontrado = j
+      end
     end
+    return encontrado, false
   end
-  return encontrado
+  local exacto, ambiguo = Buscar(completa, IdentidadJefeMapa)
+  if exacto or ambiguo then return exacto end
+  return Buscar(buscado, ClaveCartografica)
 end
 
 -- 9.4.1: con el mapa en grande, el botín sale dentro del mapa, a la derecha de la lista de jefes
@@ -1346,21 +1487,97 @@ IndexarGrupoCartografico({ "Los enanos perdidos (Baelog, Eric y Olaf)", "Baelog"
 local function ClaveJefe(n)
   if type(n) ~= "string" then return nil end
   local k = ClaveCartografica(n)
-  return INDICE_CARTOGRAFICO[k] or k
+  return INDICE_CARTOGRAFICO[k] or IdentidadJefeMapa(n)
 end
 GL.ClaveJefe = ClaveJefe
+-- Un grupo compartido representa una referencia de sala, no botín ni muerte compartidos.
+local function MarcadorValido(j)
+  return type(j) == "table" and CoordMapa(j[1], j[2]) and type(j[3]) == "string" and not (issecretvalue and issecretvalue(j[3])) and j[3] ~= ""
+end
+local function JefesConMarca(m, plantas)
+  local marcados, grupos = {}, {}
+  for _, pl in ipairs(plantas or {}) do
+    for _, j in ipairs(pl.jefes or {}) do
+      if MarcadorValido(j) then
+        local jefe = JefePorNombre(m, j[3])
+        if jefe then marcados[jefe] = true end
+        local grupo = INDICE_CARTOGRAFICO[ClaveCartografica(j[3])]
+        if grupo then grupos[grupo] = true end
+      end
+    end
+  end
+  return marcados, grupos
+end
+local function TieneMarca(j, marcados, grupos)
+  if marcados[j] then return true end
+  for _, n in pairs({j.n, j.ing, j.nombreOriginal977}) do
+    local grupo = INDICE_CARTOGRAFICO[ClaveCartografica(n)]
+    if grupo and grupos[grupo] then return true end
+  end
+  return false
+end
+local function EncuentrosEnPlanta(id)
+  local salida, vistos = {}, {}
+  if not EnteroMapa(id) or not (C_EncounterJournal and C_EncounterJournal.GetEncountersOnMap) then return salida end
+  local ok, enc = pcall(C_EncounterJournal.GetEncountersOnMap, id)
+  if not ok or type(enc) ~= "table" then return salida end
+  for _, e in ipairs(enc) do
+    if type(e) == "table" then
+      local eid = EnteroMapa(e.encounterID)
+      if eid and CoordMapa(e.mapX, e.mapY) and not vistos[eid] then
+        local okN, nombre = pcall(EJ_GetEncounterInfo, eid)
+        if okN and type(nombre) == "string" and not (issecretvalue and issecretvalue(nombre)) and nombre ~= "" then
+          vistos[eid] = true
+          salida[#salida+1] = {nombre=nombre, mapX=e.mapX, mapY=e.mapY, encounterID=eid}
+        end
+      end
+    end
+  end
+  return salida
+end
+
+-- Solo cambiar de planta al elegir un jefe con una ubicación individual inequívoca.
+local function PlantaDelJefe(f, nombre)
+  if not f or not f.m then return nil end
+  local objetivo = JefePorNombre(f.m, nombre)
+  if not objetivo then return nil end
+  local hallada
+  for i, pl in ipairs(f.plantas or {}) do
+    local coincide = false
+    if pl.img then
+      for _, j in ipairs(pl.jefes or {}) do
+        if MarcadorValido(j) and JefePorNombre(f.m, j[3]) == objetivo then coincide = true; break end
+      end
+    elseif pl.id then
+      for _, e in ipairs(EncuentrosEnPlanta(pl.id)) do
+        if JefePorNombre(f.m, e.nombre) == objetivo then coincide = true; break end
+      end
+    end
+    if coincide then
+      if hallada then return nil end
+      hallada = i
+    end
+  end
+  return hallada
+end
+
+local function ClavePin(b)
+  if b.jefe then return ClaveJefe(b.jefe.n) end
+  -- Solo un grupo declarado permite resaltar una referencia sin identidad individual.
+  return INDICE_CARTOGRAFICO[ClaveCartografica(b.nombre)]
+end
 local function PintarResalte()
   local f = mapa
   if not f then return end
   local k = f.modo and (f.resaltado or f.jefeSelModo) or nil
   for _, b in ipairs(f.pinsImg or {}) do
     if b.resalte then
-      if k and b:IsShown() and ClaveJefe(b.jefe and b.jefe.n or b.nombre) == k then b.resalte:Show() else b.resalte:Hide() end
+      if k and b:IsShown() and ClavePin(b) == k then b.resalte:Show() else b.resalte:Hide() end
     end
   end
   for _, b in ipairs(f.pins or {}) do
     if b.fondo then
-      local si = k and ClaveJefe(b.jefe and b.jefe.n or b.nombre) == k
+      local si = k and ClavePin(b) == k
       if si then b.fondo:SetColorTexture(0.85, 0.62, 0.08, 0.95) else b.fondo:SetColorTexture(0.35, 0.05, 0.05, 0.9) end
     end
   end
@@ -1376,30 +1593,30 @@ local function AnclarBotin(b)
 end
 local function PasarJefe(self, dentro)
   if not (mapa and mapa.modo) then return end
-  local k = dentro and ClaveJefe(self.jefe and self.jefe.n or self.nombre) or nil
+  local k = dentro and ClavePin(self) or nil
   mapa.resaltado = k
   PintarResalte()
   if GL.ResaltarJefePanel then GL.ResaltarJefePanel(k) end
 end
 
-local function BotinJefe(nombre, botin)
+local function BotinJefe(nombre, botin, identidad)
   local f = mapa
   if f and f.modo then   -- 9.7.6: modo mazmorra: queda elegido en el mapa y en la lista, y sale su botín
-    f.jefeSelModo = ClaveJefe(nombre)
+    f.jefeSelModo = ClaveJefe(identidad or nombre)
     PintarResalte()
     if GL.ElegirJefePanel then GL.ElegirJefePanel(f.jefeSelModo) end
     AnclarBotin(GL.VerBotin and GL.VerBotin(nombre, botin or {}))
     return
   end
   if f and f.grande and f.botinMapa then
-    f.jefeSel = nombre
+    f.jefeSel = identidad or nombre
     f.botinTitulo:SetText(nombre or L"Botín")
     f.botinMapa.desp = 0
     f.botinMapa:ClearAllPoints()
     f.botinMapa:SetPoint("TOPLEFT", f.zonaBotin, "TOPLEFT", 0, 0)
     f.botinMapa:SetPoint("TOPRIGHT", f.zonaBotin, "TOPRIGHT", 0, 0)
     f.botinMapa:Mostrar(botin or {})
-    for _, b in ipairs(f.listaJefes or {}) do if b.SetActivo then b:SetActivo(b.nombre == nombre) end end
+    for _, b in ipairs(f.listaJefes or {}) do if b.SetActivo then b:SetActivo(b.identidad == f.jefeSel) end end
     return
   end
   if GL.VerBotin then GL.VerBotin(nombre, botin or {}) end
@@ -1415,6 +1632,22 @@ local function NecesitaRefrescoMapa977(f)
 end
 GL._necesitaRefrescoMapa977 = NecesitaRefrescoMapa977
 
+local function ActualizarPosicionMapa(f)
+  if not f or not f.tu then return end
+  f.tu:Hide()
+  local p = f.plantas and f.plantas[f.planta]
+  if not (f:IsShown() and p and not p.img and f.escala) then return end
+  local x, y = GL._posicionPlantaMazmorra(p.id)
+  if x then
+    f.tu:ClearAllPoints()
+    f.tu:SetPoint("CENTER", f.lienzo, "TOPLEFT", f.ox + x * f.aw, -(f.oy + y * f.ah))
+    f.tu:Show()
+  end
+end
+local function LimpiarResalte(f)
+  f.resaltado = nil
+  if f.modo and GL.ResaltarJefePanel then GL.ResaltarJefePanel(nil) end
+end
 local function PintarMapa()
   local f = mapa
   if not f or not f:IsShown() or not f.m then return end
@@ -1430,7 +1663,7 @@ local function PintarMapa()
   for i, pl in ipairs(f.plantas) do
     local b = f.botonesPlanta[i]
     if not b then
-      b = GL.CrearBoton(f, "", function(self) mapa.planta = self.i; PintarMapa() end, nil, 18)
+      b = GL.CrearBoton(f, "", function(self) LimpiarResalte(mapa); mapa.planta = self.i; PintarMapa() end, nil, 18)
       f.botonesPlanta[i] = b
     end
     b.i = i
@@ -1464,13 +1697,13 @@ local function PintarMapa()
       i = i + 1
       local b = f.listaJefes[i]
       if not b then
-        b = GL.CrearBoton(f, "", function(self) BotinJefe(self.nombre, self.botin or {}) end, nil, 20)
+        b = GL.CrearBoton(f, "", function(self) BotinJefe(self.nombre, self.botin or {}, self.identidad) end, nil, 20)
         b:SetWidth(200)
         GL.UnaLinea(b.texto)
         if GL.Ayuda then GL.Ayuda(b) end
         f.listaJefes[i] = b
       end
-      b.nombre, b.botin = (j.n:gsub("^[^:]+: ", "")), j.botin
+      b.nombre, b.botin, b.identidad = (j.n:gsub("^[^:]+: ", "")), j.botin, j.n
       b.texto:SetText(b.nombre .. ((j.botin and #j.botin > 0) and (C.GRIS .. "  (" .. #j.botin .. ")" .. C.FIN) or ""))
       b.ayudaTitulo, b.ayudaTexto = b.nombre, L"Clic: su botín."
       local ubicacion = GL.TextoUbicacionJefe977(j)
@@ -1485,11 +1718,10 @@ local function PintarMapa()
     -- el primer jefe (o el elegido) con su botín ya a la vista
     local sel
     for _, j in ipairs(jefes) do
-      local n = j.n:gsub("^[^:]+: ", "")
-      if n == f.jefeSel then sel = j end
+      if j.n == f.jefeSel then sel = j end
     end
     sel = sel or jefes[1]
-    if sel then BotinJefe((sel.n:gsub("^[^:]+: ", "")), sel.botin or {})
+    if sel then BotinJefe((sel.n:gsub("^[^:]+: ", "")), sel.botin or {}, sel.n)
     else f.botinTitulo:SetText(""); f.botinMapa:Mostrar({}) end
   end
   if not p then
@@ -1519,6 +1751,7 @@ local function PintarMapa()
     f.aviso:SetText("")
     local lado = math.max(14, aw * 0.05)   -- 9.5: zona del tamaño de la calavera pintada
     for i, j in ipairs(p.jefes or {}) do
+      if MarcadorValido(j) then
       local b = f.pinsImg[i]
       if not b then
         b = CreateFrame("Button", nil, lienzo)
@@ -1537,16 +1770,16 @@ local function PintarMapa()
         b.resalte:Hide()
         b:SetScript("OnClick", function(self)
           local jf = self.jefe
-          BotinJefe(self.nombre, jf and jf.botin or {})
+          if jf then BotinJefe(self.nombre, jf.botin or {}, jf.n) end
         end)
         b:SetScript("OnEnter", function(self)
           PasarJefe(self, true)
           local jf = self.jefe
-          if mapa and mapa.grande then BotinJefe(self.nombre, jf and jf.botin or {}) end   -- 9.5: el botín al pasar el ratón
+          if jf and mapa and mapa.grande then BotinJefe(self.nombre, jf.botin or {}, jf.n) end   -- 9.5: el botín al pasar el ratón
           if not GameTooltip then return end
           GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
           GameTooltip:SetText(self.nombre, 1, 0.82, 0)
-          GameTooltip:AddLine(mapa and mapa.grande and L"Su botín sale debajo del mapa." or L"Clic: su botín.", 1, 1, 1, true)
+          GameTooltip:AddLine(not jf and L"Identidad del jefe sin confirmar; consulta la lista de jefes." or (mapa and mapa.grande and L"Su botín sale debajo del mapa." or L"Clic: su botín."), 1, 1, 1, true)
           local ubicacion = GL.TextoUbicacionJefe977(jf)
           if ubicacion ~= "" then GameTooltip:AddLine(ubicacion, 1, 1, 1, true) end
           GameTooltip:Show()
@@ -1565,19 +1798,12 @@ local function PintarMapa()
         b:SetPoint("CENTER", lienzo, "TOPLEFT", ox + j[1] * aw, -(j[2] * ah))
         b:Show()
       end
-    end
-    local sin, sinNombres = 0, {}
-    local marcados, clavesMarcadas = {}, {}
-    for _, pl in ipairs(f.plantas) do
-      for _, j in ipairs(pl.jefes or {}) do
-        local jefe = JefePorNombre(m, j[3])
-        if jefe then marcados[jefe] = true end
-        local clave = ClaveJefe(j[3])
-        if clave then clavesMarcadas[clave] = true end
       end
     end
+    local sin, sinNombres = 0, {}
+    local marcados, grupos = JefesConMarca(m, f.plantas)
     for _, x in ipairs(Jefes(m)) do
-      if not marcados[x] and not clavesMarcadas[ClaveJefe(x.n)] and not (x.ing and clavesMarcadas[ClaveJefe(x.ing)]) and x.botin and not x.comun977 and not x.n:find(L"otín sin jefe") and not x.n:find(L"^Bichos") then
+      if not TieneMarca(x, marcados, grupos) and x.botin and not x.comun977 and not x.n:find(L"otín sin jefe") and not x.n:find(L"^Bichos") then
         sin = sin + 1
         if #sinNombres < 4 then table.insert(sinNombres, (x.n:gsub("^[^:]+: ", ""))) end
       end
@@ -1597,25 +1823,23 @@ local function PintarMapa()
     local s = math.min(W / capa.layerWidth, H / capa.layerHeight)
     local ox, oy = (W - capa.layerWidth * s) / 2, (H - capa.layerHeight * s) / 2
     f.escala, f.ox, f.oy, f.aw, f.ah = s, ox, oy, capa.layerWidth * s, capa.layerHeight * s
-    local cols = math.ceil(capa.layerWidth / capa.tileWidth)
     for i, tex in ipairs(texturas) do
       local t = f.losetas[i]
       if not t then t = lienzo:CreateTexture(nil, "ARTWORK"); f.losetas[i] = t end
-      local c, r = (i - 1) % cols, math.floor((i - 1) / cols)
+      local x,y,w,h,u,v = GeometriaLoseta(capa,i)
       t:SetTexture(tex)
-      t:SetSize(capa.tileWidth * s, capa.tileHeight * s)
+      if t.SetTexCoord then t:SetTexCoord(0,u,0,v) end
+      t:SetSize(w*s,h*s)
       t:ClearAllPoints()
-      t:SetPoint("TOPLEFT", lienzo, "TOPLEFT", ox + c * capa.tileWidth * s, -(oy + r * capa.tileHeight * s))
+      t:SetPoint("TOPLEFT", lienzo, "TOPLEFT", ox+x*s, -(oy+y*s))
       t:Show()
     end
   end
   -- jefes del diario de encuentros en esta planta
   local nombres = {}
-  local okE, enc = pcall(function() return C_EncounterJournal and C_EncounterJournal.GetEncountersOnMap(p.id) end)
-  if okE and type(enc) == "table" and f.escala then
-    for i, e in ipairs(enc) do
-      local okN, nombre = pcall(EJ_GetEncounterInfo, e.encounterID)
-      nombre = okN and type(nombre) == "string" and nombre or (L"Jefe " .. i)
+  if f.escala then
+    for i, e in ipairs(EncuentrosEnPlanta(p.id)) do
+      local nombre = e.nombre
       local b = f.pins[i]
       if not b then
         b = CreateFrame("Button", nil, lienzo)
@@ -1627,11 +1851,11 @@ local function PintarMapa()
         b.num:SetPoint("CENTER", b, "CENTER", 0, 0)
         b:SetScript("OnClick", function(self)
           local j = self.jefe
-          BotinJefe(j and j.n or self.nombre, j and j.botin or {})
+          if j then BotinJefe(j.n, j.botin or {}, j.n) end
         end)
         b:SetScript("OnEnter", function(self)
           PasarJefe(self, true)
-          if GameTooltip then GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(self.nombre); GameTooltip:Show() end
+          if GameTooltip then GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(self.nombre); if not self.jefe then GameTooltip:AddLine(L"Identidad del jefe sin confirmar; consulta la lista de jefes.",1,1,1,true) end; GameTooltip:Show() end
         end)
         b:SetScript("OnLeave", function(self) PasarJefe(self, false); if GameTooltip then GameTooltip:Hide() end end)
         f.pins[i] = b
@@ -1647,16 +1871,7 @@ local function PintarMapa()
       end
     end
   end
-  -- dónde estás (solo si el juego lo da dentro de la mazmorra)
-  local okP, pos = pcall(C_Map.GetPlayerMapPosition, p.id, "player")
-  if okP and pos and pos.GetXY and f.escala then
-    local x, y = pos:GetXY()
-    if CoordMapa(x, y) and x > 0 and y > 0 then
-      f.tu:ClearAllPoints()
-      f.tu:SetPoint("CENTER", lienzo, "TOPLEFT", f.ox + x * f.aw, -(f.oy + y * f.ah))
-      f.tu:Show()
-    end
-  end
+  ActualizarPosicionMapa(f)
   PintarResalte()
   f.leyenda:SetText(C.GRIS .. L"Mapa del cliente; puede corresponder a otra versión." .. " " .. (#nombres > 0 and (table.concat(nombres, " · ") .. L"  (clic en un número: su botín)") or L"El juego no da la posición de los jefes en esta planta.") .. C.FIN)
 end
@@ -1684,8 +1899,7 @@ local function TamanoMapa(grande, guardar)
     f:SetFrameLevel((panel:GetFrameLevel() or 1) + 20)
   end
   if UISpecialFrames then   -- Esc cierra el mapa grande
-    for i = #UISpecialFrames, 1, -1 do if UISpecialFrames[i] == "GuiaAventureroMapaMazmorra" then table.remove(UISpecialFrames, i) end end
-    if f.grande then table.insert(UISpecialFrames, "GuiaAventureroMapaMazmorra") end
+    GL.RegistrarCierreEscapeR13("GuiaAventureroMapaMazmorra", f.grande == true)
   end
   f.ampliar.texto:SetText(f.grande and L"Reducir" or L"Ampliar")
   f.ampliar.ayudaTexto = f.grande and L"Vuelve a ponerlo dentro de la guía." or L"Abre el mapa en grande en medio de la pantalla, con los jefes."
@@ -1715,9 +1929,7 @@ local function ColocarEnModo(modo)
     f:SetPoint("TOPLEFT", ven, "TOPLEFT", 6, -200)
   end
   f:SetFrameLevel((ven:GetFrameLevel() or 1) + 5)
-  if UISpecialFrames then
-    for i = #UISpecialFrames, 1, -1 do if UISpecialFrames[i] == "GuiaAventureroMapaMazmorra" then table.remove(UISpecialFrames, i) end end
-  end
+  if UISpecialFrames then GL.RegistrarCierreEscapeR13("GuiaAventureroMapaMazmorra", false) end
   if f.m then f.titulo:SetText(modo == "lado" and (f.m.n .. C.GRIS .. L"  · mapa" .. C.FIN) or f.m.n) end   -- estrecho: solo el nombre
   f.ampliar.texto:SetText(modo == "lado" and L"Reducir" or L"Ampliar")
   f.ampliar.ayudaTexto = (modo == "lado") and L"Vuelve a ponerlo debajo de las misiones." or L"Abre el mapa más grande, a la derecha del panel."
@@ -1743,7 +1955,13 @@ GL.MapaModoMazmorra = {
   end,
   -- desde la lista de jefes del panel: resaltar (al pasar el ratón) o elegir (clic) en el mapa
   Resaltar = function(k) if mapa then mapa.resaltado = k; PintarResalte() end end,
-  Elegir = function(k) if mapa then mapa.jefeSelModo = k; PintarResalte() end end,
+  Elegir = function(k, identidad)
+    if not (mapa and mapa.modo and mapa:IsShown()) then return end
+    LimpiarResalte(mapa)
+    mapa.jefeSelModo = k
+    local i = PlantaDelJefe(mapa, identidad)
+    if i and i ~= mapa.planta then mapa.planta = i; PintarMapa() else PintarResalte() end
+  end,
   AnclarBotin = AnclarBotin,
   Ampliar = function()
     if not mapa or not mapa.modo then return end
@@ -1751,10 +1969,23 @@ GL.MapaModoMazmorra = {
     if GL.RefrescarModoMazmorra then GL.RefrescarModoMazmorra() end
   end,
   Cerrar = function()
-    if mapa and mapa.modo then mapa:Hide(); mapa.modo = nil; TamanoMapa(GuiaAventureroDB.mapaGrande == true, false); mapa:Hide() end
+    if mapa and mapa.modo then LimpiarResalte(mapa); mapa.jefeSelModo = nil; mapa:Hide(); mapa.modo = nil; TamanoMapa(GuiaAventureroDB.mapaGrande == true, false); mapa:Hide() end
   end,
   Frame = function() return mapa end,
 }
+
+local function SeleccionMapa(f,m)
+  local misma = f.m and (f.m.clave or f.m.n) == (m.clave or m.n) and (not not f.m.banda) == (not not m.banda)
+  local anterior = misma and f.plantas and f.plantas[f.planta]
+  local plantas, fuente = Plantas(m, misma and f.fuenteActiva == "cliente")
+  local indice = 1
+  if anterior then
+    for i,p in ipairs(plantas) do
+      if (anterior.id and p.id == anterior.id) or (anterior.archivo and p.archivo == anterior.archivo) then indice=i;break end
+    end
+  end
+  return plantas, fuente, indice
+end
 
 AbrirMapa = function(m, enModo)
   if not GL.MAPAS_MAZMORRAS then return end
@@ -1788,6 +2019,7 @@ AbrirMapa = function(m, enModo)
         GL.Mensaje(L"No hay otra fuente de mapa disponible en este cliente.")
         return
       end
+      LimpiarResalte(f)
       f.plantas, f.planta, f.fuenteActiva = plantas, 1, fuente
       f.fuenteMapa.texto:SetText(fuente == "cliente" and L"Dibujo" or L"Cliente")
       PintarMapa()
@@ -1836,10 +2068,22 @@ AbrirMapa = function(m, enModo)
     f.leyenda:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 6)
     f.botonesPlanta, f.losetas, f.pins, f.pinsImg = {}, {}, {}, {}
     f:SetScript("OnSizeChanged", function() PintarMapa() end)
+    local esperaPos, esperaBotin = 0, 0
+    f:SetScript("OnUpdate", function(self, dt)
+      esperaPos, esperaBotin = esperaPos + dt, esperaBotin + dt
+      if esperaPos >= 0.25 then esperaPos = 0; ActualizarPosicionMapa(self) end
+      -- Refrescar la vista grande (datos de objetos) también fuera de la lista.
+      if esperaBotin >= CADA then
+        esperaBotin = 0
+        if self.grande and NecesitaRefrescoMapa977(self) then PintarMapa() end
+      end
+    end)
+    f:SetScript("OnHide", function(self) self.tu:Hide(); LimpiarResalte(self) end)
     mapa = f
   end
-  local plantas, fuente = Plantas(m, false)
-  mapa.m, mapa.plantas, mapa.planta, mapa.fuenteActiva = m, plantas, 1, fuente
+  local plantas, fuente, indice = SeleccionMapa(mapa,m)
+  if not mapa.m or (mapa.m.clave or mapa.m.n) ~= (m.clave or m.n) then mapa.jefeSel, mapa.jefeSelModo, mapa.resaltado = nil, nil, nil end
+  mapa.m, mapa.plantas, mapa.planta, mapa.fuenteActiva = m, plantas, indice, fuente
   mapa.fuenteMapa.texto:SetText(fuente == "cliente" and L"Dibujo" or L"Cliente")
   mapa.titulo:SetText(m.n .. C.GRIS .. L"  · mapa" .. C.FIN)
   if enModo then return end   -- 9.7.6: lo coloca ColocarEnModo
@@ -1945,7 +2189,7 @@ local function CrearPanel()
     if espera >= CADA then
       espera = 0
       Refrescar()
-      if NecesitaRefrescoMapa977(mapa) then PintarMapa() end
+      -- El mapa visible actualiza su propia posición incluso si esta lista está oculta.
     end
   end)
   GL.modos.mazmorras = { panel = panel, refrescar = Refrescar }
@@ -1960,7 +2204,7 @@ GL._mazmorras = function() return CargarDatos() end
 GL.DatosMazmorras = CargarLista
 GL.AbrirMazmorra = function(nombre, jefe, npc)
   if type(GuiaAventureroDB)=="table" then GuiaAventureroDB.pestanaMaz="mazmorras"; GuiaAventureroDB.mazTodas=true end
-  if not DATOS then DATOS = CargarLista(); table.sort(DATOS, function(a, b) return a.min < b.min or (a.min == b.min and a.max < b.max) end) end
+  AsegurarDatos()
   for i = 1, #DATOS do
     if DATOS[i].n == nombre or DATOS[i].clave == nombre then
       local m = DATOS[i]
@@ -1987,8 +2231,9 @@ local tarjeta = nil
 local function MazmorraANivel()
   local db = GuiaAventureroDB or {}
   if db.avisos == false or db.estiloRuta == "rapida" then return nil end
-  if not DATOS then DATOS = CargarLista(); table.sort(DATOS, function(a, b) return a.min < b.min or (a.min == b.min and a.max < b.max) end) end
+  AsegurarDatos()
   local nivel, mejor = NivelJugador(), nil
+  if not nivel then return nil end
   for _, m in ipairs(DATOS) do
     -- sin misiones de tu facción (Salón de los Feudales o Mazmorras de Ventormenta para la Horda) no se avisa
     if m.e and #(m.misiones or {}) > 0 and nivel >= m.min and nivel <= m.min + 3 and not (db.mazNo and db.mazNo[m.n]) then

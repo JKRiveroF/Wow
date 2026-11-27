@@ -62,8 +62,7 @@ function GL.CompartirMisionesGrupo()
     C_Timer.After((i - 1) * 1.2, function()
       local idx = IndiceEnDiario(q.id)
       if idx then
-        local ok, result = pcall(SelectQuestLogEntry, idx)
-        if ok and not (issecretvalue and issecretvalue(result)) and result ~= false then pcall(QuestLogPushQuest) end
+        GL.ConSeleccionMisionR13(idx, QuestLogPushQuest)
       end
     end)
   end

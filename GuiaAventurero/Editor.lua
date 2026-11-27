@@ -126,14 +126,8 @@ local function Registrar()
   end
 end
 
-local ev = CreateFrame("Frame")
-GL.Evento(ev, "ADDON_LOADED")
-ev:SetScript("OnEvent", function(self, _, nombre)
-  if nombre ~= nombreAddon and nombre ~= "GuiaAventurero" then return end
-  self:UnregisterEvent("ADDON_LOADED")
-  local ok, err = pcall(Registrar)
-  if not ok then table.insert(GL.erroresCarga, L"rutas propias: " .. tostring(err)) end
-end)
+-- Registrar después de recuperar los datos antiguos y preparar el idioma.
+GL.RegistrarRutasPropiasR13 = Registrar
 
 local function Usar(r)
   local db = DB()
@@ -231,7 +225,7 @@ local function VentanaCodigo(modo)
     end, nil, 22, "accion")
     f.aceptar:SetWidth(100)
     f.aceptar:SetPoint("RIGHT", f.cerrar, "LEFT", -6, 0)
-    if UISpecialFrames then table.insert(UISpecialFrames, "GuiaAventureroCodigoRuta") end
+    if UISpecialFrames then GL.RegistrarCierreEscapeR13("GuiaAventureroCodigoRuta") end
     ui.codigo = f
   end
   local f = ui.codigo
@@ -264,7 +258,7 @@ local function Crear()
   GL.Caja(ven, GL.COLOR.fondo, GL.COLOR.borde)
   if GL.Sombra then GL.Sombra(ven) end
   if GL.Acento then GL.Acento(ven, 2) end
-  if UISpecialFrames then table.insert(UISpecialFrames, "GuiaAventureroEditor") end
+  if UISpecialFrames then GL.RegistrarCierreEscapeR13("GuiaAventureroEditor") end
   ui.titulo = GL.Texto(ven, "GameFontNormalLarge")
   ui.titulo:SetPoint("TOPLEFT", ven, "TOPLEFT", 14, -12)
   ui.titulo:SetText(C.BLANCO .. L"Editor de rutas" .. C.FIN)

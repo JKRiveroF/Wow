@@ -77,8 +77,18 @@ MODULOS.facciones = function()
     local puntos = {}
     for i = 1, #(f.subir or {}) do table.insert(puntos, f.subir[i]) end
     for i = 1, #(f.recompensas or {}) do table.insert(puntos, L"Recompensa: " .. f.recompensas[i]) end
-    table.insert(lista, { n = f.n or (L"Facción " .. id), desc = f.intendente and (L"Intendente: " .. f.intendente) or nil,
-      puntos = puntos, rel = { { t = "faccion", id = id, n = L"Ver en Reputación" } }, fuente = L"guía de reputación", comprobado = f.confirmado })
+    if f.pendiente then table.insert(puntos, L"Datos parciales: comprobar en Forever.") end
+    local function ActualizarAviso(e)
+      local actuales = {}
+      for i = 1, #puntos do actuales[i] = puntos[i] end
+      local aviso = GL.AvisoFaccion977 and GL.AvisoFaccion977(f, id)
+      if aviso then actuales[#actuales+1] = aviso end
+      e.puntos = actuales
+    end
+    local e = { n = f.n or (L"Facción " .. id), desc = f.intendente and (L"Intendente: " .. f.intendente) or nil,
+      dinamico = ActualizarAviso, rel = { { t = "faccion", id = id, n = L"Ver en Reputación" } }, fuente = f.fuente or L"guía de reputación", comprobado = f.confirmado }
+    ActualizarAviso(e)
+    table.insert(lista, e)
   end
   table.sort(lista, function(a, b) return a.n < b.n end)
   return lista
@@ -102,6 +112,11 @@ end
 local function WH(clave) return (GL.WH and GL.WH[clave]) or {} end
 local function Dinero(c) return (GL.Dinero and GL.Dinero(c)) or (tostring(c) .. " c") end
 local function Coord(e) return (e.x and e.y) and string.format("%.1f, %.1f", e.x, e.y) or nil end
+local function LadoActual()
+  if type(UnitFactionGroup) ~= "function" then return nil end
+  local ok, f = pcall(UnitFactionGroup, "player")
+  if ok then return f == "Alliance" and "A" or (f == "Horde" and "H" or nil) end
+end
 local function Llevar(e, nombre)
   if not (e.m and e.x and e.y) then return nil end
   return { t = "destino", n = L"Llevarme", d = { m = e.m, x = e.x, y = e.y, n = nombre or e.n } }
@@ -131,12 +146,44 @@ end
 MODULOS.vendedores = function()
   local lista = {}
   for _, v in ipairs(WH("vendedores")) do
-    local puntos = { L"Vendedor: " .. (v.vendedor or "?") .. (v.zona and (L", en " .. v.zona) or "") .. (Coord(v) and (" · " .. Coord(v)) or "") }
-    if v.precio then table.insert(puntos, L"Precio: " .. Dinero(v.precio)) end
-    if v.rep then table.insert(puntos, L"Reputación: " .. (v.rep.n or "?") .. L" en " .. (v.rep.nivel or "?")) end
-    if v.limitado then table.insert(puntos, L"Cantidad limitada: vuelve a salir con el tiempo") end
-    table.insert(lista, { n = v.n, min = v.nivel, max = v.nivel, desc = v.desc, puntos = puntos, rel = { Llevar(v, v.vendedor) },
-      fuente = "Wowhead", comprobado = v.comprobado })
+    table.insert(lista, { n = v.n, min = v.nivel, max = v.nivel, desc = v.desc, vendedor977 = v,
+      dinamico = function(e)
+        local actual, d, rep = LadoActual(), v, v.rep
+        local compatible = not v.lado or actual == v.lado
+        if v.id == 262766 then
+          -- Mismos destinos y requisitos que Colección; no duplicar coordenadas.
+          compatible = false
+          for _, m in ipairs((WH("coleccion").monturas or {})) do
+            if m.id == v.id then
+              local origen = m.destinos977 and m.destinos977[actual]
+              rep = m.repPorLado977 and m.repPorLado977[actual]
+              if origen then
+                d = { m=origen.m, x=origen.x, y=origen.y, zona=origen.zona,
+                  vendedor=actual == "H" and "Okamache" or v.vendedor }
+                compatible = true
+              end
+              break
+            end
+          end
+        end
+        local puntos, rel = {}, {}
+        if compatible then
+          puntos[#puntos+1] = L"Vendedor: " .. (d.vendedor or "?") .. (d.zona and (L", en " .. L(d.zona)) or "") .. (Coord(d) and (" · " .. Coord(d)) or "")
+          local destino = Llevar(d, d.vendedor)
+          if destino then destino.d.z = d.zona and L(d.zona); rel[#rel+1] = destino end
+        else puntos[#puntos+1] = L"Vendedor de otra facción o facción sin confirmar." end
+        if v.precio then puntos[#puntos+1] = L"Precio: " .. Dinero(v.precio) end
+        if rep then
+          puntos[#puntos+1] = L"Reputación: " .. L(rep.n or "?") .. L" en " .. L(rep.nivel or "?")
+          if GL.EstadoRequisitoReputacion977 and GL.TextoEstadoReputacion977 then
+            local estado, id = GL.EstadoRequisitoReputacion977(rep)
+            puntos[#puntos+1] = GL.TextoEstadoReputacion977(estado)
+            if id then rel[#rel+1] = { t="faccion", id=id, n=L"Ver en Reputación" } end
+          end
+        elseif v.id == 262766 then puntos[#puntos+1] = L"Exaltado con la organización comercial de tu facción; facción sin confirmar." end
+        if v.limitado then puntos[#puntos+1] = L"Cantidad limitada: vuelve a salir con el tiempo" end
+        e.puntos, e.rel = puntos, rel
+      end, fuente = "Wowhead", comprobado = v.comprobado })
   end
   table.sort(lista, function(a, b) return (a.min or 0) < (b.min or 0) end)
   return lista
@@ -170,33 +217,88 @@ MODULOS.entrenadores = function()
   return lista
 end
 
--- Razas y clases: 7.6, combinaciones del artículo de Wowhead «Create the Hero You Want to Be» (Forever) y raciales
--- del artículo de raciales de Forever (solo trae Skyborne y gnomo). 7.8: el resto, las raciales clásicas (Forever no las cambia).
+-- Raciales de Forever, contraste build 1.60.1.71139 (Zockify, Endgame Tools).
+-- Los nombres españoles de referencia no se usan para identificar hechizos del cliente.
+local function Racial(es, en, ids)
+  local texto = GL.ingles and en or es
+  -- Only use the client label when its locale matches the guide. For class
+  -- variants require positive knowledge of the spell, never select arbitrarily.
+  local locale = GetLocale and GetLocale()
+  local mismo = (GL.ingles and (locale == "enUS" or locale == "enGB")) or
+    (not GL.ingles and (locale == "esES" or locale == "esMX"))
+  if mismo and ids and GL.NombreHechizo then
+    local id = type(ids) == "number" and ids or nil
+    if type(ids) == "table" and GL.HechizoConocido then
+      for _, candidato in ipairs(ids) do
+        if GL.HechizoConocido(candidato) then id = candidato; break end
+      end
+    end
+    if id then
+      local nombre = GL.NombreHechizo(id)
+      local sufijo = texto:match("( — .+)$")
+      if type(nombre) == "string" and nombre ~= "" and sufijo then return nombre .. sufijo end
+    end
+  end
+  return texto
+end
 MODULOS.razas = function()
   return {
     { n = L"Humano", lado = L"Alianza", desc = L"Clases: cazador, mago, paladín, sacerdote, pícaro, brujo y guerrero.",
-      puntos = { L"Empieza en el Bosque de Elwynn", L"Espíritu humano (pasiva): +5 % de espíritu", L"Diplomacia (pasiva): +10 % de reputación ganada", L"Percepción: más detección de sigilo 20 s", L"Especialización con espadas y mazas (pasiva): +5 de habilidad" }, fuente = L"Wowhead (Forever) y raciales clásicas" },
+      puntos = { L"Empieza en el Bosque de Elwynn",
+        Racial("Voluntad de supervivencia — elimina aturdimientos.", "Will to Survive — removes stuns.", 1259718),
+        Racial("Percepción — mejora la detección de sigilo.", "Perception — improves stealth detection.", 20600),
+        Racial("Crueldad — +1 % de crítico.", "Ruthless — +1% critical chance.", 20597),
+        Racial("Espíritu humano — +10 % de espíritu.", "The Human Spirit — +10% Spirit.", 20598) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
     { n = L"Enano", lado = L"Alianza", desc = L"Clases: cazador, paladín, sacerdote, pícaro, chamán y guerrero.",
-      puntos = { L"Empieza en Dun Morogh", L"En Forever el enano puede ser chamán", L"Forma de piedra: quita venenos, enfermedades y sangrados y +10 % de armadura 8 s", L"Búsqueda de tesoros: ves los cofres en el minimapa", L"Resistencia a la escarcha (pasiva): +10", L"Especialización con armas de fuego (pasiva): +5 de habilidad" }, fuente = L"Wowhead (Forever) y raciales clásicas" },
+      puntos = { L"Empieza en Dun Morogh",
+        Racial("Petraforma — limpia sangrados, venenos y enfermedades; reduce daño físico.", "Stoneform — clears bleeds, poisons and diseases; reduces physical damage.", 20594),
+        Racial("Buscar tesoro — rastreo de cofres y posibilidad de botín extra.", "Find Treasure — tracks chests and may yield extra loot.", 2481),
+        Racial("Precisión artesanal — +1 % de golpe (nombre ES orientativo).", "Artisan's Precision — +1% hit.", 1259719),
+        Racial("Caza mayor — +5 % de daño a bestias.", "Big Game Hunter — +5% damage against beasts.", 1259721) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
     { n = L"Gnomo", lado = L"Alianza", desc = L"Clases: mago, sacerdote, pícaro, brujo y guerrero.",
-      puntos = { L"Empieza en Dun Morogh", L"Expansive Mind: ahora sube el máximo de tu recurso",
-        L"Eureka! (nueva): los 3 siguientes hechizos o habilidades cuestan menos y hacen un 10 % más", L"Artista del escape: te libra de efectos de enraizamiento y frenado", L"Especialización en ingeniería (pasiva): +15 de Ingeniería", L"Resistencia a lo arcano (pasiva): +10" }, fuente = L"Wowhead (Forever) y raciales clásicas" },
+      puntos = { L"Empieza en Dun Morogh",
+        Racial("Artista del escape — elimina efectos que limitan el movimiento.", "Escape Artist — removes movement impairments.", 20589),
+        Racial("¡Eureka! — mejora el daño no periódico y reduce su coste durante 8 s.", "Eureka! — improves non-periodic damage and reduces its cost for 8 sec.", {1259812, 1259813, 1259817, 1259821, 1259823}),
+        Racial("Mente expansiva — aumenta el recurso máximo según la clase.", "Expansive Mind — increases the maximum class resource.", {20591, 1259802, 1259803}),
+        Racial("Especialización en ingeniería — reduce fallos de dispositivos.", "Engineering Specialization — reduces device failures.", 20593) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
     { n = L"Elfo de la noche", lado = L"Alianza", desc = L"Clases: druida, cazador, sacerdote, pícaro y guerrero.",
-      puntos = { L"Empieza en Teldrassil", L"Fusión de las sombras: te vuelves invisible quieto (fuera de combate)", L"Rapidez (pasiva): +1 % de esquivar", L"Resistencia a la naturaleza (pasiva): +10", L"Espíritu de fuego fatuo (pasiva): al morir eres un fuego fatuo más rápido" }, fuente = L"Wowhead (Forever) y raciales clásicas" },
+      puntos = { L"Empieza en Teldrassil",
+        Racial("Fusión de las sombras — oculta al personaje; en combate puede desviar la atención enemiga.", "Shadowmeld — conceals you; in combat may divert enemy attention.", 20580),
+        Racial("Luz de Elune — +10 % de crítico durante 15 s.", "Elune's Light — +10% critical chance for 15 sec.", 1259799),
+        Racial("Prontitud — +1 % de esquivar y +2 % de velocidad de movimiento.", "Quickness — +1% dodge and +2% movement speed.", 20582),
+        Racial("Espíritu de fuego fatuo — +75 % de velocidad al morir.", "Wisp Spirit — +75% movement speed after death.", 20585) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
     -- 8.5: razas de la Horda. Combinaciones de Forever (method.gg): orco mago, trol brujo y no-muerto paladín son nuevas.
-    -- Raciales del clásico (Forever no las cambia, salvo lo que se dice).
     { n = L"Orco", lado = L"Horda", desc = L"Clases: cazador, mago (nuevo en Forever), pícaro, chamán, brujo y guerrero.",
-      puntos = { L"Empieza en el Valle de los Retos (Durotar)", L"Furia sangrienta: más poder de ataque 15 s, pero te curan menos", L"Dureza (pasiva): +25 % de resistencia a los aturdimientos", L"Mando (pasiva): +5 % de daño de tu mascota", L"Especialización con hachas (pasiva): +5 de habilidad" }, fuente = L"method.gg (Forever) y raciales del clásico" },
+      puntos = { L"Empieza en el Valle de los Retos (Durotar)",
+        Racial("Furia sangrienta — aumenta poder de ataque y de hechizos.", "Blood Fury — increases attack and spell power.", 20572),
+        Racial("Trizar maldición — disipa maldiciones y reduce daño mágico.", "Shatter Curse — removes curses and banes and reduces magic damage.", 1299026),
+        Racial("Firmeza — reduce la duración de aturdimientos un 20 %.", "Hardiness — reduces stun duration by 20%.", 20573),
+        Racial("Comandar — +5 % de daño de mascotas de cazador y brujo.", "Command — +5% Hunter and Warlock pet damage.", {20575, 20576}) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
     { n = L"No-muerto", lado = L"Horda", desc = L"Clases: mago, paladín (nuevo en Forever), sacerdote, pícaro, brujo y guerrero.",
-      puntos = { L"Empieza en Camposanto (Claros de Tirisfal)", L"Voluntad de los Renegados: te libra del miedo, el sueño y el encantamiento", L"Canibalismo: recuperas vida comiendo cadáveres", L"Resistencia a las Sombras (pasiva): +10", L"Respiración subacuática (pasiva): aguantas mucho más bajo el agua" }, fuente = L"method.gg (Forever) y raciales del clásico" },
+      puntos = { L"Empieza en Camposanto (Claros de Tirisfal)",
+        Racial("Voluntad de los Renegados — elimina miedo, sueño y encantamiento.", "Will of the Forsaken — removes fear, sleep and charm.", 7744),
+        Racial("Canibalizar — recupera salud y maná de cadáveres válidos.", "Cannibalize — restores health and mana from eligible corpses.", 20577),
+        Racial("Toque de la tumba — posibilidad de drenar salud al atacar.", "Touch of the Grave — chance to drain health when attacking.", {1260189, 1260201}),
+        Racial("Respiración subacuática — dura más bajo el agua.", "Underwater Breathing — extends underwater breath.", 5227) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
     { n = "Tauren", lado = L"Horda", desc = L"Clases: druida, cazador, chamán y guerrero.",
-      puntos = { L"Empieza en el Campamento Narache (Mulgore)", L"Pisotón de guerra: aturde a los enemigos de alrededor 2 s", L"Aguante (pasiva): +5 % de salud", L"Cultivo (pasiva): +15 de Herboristería", L"Resistencia a la naturaleza (pasiva): +10" }, fuente = L"method.gg (Forever) y raciales del clásico" },
+      puntos = { L"Empieza en el Campamento Narache (Mulgore)",
+        Racial("Pisotón de guerra — aturde enemigos cercanos.", "War Stomp — stuns nearby enemies.", 20549),
+        Racial("Cultivo — duplica una hierba cercana.", "Cultivation — duplicates a nearby herb.", 20552),
+        Racial("Carrera por las llanuras — acelera al desplazarse a pie (nombre ES orientativo).", "Plainsrunning — builds movement speed on foot.", 1259918),
+        Racial("Aguante — +5 % de salud máxima.", "Endurance — +5% maximum health.", 20550) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
     { n = L"Trol", lado = L"Horda", desc = L"Clases: cazador, mago, sacerdote, pícaro, chamán, brujo (nuevo en Forever) y guerrero.",
-      puntos = { L"Empieza en el Valle de los Retos (Durotar)", L"Rabiar: más celeridad cuanta menos vida tienes", L"Regeneración (pasiva): recuperas vida más rápido, también en combate", L"Matanza de bestias (pasiva): +5 % de daño contra bestias", L"Especialización con arcos y armas arrojadizas (pasiva): +5 de habilidad" }, fuente = L"method.gg (Forever) y raciales del clásico" },
+      puntos = { L"Empieza en el Valle de los Retos (Durotar)",
+        Racial("Iracundia — aumenta velocidad de ataque y lanzamiento.", "Berserking — increases attack and casting speed.", 20554),
+        Racial("Regeneración rápida — recupera salud si no te interrumpen.", "Rapid Regeneration — restores health while uninterrupted.", 1260270),
+        Racial("Matanza de bestias — +5 % de daño contra bestias.", "Beast Slaying — +5% damage against beasts.", 20557),
+        Racial("Regeneración — mejora la recuperación de salud, incluso en combate.", "Regeneration — improves health recovery, including in combat.", 20555) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
     { n = "Skyborne", lado = L"Alianza (High Order) y Horda (Windshapers)", desc = L"Raza nueva de Forever. Clases: druida, cazador, pícaro y guerrero en las dos facciones; mago solo en la Alianza y chamán solo en la Horda. 8.6: rutas de la Horda para las cinco clases.",
-      puntos = { L"Empieza en la Isla Zephras; la Horda sale en nave celeste a Mulgore", L"Walk on Air: planea por el aire 10 s", L"Read Ley Line (Alianza): +100 % de regeneración de salud y maná",
-        L"Skysight (Horda): +15 % de velocidad 15 s; junto a una Convergencia Elemental, +30 % durante una hora",
-        L"Wind Blessed (pasiva): +1 % de celeridad", L"Elemental Insight (pasiva): +5 % de daño contra elementales" }, fuente = L"Wowhead (Forever), Warcraft Tavern y Gfinity (clases por facción y Skysight)" },
+      puntos = { L"Empieza en la Isla Zephras; la Horda sale en nave celeste a Mulgore",
+        Racial("Caminar sobre el aire — planeo durante 10 s.", "Walk on Air — glide for 10 sec.", 1259416),
+        Racial("Leer línea Ley (Alianza) — mejora la regeneración; una línea Ley potencia el efecto.", "Read Leyline (Alliance) — boosts regeneration; a leyline strengthens the effect.", 1259705),
+        Racial("Visión cielonata (Horda) — mejora el desplazamiento; una convergencia potencia el efecto.", "Skysight (Horde) — boosts travel speed; a convergence strengthens the effect.", 1259686),
+        Racial("Bendición del viento — +2 % de celeridad.", "Wind Blessed — +2% haste.", 1259710),
+        Racial("Perspicacia elemental — +5 % de daño contra elementales.", "Elemental Insight — +5% damage against elementals.", 1259707) }, fuente = Racial("Forever 71139; nombres ES de referencia, pendientes del cliente", "Forever 71139; reference ES names pending client verification") },
   }
 end
 -- Profesiones: 7.6, tramos 1-300 de las guías de profesiones de Wowhead (Forever), en DatosWowhead.lua.
@@ -232,34 +334,46 @@ local function ActualizarProfesion(e)
     if ahora then
       local de = GL.OrigenProfesion975 and GL.OrigenProfesion975(t, PH and "Horde" or "Alliance") or (t.de and ((PH and PH.de and PH.de[t.de]) or t.de))
       if de then table.insert(l, "     " .. C.GRIS .. L"Receta: " .. de .. C.FIN) end
-      local falta, incierto = {}, false
+      local requisitos = GL.RequisitosFabricacion975 and GL.RequisitosFabricacion975(t.sp)
+      if requisitos then table.insert(l, "     " .. C.GRIS .. requisitos .. C.FIN) end
+      local falta, incierto, sinCantidad = {}, false, false
+      if t.mat and #t.mat > 0 then table.insert(l, "     " .. L"Materiales en bolsas.") end
       for _, m in ipairs(t.mat or {}) do
-        local tienes = GL.InventarioProfesion975 and GL.InventarioProfesion975(m[1])
-        local necesario = GL.MaterialBiblioteca975 and GL.MaterialBiblioteca975(t, m, rango) or m[2]
+        local tienes = GL.BolsasProfesion975 and GL.BolsasProfesion975(m[1])
+        local necesario = GL.MaterialBiblioteca975(t, m, rango)
         if type(necesario) == "number" and necesario > 0 then
           if tienes == nil then incierto = true
           elseif tienes < necesario then table.insert(falta, L(m[3]) .. " " .. C.AMARILLO .. tienes .. C.FIN .. " / " .. necesario) end
-        else incierto = true end
+        else sinCantidad = true end
       end
+      if sinCantidad then table.insert(l, "     " .. L"Cantidad necesaria sin confirmar.") end
       if incierto then table.insert(l, "     " .. L"Inventario no disponible para algunos materiales.") end
       if #falta > 0 then
         table.insert(l, L"     Te falta para el tramo:")
         for _, x in ipairs(falta) do table.insert(l, "       " .. x) end
-      elseif not incierto and t.mat and #t.mat > 0 then
-        table.insert(l, "     " .. C.VERDE .. L"Tienes todo lo del tramo." .. C.FIN)
+      elseif not incierto and not sinCantidad and t.mat and #t.mat > 0 then
+        table.insert(l, "     " .. C.VERDE .. L"Tienes los reactivos cuantificados del tramo; comprueba receta, herramientas y estación." .. C.FIN)
       end
     end
   end
   local nota = (GL.NotaProfesion975 and GL.NotaProfesion975(p, PH and "Horde" or "Alliance")) or (PH and PH.nota and PH.nota[p.n]) or p.nota
   if nota then table.insert(l, C.GRIS .. nota .. C.FIN) end
   if GL.AyudaPlan975 then table.insert(l, GL.AyudaPlan975(p.skill, "referencia")) end
+  if e.rel and #e.rel > 0 then l[#l+1] = L"Facciones relacionadas: recetas adicionales; consulta su disponibilidad y rango. No son requisitos del tramo." end
   e.puntos = l
 end
 
 MODULOS.profesiones = function()
   local lista = {}
+  local relacionadas = { [197]={59,92,609}, [171]={93}, [164]={59,93}, [333]={576,92}, [202]={93}, [165]={59,92,609} }
+  local fichas = GL.DatosReputacion and GL.DatosReputacion() or {}
   for _, p in ipairs(WH("profesiones")) do
-    table.insert(lista, { n = p.n, prof = p, dinamico = ActualizarProfesion,
+    local rel = {}
+    for _, id in ipairs(relacionadas[p.skill] or {}) do
+      local f = fichas[id]
+      if f then rel[#rel+1] = { t="faccion", id=id, n=f.n } end
+    end
+    table.insert(lista, { n = p.n, prof = p, dinamico = ActualizarProfesion, rel=rel,
       fuente = p.fuente or L"guía de profesiones de Wowhead" })
   end
   return lista
@@ -353,7 +467,7 @@ local function Ficha(e)
     table.insert(l, " ")
     table.insert(l, C.AMARILLO .. L"Relacionado" .. C.FIN)
   end
-  ui.fichaTexto:SetText(table.concat(l, "\n"))
+  ui.actualizarTexto(table.concat(l, "\n"), e)
   for i = 1, #ui.rel do
     local r = e.rel and e.rel[i]
     ui.rel[i].dato = r
@@ -382,10 +496,12 @@ local function Refrescar()
     if e and e.dinamico then pcall(e.dinamico, e) end
     if e then
       fila.nombre:SetText(e.n .. (e.region and (C.GRIS .. "  " .. e.region .. C.FIN) or ""))
+      fila.ayudaTitulo, fila.ayudaTexto = e.n, e.region
       fila.nivel:SetText(e.min and (ColorNivel(e) .. e.min .. (e.min ~= e.max and ("-" .. e.max) or "") .. C.FIN) or "")
       GL.Mostrar(fila.marca, e == elegida)
       fila:Show()
     else
+      fila.ayudaTitulo, fila.ayudaTexto = nil, nil
       fila:Hide()
     end
   end
@@ -485,6 +601,7 @@ local function CrearPanel()
     f.nombre:SetPoint("LEFT", f, "LEFT", 4, 0)
     f.nombre:SetPoint("RIGHT", f.nivel, "LEFT", -4, 0)
     GL.UnaLinea(f.nombre)
+    if GL.Ayuda then GL.Ayuda(f) end
     f:SetScript("OnClick", function(self)
       if self.entrada then sel = self.entrada; Refrescar() end
     end)
@@ -507,12 +624,22 @@ local function CrearPanel()
   ui.ficha = ficha
   ui.fichaTitulo = GL.Texto(ficha, "GameFontNormalSmall")
   ui.fichaTitulo:SetPoint("TOPLEFT", ficha, "TOPLEFT", 12, -8)
-  ui.fichaTitulo:SetPoint("TOPRIGHT", ficha, "TOPRIGHT", -110, -8); GL.UnaLinea(ui.fichaTitulo)   -- 7.6.1: dentro del marco
+  ui.fichaTitulo:SetPoint("TOPRIGHT", ficha, "TOPRIGHT", -8, -8)
+  ui.fichaTitulo:SetHeight(28)
+  if ui.fichaTitulo.SetWordWrap then ui.fichaTitulo:SetWordWrap(true) end
+  if ui.fichaTitulo.SetMaxLines then ui.fichaTitulo:SetMaxLines(2) end
   ui.fichaCab = GL.Texto(ficha, "GameFontNormalSmall", "RIGHT")
-  ui.fichaCab:SetPoint("TOPRIGHT", ficha, "TOPRIGHT", -8, -8)
-  ui.fichaTexto = GL.Texto(ficha, "GameFontHighlightSmall")
-  ui.fichaTexto:SetPoint("TOPLEFT", ficha, "TOPLEFT", 12, -26)
-  ui.fichaTexto:SetPoint("BOTTOMRIGHT", ficha, "BOTTOMRIGHT", -8, 46)
+  ui.fichaCab:SetPoint("TOPRIGHT", ficha, "TOPRIGHT", -8, -38)
+  ui.fichaCab:SetPoint("TOPLEFT", ficha, "TOPLEFT", 12, -38)
+  GL.UnaLinea(ui.fichaCab)
+  if GL.CrearTextoDesplazableR10 then
+    ui.fichaTexto, ui.actualizarTexto = GL.CrearTextoDesplazableR10(ficha, 55, 46)
+  else
+    ui.fichaTexto = GL.Texto(ficha, "GameFontHighlightSmall")
+    ui.fichaTexto:SetPoint("TOPLEFT", ficha, "TOPLEFT", 12, -55)
+    ui.fichaTexto:SetPoint("BOTTOMRIGHT", ficha, "BOTTOMRIGHT", -8, 46)
+    ui.actualizarTexto = function(t) ui.fichaTexto:SetText(t) end
+  end
   ui.fichaFuente = GL.Texto(ficha, "GameFontHighlightSmall")
   ui.fichaFuente:SetPoint("BOTTOMLEFT", ficha, "BOTTOMLEFT", 12, 6)
   ui.fichaFuente:SetPoint("BOTTOMRIGHT", ficha, "BOTTOMRIGHT", -8, 6); GL.UnaLinea(ui.fichaFuente)   -- 7.6.1: dentro del marco
@@ -546,4 +673,9 @@ GL.perezosos.biblioteca = CrearPanel
 table.insert(GL.alIniciar, function() if type(GuiaAventureroDB) == "table" and GuiaAventureroDB.cargarAlAbrir == false then CrearPanel() end end)
 
 -- Para las pruebas
+GL._fichasBiblioteca977 = function(c)
+  local lista = MODULOS[c] and MODULOS[c]() or {}
+  for _, e in ipairs(lista) do if e.dinamico then e.dinamico(e) end end
+  return lista
+end
 GL._biblioteca = function(c, b, recargar) if recargar then cargadas = {} end; cat, busqueda, sel, desde = c or cat, b or "", nil, 0; Refrescar(); return #Lista() end

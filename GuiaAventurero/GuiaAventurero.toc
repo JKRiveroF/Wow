@@ -6,7 +6,7 @@
 ## Notes-esES: Guía del Aventurero para WoW Forever, en español e inglés: rutas de leveo 1-60 para 47 combinaciones de clase y raza con flecha y marcas en el mapa, talentos que se ponen solos, mazmorras y bandas con jefes y botín, oro (ahorro, farmeo y profesiones, también Cocina y Pesca), modo pesca, vuelos y ayuda en grupo. Creado por JKRiveroF. /ga
 ## Notes-esMX: Guía del Aventurero para WoW Forever, en español e inglés: rutas de leveo 1-60 para 47 combinaciones de clase y raza con flecha y marcas en el mapa, talentos que se ponen solos, mazmorras y bandas con jefes y botín, oro (ahorro, farmeo y profesiones, también Cocina y Pesca), modo pesca, vuelos y ayuda en grupo. Creado por JKRiveroF. /ga
 ## Author: JKRiveroF
-## Version: 9.7.9
+## Version: 9.8.0
 ## Category: Quests
 ## X-License: GPL-3.0
 ## IconTexture: Interface\Icons\INV_Misc_Map_01
@@ -28,6 +28,9 @@ Idioma\enUS_975_profesiones.lua
 Idioma\enUS_976.lua
 Idioma\enUS_976_mapa.lua
 Idioma\enUS_9771.lua
+Idioma\enUS_9794.lua
+Idioma\enUS_9797.lua
+Idioma\enUS_9798.lua
 Rutas\GnomoMago.lua
 Rutas\EnanoChaman.lua
 Rutas\EnanoGnomoGuerrero.lua

@@ -112,6 +112,15 @@ local function TextoInforme()
     for i = math.max(1, #hist - 9), #hist do Linea("  " .. tostring(hist[i])) end
   end
 
+  -- 9.7.9.1: talentos del plan que no están en tu árbol y lo que tienes puesto (para ver si cambian los nombres en Forever)
+  local okT, dt = pcall(function() return GL.DiagnosticoTalentos979 and GL.DiagnosticoTalentos979() end)
+  if okT and type(dt) == "table" then
+    Linea("")
+    Linea(L"TALENTOS")
+    Linea(L"  Del plan que no están en tu árbol con ese nombre (" .. #dt.fuera .. "): " .. (#dt.fuera > 0 and table.concat(dt.fuera, ", ") or L"ninguno"))
+    Linea(L"  Puestos en tu árbol (" .. #dt.puestos .. "): " .. (#dt.puestos > 0 and table.concat(dt.puestos, ", ") or L"ninguno"))
+    if dt.resto then Linea(L"  Sin puntos en tu árbol (" .. #dt.resto .. "): " .. (#dt.resto > 0 and table.concat(dt.resto, ", ") or L"ninguno")) end
+  end
   Linea("")
   Linea(L"--- DIAGNÓSTICO COMPLETO ---")
   if GL.InformeDiagnostico then

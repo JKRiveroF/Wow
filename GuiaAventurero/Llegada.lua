@@ -57,17 +57,9 @@ local function Ritmo()
     if t >= MIN_SEG and xp > 0 then return xp / t * 3600, L"tus últimos niveles" end
   end
   local H = GL._hoy
-  if H and H.Dias then
-    local ok, dias = pcall(H.Dias)
-    local clave = ((UnitName and UnitName("player")) or "?") .. "-" .. ((GetRealmName and GetRealmName()) or "")
-    if ok and type(dias) == "table" then
-      local xp, t = 0, 0
-      for _, d in pairs(dias) do
-        local p = type(d) == "table" and d[clave]
-        if type(p) == "table" then xp, t = xp + (Num(p.xp) or 0), t + (Num(p.t) or 0) end
-      end
-      if t >= MIN_SEG and xp > 0 then return xp / t * 3600, L"los últimos días" end
-    end
+  if H and H.RitmoPropio then
+    local ok,xp,t=pcall(H.RitmoPropio)
+    if ok and Num(xp) and Num(t) and t>=MIN_SEG and xp>0 then return xp/t*3600,L"los últimos días" end
   end
   return nil
 end
@@ -143,14 +135,17 @@ local function YAhoraQue()
   end
   if #profs > 0 then table.insert(l, { L"Profesiones", table.concat(profs, " · "), "oficios" }) end
   -- reputaciones con ficha en la guía que aún no están en exaltado
-  if GL.DatosReputacion and GetNumFactions and GetFactionInfo then
+  if GL.DatosReputacion and GL.LeerReputaciones977 then
     local ok, fichas = pcall(GL.DatosReputacion)
+    local okR, lista = pcall(GL.LeerReputaciones977)
     local reps = {}
-    if ok and type(fichas) == "table" then
-      for i = 1, (GetNumFactions() or 0) do
-        local nombre, _, rango, _, _, _, _, _, cabecera, _, _, _, _, id = GetFactionInfo(i)
-        if nombre and not cabecera and rango and rango < 8 and (fichas[id] or fichas[nombre]) then
-          table.insert(reps, nombre .. " (" .. (({ L"Odiado", L"Hostil", L"Adverso", L"Neutral", L"Amistoso", L"Honorable", L"Reverenciado" })[rango] or "?") .. ")")
+    if ok and type(fichas) == "table" and okR and type(lista) == "table" then
+      for _, f in ipairs(lista) do
+        local ficha = f.id and fichas[f.id]
+        if f.rango and f.rango < 8 and ficha and not ficha.pendiente
+          and not (GL.AvisoFaccion977 and GL.AvisoFaccion977(ficha, f.id)) then
+          local etiqueta = GL._reputacion977.Etiqueta(f.rango)
+          table.insert(reps, f.nombre .. " (" .. etiqueta .. ")")
         end
       end
     end

@@ -38,7 +38,7 @@ end
 local function TextoMetros(yd)
   if not yd then return "" end
   local m = Metros(yd)
-  local t = (m >= 1000) and string.format(L"%.1f km", m / 1000) or (m .. " m")
+  local t = (m >= 1000) and GL.FormatoDecimal(string.format(L"%.1f km", m / 1000)) or (m .. " m")
   return ColorDistancia(m) .. t .. "|r"
 end
 GL.TextoMetros = TextoMetros
@@ -74,7 +74,8 @@ end
 ------------------------------------------------------------------------
 -- 34. Línea «Ahora» encima del texto del paso: qué hacer y a cuántos metros
 ------------------------------------------------------------------------
-local VERBOS_DESTINO = { Recoger = L"Recoge", Entregar = L"Entrega", Objetivo = L"Completa" }
+local VERBOS_DESTINO = { Recoger = "Recoge", Accept = "Recoge", Entregar = "Entrega", ["Turn in"] = "Entrega",
+  Objetivo = "Completa", Objective = "Completa" }
 local ahora
 
 local function TextoAhora(d)
@@ -82,8 +83,8 @@ local function TextoAhora(d)
   local accion, resto = string.match(n, "^([^:]+):%s*(.+)$")
   local verbo, que, quien
   if accion and VERBOS_DESTINO[accion] then
-    verbo = VERBOS_DESTINO[accion]
-    que, quien = string.match(resto, "^(.-)%s*%(([^()]+)%)$")
+    verbo = (accion == "Objetivo" or accion == "Objective") and (GL.ingles and "Complete" or "Completa") or L(VERBOS_DESTINO[accion])
+    que, quien = string.match(resto, "^(.*) %(([^()]+)%)$")
     que = que or resto
   elseif string.find(n, "^Vuelo") then
     verbo, que = L"Activa el", string.lower(string.sub(n, 1, 1)) .. string.sub(n, 2)
@@ -232,9 +233,9 @@ end
 local VERBOS = { "habla", "recoge", "entrega", "acepta", "coge", "mata", "matar", "cruza", "sigue", "activa", "vuela",
   "compra", "vende", "aprende", "entra", "sube", "baja", "busca", "usa", "lee", "abre", "lleva", "toma",
   "entrena", "equipa", "pon", "haz", "viaja", "vuelve", "regresa", "ve", "vete", "despega", "camina", "corre",
-  "rodea", "salta", "espera", "consigue", L"reúne", "recolecta", "despeja", "limpia", "explora",
+  "rodea", "salta", "espera", "consigue", "reúne", "recolecta", "despeja", "limpia", "explora",
   "descubre", "investiga", "examina", "elimina", "derrota", "acaba", "completa", "termina", "deja", "guarda",
-  "repara", L"vacía", "fija", "coloca", "ignora" }
+  "repara", "vacía", "fija", "coloca", "ignora" }
 -- 9.3.5: los mismos verbos para la guía en inglés
 local VERBOS_EN = { "talk", "accept", "turn in", "kill", "take", "pick up", "gather", "collect", "cross", "follow",
   "activate", "fly", "buy", "sell", "learn", "enter", "go", "climb", "look for", "find", "use", "read", "open",
@@ -298,9 +299,16 @@ end
 
 local function Mayuscula(v) return string.upper(string.sub(v, 1, 1)) .. string.sub(v, 2) end
 
-local cacheResaltado = {}
+-- La caché pertenece al paso y al idioma actuales; no retiene todos los pasos visitados.
+local cacheResaltado, nResaltado = {}, 0
+local pasoResaltado, rutaResaltado, idiomaResaltado, destinosResaltado
 function GL.Resaltar(texto, p)
   if not Si("resaltarPaso") or type(texto) ~= "string" then return texto end
+  local wp = type(p) == "table" and p.wp or nil
+  if pasoResaltado ~= p or rutaResaltado ~= GL.RUTA or idiomaResaltado ~= GL.ingles or destinosResaltado ~= wp then
+    cacheResaltado, nResaltado = {}, 0
+    pasoResaltado, rutaResaltado, idiomaResaltado, destinosResaltado = p, GL.RUTA, GL.ingles, wp
+  end
   local clave = texto
   if cacheResaltado[clave] then return cacheResaltado[clave] end
   local frases = {}
@@ -322,7 +330,9 @@ function GL.Resaltar(texto, p)
   for _, v in ipairs(GL.ingles and VERBOS_EN or VERBOS) do
     r = FueraDeColor(r, function(t) return Pintar(Pintar(t, v, DORADO_ACCION), Mayuscula(v), DORADO_ACCION) end)
   end
-  cacheResaltado[clave] = r
+  -- También limita variantes dinámicas del texto del mismo paso.
+  if nResaltado >= 8 then cacheResaltado, nResaltado = {}, 0 end
+  cacheResaltado[clave], nResaltado = r, nResaltado + 1
   return r
 end
 

@@ -136,11 +136,7 @@ local function Celebrar(titulo, texto, hechizos)
   if DB().celebracion == false then return end
   if not cel then
     cel = CrearPopup(380, -140)
-    local brillo = cel:CreateTexture(nil, "BACKGROUND", nil, 1)
-    brillo:SetPoint("TOPLEFT", cel, "TOPLEFT", 1, -1)
-    brillo:SetPoint("TOPRIGHT", cel, "TOPRIGHT", -1, -1)
-    brillo:SetHeight(50)
-    brillo:SetColorTexture(1, 0.82, 0, 0.12)
+    -- 9.7.9.8: sin la franja dorada de arriba; el panel entero es de un solo color, como los demás avisos
     if cel.titulo.GetFont then
       local fuente, _, op = cel.titulo:GetFont()
       if fuente then cel.titulo:SetFont(fuente, 26, op) end
@@ -238,7 +234,9 @@ local function Bienvenida()
     bien = CrearPopup(360, -120)
     bien.seguir = GL.CrearBoton(bien, L"Seguir", function()
       bien:Hide()
-      if GL.frame then GL.frame:Show(); db.oculto = false end
+      if GL.MostrarVentanaCompletaR10 then GL.MostrarVentanaCompletaR10() else
+    if GL.frame then GL.frame:Show(); db.oculto = false end
+  end
       if GL.AbrirModo then GL.AbrirModo("guia") end
     end, nil, 22, "accion")
     bien.seguir:SetWidth(150)
@@ -347,7 +345,8 @@ ev:SetScript("OnEvent", function(_, evento, a1)
   if evento == "PLAYER_REGEN_DISABLED" then
     if retrato then retrato.boton:Hide() end   -- en combate no se puede tocar; se vuelve a poner al acabar
   elseif evento == "PLAYER_LEVEL_UP" then
-    local nivel = tonumber(a1) or ((UnitLevel and UnitLevel("player")) or 1)
+    local nivel = GL.NivelJugadorR14(a1)
+    if not nivel then return end
     if C_Timer and C_Timer.After then C_Timer.After(1, function() pcall(CelebrarNivel, nivel) end) else pcall(CelebrarNivel, nivel) end
   elseif evento == "PLAYER_ENTERING_WORLD" and a1 then   -- solo al conectar, no al cambiar de zona
     if C_Timer and C_Timer.After then C_Timer.After(4, function() pcall(Bienvenida) end) end
@@ -414,7 +413,13 @@ end
 local vigiladasPropias = {}
 local function EstadoVigilada(i)
   local ok, v = pcall(IsQuestWatched, i)
-  if ok then return not not v end
+  if not ok then return nil end
+  if type(issecretvalue)=="function" then
+    local comprobado, secreto=pcall(issecretvalue,v)
+    if not comprobado or secreto then return nil end
+  end
+  if v==true or v==1 then return true end
+  if v==false or v==0 then return false end
   return nil
 end
 local function SeguirMisionesPaso()
@@ -498,10 +503,10 @@ end
 
 -- Primer uso: cuatro pantallas cortas para quien abre el addon por primera vez.
 local PRIMER_USO = {
-  { L"Tu paso", L"La caja de arriba dice qué hacer ahora. Debajo están los objetivos: clic en uno para seguirlo, posponerlo o ignorarlo. Con Shift+clic enlazas la misión en el chat." },
-  { L"La flecha", L"Te lleva al objetivo y cambia de color con la distancia: verde cerca, amarillo a media distancia y rojo lejos. También te dice el rumbo." },
-  { L"Las guías", L"Los botones de la derecha abren la Guía, la Reputación, las Mazmorras y la Biblioteca." },
-  { L"Opciones", L"En Opciones > Ajustes cambias el tema, el tamaño y lo que se muestra: retrato, celebraciones, sonidos y seguimiento de misiones." },
+  { "Tu paso", "La caja de arriba dice qué hacer ahora. Debajo están los objetivos: clic en uno para seguirlo, posponerlo o ignorarlo. Con Shift+clic enlazas la misión en el chat." },
+  { "La flecha", "Te lleva al objetivo y cambia de color con la distancia: verde cerca, amarillo a media distancia y rojo lejos. También te dice el rumbo." },
+  { "Las guías", "Los botones de la derecha abren la Guía, la Reputación, las Mazmorras y la Biblioteca." },
+  { "Opciones", "En Opciones > Ajustes cambias el tema, el tamaño y lo que se muestra: retrato, celebraciones, sonidos y seguimiento de misiones." },
 }
 local guia = nil
 local function MostrarPrimerUso(i)
@@ -529,8 +534,8 @@ local function MostrarPrimerUso(i)
   i = math.max(1, math.min(i or 1, #PRIMER_USO))
   guia.i = i
   guia.paso:SetText(C.GRIS .. i .. L" de " .. #PRIMER_USO .. C.FIN)
-  guia.titulo:SetText(C.AMARILLO .. PRIMER_USO[i][1] .. C.FIN)
-  guia.texto:SetText(PRIMER_USO[i][2])
+  guia.titulo:SetText(C.AMARILLO .. L(PRIMER_USO[i][1]) .. C.FIN)
+  guia.texto:SetText(L(PRIMER_USO[i][2]))
   if guia.ant.SetEnabled then guia.ant:SetEnabled(i > 1) end
   if guia.ant.SetAlpha then guia.ant:SetAlpha(i > 1 and 1 or 0.4) end
   if guia.sig.texto then guia.sig.texto:SetText(i == #PRIMER_USO and L"Empezar" or L"Siguiente") end
@@ -586,8 +591,10 @@ GL.EditarNota = function()
     if GL.Caja and GL.COLOR then GL.Caja(caja, { 0, 0, 0, 0.4 }, GL.COLOR.botonBorde) end
     local function Guardar()
       local t = (caja:GetText() or ""):gsub("^%s+", ""):gsub("%s+$", "")
-      DB().notas = DB().notas or {}
-      DB().notas[editor.clave] = (t ~= "") and t or nil
+      local actual = DB()
+      if actual ~= editor.db or actual.ruta ~= editor.ruta then caja:ClearFocus(); editor:Hide(); return end
+      if type(actual.notas) ~= "table" then actual.notas = {} end
+      actual.notas[editor.clave] = (t ~= "") and t or nil
       caja:ClearFocus(); editor:Hide()
       if GL.Refrescar then GL.Refrescar() end
     end
@@ -602,7 +609,7 @@ GL.EditarNota = function()
     editor.borrar:SetPoint("RIGHT", editor.guardar, "LEFT", -6, 0)
     editor:SetHeight(112)
   end
-  editor.clave = clave
+  editor.clave, editor.db, editor.ruta = clave, db, db.ruta
   editor.titulo:SetText(C.AMARILLO .. L"Tu nota del paso " .. db.paso .. C.FIN)
   editor.texto:SetText("")
   editor.caja:SetText((db.notas and db.notas[clave]) or "")

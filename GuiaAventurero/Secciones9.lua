@@ -50,7 +50,7 @@ local function CrearTramo(panel)
   tramo.raya:SetPoint("BOTTOMLEFT", tramo, "BOTTOMLEFT", 0, 0)
 end
 
-function GL.TarjetaTramo(panel, y, ancho, prof, nivel)
+function GL.TarjetaTramo(panel, y, ancho, prof, nivel, tope)
   if tramo then tramo:Hide() end
   if DB().tarjetaTramo == false or not (prof and prof.pasos and nivel) then return 0 end
   local paso
@@ -62,13 +62,15 @@ function GL.TarjetaTramo(panel, y, ancho, prof, nivel)
   local a = GL.COLOR.acento
   GL.Caja(tramo, { a[1], a[2], a[3], 0.08 }, { a[1], a[2], a[3], 0.45 })
   tramo.raya:SetColorTexture(a[1], a[2], a[3], 1)
-  tramo.titulo:SetText(C.GRIS .. L"TRAMO ACTUAL" .. C.FIN)
+  local bloqueado = type(tope)=="number" and tope<300 and nivel>=tope
+  tramo.titulo:SetText(C.GRIS .. (bloqueado and L"TRAMO PENDIENTE (LÍMITE ALCANZADO)" or L"TRAMO ACTUAL") .. C.FIN)
   tramo.rango:SetText(C.BLANCO .. paso.d .. " " .. GL.Icono("→", 255, 255, 255) .. " " .. paso.h .. C.FIN)
   tramo.barra:SetMinMaxValues(paso.d, paso.h)
   tramo.barra:SetValue(nivel)
   local faltan = paso.h - nivel
   if tramo.barra.texto then tramo.barra.texto:SetText(nivel .. " / " .. paso.h .. L"  ·  faltan " .. faltan .. (faltan == 1 and L" punto" or L" puntos")) end
-  local t = (GL.Colorear and GL.Colorear(paso.t)) or paso.t
+  local pt = GL.TextoPasoProfesion979 and GL.TextoPasoProfesion979(paso, true, tope) or paso.t
+  local t = (GL.Colorear and GL.Colorear(pt)) or pt
   local w = ancho - 20
   tramo.texto:SetWidth(w)
   tramo.texto:SetText(t)
@@ -108,7 +110,7 @@ end
 ------------------------------------------------------------------------
 -- Exploración › Tu viaje
 ------------------------------------------------------------------------
-local CONTINENTES = { { id = 1415, nombre = L"Este" }, { id = 1414, nombre = "Kalimdor" } }
+local CONTINENTES = { { id = 1415, nombre = "Este" }, { id = 1414, nombre = "Kalimdor" } }
 local viaje
 
 -- zonas de la ruta por orden de aparición: { zona, m, x, y, primera, ultima } (secciones)
@@ -177,7 +179,7 @@ local function CrearViaje(panel)
   viaje.cerrar:SetPoint("TOPRIGHT", viaje, "TOPRIGHT", 0, 0)
   viaje.botones = {}
   for i, c in ipairs(CONTINENTES) do
-    local b = GL.CrearBoton(viaje, c.nombre, function() DB().contViaje = c.id; GL.PintarViaje() end, nil, 18, "pestana")
+    local b = GL.CrearBoton(viaje, L(c.nombre), function() DB().contViaje = c.id; GL.PintarViaje() end, nil, 18, "pestana")
     b:SetWidth(72)
     b.id = c.id
     viaje.botones[i] = b

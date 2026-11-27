@@ -10,68 +10,197 @@ local C = GL.colores
 local PLANTILLA = BackdropTemplateMixin and "BackdropTemplate" or nil
 local ALTO_FILA, LADO_ICONO, MAX_FILAS, MAX_ICONOS = 20, 24, 10, 100
 
+-- R14: normalizar solo los campos que consume el panel y archivar los originales.
+local function NumeroGuardadoR14(v, minimo, entero, maximo)
+  local n=(type(v)=="number" or type(v)=="string") and tonumber(v)
+  if n and n==n and n<math.huge and n>=minimo and (not entero or n%1==0) and (not maximo or n<=maximo) then return n end
+end
 local function Cuenta()
-  if type(GuiaAventureroCuenta) ~= "table" then GuiaAventureroCuenta = {} end
-  if type(GuiaAventureroCuenta.personajes) ~= "table" then GuiaAventureroCuenta.personajes = {} end
-  -- 9.7.4: una vez por sesión, fuera lo guardado que no tiene la forma de ahora (la ventana fallaba con ello)
-  if not GL._cuentaRevisada then
-    GL._cuentaRevisada = true
-    local function Lista(t, campo)
-      if type(t) ~= "table" then return nil end
-      local r = {}
-      for _, o in ipairs(t) do if type(o) == "table" and type(o[campo]) == "string" then
-        if campo == "l" then o.c = tonumber(o.c) or 1 end
-        r[#r + 1] = o end end
-      return r
-    end
-    for k, p in pairs(GuiaAventureroCuenta.personajes) do
-      if type(p) ~= "table" or type(k) ~= "string" then GuiaAventureroCuenta.personajes[k] = nil
-      else
-        p.mochila, p.banco, p.profesiones = Lista(p.mochila, "l"), Lista(p.banco, "l"), Lista(p.profesiones, "n")
-        p.oro = tonumber(p.oro); p.nivel = tonumber(p.nivel) or p.nivel
-        if p.n ~= nil and type(p.n) ~= "string" then p.n = nil end
-        if p.zona ~= nil and type(p.zona) ~= "string" then p.zona = nil end
+  if type(GuiaAventureroCuenta) ~= "table" then
+    local anterior=GuiaAventureroCuenta
+    GuiaAventureroCuenta={}
+    if anterior~=nil then GuiaAventureroCuenta.reparacionesR14={raiz=GL.CopiaDiagnosticoR14(anterior)} end
+  end
+  local c=GuiaAventureroCuenta
+  local function archivar(k,v)
+    if v==nil then return end
+    if type(c.reparacionesR14)~="table" then c.reparacionesR14={anterior=GL.CopiaDiagnosticoR14(c.reparacionesR14)} end
+    if c.reparacionesR14[k]==nil then c.reparacionesR14[k]=GL.CopiaDiagnosticoR14(v) end
+  end
+  if type(c.personajes)~="table" then archivar("personajes",c.personajes); c.personajes={} end
+  -- Una vez por sesión y por tabla (por ejemplo tras una sustitución de los guardados).
+  if GL._cuentaRevisada~=c.personajes then
+    local function copiar(t) local r={};for k,v in pairs(t) do r[k]=v end;return r end
+    local function Lista(t,campo)
+      if t==nil then return nil,false end
+      if type(t)~="table" then return nil,true end
+      local r, claves, mal={},{},false
+      for k in pairs(t) do
+        if type(k)=="number" and k>=1 and k<math.huge and k%1==0 then claves[#claves+1]=k else mal=true end
       end
+      table.sort(claves)
+      for _,k in ipairs(claves) do
+        local o=t[k]
+        if type(o)=="table" and type(o[campo])=="string" and o[campo]~="" then
+          local fila=o
+          if campo=="l" then
+            local cantidad=o.c==nil and 1 or NumeroGuardadoR14(o.c,1,true)
+            if cantidad then
+              if cantidad~=o.c then fila=copiar(o);fila.c=cantidad;mal=true end
+              if fila.i~=nil and type(fila.i)~="string" and not NumeroGuardadoR14(fila.i,1,true) then
+                if fila==o then fila=copiar(o) end;fila.i=nil;mal=true
+              end
+            else fila=nil;mal=true end
+          else
+            for _,campoNumero in ipairs({"r","tope","id"}) do
+              local valor=o[campoNumero]
+              if valor~=nil then
+                local x=NumeroGuardadoR14(valor,campoNumero=="id" and 1 or 0,true)
+                if x~=valor then
+                  if fila==o then fila=copiar(o) end;fila[campoNumero]=x;mal=true
+                end
+              end
+            end
+          end
+          if fila then r[#r+1]=fila;if k~=#r then mal=true end end
+        else mal=true end
+      end
+      return mal and r or t,mal
+    end
+    for k,p in pairs(c.personajes) do
+      if type(p)~="table" or type(k)~="string" then
+        -- Una clave no textual no debe convertirse en la identidad de otro personaje.
+        archivar(type(k)=="string" and "pj:"..k or "clave:"..type(k)..":"..tostring(k),p)
+        c.personajes[k]=nil
+      else
+        local nuevo,mal=copiar(p),false
+        for _,campo in ipairs({"mochila","banco","profesiones"}) do
+          local v,cambio=Lista(p[campo],campo=="profesiones" and "n" or "l")
+          if cambio then nuevo[campo]=v;mal=true end
+        end
+        for _,campo in ipairs({"oro","nivel","visto","tiempo","usados","huecos","bancoUsados","bancoHuecos"}) do
+          local v=p[campo]
+          if v~=nil then
+            local x=NumeroGuardadoR14(v,campo=="nivel" and 1 or 0,campo~="tiempo",campo=="visto" and 253402300799 or nil)
+            if x~=v then nuevo[campo]=x;mal=true end
+          end
+        end
+        for _,campo in ipairs({"n","zona","reino","clase","raza","guid"}) do
+          if p[campo]~=nil and type(p[campo])~="string" then nuevo[campo]=nil;mal=true end
+        end
+        if p.ajustes~=nil and type(p.ajustes)~="table" then nuevo.ajustes=nil;mal=true end
+        if mal then archivar("pj:"..k,p);c.personajes[k]=nuevo end
+      end
+    end
+    GL._cuentaRevisada=c.personajes
+  end
+  return c.personajes
+end
+
+-- El GUID prueba identidad; el nombre sin reino nunca la prueba.
+local function TextoSeguro(fn, ...)
+  if type(fn) ~= "function" then return nil end
+  local ok, v = pcall(fn, ...)
+  if ok and not (issecretvalue and issecretvalue(v)) and type(v) == "string" and v:find("%S") then return v end
+end
+local function GUID(v)
+  return type(v) == "string" and v:match("^Player%-%w+%-%w+$") and v or nil
+end
+local function Identidad()
+  local n = TextoSeguro(UnitName, "player")
+  if not n or n == UNKNOWNOBJECT or n == UNKNOWN or n == "?" then return nil end
+  local r = TextoSeguro(GetRealmName) or TextoSeguro(GetNormalizedRealmName)
+  local g = GUID(TextoSeguro(UnitGUID, "player"))
+  if r then return n .. "-" .. r, n, r, g end
+  -- Durante la carga solo reutilizar una clave completa si el GUID coincide.
+  if g then
+    local lista = type(GuiaAventureroCuenta) == "table" and GuiaAventureroCuenta.personajes
+    local mejor, visto
+    if type(lista) == "table" then
+      for k, p in pairs(lista) do
+        if type(k) == "string" and type(p) == "table" and GUID(p.guid) == g and p.n == n
+            and type(p.reino) == "string" and p.reino:find("%S") and k == n .. "-" .. p.reino then
+          local t = NumeroGuardadoR14(p.visto,0,true,253402300799) or 0
+          if not mejor or t > visto or (t == visto and k < mejor) then mejor, visto = k, t end
+        end
+      end
+    end
+    if mejor then return mejor, n, lista[mejor].reino, g end
+  end
+  -- Forever puede no proporcionar el reino. Mantener el guardado añadido en
+  -- 9.7.9.6 si hay GUID, pero no escribir ni borrar con identidad sin confirmar.
+  if not g then return nil end
+  local lista = type(GuiaAventureroCuenta) == "table" and GuiaAventureroCuenta.personajes
+  local base = n .. "-"
+  if type(lista) ~= "table" then return base, n, "", g end
+  local mejor, visto
+  for k, p in pairs(lista) do
+    if type(k) == "string" and type(p) == "table" and GUID(p.guid) == g and p.n == n then
+      local t = NumeroGuardadoR14(p.visto,0,true,253402300799) or 0
+      if not mejor or t > visto or (t == visto and k < mejor) then mejor, visto = k, t end
     end
   end
-  return GuiaAventureroCuenta.personajes
+  if mejor then return mejor, n, "", g end
+  if lista[base] == nil then return base, n, "", g end
+  -- No reutilizar una entrada sin GUID o con un GUID distinto: podría ser
+  -- otro personaje homónimo. Conservarla activa y elegir una clave estable.
+  local clave, i = base .. g, 1
+  while lista[clave] ~= nil do i = i + 1; clave = base .. g .. "#" .. i end
+  return clave, n, "", g
 end
-
-local function ClavePersonaje()
-  local n = UnitName and UnitName("player")
-  if not n or n == "" then return nil end
-  local r = GetRealmName and GetRealmName()
-  if (not r or r == "") and GetNormalizedRealmName then r = GetNormalizedRealmName() end
-  -- 9.7.7.3: en la 9.7.4 un personaje sin reino no se guardaba (al conectar el juego puede tardar en darlo y salía
-  -- repetido). Si el juego no da nunca el reino, no se guardaba ninguno: «Aún no hay personajes guardados».
-  -- Ahora se guarda como «Nombre-»; si después llega el reino, JuntarRepetidos junta los dos por su GUID.
-  if type(r) ~= "string" then r = "" end
-  return n .. "-" .. r
+local function ClavePersonaje() return Identidad() end
+function GL.ClavePersonajeCuenta() return ClavePersonaje() end
+function GL.EsPersonajeActualCuenta(clave, p)
+  local k, _, _, g = Identidad()
+  if k and k == clave then return true end
+  return g ~= nil and type(p) == "table" and GUID(p.guid) == g
 end
-function GL.ClavePersonajeCuenta() return ClavePersonaje() end   -- para el informe de fallos
-
--- 9.7.4: el mismo personaje guardado con otra clave por versiones anteriores (sin reino, o antes de guardar
--- su GUID) se junta con el de ahora: se queda lo nuevo y, si al de ahora le falta, el banco de lo viejo
+local function Archivar(clave, p, motivo)
+  local c = GuiaAventureroCuenta
+  if type(c.personajesArchivados9794) ~= "table" then
+    if c.personajesArchivados9794 ~= nil then return false end
+    c.personajesArchivados9794 = {}
+  end
+  local lista = c.personajesArchivados9794
+  local k = clave; local i = 1
+  while lista[k] ~= nil do i = i + 1; k = clave .. "#" .. i end
+  lista[k] = { motivo=motivo, datos=p }
+  return true
+end
+local function CopiarDato(v, vistos)
+  if type(v) ~= "table" then return v end
+  if vistos[v] then return vistos[v] end
+  local r = {}; vistos[v] = r
+  for k, x in pairs(v) do r[k] = CopiarDato(x, vistos) end
+  return r
+end
 local function JuntarRepetidos(lista, clave, p)
+  local guid = GUID(p.guid)
+  if not guid then return end
+  local candidatos = {}
   for k, q in pairs(lista) do
-    if k ~= clave and type(q) == "table" then
-      local mismo = (p.guid and q.guid == p.guid)
-        or (not q.guid and q.n == p.n and q.clase == p.clase and q.raza == p.raza
-            and (k == p.n or k == p.n .. "-" or (q.reino == nil and string.sub(k, 1, #p.n + 1) == p.n .. "-")))
-      if mismo then
-        if not p.banco and q.banco then p.banco, p.bancoUsados, p.bancoHuecos = q.banco, q.bancoUsados, q.bancoHuecos end
-        lista[k] = nil
-      end
+    if k ~= clave and type(k) == "string" and type(q) == "table" and GUID(q.guid) == guid then
+      candidatos[#candidatos+1] = {k=k, q=q, visto=NumeroGuardadoR14(q.visto,0,true,253402300799) or 0}
+    end
+  end
+  table.sort(candidatos, function(a,b) if a.visto ~= b.visto then return a.visto > b.visto end; return a.k < b.k end)
+  for _, e in ipairs(candidatos) do
+    local q = e.q
+    -- Archivar antes de retirar del registro activo, sin perder campos de versiones futuras.
+    if Archivar(e.k, q, "guid_duplicado") then
+      if not p.banco and q.banco then p.banco, p.bancoUsados, p.bancoHuecos = CopiarDato(q.banco, {}), q.bancoUsados, q.bancoHuecos end
+      if not p.mochila and q.mochila then p.mochila, p.usados, p.huecos = CopiarDato(q.mochila, {}), q.usados, q.huecos end
+      for k, v in pairs(q) do if p[k] == nil then p[k] = CopiarDato(v, {}) end end
+      lista[e.k] = nil
     end
   end
 end
 GL._JuntarRepetidos = JuntarRepetidos
 
--- 9.7.4: quitar de la lista un personaje que ya no existe (clic derecho en su fila)
 function GL.OlvidarPersonaje(clave)
-  if not clave or clave == ClavePersonaje() then return false end
+  if type(clave) ~= "string" or not ClavePersonaje() then return false end
   local lista = Cuenta()
-  if not lista[clave] then return false end
+  if not lista[clave] or GL.EsPersonajeActualCuenta(clave, lista[clave]) then return false end
   lista[clave] = nil
   return true
 end
@@ -132,7 +261,7 @@ GL.Habilidades = function()
 end
 
 -- 7.5.4: ajustes que se pueden copiar de un personaje a otro (no automatismos ni progreso)
-local AJUSTES = { "tema", "escala", "opacidad", "escalaFlecha", "tamTexto", "bloqueada", "recompensa", "instructor", "marcaMapa", "marcaPantalla", "modoPesca", "rangosBarras", "rangosAuto", "guiaClara",
+local AJUSTES = { "tema", "escala", "opacidad", "alphaVentana", "alphaRaton", "escalaFlecha", "tamTexto", "bloqueada", "recompensa", "instructor", "marcaMapa", "marcaPantalla", "modoPesca", "rangosBarras", "rangosAuto", "guiaClara",
   "pinesMapa", "minimapa", "destello", "discretoCombate", "comparador", "avisos", "grupo", "retrato", "celebracion",
   "minimapaDestinos", "bienvenida", "flechaColor", "autoSeguimiento", "sonidos", "infoContextual", "ahorro", "barraBuffs",
   -- 8.8: aspecto
@@ -155,15 +284,22 @@ local function TiempoJugado()
   return t
 end
 
+local cuentaSuspendidaR14 = false
 local function Guardar(conMochila, evento)
-  local clave = ClavePersonaje()
+  if cuentaSuspendidaR14 then return end
+  local clave, nombre, reino, guid = Identidad()
   if not clave then return end
   if evento == "PLAYER_LOGOUT" then return end   -- 7.6.2: al salir el juego ya da bolsas y oro vacíos y pisaba lo guardado
   local lista = Cuenta()
-  local p = lista[clave] or {}
-  p.n = UnitName("player")
-  p.reino = GetRealmName and GetRealmName() or p.reino
-  p.guid = (UnitGUID and UnitGUID("player")) or p.guid
+  local p = lista[clave]
+  if p and GUID(p.guid) and not guid then return end -- no sobrescribir una identidad confirmada sin GUID
+  if p and guid and GUID(p.guid) and p.guid ~= guid then
+    if not Archivar(clave, p, "guid_distinto") then return end
+    p = nil
+  end
+  p = p or {}
+  p.n, p.reino, p.guid = nombre, reino, guid or p.guid
+  JuntarRepetidos(lista, clave, p)
   local clase = UnitClass and select(2, UnitClass("player"))
   p.clase = clase
   p.raza = UnitRace and UnitRace("player")
@@ -201,7 +337,6 @@ local function Guardar(conMochila, evento)
   end
   p.visto = time and time() or nil
   lista[clave] = p
-  pcall(JuntarRepetidos, lista, clave, p)
 end
 
 ------------------------------------------------------------------------
@@ -213,8 +348,10 @@ local function GuardarBanco()
   local clave = ClavePersonaje()
   if not clave or not bancoAbierto then return end
   local p = Cuenta()[clave]
-  if not p then return end
-  p.banco, p.bancoUsados, p.bancoHuecos = LeerMochila(BANCO)
+  local _, _, _, guid = Identidad()
+  if not p or (GUID(p.guid) and guid ~= p.guid) then return end
+  local datos, usados, huecos = LeerMochila(BANCO)
+  if huecos > 0 then p.banco, p.bancoUsados, p.bancoHuecos = datos, usados, huecos end
 end
 
 local panel, ui = nil, { filas = {}, iconos = {} }
@@ -232,7 +369,7 @@ local function Buscar(texto)
         local nombre = o.l and o.l:match("%[(.-)%]")
         if nombre and string.find(string.lower(nombre), texto, 1, true) then
           if not porObjeto[nombre] then porObjeto[nombre] = { n = nombre, i = o.i, l = o.l, donde = {} }; table.insert(orden, nombre) end
-          local cl = (p.n or k) .. "|" .. sitio[1]
+          local cl = k .. "|" .. sitio[1]
           porObjeto[nombre].donde[cl] = (porObjeto[nombre].donde[cl] or 0) + (o.c or 1)
         end
       end
@@ -248,7 +385,7 @@ GL.BuscarEnCuenta = Buscar
 -- 9.7.4: cuántas unidades de un objeto (por su número) guarda cada personaje en la mochila y en el banco,
 -- según lo último que vio la guía. propio = el personaje con el que juegas.
 function GL.ContarObjetoCuenta(id)
-  local res, mia = {}, ClavePersonaje()
+  local res = {}
   if not id then return res end
   for k, p in pairs(Cuenta()) do
     local m, b = 0, 0
@@ -258,7 +395,8 @@ function GL.ContarObjetoCuenta(id)
     for _, o in ipairs(p.banco or {}) do
       if tonumber(o.l and o.l:match("item:(%d+)")) == id then b = b + (o.c or 1) end
     end
-    if m > 0 or b > 0 or k == mia then table.insert(res, { n = p.n or k, mochila = m, banco = b, propio = (k == mia) }) end
+    local propio = GL.EsPersonajeActualCuenta(k, p)
+    if m > 0 or b > 0 or propio then table.insert(res, { n = k, mochila = m, banco = b, propio = propio }) end
   end
   table.sort(res, function(a, b2) return (a.mochila + a.banco) > (b2.mochila + b2.banco) end)
   return res
@@ -350,7 +488,7 @@ local function Refrescar()
     f:SetPoint("TOPRIGHT", panel, "TOPRIGHT", 0, y)
     local abre = (abierto == e.k)
     f.flecha:SetText(C.GRIS .. (abre and "v" or ">") .. C.FIN)
-    f.nombre:SetText(ColorClase(p.clase) .. (p.n or e.k) .. C.FIN)
+    f.nombre:SetText(ColorClase(p.clase) .. e.k .. C.FIN)
     f.nivel:SetText(tostring(p.nivel or "?"))
     f.zona:SetText(C.GRIS .. (p.zona or "") .. C.FIN)
     f.oro:SetText(GL.Dinero and GL.Dinero(p.oro or 0) or tostring(p.oro or 0))
@@ -611,11 +749,19 @@ GL.Evento(ev, "PLAYER_MONEY")
 GL.Evento(ev, "PLAYER_LEVEL_UP")
 GL.Evento(ev, "BAG_UPDATE_DELAYED")
 GL.Evento(ev, "PLAYER_LOGOUT")
+GL.Evento(ev, "PLAYER_LEAVING_WORLD")
 GL.Evento(ev, "BANKFRAME_OPENED")
 GL.Evento(ev, "BANKFRAME_CLOSED")
 GL.Evento(ev, "PLAYERBANKSLOTS_CHANGED")
 GL.Evento(ev, "SKILL_LINES_CHANGED")
 ev:SetScript("OnEvent", function(_, evento)
+  if evento == "PLAYER_LEAVING_WORLD" or evento == "PLAYER_LOGOUT" then
+    bancoAbierto, cuentaSuspendidaR14 = false, true
+    return
+  elseif evento == "PLAYER_ENTERING_WORLD" then
+    bancoAbierto, cuentaSuspendidaR14 = false, false
+  end
+  if cuentaSuspendidaR14 then return end
   if evento == "BANKFRAME_OPENED" then bancoAbierto = true end
   pcall(Guardar, evento ~= "PLAYER_MONEY" and evento ~= "PLAYER_LEVEL_UP", evento)
   if bancoAbierto then pcall(GuardarBanco) end
@@ -625,11 +771,11 @@ end)
 
 -- 7.6.2: profesiones de los otros personajes de la cuenta (para la Biblioteca). Devuelve { { n = personaje, r = nivel } }.
 GL.ProfesionEnCuenta = function(nombre, id)
-  local r, yo = {}, ClavePersonaje()
+  local r = {}
   for k, p in pairs(Cuenta()) do
-    if k ~= yo then
+    if not GL.EsPersonajeActualCuenta(k, p) then
       for _, pr in ipairs(p.profesiones or {}) do
-        if pr.n == nombre or (id and pr.id == id) then table.insert(r, { n = p.n or k, r = pr.r or 0, tope = pr.tope }); break end
+        if pr.n == nombre or (id and pr.id == id) then table.insert(r, { n = k, r = pr.r or 0, tope = pr.tope }); break end
       end
     end
   end
@@ -640,4 +786,4 @@ end
 -- Para las pruebas
 GL._cuenta = { Guardar = Guardar, Refrescar = Refrescar, Abrir = function(k) abierto = k end, Buscar = Buscar,
   Banco = function() bancoAbierto = true; GuardarBanco() end, VerBanco = function(v) verBanco = v end,
-  Busqueda = function(t) busqueda = t or "" end }
+  Busqueda = function(t) busqueda = t or "" end, Identidad=Identidad, Cuenta=Cuenta }

@@ -54,7 +54,7 @@ end
 local function Pasos(p, PH)
   local pasos = {}
   for _, t in ipairs(p.tramos or {}) do
-    local texto
+    local texto, base975, receta975
     if not t.mat then
       local zonas = t.zonas
       if zonas and GL.LC then zonas = zonas:gsub("[^,]+", function(z) local a, b, c = z:match("^(%s*)(.-)(%s*)$"); return a .. GL.LC(b) .. c end) end
@@ -64,8 +64,9 @@ local function Pasos(p, PH)
       for _, m in ipairs(t.mat or {}) do table.insert(mats, "<" .. ((GL.T and GL.T(m[3])) or m[3]) .. ">") end
       texto = "<" .. L(t.r) .. ">" .. (t.c and (" ×" .. t.c) or "") ..
         (#mats > 0 and (L" con " .. table.concat(mats, ", ")) or "") .. "."
+      base975 = texto
       local de = GL.OrigenProfesion975 and GL.OrigenProfesion975(t, Faccion()) or (t.de and ((PH and PH.de and PH.de[t.de]) or t.de))
-      if de and de ~= "Conocido" and de ~= "Known" then texto = texto .. " " .. L"Receta: " .. de .. "." end
+      if de and de ~= "Conocido" and de ~= "Known" then texto = texto .. " " .. L"Receta: " .. de .. "."; receta975 = de end
     end
     local mat
     if t.mat and t.c and t.c > 0 then
@@ -73,6 +74,9 @@ local function Pasos(p, PH)
       for _, m in ipairs(t.mat) do table.insert(mat, { m[1], m[2] / t.c, m[3], total975 = m[2] }) end
     end
     if t.ayuda975 then texto = texto .. " " .. L(t.ayuda975) end
+    local ayuda975 = t.ayuda975 and L(t.ayuda975) or nil
+    local requisitos975 = GL.RequisitosFabricacion975 and GL.RequisitosFabricacion975(t.sp)
+    if requisitos975 then texto = texto .. " " .. requisitos975 end
     local receta = t.sp and t.r or nil
     local recetas = receta and {receta} or nil
     if receta then
@@ -89,15 +93,85 @@ local function Pasos(p, PH)
     local crea, unidades
     if GL.ResultadoProfesion975 then crea, unidades = GL.ResultadoProfesion975(t.sp) end
     table.insert(pasos, { d = t.d, h = t.h, icono = ICONOS[p.skill], t = texto, mat = mat,
-      c975 = t.c, sp975 = t.sp, r975 = receta, recetas = recetas,
+      c975 = t.c, sp975 = t.sp, r975 = receta, recetas = recetas, base975 = base975, receta975 = receta975, ayuda975 = ayuda975, requisitos975 = requisitos975,
       crea = crea and { crea } or nil, produce975 = unidades, de975 = t.de, tramos975 = true })
   end
   return pasos
 end
 
+------------------------------------------------------------------------
+-- 9.7.9.1 (Quini: «quitar todo el texto de las profesiones y dejar solo lo necesario para el nivel de la profesión»).
+-- El texto completo de cada tramo sigue en paso.t; en la ventana se enseña esto:
+--   tramos pasados y futuros: solo qué fabricar y con qué;
+--   tramo actual: además, de dónde sale la receta y, si aún no tienes el rango que pide, a quién aprendérselo (solo tu facción).
+-- Se quitan los colores de Forever, «cantidad estimada» y «comprueba el color» (la explicación general va en la ayuda del icono).
+------------------------------------------------------------------------
+local QUITAR = {
+  "^Forever:", "amarillo/verde/gris", "yellow/green/grey", "^Aprendizaje %d", "^Learn at %d", "^Learning skill",
+  "[Cc]antidad estimada", "[Ee]stimated quantity", "[Cc]omprueba el color", "[Cc]onfirma el color", "[Cc]heck recipe colo",
+  "[Cc]onfirm the colo", "^Verifica el aprendizaje", "^Check the learning",
+}
+local function Frases(s)
+  local r, ini = {}, 1
+  while true do
+    local a, b = string.find(s, "%.%s+", ini)
+    if not a then table.insert(r, string.sub(s, ini)); break end
+    table.insert(r, string.sub(s, ini, a)); ini = b + 1
+  end
+  return r
+end
+local function Rango(frase, tope, fac)
+  -- «Antes de 150 aprende Experto (habilidad 125, nivel 20): Alianza, X; Horda, Y.» / «Learn Expert before 150 (...): Alliance, X; Horde, Y.»
+  local n, rango, ali, hor = frase:match("^Antes de (%d+) aprende (.-) %b():%s*Alianza, (.-); Horda, (.-)%.*$")
+  local en = false
+  if not n then rango, n, ali, hor = frase:match("^Learn (.-) before (%d+) %b():%s*Alliance, (.-); Horde, (.-)%.*$"); en = n ~= nil end
+  if not n then
+    rango, ali, hor = frase:match("^Aprende (.-):%s*Alianza, (.-); Horda, (.-)%.*$")
+    if not rango then rango, ali, hor = frase:match("^Learn (.-):%s*Alliance, (.-); Horde, (.-)%.*$"); en = rango ~= nil end
+    if not rango then return nil end
+    return false   -- «Aprende Aprendiz»: si la ves es que ya la tienes
+  end
+  if tope and tope > tonumber(n) then return false end   -- con tope 150 aún no tienes Experto (su tope es 225)
+  local quien = fac == "Horde" and hor or ali
+  return en and ("Learn " .. rango .. " before " .. n .. ": " .. quien .. ".") or ("Antes de " .. n .. " aprende " .. rango .. ": " .. quien .. ".")
+end
+local function NotaCorta(s, tope)
+  if type(s) ~= "string" or s == "" then return nil end
+  local fac, r = Faccion(), {}
+  for _, f in ipairs(Frases(s)) do
+    f = f:gsub("^%s+", ""):gsub("%s+$", "")
+    local quitar = f == ""
+    for _, q in ipairs(QUITAR) do if f:find(q) then quitar = true; break end end
+    if not quitar then
+      local rf = Rango(f, tope, fac)
+      if rf == false then quitar = true elseif rf then f = rf end
+    end
+    if not quitar then table.insert(r, f) end
+  end
+  if #r == 0 then return nil end
+  local t = table.concat(r, " "):gsub("%.%.+$", ".")
+  return t
+end
+GL.NotaRecetaCorta979 = NotaCorta
+function GL.TextoPasoProfesion979(paso, actual, tope)
+  if not paso or not paso.base975 then return paso and paso.t end
+  local t = paso.base975
+  if actual then
+    local de = NotaCorta(paso.receta975, tope)
+    if de then t = t .. " " .. L"Receta: " .. de end
+    local ay = NotaCorta(paso.ayuda975, tope)
+    if ay then t = t .. " " .. ay end
+    -- No filtrar requisitos de herramienta/estación por las reglas de abreviación.
+    if paso.requisitos975 then t = t .. " " .. paso.requisitos975 end
+  end
+  return t
+end
+
 local function Hacer(skill, modo)
-  local p = GL.PlanProfesion975 and GL.PlanProfesion975(skill, modo) or DeWowhead(skill)
-  if not p or not p.tramos then return nil end
+  local p
+  if GL.PlanProfesion975 then p = GL.PlanProfesion975(skill, modo) else p = DeWowhead(skill) end
+  -- Una respuesta vacía o transitoria no es una guía válida ni debe sustituir el plan elegido.
+  if type(p) ~= "table" or type(p.tramos) ~= "table" or #p.tramos == 0 then return nil end
   local PH = (Faccion() == "Horde") and GL.WH.profesionesHorda or nil
   local intro
   if skill == 185 then
@@ -135,13 +209,13 @@ local function Aprendida(o)
   if not GL.NivelProfesion then return nil end
   for k = 2, 3 do
     local ok, r = pcall(GL.NivelProfesion, { nombre = o[k], skill = o[1] })
-    if ok and r then return r end
+    if ok and type(r)=="number" and r>0 and r<math.huge and r%1==0 then return r end
   end
 end
 
 -- Se llama al cargar la ruta (ya traducida, GuiaAventurero.lua Iniciar) y cuando cambian tus habilidades.
 -- Devuelve true si la lista ha cambiado.
-function GL.ProfesionesDelPersonaje(R)
+local function ReconstruirProfesiones(R)
   if type(R) ~= "table" then return false end
   if not R.profesionesRuta then R.profesionesRuta = R.profesiones or {} end
   local deRuta = {}
@@ -150,15 +224,20 @@ function GL.ProfesionesDelPersonaje(R)
   local lista, firma = {}, {}
   for _, o in ipairs(ORDEN) do
     if Aprendida(o) then
-      local modo = GL.ModoProfesion975 and GL.ModoProfesion975(o[1]) or "referencia"
+      local modo = GL.ModoProfesion975 and GL.ModoProfesion975(o[1], R) or "referencia"
       local clave = tostring(o[1]) .. ":" .. modo
       local prof = (modo == "ruta" and deRuta[o[1]]) or R.guiasHechas[clave]
       if not prof and not DeWowhead(o[1]) then prof = deRuta[o[1]] end
       if not prof then
         local ok, hecha = pcall(Hacer, o[1], modo)
-        prof = ok and hecha or { nombre = NombreCliente(o[1], o[2]), skill = o[1], icono = ICONOS[o[1]], pasos = {},
-          intro = L"Todavía no hay guía para subir esta profesión." }
-        R.guiasHechas[clave] = prof
+        if ok and type(hecha)=="table" and type(hecha.pasos)=="table" and #hecha.pasos>0 then
+          prof = hecha
+          R.guiasHechas[clave] = prof
+        else
+          prof = { nombre = NombreCliente(o[1], o[2]), skill = o[1], icono = ICONOS[o[1]], pasos = {},
+            intro = L"Todavía no hay guía para subir esta profesión." }
+          clave = clave .. ":pendiente"
+        end
       end
       prof.icono = prof.icono or ICONOS[o[1]]
       table.insert(lista, prof)
@@ -197,16 +276,24 @@ function GL.ProfesionesDelPersonaje(R)
   return cambia
 end
 
+-- La consulta de habilidades puede expandir categorías y disparar eventos síncronos.
+local reconstruyendo = false
+function GL.ProfesionesDelPersonaje(R)
+  if reconstruyendo then return false end
+  reconstruyendo = true
+  local ok, cambia = pcall(ReconstruirProfesiones,R)
+  reconstruyendo = false
+  if not ok then return false end
+  return cambia
+end
+
 -- Estimación conjunta de ingredientes de pescado de los planes activos, sin duplicar bolsas.
 local PECES977 = {[6291]=true,[6289]=true,[6308]=true,[8365]=true,[4603]=true,[13893]=true,[13759]=true,[13758]=true,[13760]=true,[13888]=true,[13889]=true,[13754]=true,[13755]=true,[6361]=true,[6362]=true,[6358]=true,[6359]=true,[13422]=true}
 function GL.NecesidadesPesca977(profesiones, obtenerNivel, contar)
   local total,lista,vistas={},{},{}
   obtenerNivel=obtenerNivel or GL.NivelProfesion
   if not obtenerNivel or not GL.ComprasProfesion975 then return lista end
-  contar=contar or function(id)
-    local f=(C_Item and C_Item.GetItemCount) or GetItemCount
-    if f then local ok,n=pcall(f,id,false); if ok and type(n)=="number" then return n end end
-  end
+  contar=contar or GL.BolsasProfesion975 or function() return nil end
   for _,prof in ipairs(profesiones or {}) do
     if (prof.skill==185 or prof.skill==171) and not vistas[prof.skill] then
       vistas[prof.skill]=true
@@ -222,8 +309,9 @@ function GL.NecesidadesPesca977(profesiones, obtenerNivel, contar)
     end
   end
   for id,t in pairs(total) do
-    local n=contar(id); t.desconocido=type(n)~="number"
-    t.falta=math.max(0,t.cantidad-math.max(0,tonumber(n) or 0))
+    local ok,n=pcall(contar,id)
+    t.desconocido=not ok or (issecretvalue and issecretvalue(n)) or type(n)~="number" or n~=n or n<0 or n>=math.huge or n%1~=0
+    t.falta=math.max(0,t.cantidad-(t.desconocido and 0 or n))
     if t.falta>0 then lista[#lista+1]=t end
   end
   table.sort(lista,function(a,b) if a.falta==b.falta then return a.id<b.id end return a.falta>b.falta end)

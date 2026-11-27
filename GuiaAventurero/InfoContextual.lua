@@ -52,6 +52,7 @@ local function AmpliarObjeto(tooltip)
       local texto = _G[equip]
       if type(texto) == "string" and texto ~= "" then tipo = tipo .. " · " .. texto end
     end
+    if GL.ingles ~= GL.clienteIngles then tipo = tipo .. " (" .. L"idioma del cliente" .. ")" end
     lineas[#lineas+1] = tipo
   end
   -- 7.9.4: el precio de venta ya lo pone el juego en el tooltip; no se repite
@@ -62,4 +63,4 @@ local function AmpliarObjeto(tooltip)
   tooltip:Show()
 end
 
-if GL.EngancharTooltipObjeto then GL.EngancharTooltipObjeto(AmpliarObjeto, L"información de objetos") end
+if GL.EngancharTooltipObjeto then GL.EngancharTooltipObjeto(AmpliarObjeto, L"información de objetos", function() return L"Guía del Aventurero · Información" end) end

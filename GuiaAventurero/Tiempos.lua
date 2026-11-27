@@ -13,8 +13,19 @@ local L = GL.L
 local C = GL.colores
 local POR_DEFECTO = 240
 
-local function DB() return GuiaAventureroDB or {} end
-local function Num(v) v = (GL.Seguro and GL.Seguro(v)) or v; return type(v) == "number" and v or nil end
+local function DB() return type(GuiaAventureroDB) == "table" and GuiaAventureroDB or {} end
+local function Num(v)
+  if GL.Seguro then v = GL.Seguro(v) end
+  return type(v) == "number" and v == v and v > 0 and v <= 3600 and v or nil
+end
+local function Clave(v) return type(v) == "string" and v:match("^[1-9]%d*:[1-9]%d*$") ~= nil end
+local function Muestras(v) return type(v) == "number" and v >= 1 and v <= 20 and v % 1 == 0 and v or 1 end
+local function Archivo(t, k, v)
+  if v == nil then return end
+  local a = t.reparacionesTiemposR09
+  if type(a) ~= "table" then a = { anterior = a }; t.reparacionesTiemposR09 = a end
+  if a[k] == nil then a[k] = type(v) == "number" and (v ~= v or math.abs(v) == math.huge) and tostring(v) or v end
+end
 local function IdRuta() return (GL.RUTA and GL.RUTA.id) or "?" end
 
 ------------------------------------------------------------------------
@@ -76,35 +87,44 @@ end
 
 -- Lo llama Guia9.lua al acabar un paso
 function GL.GuardarTiempoPaso(clave, seg, xp)
-  if type(clave) ~= "string" or not Num(seg) then return end
-  if type(GuiaAventureroCuenta) ~= "table" then GuiaAventureroCuenta = {} end
-  local c = GuiaAventureroCuenta
-  c.pasos9 = type(c.pasos9) == "table" and c.pasos9 or {}
   local id = IdRuta()
-  c.pasos9[id] = type(c.pasos9[id]) == "table" and c.pasos9[id] or {}
-  local v = c.pasos9[id][clave]
-  if type(v) ~= "table" or not Num(v.t) then v = { t = seg, n = 1, xp = xp }
+  if not Clave(clave) or not Num(seg) or seg < 10 or type(id) ~= "string" or id == "?" or id == "" then return end
+  if type(GuiaAventureroDB) ~= "table" then return end
+  if GuiaAventureroCuenta == nil then GuiaAventureroCuenta = {} end
+  if type(GuiaAventureroCuenta) ~= "table" then return end
+  if type(xp) ~= "number" or xp ~= xp or xp < 0 or xp >= math.huge then xp = nil end
+  local c, db = GuiaAventureroCuenta, GuiaAventureroDB
+  local function tabla(t, k, ruta)
+    if type(t[k]) ~= "table" then Archivo(ruta, k, t[k]); t[k] = {} end
+    return t[k]
+  end
+  local cuenta = tabla(tabla(c, "pasos9", c), id, c)
+  local mios = tabla(tabla(db, "tiempos9", db), id, db)
+  local v = cuenta[clave]
+  if type(v) ~= "table" or not Num(v.t) then
+    Archivo(c, "pasos9:" .. id .. ":" .. clave, v)
+    v = { t = seg, n = 1, xp = xp }
   else
-    local n = Num(v.n) or 1
+    local n = Muestras(v.n)
+    if v.n ~= nil and v.n ~= n then Archivo(c, "pasos9:" .. id .. ":" .. clave .. ":n", v.n) end
     v.t = math.floor((v.t * n + seg) / (n + 1) + 0.5)
-    v.n = math.min(n + 1, 20)   -- media móvil: las últimas veces pesan más que las de hace meses
+    v.n = math.min(n + 1, 20)
     if xp and xp > 0 then v.xp = xp end
   end
-  c.pasos9[id][clave] = v
-  local db = DB()
-  db.tiempos9 = type(db.tiempos9) == "table" and db.tiempos9 or {}
-  db.tiempos9[id] = type(db.tiempos9[id]) == "table" and db.tiempos9[id] or {}
-  db.tiempos9[id][clave] = math.floor(seg)
+  cuenta[clave] = v
+  if mios[clave] ~= nil and not Num(mios[clave]) then Archivo(db, "tiempos9:" .. id .. ":" .. clave, mios[clave]) end
+  mios[clave] = math.floor(seg)
   GL.TiemposCambiaron()
 end
 
 ------------------------------------------------------------------------
 -- Tu ritmo frente a la cuenta, y tus medias por tipo
 ------------------------------------------------------------------------
-local cache
+local cache, cacheRuta, cacheDB, cacheCuenta
 function GL.TiemposCambiaron() cache = nil end
 
 local function PasoDeClave(clave)
+  if not Clave(clave) then return nil end
   local s, p = string.match(clave, "^(%d+):(%d+)$")
   local R = GL.RUTA
   local sec = R and s and R.secciones[tonumber(s)]
@@ -112,17 +132,18 @@ local function PasoDeClave(clave)
 end
 
 local function Calcular()
-  if cache then return cache end
+  if cache and cacheRuta == IdRuta() and cacheDB == GuiaAventureroDB and cacheCuenta == GuiaAventureroCuenta then return cache end
+  cacheRuta, cacheDB, cacheCuenta = IdRuta(), GuiaAventureroDB, GuiaAventureroCuenta
   local mios, cuenta = Mios(), Cuenta()
   local sm, sc, pares, nMios = 0, 0, 0, 0
   local porTipo = {}
   for clave, t in pairs(mios) do
     t = Num(t)
-    if t then
+    if t and Clave(clave) then
       nMios = nMios + 1
       local v = cuenta[clave]
       -- solo pasos que también hizo otro personaje (n >= 2): si no, la media de la cuenta es tu propio tiempo
-      if type(v) == "table" and Num(v.t) and (Num(v.n) or 1) >= 2 then sm, sc, pares = sm + t, sc + v.t, pares + 1 end
+      if type(v) == "table" and Num(v.t) and Muestras(v.n) >= 2 then sm, sc, pares = sm + t, sc + v.t, pares + 1 end
       local p = PasoDeClave(clave)
       if p then
         local tipo = Tipo(p)
@@ -134,7 +155,7 @@ local function Calcular()
   local factor = 1
   if pares >= 5 and sc > 0 then factor = math.max(0.5, math.min(2, sm / sc)) end
   local st, nt = 0, 0
-  for _, v in pairs(cuenta) do if type(v) == "table" and Num(v.t) then st, nt = st + v.t, nt + 1 end end
+  for clave, v in pairs(cuenta) do if Clave(clave) and type(v) == "table" and Num(v.t) then st, nt = st + v.t, nt + 1 end end
   local medias = {}
   for tipo, x in pairs(porTipo) do if x.n >= 3 then medias[tipo] = x.s / x.n end end
   cache = { factor = factor, pares = pares, nMios = nMios, media = nt >= 3 and st / nt or nil, porTipo = medias }
@@ -209,7 +230,7 @@ function GL.PasosLentos(max)
   for clave, t in pairs(Mios()) do
     t = Num(t)
     local v = cuenta[clave]
-    if t and type(v) == "table" and Num(v.t) and (Num(v.n) or 1) >= 2 and t > v.t * 1.4 and t - v.t >= 120 then
+    if t and type(v) == "table" and Num(v.t) and Muestras(v.n) >= 2 and t > v.t * 1.4 and t - v.t >= 120 then
       local p = PasoDeClave(clave)
       if p then table.insert(l, { clave = clave, paso = p, t = t, media = v.t, r = t / v.t }) end
     end
@@ -225,7 +246,7 @@ function GL.MinutosPorSeccion()
   if not R then return {} end
   local suma, n = {}, {}
   for clave, t in pairs(Mios()) do
-    local s = tonumber(string.match(clave, "^(%d+):"))
+    local s = Clave(clave) and tonumber(string.match(clave, "^(%d+):"))
     if s and Num(t) then suma[s], n[s] = (suma[s] or 0) + t, (n[s] or 0) + 1 end
   end
   local l = {}

@@ -8,12 +8,17 @@ local L = GL.L
 local aceptar, entregar = {}, {}      -- misiones de la ruta: las que se recogen y las que se entregan
 local marca                           -- marca sobre la recompensa recomendada
 local revisionDialogo = 0
+local rutaPreparada
+local accionesMision, accionesSaludo = {}, {}
+local ultimoAviso
 
 local function DB() return GuiaAventureroDB end
 
 local function PrepararMisiones()
   revisionDialogo = revisionDialogo + 1
   if marca then marca:Hide() end
+  rutaPreparada = nil
+  accionesMision, accionesSaludo, ultimoAviso = {}, {}, nil
   aceptar, entregar = {}, {}
   local secciones = GL.RUTA and GL.RUTA.secciones or {}
   for i = 1, #secciones do
@@ -27,28 +32,37 @@ local function PrepararMisiones()
       end
     end
   end
+  rutaPreparada = GL.RUTA
 end
 
 local function Activo()
+  if not GL.RUTA or rutaPreparada ~= GL.RUTA then return false end
   if not DB() or DB().autoMisiones == false then return false end
+  if not GL.PersonajeVivoR14() or not GL.AccionProtegidaPermitidaR13() then return false end
   if GL.QuestieConvivencia976 and GL.QuestieConvivencia976() then return false end
   if IsShiftKeyDown and IsShiftKeyDown() then return false end
   return true
 end
 
+-- Registrar antes de llamar a la API: puede disparar otro evento de forma síncrona.
+-- Si el juego rechaza la acción, se deja el diálogo al jugador hasta que lo cierre.
+local function UnaVez(registro, accion, q, f, ...)
+  if not Activo() or type(f) ~= "function" then return end
+  local clave = accion .. ":" .. tostring(q)
+  if registro[clave] then return end
+  registro[clave] = true
+  f(...)
+end
+
 local function MisionDelDialogo()
   if not GetQuestID then return nil end
   local q = GL.Seguro(GetQuestID())
-  if q == 0 then return nil end
+  if type(q) ~= "number" or q <= 0 or q >= math.huge or q ~= math.floor(q) then return nil end
   return q
 end
 
 local function Completa(q)
-  if C_QuestLog and C_QuestLog.IsComplete then
-    local ok, r = pcall(C_QuestLog.IsComplete, q)
-    return ok and r
-  end
-  return false
+  return GL.ConsultarMisionR14(C_QuestLog and C_QuestLog.IsComplete, q) == true
 end
 
 ------------------------------------------------------------------------
@@ -76,15 +90,16 @@ local function Texto(v)
 end
 local function LeerInfo(f, objeto)
   if type(f) ~= "function" then return nil end
-  local ok, nombre, enlace, _, nivel, nivelReq, _, _, _, ranura, _, precio, clase, subclase = pcall(f, objeto)
-  if not ok or not Texto(nombre) or not Texto(ranura) or not Numero(nivelReq) or nivelReq < 0
+  local ok, nombre, enlace, _, nivel, nivelReq, _, nombreSubclase, _, ranura, _, precio, clase, subclase = pcall(f, objeto)
+  if not ok or not Texto(nombre) or not Publico(ranura) or type(ranura) ~= "string" or not Numero(nivelReq) or nivelReq < 0
       or not Numero(clase) or not Numero(subclase) then return nil end
   if not Texto(enlace) then
     if not Texto(objeto) then return nil end
     enlace = objeto
   end
   return { nombre = nombre, enlace = enlace, ranura = ranura, precio = Numero(precio) and precio >= 0 and precio or 0,
-    clase = clase, subclase = subclase, nivelReq = nivelReq, nivel = Numero(nivel) and nivel >= 0 and nivel or nil }
+    precioConocido = Numero(precio) and precio >= 0,
+    clase = clase, subclase = subclase, nombreSubclase = Texto(nombreSubclase) and nombreSubclase or nil, nivelReq = nivelReq, nivel = Numero(nivel) and nivel >= 0 and nivel or nil }
 end
 local function InfoObjeto(objeto)
   if not Publico(objeto) or not objeto then return nil end
@@ -124,7 +139,7 @@ local DOS_MANOS_ARMA = { 16, 17 }
 
 -- Los requisitos especiales se consultan sin abrir ni modificar el tooltip visible.
 -- Una API ausente o un resultado incompleto no demuestra que el objeto sea equipable.
-local function RequisitosEspeciales(enlace)
+local function RequisitosEspeciales(enlace, info)
   local f = C_TooltipInfo and C_TooltipInfo.GetHyperlink
   if not f or not enlace then return nil end
   local ok, datos = pcall(f, enlace)
@@ -132,7 +147,22 @@ local function RequisitosEspeciales(enlace)
   local patrones = { "^requires%s", "^requirement%s", "^classes:", "^races:", "^requiere%s", "^requisito%s", "^clases:", "^razas:" }
   local incierto = false
   local completas = Enum and Enum.TooltipDataType and Enum.TooltipDataType.Item ~= nil and datos.type == Enum.TooltipDataType.Item and #datos.lines >= 2
-  for _, linea in ipairs(datos.lines) do
+  info = info or InfoObjeto(enlace)
+  local subtipo = info and (info.clase == 2 or info.clase == 4) and info.nombreSubclase
+  local function Rojo(c)
+    return type(c) == "table" and Numero(c.r) and Numero(c.g) and Numero(c.b) and c.r >= 0.7 and c.g < 0.35 and c.b < 0.35
+  end
+  for indice, linea in ipairs(datos.lines) do
+    -- El tipo de arma/armadura puede salir en rojo sin una línea «Requiere».
+    -- Comparar solo la etiqueta exacta localizada y nunca el título del objeto.
+    if subtipo and indice > 1 then
+      local function TipoRojo(texto, color)
+        return Texto(texto) and texto:match("^%s*(.-)%s*$"):lower() == subtipo:lower() and Rojo(color)
+      end
+      if TipoRojo(linea.leftText, linea.leftColor) or TipoRojo(linea.rightText, linea.rightColor) then
+        return false, subtipo
+      end
+    end
     local texto = type(linea.leftText) == "string" and linea.leftText:lower() or ""
     -- Solo etiquetas explícitas: no confundir reputación o nombres de facciones con exclusividad.
     local faccion = ({["alliance only"]="Alliance", ["horde only"]="Horde", ["solo alianza"]="Alliance", ["solo horda"]="Horde", ["faction: alliance"]="Alliance", ["faction: horde"]="Horde", ["facción: alianza"]="Alliance", ["facción: horda"]="Horde"})[texto:match("^%s*(.-)%s*$")]
@@ -159,17 +189,33 @@ local function RequisitosEspeciales(enlace)
   return nil
 end
 
+-- Los perfiles de las rutas no incluyen la subclase 6 (escudos), aunque
+-- Guerrero y Paladín disponen de talentos específicos de escudo en Forever.
+-- Para las demás clases no ampliar competencias sin confirmación.
+local function EscudoDeClase(info)
+  if info.clase ~= 4 or info.subclase ~= 6 or info.ranura ~= "INVTYPE_SHIELD" then return false end
+  if type(UnitClass) ~= "function" then return false end
+  local ok, _, clase = pcall(UnitClass, "player")
+  return ok and (clase == "WARRIOR" or clase == "PALADIN")
+end
+
+local function NivelEquipo(info, equipo)
+  local requerido = info.nivelReq or 0
+  if info.clase == 4 then
+    requerido = math.max(requerido, (equipo.nivelArmadura or {})[info.subclase] or 0)
+  end
+  return requerido
+end
+
 local function Usable(info, equipo, nivelObjetivo)
   if not info or not equipo or not RANURAS[info.ranura or ""] then return false end
   local nivelJugador = nivelObjetivo or ((UnitLevel and UnitLevel("player")) or 1)
-  if (info.nivelReq or 0) > nivelJugador then return false end
-  if RequisitosEspeciales(info.enlace) == false then return false end
+  if NivelEquipo(info, equipo) > nivelJugador then return false end
+  if RequisitosEspeciales(info.enlace, info) == false then return false end
   if equipo.dosManos and MANO_IZQUIERDA[info.ranura or ""] then return false end
   if equipo.dobleArma and NO_DOBLE[info.ranura or ""] then return false end
   if info.clase == 4 then
-    local nivel = equipo.nivelArmadura and equipo.nivelArmadura[info.subclase]
-    if nivel and nivelJugador < nivel then return false end
-    return Esta(equipo.armadura, info.subclase)
+    return Esta(equipo.armadura, info.subclase) or EscudoDeClase(info)
   end
   if info.clase == 2 then return Esta(equipo.armas, info.subclase) end
   return false
@@ -199,13 +245,39 @@ local function Puntuar(enlace, info, pesos)
     end
     if peso and type(valor) == "number" then total = total + peso * valor end
   end
-  return total
+  return Numero(total) and total or nil
+end
+
+-- Un mismo umbral para tooltip, botín y recompensas. El porcentaje es de la
+-- puntuación orientativa, no de DPS ni sanación real.
+local function DiferenciaEquipo(nueva, anterior)
+  if not Numero(nueva) or not Numero(anterior) then return nil end
+  local d = nueva - anterior
+  if not Numero(d) then return nil end
+  if math.abs(d) <= 0.05 then return 0 end
+  local pct = anterior > 0.05 and d / anterior * 100 or nil
+  return d, Numero(pct) and pct or nil
+end
+
+-- Una API ausente, un error o una pieza aún sin enlace no son una ranura vacía.
+local function EnlaceEquipado(slot)
+  if type(GetInventoryItemLink) ~= "function" then return false end
+  local ok, enlace = pcall(GetInventoryItemLink, "player", slot)
+  if not ok or not Publico(enlace) then return false end
+  if Texto(enlace) then return true, enlace end
+  if enlace ~= nil then return false end
+  if type(GetInventoryItemID) == "function" then
+    local okID, id = pcall(GetInventoryItemID, "player", slot)
+    if not okID or not Publico(id) or id ~= nil then return false end
+  end
+  return true, nil
 end
 
 local function PuntuacionEquipada(ranuras, pesos)
   local peor
   for i = 1, #ranuras do
-    local enlace = GetInventoryItemLink and GetInventoryItemLink("player", ranuras[i])
+    local ok, enlace = EnlaceEquipado(ranuras[i])
+    if not ok then return nil end
     local valor = 0
     if enlace then
       local info = InfoObjeto(enlace)
@@ -221,12 +293,36 @@ end
 -- Devuelve el coste de las piezas desplazadas, la ranura de destino y sus enlaces.
 -- nil significa que no se puede comparar sin datos o sin cambiar otra arma.
 -- Límites de categoría de equipo proporcionados por la API (si existe).
+local function IdObjeto(enlace)
+  if not Texto(enlace) then return nil end
+  return tonumber(enlace:match("item:(%d+)")) or tonumber(enlace)
+end
+
+local function LineasObjeto(enlace)
+  local f = C_TooltipInfo and C_TooltipInfo.GetHyperlink
+  if type(f) ~= "function" or not Texto(enlace) then return nil end
+  local ok, datos = pcall(f, enlace)
+  if ok and type(datos) == "table" and type(datos.lines) == "table" then return datos.lines end
+end
+
 local function LimiteEquipo(enlace)
   local f = C_Item and C_Item.GetItemUniqueness
-  if not f or not enlace then return nil end
-  local ok, categoria, maximo = pcall(f, enlace)
-  if ok and type(categoria) == "number" and categoria > 0 and type(maximo) == "number" and maximo >= 1 then
-    return categoria, maximo
+  if type(f) == "function" and enlace then
+    local ok, categoria, maximo = pcall(f, enlace)
+    if ok and Numero(categoria) and categoria > 0 and Numero(maximo) and maximo >= 1 then
+      return categoria, maximo
+    end
+  end
+  -- No confundir «Único» (límite de posesión) con «Único equipado».
+  -- Las categorías textuales no son identificadores fiables entre idiomas.
+  for indice, linea in ipairs(LineasObjeto(enlace) or {}) do
+    if indice > 1 and Texto(linea.leftText) then
+      local texto = linea.leftText:match("^%s*(.-)%s*$"):lower()
+      if texto == "unique-equipped" or texto == "unique equipped" or texto == "único equipado" or texto == "Único equipado" or texto == "único-equipado" or texto == "Único-equipado" then
+        local id = IdObjeto(enlace)
+        if id then return "item:" .. id, 1 end
+      end
+    end
   end
 end
 
@@ -236,11 +332,77 @@ local function RespetaLimite(info, destino)
   local cantidad = 1
   for slot = 1, 19 do
     if slot ~= destino and not (info.ranura == "INVTYPE_2HWEAPON" and slot == 17) then
-      local e = GetInventoryItemLink and GetInventoryItemLink("player", slot)
-      if e and LimiteEquipo(e) == categoria then cantidad = cantidad + 1 end
+      local disponible, e = EnlaceEquipado(slot)
+      if not disponible then return false end
+      if e then
+        local coincide = LimiteEquipo(e) == categoria
+        local id = IdObjeto(info.enlace)
+        if id and IdObjeto(e) == id then coincide = true end
+        -- Una variante encantada del mismo objeto comparte su identidad.
+        if type(categoria) == "string" then coincide = IdObjeto(e) == IdObjeto(info.enlace) end
+        if coincide then cantidad = cantidad + 1 end
+      end
     end
   end
   return cantidad <= maximo
+end
+
+-- Los abalorios y efectos de uso/equipado no tienen una ponderación fiable
+-- basada exclusivamente en GetItemStats. No inventar un valor de combate.
+local function EfectosSinPuntuar(enlace, info)
+  info = info or InfoObjeto(enlace)
+  if info and info.ranura == "INVTYPE_TRINKET" then return true end
+  for indice, linea in ipairs(LineasObjeto(enlace) or {}) do
+    if indice > 1 and Texto(linea.leftText) then
+      local texto = linea.leftText:match("^%s*(.-)%s*$"):lower()
+      if texto:match("^equip:") or texto:match("^use:") or texto:match("^chance on hit:")
+          or texto:match("^equipar:") or texto:match("^uso:") or texto:match("^usar:")
+          or texto:match("^al equipar:") or texto:match("^probabilidad al golpear:") then return true end
+    end
+  end
+  return false
+end
+
+-- Solo las estadísticas contempladas por los perfiles existentes están clasificadas.
+-- Una clave nueva del cliente no equivale a una estadística de valor cero.
+local ESTADISTICAS_CONOCIDAS = {
+  ITEM_MOD_STRENGTH_SHORT = true,
+  ITEM_MOD_AGILITY_SHORT = true,
+  ITEM_MOD_STAMINA_SHORT = true,
+  ITEM_MOD_INTELLECT_SHORT = true,
+  ITEM_MOD_SPIRIT_SHORT = true,
+  RESISTANCE0_NAME = true,
+  ITEM_MOD_DAMAGE_PER_SECOND_SHORT = true,
+  ITEM_MOD_ATTACK_POWER_SHORT = true,
+  ITEM_MOD_RANGED_ATTACK_POWER_SHORT = true,
+  ITEM_MOD_CRIT_RATING_SHORT = true,
+  ITEM_MOD_HIT_RATING_SHORT = true,
+  ITEM_MOD_CRIT_SPELL_RATING_SHORT = true,
+  ITEM_MOD_HIT_SPELL_RATING_SHORT = true,
+  ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = true,
+  ITEM_MOD_DODGE_RATING_SHORT = true,
+  ITEM_MOD_MANA_REGENERATION_SHORT = true,
+  ITEM_MOD_SPELL_DAMAGE_DONE_SHORT = true,
+  ITEM_MOD_SPELL_POWER_SHORT = true,
+  ITEM_MOD_HEALING_DONE_SHORT = true,
+  ITEM_MOD_PARRY_RATING_SHORT = true,
+  ITEM_MOD_BLOCK_RATING_SHORT = true,
+}
+local function EstadisticasSinValorar(enlace)
+  local stats = Estadisticas(enlace)
+  if not stats then return false end -- la falta de datos ya bloquea Puntuar
+  for clave, valor in pairs(stats) do
+    if valor ~= 0 and not ESTADISTICAS_CONOCIDAS[clave] then return true end
+  end
+  return false
+end
+
+local function ComparacionParcial(info, piezas)
+  if EfectosSinPuntuar(info.enlace, info) or EstadisticasSinValorar(info.enlace) then return true end
+  for _, enlace in ipairs(piezas or {}) do
+    if EfectosSinPuntuar(enlace) or EstadisticasSinValorar(enlace) then return true end
+  end
+  return false
 end
 
 local function CosteSustitucion(info, equipo, pesos)
@@ -248,15 +410,32 @@ local function CosteSustitucion(info, equipo, pesos)
   local ranuras = RANURAS[tipo]
   if not ranuras then return nil end
   if equipo.dobleArma and tipo == "INVTYPE_WEAPON" then ranuras = DOS_MANOS_ARMA end
-  local principal = GetInventoryItemLink and GetInventoryItemLink("player", 16)
+  local principalDisponible, principal = EnlaceEquipado(16)
   local ip = principal and InfoObjeto(principal)
-  local dos = ip and ip.ranura == "INVTYPE_2HWEAPON"
+  local principalUnaMano = principalDisponible and ip and ip.clase == 2
+    and (ip.ranura == "INVTYPE_WEAPON" or ip.ranura == "INVTYPE_WEAPONMAINHAND")
+  -- La preferencia de doble arma no demuestra que el personaje haya aprendido
+  -- la competencia. Si la API no responde, solo un arma ya equipada en la
+  -- mano izquierda permite inferirla, sin asumir niveles de desbloqueo.
+  local function PuedeManoIzquierda()
+    if not principalUnaMano or equipo.dosManos then return false end
+    if info.clase ~= 2 then return true end
+    if type(CanDualWield) == "function" then
+      local ok, puede = pcall(CanDualWield)
+      if ok and Publico(puede) and type(puede) == "boolean" then return puede end
+    end
+    local disponible, izquierda = EnlaceEquipado(17)
+    local ii = disponible and izquierda and InfoObjeto(izquierda)
+    return ii and ii.clase == 2
+      and (ii.ranura == "INVTYPE_WEAPON" or ii.ranura == "INVTYPE_WEAPONOFFHAND") or false
+  end
   local mejor, destino, piezas
   for _, r in ipairs(ranuras) do
-    if RespetaLimite(info, r) and not (r == 17 and (dos or (principal and not ip))) then
+    if (r ~= 17 or PuedeManoIzquierda()) and RespetaLimite(info, r) then
       local enlaces, total, valido = {}, 0, true
       local function Sumar(slot)
-        local e = GetInventoryItemLink and GetInventoryItemLink("player", slot)
+        local disponible, e = EnlaceEquipado(slot)
+        if not disponible then valido = false; return end
         if not e then return end
         local i = InfoObjeto(e)
         if not i then valido = false; return end
@@ -273,9 +452,43 @@ local function CosteSustitucion(info, equipo, pesos)
   return mejor, destino, piezas
 end
 
+-- Compartido por el diario y el diálogo: no elegir entre datos incompletos.
+local function ElegirRecompensa(lista, equipo)
+  if not equipo or lista.incompleta then return nil, nil, true end
+  local mejor, mejora, caro, precio = nil, 0, nil, -1
+  local faltan, hayParcial, faltaPrecio = false, false, false
+  for i, r in ipairs(lista) do
+    if r.elegir then
+      local info = InfoObjeto(r.enlace)
+      if not info then
+        faltan = true
+      else
+        if RANURAS[info.ranura] and Usable(info, equipo) then
+          local pesos = equipo.pesos or {}
+          local coste, _, piezas = CosteSustitucion(info, equipo, pesos)
+          local limitada = ComparacionParcial(info, piezas)
+          if limitada then hayParcial = true end
+          local m = DiferenciaEquipo(Puntuar(info.enlace, info, pesos), coste)
+          if m == nil then faltan = true end
+          if m and m > mejora and not limitada then mejor, mejora = i, m end
+        end
+        if not info.precioConocido then faltaPrecio = true
+        elseif info.precio > precio then caro, precio = i, info.precio end
+      end
+    end
+  end
+  if faltan then return nil, nil, true end
+  -- Una alternativa con efectos no valorados puede superar la mejor puntuación conocida.
+  -- No destacar ninguna elección como óptima hasta poder compararlas todas.
+  if hayParcial then return nil, nil, false end
+  if mejor then return mejor, nil, false end
+  if not faltaPrecio and precio > 0 then return nil, caro, false end
+  return nil, nil, faltaPrecio
+end
+
 -- 6.4: lo usa Equipo.lua (comparador en los tooltips y pestaña Personaje > Equipo)
 GL.EquipoUtil = { InfoObjeto = InfoObjeto, Estadisticas = Estadisticas, Usable = Usable, Puntuar = Puntuar, PuntuacionEquipada = PuntuacionEquipada,
-  RequisitosEspeciales = RequisitosEspeciales, RANURAS = RANURAS, DOS_MANOS_ARMA = DOS_MANOS_ARMA, CosteSustitucion = CosteSustitucion }
+  ElegirRecompensa = ElegirRecompensa, ComparacionParcial = ComparacionParcial, DiferenciaEquipo = DiferenciaEquipo, RequisitosEspeciales = RequisitosEspeciales, NivelEquipo = NivelEquipo, RANURAS = RANURAS, DOS_MANOS_ARMA = DOS_MANOS_ARMA, CosteSustitucion = CosteSustitucion }
 
 local function BotonRecompensa(i)
   local f = QuestInfoRewardsFrame
@@ -287,9 +500,13 @@ local function BotonRecompensa(i)
   return _G["QuestInfoRewardsFrameQuestInfoItem" .. i]
 end
 
-local function Marcar(i, motivo)
-  local enlace = GetQuestItemLink and GetQuestItemLink("choice", i)
-  GL.Mensaje(L"recompensa recomendada: " .. (enlace or (L"la número " .. i)) .. " (" .. motivo .. ").")
+local function Marcar(i, motivo, q, enlace)
+  -- No repetir el aviso de chat cuando el cliente vuelve a emitir QUEST_COMPLETE.
+  local aviso = tostring(q) .. ":" .. i .. ":" .. enlace .. ":" .. motivo
+  if ultimoAviso ~= aviso then
+    ultimoAviso = aviso
+    GL.Mensaje(L"recompensa recomendada: " .. enlace .. " (" .. motivo .. ").")
+  end
   local b = BotonRecompensa(i)
   if not b then return end
   if not marca then
@@ -311,40 +528,48 @@ local function Marcar(i, motivo)
   marca:Show()
 end
 
+local function NumeroOpciones()
+  if not GetNumQuestChoices then return nil end
+  local n = GL.Seguro(GetNumQuestChoices())
+  if not Numero(n) or n < 0 or n ~= math.floor(n) then return nil end
+  return n
+end
+
 local function Recomendar(n, intento, revision, q)
-  if revision ~= revisionDialogo or not DB() or DB().recompensa == false then return end
-  if q ~= MisionDelDialogo() or not GetNumQuestChoices or GetNumQuestChoices() ~= n then return end
+  if revision ~= revisionDialogo or not GL.RUTA or rutaPreparada ~= GL.RUTA or not DB() or DB().recompensa == false then return end
+  if not GL.PersonajeVivoR14() or (IsShiftKeyDown and IsShiftKeyDown()) then return end
+  if not q or q ~= MisionDelDialogo() or NumeroOpciones() ~= n then return end
   local equipo = GL.RUTA and GL.RUTA.equipo
-  local mejor, mejora, caro, precio, faltan = nil, 0, nil, -1, false
+  local lista = {}
   for i = 1, n do
-    local enlace = GetQuestItemLink and GetQuestItemLink("choice", i)
-    local info = InfoObjeto(enlace)
-    if not info then
-      faltan = true
-    else
-      local ranuras = RANURAS[info.ranura or ""]
-      if equipo and equipo.dobleArma and info.ranura == "INVTYPE_WEAPON" then ranuras = DOS_MANOS_ARMA end
-      if equipo and ranuras and Usable(info, equipo) then
-        local coste = CosteSustitucion(info, equipo, equipo.pesos or {})
-        local nota = Puntuar(enlace, info, equipo.pesos or {})
-        local m = coste and nota and (nota - coste)
-        if m == nil then faltan = true end
-        if m and m > mejora then mejor, mejora = i, m end
-      end
-      if info.precio > precio then caro, precio = i, info.precio end
-    end
+    lista[i] = { elegir = true, enlace = GetQuestItemLink and GetQuestItemLink("choice", i) }
   end
+  local mejor, caro, faltan = ElegirRecompensa(lista, equipo)
   -- el juego a veces aún no tiene los datos del objeto: se reintenta un momento después
-  if faltan and (intento or 0) < 3 and C_Timer and C_Timer.After then
-    C_Timer.After(0.4, function() Recomendar(n, (intento or 0) + 1, revision, q) end)
+  if faltan and (intento or 0) < 3 and C_Timer and type(C_Timer.After) == "function" then
+    local pendiente = true
+    local function Reintentar()
+      if not pendiente then return end
+      pendiente = false
+      if revision ~= revisionDialogo then return end
+      local ok, err = pcall(Recomendar, n, (intento or 0) + 1, revision, q)
+      if not ok then GL.Fallo("misiones: recompensa", err) end
+    end
+    local ok, resultado = pcall(C_Timer.After, 0.4, Reintentar)
+    if not ok or resultado == false then
+      pendiente = false
+      if not ok then GL.Fallo("misiones: temporizador recompensa", resultado) end
+    end
     return
   end
   if faltan then return end
-  if mejor then
-    Marcar(mejor, L"mejora tu equipo")
-  elseif caro and precio > 0 then
-    Marcar(caro, L"ninguna mejora tu equipo; es la que más vale en el vendedor")
-  end
+  local i = mejor or caro
+  if not i or not lista[i] or not Texto(lista[i].enlace) then return end
+  -- Verificar de nuevo el diálogo y la opción antes de mostrar la recomendación.
+  if revision ~= revisionDialogo or q ~= MisionDelDialogo() or NumeroOpciones() ~= n
+      or not DB() or DB().recompensa == false or not GL.PersonajeVivoR14() or (IsShiftKeyDown and IsShiftKeyDown())
+      or not GetQuestItemLink or GetQuestItemLink("choice", i) ~= lista[i].enlace then return end
+  Marcar(i, mejor and L"mejora tu equipo" or L"ninguna mejora tu equipo; es la que más vale en el vendedor", q, lista[i].enlace)
 end
 
 ------------------------------------------------------------------------
@@ -353,23 +578,24 @@ end
 local function AlDetalle()          -- te ofrecen una misión
   if not Activo() then return end
   local q = MisionDelDialogo()
-  if q and aceptar[q] and AcceptQuest then AcceptQuest() end
+  if q and aceptar[q] and AcceptQuest then UnaVez(accionesMision, "aceptar", q, AcceptQuest) end
 end
 
 local function AlProgreso()         -- vas a entregar: pide los objetos
   if not Activo() then return end
   local q = MisionDelDialogo()
-  if q and entregar[q] and IsQuestCompletable and IsQuestCompletable() and CompleteQuest then CompleteQuest() end
+  if q and entregar[q] and IsQuestCompletable and GL.EstadoMisionR14(IsQuestCompletable()) == true and CompleteQuest then UnaVez(accionesMision, "completar", q, CompleteQuest) end
 end
 
 local function AlCompletar()        -- ventana de recompensa
   local q = MisionDelDialogo()
-  local n = (GetNumQuestChoices and GetNumQuestChoices()) or 0
+  local n = NumeroOpciones()
+  if not q or n == nil then return end
   if n > 1 then
     if DB() and DB().recompensa ~= false then Recomendar(n, 0, revisionDialogo, q) end
     return
   end
-  if Activo() and q and entregar[q] and GetQuestReward then GetQuestReward(n) end
+  if Activo() and q and entregar[q] and GetQuestReward then UnaVez(accionesMision, "recompensa", q, GetQuestReward, n) end
 end
 
 local function AlSaludo()           -- PNJ con varias misiones (ventana de saludo)
@@ -377,11 +603,11 @@ local function AlSaludo()           -- PNJ con varias misiones (ventana de salud
   for i = 1, ((GetNumActiveQuests and GetNumActiveQuests()) or 0) do
     local q = GetActiveQuestID and GetActiveQuestID(i)
     local lista = GetActiveTitle and select(2, GetActiveTitle(i))
-    if SelectActiveQuest and q and entregar[q] and (lista or Completa(q)) then SelectActiveQuest(i); return end
+    if SelectActiveQuest and q and entregar[q] and (GL.EstadoMisionR14(lista) == true or Completa(q)) then UnaVez(accionesSaludo, "entregar", q, SelectActiveQuest, i); return end
   end
   for i = 1, ((GetNumAvailableQuests and GetNumAvailableQuests()) or 0) do
     local q = GetAvailableQuestInfo and select(5, GetAvailableQuestInfo(i))
-    if SelectAvailableQuest and q and aceptar[q] then SelectAvailableQuest(i); return end
+    if SelectAvailableQuest and q and aceptar[q] then UnaVez(accionesSaludo, "aceptar", q, SelectAvailableQuest, i); return end
   end
 end
 
@@ -390,8 +616,8 @@ local function AlChisme()           -- PNJ con opciones de diálogo
   local activas = (C_GossipInfo.GetActiveQuests and C_GossipInfo.GetActiveQuests()) or {}
   for i = 1, #activas do
     local info = activas[i]
-    if C_GossipInfo.SelectActiveQuest and info.questID and entregar[info.questID] and (info.isComplete or Completa(info.questID)) then
-      C_GossipInfo.SelectActiveQuest(info.questID)
+    if C_GossipInfo.SelectActiveQuest and info.questID and entregar[info.questID] and (GL.EstadoMisionR14(info.isComplete) == true or Completa(info.questID)) then
+      UnaVez(accionesSaludo, "entregar", info.questID, C_GossipInfo.SelectActiveQuest, info.questID)
       return
     end
   end
@@ -399,7 +625,7 @@ local function AlChisme()           -- PNJ con opciones de diálogo
   for i = 1, #disponibles do
     local info = disponibles[i]
     if C_GossipInfo.SelectAvailableQuest and info.questID and aceptar[info.questID] then
-      C_GossipInfo.SelectAvailableQuest(info.questID)
+      UnaVez(accionesSaludo, "aceptar", info.questID, C_GossipInfo.SelectAvailableQuest, info.questID)
       return
     end
   end
@@ -412,9 +638,20 @@ GL.Evento(eventos, "QUEST_COMPLETE")
 GL.Evento(eventos, "QUEST_GREETING")
 GL.Evento(eventos, "GOSSIP_SHOW")
 GL.Evento(eventos, "QUEST_FINISHED")
+GL.Evento(eventos, "PLAYER_DEAD")
+GL.Evento(eventos, "PLAYER_LEAVING_WORLD")
+GL.Evento(eventos, "GOSSIP_CLOSED")
 eventos:SetScript("OnEvent", function(self, event)
+  if event == "GOSSIP_CLOSED" then
+    accionesSaludo = {}
+    return
+  end
   revisionDialogo = revisionDialogo + 1
   if marca then marca:Hide() end
+  if event == "QUEST_FINISHED" or event == "PLAYER_DEAD" or event == "PLAYER_LEAVING_WORLD" then
+    accionesMision, accionesSaludo, ultimoAviso = {}, {}, nil
+    return
+  end
   if not GL.RUTA then return end
   local f
   if event == "QUEST_DETAIL" then f = AlDetalle
@@ -422,9 +659,6 @@ eventos:SetScript("OnEvent", function(self, event)
   elseif event == "QUEST_COMPLETE" then f = AlCompletar
   elseif event == "QUEST_GREETING" then f = AlSaludo
   elseif event == "GOSSIP_SHOW" then f = AlChisme
-  elseif event == "QUEST_FINISHED" then
-    if marca then marca:Hide() end
-    return
   end
   if not f then return end
   local ok, err = pcall(f)

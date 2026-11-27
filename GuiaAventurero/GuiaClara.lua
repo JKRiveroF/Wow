@@ -73,7 +73,7 @@ end
 
 local function Donde(d)
   if not d then return "" end
-  return COL.gris .. ((d.z and (" · " .. d.z)) or "") .. Coords(d) .. C.FIN
+  return COL.gris .. ((d.z and (" · " .. (GL.ZonaDestinoGuiaR11 and GL.ZonaDestinoGuiaR11(d) or d.z))) or "") .. Coords(d) .. C.FIN
 end
 
 local function Hecho(d) return GL.DestinoHecho and GL.DestinoHecho(d) == true or false end
@@ -96,7 +96,11 @@ local function Objetivos(q)
     end
   end
   if #partes == 0 then return nil, 0 end
-  return table.concat(partes, COL.gris .. " · " .. C.FIN), #lista
+  local texto = table.concat(partes, COL.gris .. " · " .. C.FIN)
+  if GL.ingles ~= GL.clienteIngles and GL.clienteIngles ~= nil then
+    texto = texto .. COL.gris .. " (" .. L"idioma del cliente" .. ")" .. C.FIN
+  end
+  return texto, #lista
 end
 
 -- 9.6: la frase del texto del paso que dice qué hacer en una misión («Mata lobos para [Los enanos modistos]»).
@@ -124,7 +128,7 @@ local function FraseHacer(texto, nombre)
   if type(texto) ~= "string" or not nombre or nombre == "" then return nil end
   local limpio = texto:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
   local marca = "[" .. nombre .. "]"
-  for frase in (limpio .. " "):gmatch("(.-[%.;])%s") do
+  for frase in (limpio .. ". "):gmatch("(.-[%.;])%s") do
     if frase:find(marca, 1, true) then
       -- trozos separados por «, » y «: » (se guarda el separador de después)
       local trozos = {}
@@ -243,6 +247,8 @@ end
 -- Marcos
 ------------------------------------------------------------------------
 local tarjetas, extras = {}, {}
+local plegadas, cabPlegadas = {}, nil   -- 9.7.9.7
+local abiertaPaso, abiertaQ, PintarCabeceraPlegadas, PintarPlegada
 
 local function Fila(card, j)
   card.filas = card.filas or {}
@@ -315,6 +321,13 @@ local function Tarjeta(panel, i)
     GameTooltip:Show()
   end)
   t:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+  -- 9.7.9.7: en un paso con varias misiones, pulsar la tarjeta abierta la vuelve a plegar
+  t:SetScript("OnMouseUp", function(self)
+    if self.plegarQ and abiertaQ == self.plegarQ then
+      abiertaQ = nil
+      if GL.Refrescar then GL.Refrescar() end
+    end
+  end)
   tarjetas[i] = t
   return t
 end
@@ -328,12 +341,14 @@ local function PintarFila(card, j, r, y, ancho, numero, objetivo)
   f:SetPoint("TOPRIGHT", card, "TOPRIGHT", -12, -y)
   local anchoTexto = math.max(80, ancho - 24 - 96)
   -- marca: hecho (gris con la marca), el de la flecha (morado) o número
+  -- 9.7.9.7 (Quini): sin números en Coger, Hacer y Entregar. Hecho: la marca; el de la flecha: un cuadro morado.
+  f.num:SetText("")
   if r.hecho then
-    f.circulo:SetVertexColor(0.25, 0.85, 0.35, 0.18); f.marca:Show(); f.num:SetText("")
+    f.circulo:SetVertexColor(0.25, 0.85, 0.35, 0.18); f.circulo:Show(); f.marca:Show()
   elseif objetivo then
-    f.circulo:SetVertexColor(MORADO[1], MORADO[2], MORADO[3], 1); f.marca:Hide(); f.num:SetText(COL.blanco .. numero .. C.FIN)
+    f.circulo:SetVertexColor(MORADO[1], MORADO[2], MORADO[3], 1); f.circulo:Show(); f.marca:Hide()
   else
-    f.circulo:SetVertexColor(1, 1, 1, 0.10); f.marca:Hide(); f.num:SetText(COL.claro .. numero .. C.FIN)
+    f.circulo:Hide(); f.marca:Hide()
   end
   local col = r.hecho and COL.gris or (COL[r.k] or COL.blanco)
   f.etiqueta:SetText(col .. L(ETIQUETA[r.k] or "IR") .. C.FIN)
@@ -381,6 +396,139 @@ local function PintarTarjeta(panel, i, y, ancho, titulo, derecha, filas, ayudaTi
 end
 
 ------------------------------------------------------------------------
+-- 9.7.9.7: misiones plegadas (pasos con dos o más misiones). Una línea por misión con lo que toca:
+-- Coger (quién y dónde) y Llévame; Hacer con el contador de cada objetivo y Llévame; Entregar (a quién,
+-- «lista para entregar») y Llévame; Entregada en verde y tachada. Pulsar la línea abre la tarjeta normal.
+------------------------------------------------------------------------
+local function Metros(d)
+  if not (d and d.x and GL.Vector) then return nil end
+  local ok, este, _, dist = pcall(GL.Vector, d)
+  if not (ok and este and type(dist) == "number") then return nil end
+  local m = math.floor(dist * 0.9144 + 0.5)
+  if m >= 1000 then return string.format("%.1f km", m / 1000) end
+  return m .. " m"
+end
+local function Llevar(r)
+  if not (r and r.d) then return end
+  if r.i then
+    GuiaAventureroDB.destino = r.i
+    if GL.SeguirDesvio then GL.SeguirDesvio(nil) end
+  elseif r.d.m and GL.SeguirDesvio then
+    GL.SeguirDesvio(r.d)
+  end
+end
+GL._LlevarFila = Llevar   -- para las pruebas
+-- Lo que toca de una misión: etiqueta, fila de destino y texto de debajo.
+local function LoQueToca(t, filas)
+  if Completada(t.q) or filas[3].hecho then return "ENTREGADA", nil, nil end
+  if not filas[1].hecho then return "A", filas[1], filas[1].texto end
+  if not filas[2].hecho then
+    local r = filas[2]
+    return "C", r, (r.sub and r.sub ~= "") and r.sub or r.texto
+  end
+  return "T", filas[3], (filas[3].texto or "") .. COL.gris .. L" · lista para entregar" .. C.FIN
+end
+GL._LoQueToca = function(t, paso) return LoQueToca(t, FilasMision(t, paso and paso.t)) end   -- para las pruebas
+
+PintarCabeceraPlegadas = function(panel, y, ancho, n, entregadas)
+  if not cabPlegadas then cabPlegadas = GL.Texto(panel, "GameFontHighlightSmall") end
+  cabPlegadas:SetParent(panel)
+  cabPlegadas:ClearAllPoints()
+  cabPlegadas:SetPoint("TOPLEFT", panel, "TOPLEFT", 2, -(y + 2))
+  cabPlegadas:SetWidth(ancho - 4)
+  cabPlegadas:SetText(COL.titulo .. n .. L" misiones en este paso" .. C.FIN .. COL.gris .. "  ·  " .. entregadas .. L" entregadas" ..
+    "  ·  " .. L"pulsa una para verla entera" .. C.FIN)
+  cabPlegadas:Show()
+  return 20
+end
+
+local function Plegada(panel, i)
+  local f = plegadas[i]
+  if f then return f end
+  f = CreateFrame("Button", nil, panel, PLANTILLA)
+  GL.Caja(f, GL.COLOR.caja or { 1, 1, 1, 0.04 }, GL.COLOR.cajaBorde or { 1, 1, 1, 0.10 })
+  local brillo = f:CreateTexture(nil, "HIGHLIGHT")
+  brillo:SetAllPoints()
+  brillo:SetColorTexture(1, 1, 1, 0.04)
+  f.raya = f:CreateTexture(nil, "ARTWORK")
+  f.raya:SetWidth(3)
+  f.raya:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
+  f.raya:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
+  f.raya:SetColorTexture(1, 0.82, 0, 1)
+  f.flecha = GL.Texto(f, "GameFontHighlightSmall")
+  f.flecha:SetPoint("TOPLEFT", f, "TOPLEFT", 8, -8)
+  f.etiqueta = GL.Texto(f, "GameFontNormalSmall")
+  f.etiqueta:SetPoint("TOPLEFT", f, "TOPLEFT", 20, -8)
+  f.etiqueta:SetWidth(76)
+  GL.UnaLinea(f.etiqueta)
+  f.nombre = GL.Texto(f, "GameFontHighlightSmall")
+  f.nombre:SetPoint("TOPLEFT", f, "TOPLEFT", 98, -8)
+  GL.UnaLinea(f.nombre)
+  f.sub = GL.Texto(f, "GameFontHighlightSmall")
+  f.sub:SetPoint("TOPLEFT", f.nombre, "BOTTOMLEFT", 0, -3)
+  f.llevar = GL.CrearBoton(f, L"Llévame", function(b) Llevar(b:GetParent().fila) end, nil, 18)
+  f.llevar:SetWidth(64)
+  f.llevar:SetPoint("RIGHT", f, "RIGHT", -6, 0)
+  if GL.Ayuda then GL.Ayuda(f.llevar, L"Llévame", L"La flecha te lleva a esta misión para hacerla antes que las demás.") end
+  f:SetScript("OnClick", function(self)
+    if IsShiftKeyDown and IsShiftKeyDown() and self.fila and self.fila.d and GL.EnlazarMision and GL.EnlazarMision(self.fila.d) then return end
+    abiertaQ = self.q
+    if GL.Refrescar then GL.Refrescar() end
+  end)
+  f:SetScript("OnEnter", function(self)
+    if not GameTooltip then return end
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(self.titulo or "", 1, 0.82, 0)
+    GameTooltip:AddLine(L"Clic: ver la misión entera (Coger, Hacer, Entregar). Mayús+clic: enlazar la misión en el chat.", 0.6, 0.6, 0.65, true)
+    GameTooltip:Show()
+  end)
+  f:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+  plegadas[i] = f
+  return f
+end
+
+PintarPlegada = function(panel, i, y, ancho, t, filas, etiquetaMision)
+  local f = Plegada(panel, i)
+  f.q = t.q
+  f.titulo = t.nombre
+  f:ClearAllPoints()
+  f:SetPoint("TOPLEFT", panel, "TOPLEFT", 0, -y)
+  f:SetPoint("TOPRIGHT", panel, "TOPRIGHT", 0, -y)
+  local tipo, r, sub = LoQueToca(t, filas)
+  f.fila = r
+  local destino = GL.DestinoActual and GL.DestinoActual()
+  local actual = false
+  if destino then for _, x in ipairs(filas) do if x.d and x.d == destino then actual = true end end end
+  GL.Mostrar(f.raya, actual and tipo ~= "ENTREGADA")
+  local anchoTexto = math.max(80, ancho - 98 - 76)
+  f.nombre:SetWidth(anchoTexto)
+  if tipo == "ENTREGADA" then
+    f.flecha:SetText("|TInterface\\RaidFrame\\ReadyCheck-Ready:12|t")
+    f.etiqueta:SetText(COL.T .. L"ENTREGADA" .. C.FIN)
+    f.nombre:SetText("|cff66cc66" .. (t.nombre or L"Misión") .. C.FIN)
+    f.sub:SetText(""); f.sub:Hide()
+    f.llevar:Hide()
+    f:SetHeight(26)
+    f:Show()
+    return 26
+  end
+  f.flecha:SetText("|TInterface\\Buttons\\UI-PlusButton-Up:12|t")
+  f.etiqueta:SetText((COL[tipo] or COL.blanco) .. L(ETIQUETA[tipo] or "") .. C.FIN)
+  f.nombre:SetText(COL.titulo .. (t.nombre or L"Misión") .. (etiquetaMision or "") .. C.FIN)
+  local lejos = r and r.d and Metros(r.d)
+  local texto = (sub or "") .. (lejos and (COL.gris .. " · " .. lejos .. C.FIN) or "")
+  f.sub:SetWidth(anchoTexto)
+  f.sub:SetText(texto)
+  f.sub:Show()
+  local h = 8 + 14 + 3 + GL.Alto(f.sub, texto, 13, anchoTexto) + 7
+  GL.Mostrar(f.llevar, r and r.d ~= nil)
+  h = math.max(34, math.floor(h))
+  f:SetHeight(h)
+  f:Show()
+  return h
+end
+
+------------------------------------------------------------------------
 -- Pintar la Guía clara. Devuelve el alto que ocupa (desde y).
 ------------------------------------------------------------------------
 function GL.PintarGuiaClara(panel, y, ancho)
@@ -388,16 +536,37 @@ function GL.PintarGuiaClara(panel, y, ancho)
   if not paso then return 0 end
   local textoPaso = GL.Colorear and GL.Colorear(paso.t or "") or (paso.t or "")
   local lista, sueltos = Tarjetas(paso)
-  local usadas, alto = 0, 0
+  local usadas, alto, plegadasUsadas = 0, 0, 0
+  -- 9.7.9.7 (Quini): con dos o más misiones en el paso, todas plegadas en una línea con lo que toca;
+  -- al pulsar una se abre su tarjeta normal (Coger, Hacer, Entregar). Solo una abierta a la vez.
+  local db = DB()
+  local clavePaso = tostring(db.seccion) .. ":" .. tostring(db.paso)
+  if abiertaPaso ~= clavePaso then abiertaPaso, abiertaQ = clavePaso, nil end
+  local plegar = #lista >= 2
+  if plegar then
+    local entregadas = 0
+    for _, t in ipairs(lista) do if Completada(t.q) then entregadas = entregadas + 1 end end
+    alto = alto + PintarCabeceraPlegadas(panel, y, ancho, #lista, entregadas)
+  end
   for _, t in ipairs(lista) do
     local filas = FilasMision(t, paso.t)
     local hechos = 0
     for _, r in ipairs(filas) do if r.hecho then hechos = hechos + 1 end end
     local etiqueta = (GL.EtiquetaMision and not filas[3].hecho) and GL.EtiquetaMision(t.q) or ""
-    usadas = usadas + 1
-    alto = alto + PintarTarjeta(panel, usadas, y + alto, ancho, (t.nombre or L"Misión") .. (etiqueta or ""),
-      COL.gris .. hechos .. L" de " .. #filas .. L" hechos" .. C.FIN, filas, t.nombre, textoPaso) + 8
+    if plegar and abiertaQ ~= t.q then
+      plegadasUsadas = plegadasUsadas + 1
+      alto = alto + PintarPlegada(panel, plegadasUsadas, y + alto, ancho, t, filas, etiqueta) + 4
+    else
+      usadas = usadas + 1
+      local card
+      alto = alto + PintarTarjeta(panel, usadas, y + alto, ancho, (plegar and "|TInterface\\Buttons\\UI-MinusButton-Up:12|t " or "") .. (t.nombre or L"Misión") .. (etiqueta or ""),
+        COL.gris .. hechos .. L" de " .. #filas .. L" hechos" .. C.FIN, filas, t.nombre, textoPaso) + 8
+      card = tarjetas[usadas]
+      card.plegarQ = plegar and t.q or nil
+    end
   end
+  for i = plegadasUsadas + 1, #plegadas do plegadas[i]:Hide() end
+  if not plegar and cabPlegadas then cabPlegadas:Hide() end
   -- lo que no es misión: una tarjeta con un paso «Ir» por destino (o solo el texto si no hay destino)
   if #sueltos > 0 or #lista == 0 then
     local filas = {}
@@ -480,28 +649,22 @@ function GL.PintarLuego(panel, y, ancho)
     extras.luego:Hide()
     alto = 6
   end
-  extras.atras:ClearAllPoints()
-  extras.atras:SetPoint("TOPLEFT", panel, "TOPLEFT", 0, -(y + alto))
-  extras.saltar:ClearAllPoints()
-  extras.saltar:SetPoint("TOPRIGHT", panel, "TOPRIGHT", 0, -(y + alto))
-  extras.minivel:ClearAllPoints()
-  extras.minivel:SetPoint("TOP", panel, "TOP", 0, -(y + alto))
-  extras.atras:Show(); extras.saltar:Show(); extras.minivel:Show()
-  extras.comprobar:ClearAllPoints()
-  extras.comprobar:SetPoint("TOP", panel, "TOP", 0, -(y + alto + 25))
-  extras.comprobar:SetWidth(math.min(240, math.max(150, ancho - 20)))
-  extras.comprobar:Show()
-  return alto + 52
+  -- 9.7.9.7 (Quini): Atrás, Mi nivel, Siguiente y «?» (¿Atascado?) van arriba, debajo de la barra de la ruta
+  -- (fila ui.nav de GuiaAventurero.lua); con muchas misiones en el paso, abajo no se veían.
+  extras.atras:Hide(); extras.saltar:Hide(); extras.minivel:Hide(); extras.comprobar:Hide()
+  return alto
 end
 
--- Con la Guía clara encendida se ocultan los botones de arriba (Anterior, Mi nivel, Siguiente);
--- apagada, se ocultan las tarjetas. Lo llama RefrescarGuia en cada refresco.
+-- 9.7.9.7: los botones de arriba (Atrás, Mi nivel, Siguiente, ?) se ven siempre; con la Guía clara apagada,
+-- se ocultan las tarjetas. Lo llama RefrescarGuia en cada refresco.
 function GL.GuiaClaraOcultar(clara)
   local ui = GL.ui
-  if ui and ui.nav then for _, b in ipairs(ui.nav) do GL.Mostrar(b, not clara) end end
+  if ui and ui.nav then for _, b in ipairs(ui.nav) do GL.Mostrar(b, true) end end   -- 9.7.9.7: siempre a la vista
   if not clara then
     for _, t in ipairs(tarjetas) do t:Hide() end
-    for _, k in ipairs({ "raya", "luego", "atras", "saltar", "minivel" }) do if extras[k] then extras[k]:Hide() end end
+    for _, k in ipairs({ "raya", "luego", "atras", "saltar", "minivel", "comprobar" }) do if extras[k] then extras[k]:Hide() end end
+    for _, f in ipairs(plegadas) do f:Hide() end
+    if cabPlegadas then cabPlegadas:Hide() end
   end
 end
 
@@ -519,6 +682,7 @@ function GL.SubirAvisos(panel, cuanto)
   end
 end
 GL._tarjetasClara = tarjetas
+GL._plegadasClara = plegadas   -- 9.7.9.7: para las pruebas
 
 -- 9.6: ¿el mapa m está en otro continente que el tuyo? (sube por los mapas padre hasta el de tipo continente)
 local function MapaValido(m)

@@ -1,5 +1,5 @@
 -- Mascotas.lua (9.3): botón Mascotas de la barra lateral. Solo lo ven los cazadores y los brujos.
---  · Cazador: Familias (las 19 familias (9.5: Zorro y Ave rapaz de Forever) y sus bestias por nivel), Mis mascotas (la activa y las del establo) y
+--  · Cazador: Familias (las 18 familias (Zorro nuevo, Búho renombrado Ave rapaz) y sus bestias por nivel), Mis mascotas (la activa y las del establo) y
 --    Establos, con dos subpestañas: Mascotas guardadas y Maestros de establos (con los instructores de mascotas
 --    de tu facción, con Llevarme).
 --  · Brujo: Demonios (cada demonio, su misión y sus habilidades), Mis demonios (el activo y los que sabes invocar)
@@ -13,7 +13,7 @@ local C = GL.colores
 local PLANTILLA = BackdropTemplateMixin and "BackdropTemplate" or nil
 local COLUMNAS, ALTO_CELDA, LADO_ICONO, ALTO_FICHA, ALTO_FILA = 4, 66, 40, 132, 30
 local ICONO_SI, ICONO_NO = "Interface\\RaidFrame\\ReadyCheck-Ready", "Interface\\RaidFrame\\ReadyCheck-NotReady"
-local RANGO = { [1] = L"élite", [2] = L"raro élite", [4] = "raro" }
+local RANGO = { [1] = "élite", [2] = "raro élite", [4] = "raro" }
 
 local function Clase() return UnitClass and select(2, UnitClass("player")) end
 local function EsCazador() return Clase() == "HUNTER" end
@@ -23,8 +23,8 @@ local function NivelJugador() return (UnitLevel and UnitLevel("player")) or 1 en
 local function DB() if type(GuiaAventureroDB) ~= "table" then return {} end return GuiaAventureroDB end
 
 local PESTANAS = {
-  HUNTER = { { "familias", L"Familias" }, { "mias", L"Mis mascotas" }, { "establos", L"Establos" }, { "rangos", L"Rangos" } },   -- 9.4: Rangos abre su ventana
-  WARLOCK = { { "demonios", L"Demonios" }, { "mias", L"Mis demonios" }, { "instructores", L"Instructores" } },
+  HUNTER = { { "familias", "Familias" }, { "mias", "Mis mascotas" }, { "establos", "Establos" }, { "rangos", "Rangos" } },   -- 9.4: Rangos abre su ventana
+  WARLOCK = { { "demonios", "Demonios" }, { "mias", "Mis demonios" }, { "instructores", "Instructores" } },
 }
 
 ------------------------------------------------------------------------
@@ -32,51 +32,95 @@ local PESTANAS = {
 -- Misiones de QuestieDB y cMaNGOS (Classic); habilidades y nombres en español, traducción propia.
 ------------------------------------------------------------------------
 GL.demonios = {
-  { n = L"Diablillo", ing = "Imp", nivel = 1, hechizo = 688, icono = "Interface\\Icons\\Spell_Shadow_SummonImp",
-    rol = L"Daño a distancia y más aguante para el grupo",
-    hab = { L"Descarga de fuego: daño de fuego a distancia", L"Pacto de sangre: más aguante para el grupo",
-      L"Escudo de fuego: daña a quien golpea al aliado", L"Cambio de fase: no recibe daño pero tampoco ataca" },
+  { n = "Diablillo", ing = "Imp", nivel = 1, hechizo = 688, icono = "Interface\\Icons\\Spell_Shadow_SummonImp",
+    rol = "Daño a distancia y más aguante para el grupo",
+    hab = { "Descarga de fuego: daño de fuego a distancia", "Pacto de sangre: más aguante para el grupo",
+      "Escudo de fuego: daña a quien golpea al aliado", "Cambio de fase: no recibe daño pero tampoco ataca" },
     como = {
-      Gnome = { L"Novato", "Alamar Grimm", "Dun Morogh", 1426, 28.7, 66.1 },
-      Scourge = { L"Descubrir el misterio", L"Venya Martmani", L"Claros de Tirisfal", 1420, 31.0, 66.4 },
-      A = { L"El libro robado", "Drusilla La Salle", L"Bosque de Elwynn", 1429, 49.9, 42.7 },
-      H = { L"Familiares viles", "Ruzan", "Durotar", 1411, 42.6, 69.0 },
+      Gnome = { "Novato", "Alamar Grimm", "Dun Morogh", 1426, 28.7, 66.1 },
+      Scourge = { "Descubrir el misterio", "Venya Martmani", "Claros de Tirisfal", 1420, 31.0, 66.4 },
+      A = { "El libro robado", "Drusilla La Salle", "Bosque de Elwynn", 1429, 49.9, 42.7 },
+      H = { "Familiares viles", "Ruzan", "Durotar", 1411, 42.6, 69.0 },
     } },
-  { n = L"Abisario", ing = "Voidwalker", nivel = 10, hechizo = 697, icono = "Interface\\Icons\\Spell_Shadow_SummonVoidWalker",
-    rol = L"Tanque: aguanta los golpes por ti",
-    hab = { L"Tormento: provoca al enemigo", L"Sacrificio: escudo para ti a costa de su vida",
-      L"Consumir sombras: se cura fuera de combate", L"Sufrimiento: provoca a los enemigos cercanos" },
+  { n = "Abisario", ing = "Voidwalker", nivel = 10, hechizo = 697, icono = "Interface\\Icons\\Spell_Shadow_SummonVoidWalker",
+    rol = "Tanque: aguanta los golpes por ti",
+    hab = { "Tormento: provoca al enemigo", "Sacrificio: escudo para ti a costa de su vida",
+      "Consumir sombras: se cura fuera de combate", "Sufrimiento: provoca a los enemigos cercanos" },
     como = {
-      A = { L"La invocación de Gakin, Surena Caledon y El vínculo", L"Gakin el Presotenebra", L"Ciudad de Ventormenta", 1453, 25.3, 78.6 },
-      Scourge = { L"Las invocaciones de Halgar, Criatura abisal y El vínculo", "Carendin Halgar", L"Entrañas", 1458, 85.1, 26.0 },
-      H = { L"Las invocaciones de Gan'rul, Criatura abisal y El vínculo", L"Ojo sangriento de Gan'rul", "Orgrimmar", 1454, 48.3, 45.3 },
+      A = { "La invocación de Gakin, Surena Caledon y El vínculo", "Gakin el Presotenebra", "Ciudad de Ventormenta", 1453, 25.3, 78.6 },
+      Scourge = { "Las invocaciones de Halgar, Criatura abisal y El vínculo", "Carendin Halgar", "Entrañas", 1458, 85.1, 26.0 },
+      H = { "Las invocaciones de Gan'rul, Criatura abisal y El vínculo", "Ojo sangriento de Gan'rul", "Orgrimmar", 1454, 48.3, 45.3 },
     } },
-  { n = L"Súcubo", ing = "Succubus", nivel = 20, hechizo = 712, icono = "Interface\\Icons\\Spell_Shadow_SummonSuccubus",
-    rol = L"Daño cuerpo a cuerpo y control (seducción)",
-    hab = { L"Latigazo de dolor: daño de sombras", L"Beso tranquilizador: baja la amenaza",
-      L"Seducción: deja quieto a un humanoide", L"Invisibilidad inferior: se hace invisible" },
+  { n = "Súcubo", ing = "Succubus", nivel = 20, hechizo = 712, icono = "Interface\\Icons\\Spell_Shadow_SummonSuccubus",
+    rol = "Daño cuerpo a cuerpo y control (seducción)",
+    hab = { "Latigazo de dolor: daño de sombras", "Beso tranquilizador: baja la amenaza",
+      "Seducción: deja quieto a un humanoide", "Invisibilidad inferior: se hace invisible" },
     como = {
-      A = { L"Devoradora de almas, Duramen (Takar el Vidente, Los Baldíos 49.3 57.1) y El vínculo", L"Gakin el Presotenebra", L"Ciudad de Ventormenta", 1453, 25.3, 78.6 },
-      Scourge = { L"Devoradora de almas, Corazones puros (Godrick Farsan) y El vínculo", "Carendin Halgar", L"Entrañas", 1458, 85.1, 26.0 },
-      H = { L"Devoradora de almas, Cazul el ciego, Noticias de Dogran, Poción de Ken'zigla, El cautiverio de Dogran, Un regalo de amor y El vínculo", L"Ojo sangriento de Gan'rul", "Orgrimmar", 1454, 48.3, 45.3 },
+      A = { "Devoradora de almas, Duramen (Takar el Vidente, Los Baldíos 49.3 57.1) y El vínculo", "Gakin el Presotenebra", "Ciudad de Ventormenta", 1453, 25.3, 78.6 },
+      Scourge = { "Devoradora de almas, Corazones puros (Godrick Farsan) y El vínculo", "Carendin Halgar", "Entrañas", 1458, 85.1, 26.0 },
+      H = { "Devoradora de almas, Cazul el ciego, Noticias de Dogran, Poción de Ken'zigla, El cautiverio de Dogran, Un regalo de amor y El vínculo", "Ojo sangriento de Gan'rul", "Orgrimmar", 1454, 48.3, 45.3 },
     } },
-  { n = L"Manáfago", ing = "Felhunter", nivel = 30, hechizo = 691, icono = "Interface\\Icons\\Spell_Shadow_SummonFelHunter",
-    rol = L"Contra lanzadores de hechizos",
-    hab = { L"Devorar magia: quita magia a enemigos o aliados", L"Bloqueo de hechizo: corta un hechizo",
-      L"Sangre corrupta: daña a quien lo golpea", L"Paranoia: el grupo ve a los enemigos en sigilo" },
+  { n = "Manáfago", ing = "Felhunter", nivel = 30, hechizo = 691, icono = "Interface\\Icons\\Spell_Shadow_SummonFelHunter",
+    rol = "Contra lanzadores de hechizos",
+    hab = { "Devorar magia: quita magia a enemigos o aliados", "Bloqueo de hechizo: corta un hechizo",
+      "Sangre corrupta: daña a quien lo golpea", "Paranoia: el grupo ve a los enemigos en sigilo" },
     como = {
-      A = { L"El Libro del Conciliábulo (Krom Brazorrecio, Forjaz 74.2 9.4) y El vínculo", "Strahad Farsan", L"Los Baldíos (Trinquete)", 1413, 62.6, 35.5 },
-      H = { L"El Libro del Conciliábulo (Jorah Annison, Entrañas 75.9 37.9) y El vínculo", "Strahad Farsan", L"Los Baldíos (Trinquete)", 1413, 62.6, 35.5 },
+      A = { "El Libro del Conciliábulo (Krom Brazorrecio, Forjaz 74.2 9.4) y El vínculo", "Strahad Farsan", "Los Baldíos (Trinquete)", 1413, 62.6, 35.5 },
+      H = { "El Libro del Conciliábulo (Jorah Annison, Entrañas 75.9 37.9) y El vínculo", "Strahad Farsan", "Los Baldíos (Trinquete)", 1413, 62.6, 35.5 },
     } },
   { n = "Infernal", ing = "Infernal", nivel = 50, hechizo = 1122, icono = "Interface\\Icons\\Spell_Shadow_SummonInfernal",
-    rol = L"Cae del cielo y aturde; luego hay que esclavizarlo para que no se vuelva contra ti",
-    hab = { L"Inmolación: daño de fuego a su alrededor" },
-    entrenador = L"Hechizo Infernal (Inferno) del instructor de brujos. Gasta una Piedra infernal (vendedor de componentes)." },
-  { n = L"Guardia apocalíptico", ing = "Doomguard", nivel = 60, hechizo = 18540, icono = "Interface\\Icons\\Spell_Shadow_AntiMagicShell",
-    rol = L"Demonio de élite; hay que esclavizarlo",
-    hab = { L"Golpes cuerpo a cuerpo muy fuertes" },
-    entrenador = L"Ritual de fatalidad del instructor de brujos. Hacen falta 5 jugadores y una Figurilla demoníaca; puede matar a uno del grupo." },
+    rol = "Cae del cielo y aturde; luego hay que esclavizarlo para que no se vuelva contra ti",
+    hab = { "Inmolación: daño de fuego a su alrededor" },
+    entrenador = "Hechizo Infernal (Inferno) del instructor de brujos. Gasta una Piedra infernal (vendedor de componentes)." },
+  { n = "Guardia apocalíptico", ing = "Doomguard", nivel = 60, hechizo = 18540, icono = "Interface\\Icons\\Spell_Shadow_AntiMagicShell",
+    rol = "Demonio de élite; hay que esclavizarlo",
+    hab = { "Golpes cuerpo a cuerpo muy fuertes" },
+    entrenador = "Ritual de fatalidad del instructor de brujos. Hacen falta 5 jugadores y una Figurilla demoníaca; puede matar a uno del grupo." },
 }
+
+-- B05: catálogo documental de habilidades propias de los demonios, no del jugador.
+local rangosDemonios={
+ {688,"Descarga de fuego","Firebolt",{1,8,18,28,38,48,58},{0,16302,16316,16317,16318,16319,16320}},
+ {688,"Pacto de sangre","Blood Pact",{4,14,26,38,50},{16321,16322,16323,16324,16325}},
+ {688,"Cambio de fase","Phase Shift",{12},{16331}},
+ {688,"Escudo de fuego","Fire Shield",{14,24,34,44,54},{16326,16327,16328,16329,16330}},
+ {697,"Tormento","Torment",{10,20,30,40,50,60},{0,16346,16347,16348,16349,16350}},
+ {697,"Sacrificio","Sacrifice",{16,24,32,40,48,56},{16351,16352,16353,16354,16355,16356}},
+ {697,"Consumir sombras","Consume Shadows",{18,26,34,42,50,58},{16357,16358,16359,16360,16361,16362}},
+ {697,"Sufrimiento","Suffering",{24,36,48,60},{16363,16364,16365,16366}},
+ {712,"Latigazo de dolor","Lash of Pain",{20,28,36,44,52,60},{0,16368,16371,16372,16373,16374}},
+ {712,"Beso tranquilizador","Soothing Kiss",{22,34,46,58},{16375,16376,16377,16378}},
+ {712,"Seducción","Seduction",{26},{16379}},
+ {712,"Invisibilidad inferior","Lesser Invisibility",{32},{16380}},
+ {691,"Devorar magia","Devour Magic",{30,38,46,54},{0,16381,16382,16383}},
+ {691,"Sangre mácula","Tainted Blood",{32,40,48,56},{16384,16385,16386,16387}},
+ {691,"Bloqueo de hechizo","Spell Lock",{36,52},{16388,16389}},
+ {691,"Paranoia","Paranoia",{42},{16390}},
+}
+function GL.RangosDemoniosBrujo(id)
+  local r={}; if id==713 then id=712 end
+  for _,e in ipairs(rangosDemonios) do if not id or e[1]==id then r[#r+1]=e end end
+  return r
+end
+local function TxtBrujo(es,en) return GL.ingles and en or es end
+local function ConoceInvocacion(d)
+  if GL.HechizoConocido then return GL.HechizoConocido(d.hechizo) and true or false end
+  if IsSpellKnown then return IsSpellKnown(d.hechizo) and true or false end
+end
+-- Ambas formas sayaad tienen el mismo catálogo, pero sus invocaciones son independientes.
+local inc={};for k,v in pairs(GL.demonios[3]) do inc[k]=v end
+inc.n="Íncubo";inc.ing="Incubus";inc.hechizo=713;inc.como=nil
+inc.entrenador="Misión de íncubo desde nivel 20: consulta al instructor de tu facción. Mira Personaje > Clase."
+inc.entrenadorEN="Incubus quest from level 20: ask your faction trainer. See Character > Class."
+table.insert(GL.demonios,4,inc)
+GL.demonios[5].hab[3]="Sangre mácula: reduce el poder de ataque de los atacantes cuerpo a cuerpo"
+GL.demonios[5].habEN={nil,nil,"Tainted Blood: reduces melee attackers' attack power"}
+GL.demonios[6].entrenador="Misión de Niby e Impsy en Frondavil (7601–7603); requiere Piedra infernal."
+GL.demonios[6].entrenadorEN="Niby and Impsy quests in Felwood (7601–7603); requires Infernal Stone."
+GL.demonios[6].rol="Invocación temporal que aturde al caer; comprueba el control y la duración."
+GL.demonios[6].rolEN="Temporary summon that stuns on impact; check control and duration."
+GL.demonios[7].entrenador="Misión Supresión (7583), tras 7581 y 7582, con Daio en Tierras Devastadas. Ritual con grupo y Figurilla demoníaca; puede sacrificar a un participante."
+GL.demonios[7].entrenadorEN="Suppression quest (7583), after 7581 and 7582, from Daio in Blasted Lands. Group ritual and Demonic Figurine; may sacrifice a participant."
 
 local function Raza() return UnitRace and select(2, UnitRace("player")) end
 local function ComoDemonio(d)
@@ -148,7 +192,7 @@ local function EsRara(e) return e.npc ~= nil and (e.r == 2 or e.r == 4) end
 local panel, ui = nil, { celdas = {}, pest = {}, filas = {} }
 local pest, fam, sel, desde = nil, nil, nil, 0
 local subEst = "guardadas"   -- 9.3: Establos tiene dos subpestañas: guardadas y maestros
-local SUB_ESTABLO = { { "guardadas", L"Mascotas guardadas" }, { "maestros", L"Maestros de establos" } }
+local SUB_ESTABLO = { { "guardadas", "Mascotas guardadas" }, { "maestros", "Maestros de establos" } }
 local function ArribaLista() return 54 + ((pest == "establos") and 26 or 0) end
 
 local function Pestanas() return PESTANAS[Clase() or ""] or PESTANAS.HUNTER end
@@ -159,11 +203,14 @@ local function Icono(e)
   if e.npc and e.f then Bestias(); local f = familiaDe[e.f]; if f and f.icono then return f.icono end end
   return "Interface\\Icons\\INV_Misc_QuestionMark"
 end
+local function NombreEntrada(e)
+  return GL.ingles and (e.ing or L(e.n)) or e.n
+end
 local function Habilidades(f, larga)
   local B, l = GL.bestias or {}, {}
   for _, h in ipairs(f.hab or {}) do
-    local t = (B.habilidades and B.habilidades[h]) or h
-    table.insert(l, larga and ("  · " .. t) or (t:match("^([^:]+)") or t))
+    local t = GL.HabilidadBestia and GL.HabilidadBestia(h,not larga) or (B.habilidades and B.habilidades[h]) or h
+    table.insert(l, larga and ("  · " .. t) or t)
   end
   return table.concat(l, larga and "\n" or ", ")
 end
@@ -182,7 +229,7 @@ local function Vivo(e)
   return (e.min or 1) <= NivelJugador()
 end
 local function Marca(e)   -- true tic, false X, nil nada
-  if pest == "demonios" then return (IsSpellKnown and e.hechizo and IsSpellKnown(e.hechizo)) and true or false end
+  if pest == "demonios" then return ConoceInvocacion(e) end
   if pest == "familias" and fam and e.npc and EsCazador() then return LaTengo(e) end
   return nil
 end
@@ -192,41 +239,46 @@ local function TextoFicha(e)
   if pest == "demonios" then
     local sabe = Marca(e)
     table.insert(l, C.GRIS .. L"demonio · desde el nivel " .. e.nivel .. " · " .. (sabe and (C.VERDE .. L"ya sabes invocarlo" .. C.FIN .. C.GRIS) or L"aún no sabes invocarlo") .. C.FIN)
-    table.insert(l, C.AMARILLO .. L"Para qué: " .. C.FIN .. e.rol)
+    table.insert(l, C.AMARILLO .. L"Para qué: " .. C.FIN .. (GL.ingles and e.rolEN or L(e.rol)))
     local c = ComoDemonio(e)
     if c then
-      table.insert(l, C.AMARILLO .. L"Misión: " .. C.FIN .. c[1])
-      table.insert(l, C.AMARILLO .. L"Empieza con: " .. C.FIN .. c[2] .. " · " .. c[3] .. " " .. string.format("%.1f, %.1f", c[5], c[6]))
+      table.insert(l, C.AMARILLO .. L"Misión: " .. C.FIN .. L(c[1]))
+      table.insert(l, C.AMARILLO .. L"Empieza con: " .. C.FIN .. L(c[2]) .. " · " .. L(c[3]) .. " " .. string.format("%.1f, %.1f", c[5], c[6]))
     elseif e.entrenador then
-      table.insert(l, C.AMARILLO .. L"Cómo: " .. C.FIN .. e.entrenador)
+      table.insert(l, C.AMARILLO .. L"Cómo: " .. C.FIN .. (GL.ingles and e.entrenadorEN or L(e.entrenador)))
     end
     table.insert(l, C.AMARILLO .. L"Habilidades:" .. C.FIN)
-    for _, h in ipairs(e.hab or {}) do table.insert(l, "  · " .. h) end
-    table.insert(l, C.GRIS .. L"Los rangos nuevos de sus habilidades se compran como grimorios al instructor de demonios." .. C.FIN)
+    for i, h in ipairs(e.hab or {}) do table.insert(l, "  · " .. (GL.ingles and e.habEN and e.habEN[i] or L(h))) end
+    if #GL.RangosDemoniosBrujo(e.hechizo)>0 then
+      table.insert(l, C.GRIS .. TxtBrujo("Niveles y grimorios en Instructores. Invoca el demonio correcto para aprenderlos.","Rank levels and grimoires in Trainers. Summon the correct demon to teach them.") .. C.FIN)
+    end
     return table.concat(l, "\n")
   end
   local B = GL.bestias or {}
   if e.hab and not e.npc then
     table.insert(l, C.GRIS .. L"familia · " .. (e.cuantas or 0) .. L" bestias" .. ((FamiliaMascota() == e.n or FamiliaMascota() == e.ing) and (" · " .. C.VERDE .. L"tu mascota es de esta familia" .. C.FIN .. C.GRIS) or "") .. C.FIN)
     table.insert(l, C.AMARILLO .. L"Habilidades:" .. C.FIN .. "\n" .. Habilidades(e, true))
-    table.insert(l, C.AMARILLO .. L"Todas: " .. C.FIN .. (B.comun or ""))
-    table.insert(l, C.AMARILLO .. L"Dieta: " .. C.FIN .. (e.dieta or "?"))
+    table.insert(l, C.AMARILLO .. L"Todas: " .. C.FIN .. L(B.comun or ""))
+    table.insert(l, C.AMARILLO .. L"Dieta: " .. C.FIN .. L(e.dieta or "?"))
     table.insert(l, C.GRIS .. L"Para aprender un rango nuevo, domestica una bestia que lo tenga y úsala hasta aprenderlo; luego enséñaselo a tu mascota en Entrenar bestia." .. C.FIN)
     return table.concat(l, "\n")
   end
   Bestias()
   local f = familiaDe[e.f] or {}
   local puedo = (e.min or 1) <= NivelJugador()
-  table.insert(l, C.GRIS .. string.lower(f.n or "bestia") .. L" · nivel " .. (e.nv or "?") .. (RANGO[e.r] and (" · " .. RANGO[e.r]) or "") .. " · " ..
-    (puedo and (C.VERDE .. L"ya puedes domesticarla" .. C.FIN .. C.GRIS) or (L"desde el nivel " .. (e.min or "?"))) .. C.FIN)
+  table.insert(l, C.GRIS .. string.lower(NombreEntrada(f) or "bestia") .. L" · nivel " .. (e.nv or "?") .. (RANGO[e.r] and (" · " .. L(RANGO[e.r])) or "") .. " · " ..
+    (puedo and (C.VERDE .. (GL.ingles and "level compatible; check tameability" or "nivel compatible; comprueba si es domesticable") .. C.FIN .. C.GRIS) or (L"desde el nivel " .. (e.min or "?"))) .. C.FIN)
   if EsCazador() then table.insert(l, LaTengo(e) and (C.VERDE .. L"La tienes domesticada" .. C.FIN) or (C.GRIS .. L"No la tienes domesticada" .. C.FIN)) end
   if EsRara(e) then table.insert(l, C.GRIS .. L"Dragón plateado: bestia rara" .. C.FIN) end
-  table.insert(l, C.AMARILLO .. L"Dónde: " .. C.FIN .. (e.zona or "?") .. (e.otras and (C.GRIS .. L" (también en " .. e.otras .. ")" .. C.FIN) or ""))
+  table.insert(l, C.AMARILLO .. L"Dónde: " .. C.FIN .. L(e.zona or "?") .. (e.otras and (C.GRIS .. L" (también en " .. L(e.otras) .. ")" .. C.FIN) or ""))
   if e.x and e.y then table.insert(l, C.AMARILLO .. L"Coordenadas: " .. C.FIN .. string.format("%.1f, %.1f", e.x, e.y)) end
   if e.v then table.insert(l, C.AMARILLO .. L"Velocidad de ataque: " .. C.FIN .. string.format("%.1f s", e.v) .. (e.v < 2 and (C.VERDE .. L" (rápida)" .. C.FIN) or "")) end
-  table.insert(l, C.AMARILLO .. L"Habilidades: " .. C.FIN .. Habilidades(f, false))
-  table.insert(l, C.AMARILLO .. L"Dieta: " .. C.FIN .. (f.dieta or "?"))
-  table.insert(l, C.GRIS .. L"Fuente: base de datos de Classic (cMaNGOS y QuestieDB)" .. C.FIN)
+  table.insert(l, C.AMARILLO .. (GL.ingles and "Family skills (not innate): " or "Habilidades de familia (no innatas): ") .. C.FIN .. Habilidades(f, false))
+  table.insert(l, C.AMARILLO .. L"Dieta: " .. C.FIN .. L(f.dieta or "?"))
+  if e.familiaPendiente then
+    table.insert(l, C.AMARILLO .. (GL.ingles and "Family pending live verification (Nov 9 hotfix)." or "Familia pendiente de verificar en vivo (corrección del 9 de noviembre).") .. C.FIN)
+  end
+  table.insert(l, C.GRIS .. (GL.ingles and "Family compatibility: Forever 71091. NPC coordinates and tameability: reference, not verified in client." or "Compatibilidad de familia: Forever 71091. Coordenadas y domesticación: referencia sin verificar en cliente.") .. C.FIN)
   return table.concat(l, "\n")
 end
 
@@ -234,17 +286,18 @@ end
 local function DestinoFicha(e)
   if pest == "demonios" then
     local c = ComoDemonio(e)
-    if c then return { m = c[4], x = c[5], y = c[6], n = c[2] } end
+    if c then return { m = c[4], x = c[5], y = c[6], n = (GL.LC or L)(c[2]), z = (GL.LC or L)(c[3]) } end
     return nil
   end
-  if e.m and e.x then return { m = e.m, x = e.x, y = e.y, n = e.n } end
+  if e.familiaPendiente then return nil end
+  if e.m and e.x then return { m = e.m, x = e.x, y = e.y, n = GL.clienteIngles and (e.ing or (GL.LC or L)(e.n)) or e.n, z = (GL.LC or L)(e.zona) } end
   return nil
 end
 
 ------------------------------------------------------------------------
 -- Pestañas de lista: Mis mascotas / Mis demonios / Establos / Instructores
 ------------------------------------------------------------------------
-local FELICIDAD = { L"Descontenta", L"Satisfecha", L"Contenta" }
+local FELICIDAD = { "Descontenta", "Satisfecha", "Contenta" }
 local function HabilidadesMascota()
   local l = {}
   if not GetPetActionInfo then return l end
@@ -264,7 +317,7 @@ local function Cabecera()
       table.insert(l, C.AMARILLO .. L"Activa: " .. C.FIN .. ((UnitName and UnitName("pet")) or "?") .. C.GRIS .. " · " .. (FamiliaMascota() or "?") .. (nv and (L" · nivel " .. nv) or "") .. C.FIN)
       if GetPetHappiness then
         local ok, h = pcall(GetPetHappiness)
-        if ok and h then table.insert(l, C.AMARILLO .. L"Felicidad: " .. C.FIN .. (FELICIDAD[h] or h) .. (h < 3 and (C.GRIS .. L" (dale de comer para que haga más daño)" .. C.FIN) or "")) end
+        if ok and h then table.insert(l, C.AMARILLO .. L"Felicidad: " .. C.FIN .. (FELICIDAD[h] and L(FELICIDAD[h]) or h) .. (h < 3 and (C.GRIS .. L" (dale de comer para que haga más daño)" .. C.FIN) or "")) end
       end
       if GetPetLoyalty then local ok, t = pcall(GetPetLoyalty); if ok and t then table.insert(l, C.AMARILLO .. L"Lealtad: " .. C.FIN .. t) end end
       if GetPetTrainingPoints then
@@ -292,7 +345,7 @@ local function Cabecera()
       table.insert(l, C.GRIS .. L"No tienes ningún demonio fuera." .. C.FIN)
     end
     local frag = GetItemCount and GetItemCount(6265) or 0
-    table.insert(l, C.AMARILLO .. L"Fragmentos de alma: " .. C.FIN .. (frag or 0) .. C.GRIS .. L" (el Abisario y los siguientes gastan uno al invocarlos)" .. C.FIN)
+    table.insert(l, C.AMARILLO .. L"Fragmentos de alma: " .. C.FIN .. (frag or 0) .. C.GRIS .. TxtBrujo(" (abisario, sayaad y manáfago: comprueba los reactivos; infernal y fatalidad usan otros)"," (Voidwalker, Sayaad and Felhunter: check reagents; Inferno and Doom use others)") .. C.FIN)
     table.insert(l, C.GRIS .. L"Demonios que sabes invocar:" .. C.FIN)
   elseif pest == "establos" and subEst == "guardadas" then
     local huecos = DB().huecosEstablo
@@ -324,7 +377,7 @@ local function PNJDeMiLado(lista)
 end
 
 local function FilaPNJ(p, icono)
-  return { t = p.n, d = p.zona .. " · " .. string.format("%.1f, %.1f", p.x, p.y), icono = icono, destino = p }
+  return { t = L(p.n), d = L(p.zona) .. " · " .. string.format("%.1f, %.1f", p.x, p.y), icono = icono, destino = {m=p.m,x=p.x,y=p.y,n=(GL.LC or L)(p.n),z=(GL.LC or L)(p.zona)} }
 end
 
 -- Filas: { t = texto, d = detalle, icono, marca (true/false/nil), destino }
@@ -339,8 +392,8 @@ local function Filas()
     if #r == 0 then table.insert(r, { t = C.GRIS .. L"Ninguna todavía" .. C.FIN, d = L"Domestica una bestia (pestaña Familias) o abre el establo para apuntar las tuyas." }) end
   elseif pest == "mias" then
     for _, d in ipairs(GL.demonios) do
-      local sabe = IsSpellKnown and IsSpellKnown(d.hechizo)
-      table.insert(r, { t = d.n, d = sabe and (C.VERDE .. L"lo sabes invocar" .. C.FIN) or (L"desde el nivel " .. d.nivel), icono = d.icono, marca = sabe and true or false })
+      local sabe = ConoceInvocacion(d)
+      table.insert(r, { t = NombreEntrada(d), d = sabe and (C.VERDE .. L"lo sabes invocar" .. C.FIN) or (L"desde el nivel " .. d.nivel), icono = d.icono, marca = sabe and true or false })
     end
   elseif pest == "establos" and subEst == "guardadas" then
     for _, p in ipairs(DB().establo or {}) do
@@ -360,6 +413,15 @@ local function Filas()
   elseif pest == "instructores" then
     for _, p in ipairs(PNJDeMiLado(GL.bestias and GL.bestias.demonios)) do
       table.insert(r, FilaPNJ(p, "Interface\\Icons\\INV_Misc_Book_06"))
+    end
+    local familias={[688]={"Diablillo","Imp"},[697]={"Abisario","Voidwalker"},[712]={"Sayaad (súcubo/íncubo)","Sayaad (Succubus/Incubus)"},[691]={"Manáfago","Felhunter"}}
+    table.insert(r,{t=TxtBrujo("Grimorios de demonios","Demon grimoires"),d=TxtBrujo("Referencia: comprueba oferta, precio y rango aprendido.","Reference: check stock, price and learned rank.")})
+    for _,e in ipairs(rangosDemonios) do
+      for i,nv in ipairs(e[4]) do
+        local libro=e[5][i]
+        local origen=libro==0 and TxtBrujo("Facultad inicial","Initial ability") or TxtBrujo("Grimorio #","Grimoire #")..libro
+        table.insert(r,{t=TxtBrujo(e[2],e[3]).." "..i.." · "..TxtBrujo(familias[e[1]][1],familias[e[1]][2]),d=TxtBrujo("Nivel ","Level ")..nv.." · "..origen..(nv>NivelJugador() and TxtBrujo(" · Futuro"," · Future") or "")})
+      end
     end
   end
   return r
@@ -382,7 +444,7 @@ local function RefrescarRejilla()
   ui.altoFicha = ALTO_FICHA
   local ficha = sel or (pest == "familias" and fam and familiaDe[fam]) or nil
   if ficha then
-    ui.fichaTitulo:SetText(string.upper(ficha.n or "?") .. ((ficha.ing and ficha.ing ~= ficha.n) and (C.GRIS .. "  (" .. ficha.ing .. ")" .. C.FIN) or ""))
+    ui.fichaTitulo:SetText(string.upper(NombreEntrada(ficha) or "?") .. ((ficha.ing and ficha.ing ~= ficha.n) and (C.GRIS .. "  (" .. (GL.ingles and ficha.n or ficha.ing) .. ")" .. C.FIN) or ""))
     ui.fichaTexto:SetText(TextoFicha(ficha))
     local destino = DestinoFicha(ficha)
     ui.destino = destino
@@ -420,7 +482,7 @@ local function RefrescarRejilla()
         GL.Mostrar(celda.dragon, raro)
         PonerMarca(celda.marca, Marca(e))
         local extra = (e.npc and (" · " .. (e.nv or ""))) or ((e.hab and not e.nivel) and (" (" .. (e.cuantas or 0) .. ")")) or (e.nivel and (" · " .. e.nivel)) or ""
-        celda.nombre:SetText((vivo and "" or C.GRIS) .. (e.n or "?") .. extra .. (vivo and "" or C.FIN))
+        celda.nombre:SetText((vivo and "" or C.GRIS) .. (NombreEntrada(e) or "?") .. extra .. (vivo and "" or C.FIN))
         celda:Show()
       end
     end
@@ -429,7 +491,7 @@ local function RefrescarRejilla()
   if pest == "familias" and fam then
     local puedo = 0
     for i = 1, #lista do if Vivo(lista[i]) then puedo = puedo + 1 end end
-    ui.titulo:SetText(L"Mascotas" .. C.GRIS .. "  · " .. ((familiaDe[fam] and familiaDe[fam].n) or "") .. ": " .. puedo .. L" de " .. #lista .. L" a tu nivel" .. C.FIN)
+    ui.titulo:SetText(L"Mascotas" .. C.GRIS .. "  · " .. ((familiaDe[fam] and NombreEntrada(familiaDe[fam])) or "") .. ": " .. puedo .. L" de " .. #lista .. L" a tu nivel" .. C.FIN)
   elseif pest == "familias" then
     ui.titulo:SetText(L"Mascotas" .. C.GRIS .. "  · " .. #lista .. L" familias de bestias" .. C.FIN)
   else
@@ -473,7 +535,7 @@ local function RefrescarLista()
     end
   end
   for i = n + 1, #ui.filas do ui.filas[i]:Hide() end
-  local titulos = { mias = EsCazador() and L"tus mascotas" or L"tus demonios", establos = "establos", instructores = L"instructores de demonios" }
+  local titulos = { mias = EsCazador() and L"tus mascotas" or L"tus demonios", establos = L"establos", instructores = L"instructores de demonios" }
   ui.titulo:SetText(L"Mascotas" .. C.GRIS .. "  · " .. (titulos[pest] or "") .. C.FIN)
   ui.pie:ClearAllPoints()
   ui.pie:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 0, 4)
@@ -543,9 +605,9 @@ local function CrearCelda()
   b:SetScript("OnEnter", function(self)
     if not GameTooltip or not self.e then return end
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(self.e.n or "?")
+    GameTooltip:SetText(NombreEntrada(self.e) or "?")
     if pest == "familias" and not fam then GameTooltip:AddLine(L"Clic: ver sus bestias", 0.7, 0.7, 0.7)
-    elseif self.e.npc then GameTooltip:AddLine(L"Nivel " .. (self.e.nv or "?") .. " · " .. (self.e.zona or ""), 1, 1, 1)
+    elseif self.e.npc then GameTooltip:AddLine(L"Nivel " .. (self.e.nv or "?") .. " · " .. L(self.e.zona or ""), 1, 1, 1)
     else GameTooltip:AddLine(L"Desde el nivel " .. (self.e.nivel or "?"), 1, 1, 1) end
     GameTooltip:Show()
   end)
@@ -596,7 +658,7 @@ local function CrearPanel()
   local tabs = Pestanas()
   for i = 1, #tabs do
     local clave = tabs[i][1]
-    local b = GL.CrearBoton(panel, tabs[i][2], function()
+    local b = GL.CrearBoton(panel, L(tabs[i][2]), function()
       if clave == "rangos" then if GL.AbrirRangosMascota then GL.AbrirRangosMascota() end return end   -- 9.4: CazadorBrujo94.lua
       pest, fam, sel, desde = clave, nil, nil, 0; Refrescar()
     end, nil, 20)
@@ -608,7 +670,7 @@ local function CrearPanel()
   ui.subs = {}
   for i = 1, #SUB_ESTABLO do
     local clave = SUB_ESTABLO[i][1]
-    local b = GL.CrearBoton(panel, SUB_ESTABLO[i][2], function() subEst, desde = clave, 0; Refrescar() end, nil, 18)
+    local b = GL.CrearBoton(panel, L(SUB_ESTABLO[i][2]), function() subEst, desde = clave, 0; Refrescar() end, nil, 18)
     b:SetWidth(140)
     b.clave = clave
     if i == 1 then b:SetPoint("TOPLEFT", panel, "TOPLEFT", 0, -50) else b:SetPoint("LEFT", ui.subs[i - 1], "RIGHT", 4, 0) end

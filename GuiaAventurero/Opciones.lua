@@ -29,17 +29,25 @@ end
 local function Aplicar()
   local db = DB()
   if GL.frame then
-    GL.frame:SetScale(db.escala or 1)
+    GL.EscalaVisibleR10(GL.frame, db.escala or 1)
     AplicarFondo(GL.frame)
   end
   if compacto then
-    compacto:SetScale(db.escala or 1)
+    GL.EscalaVisibleR10(compacto, db.escala or 1)
     AplicarFondo(compacto)
   end
-  if GL.flecha then GL.flecha:SetScale(db.escalaFlecha or 1); if GL.FlechaAlPixel then GL.FlechaAlPixel() end end
+  if GL.franja then GL.EscalaVisibleR10(GL.franja, db.escala or 1) end
+  if GL.flecha then GL.EscalaVisibleR10(GL.flecha, db.escalaFlecha or 1); if GL.FlechaAlPixel then GL.FlechaAlPixel() end end
   if GL.AplicarTransparencia then GL.AplicarTransparencia() end
 end
 GL.AplicarAjustes = Aplicar
+-- No modificar preferencias al cambiar la resolución o la escala global.
+local eventosEscala = CreateFrame("Frame")
+GL.Evento(eventosEscala, "DISPLAY_SIZE_CHANGED")
+GL.Evento(eventosEscala, "UI_SCALE_CHANGED")
+eventosEscala:SetScript("OnEvent", function()
+  if type(DB()) == "table" and GL.frame then Aplicar() end
+end)
 
 -- 9.0: transparencia de toda la ventana (texto y cajas incluidos) para ver el juego que hay detrás.
 -- Con «opaca al pasar el ratón», se ve entera mientras el ratón está encima.
@@ -47,7 +55,7 @@ function GL.AplicarTransparencia()
   local db = DB()
   if type(db) ~= "table" then return end
   local a = tonumber(db.alphaVentana) or 1
-  for _, f in ipairs({ GL.frame, compacto, GL.franja, _G.GuiaAventureroModoMazmorra }) do
+  for _, f in pairs({ GL.frame, compacto, GL.franja, _G.GuiaAventureroModoMazmorra }) do
     if f and f.SetAlpha then
       local encima = a < 1 and db.alphaRaton ~= false and f:IsShown() and MouseIsOver and MouseIsOver(f)
       f:SetAlpha(encima and 1 or a)
@@ -149,6 +157,7 @@ local function RefrescarCompacto()
   end
   local alto = GL.Alto(compacto.texto, texto, 12, compacto:GetWidth() - 20)
   compacto:SetHeight(32 + alto + 6 + 16 + 10 + n * 14 + (n > 0 and 4 or 0) + ((compacto.barraXP and compacto.barraXP:IsShown()) and 22 or 0))   -- 9.0: barra de XP
+  GL.EscalaVisibleR10(compacto, DB().escala or 1)
 end
 
 local function GuardarPosicionCompacto()
@@ -233,14 +242,108 @@ local function CrearCompacto()
   compacto.destino:SetPoint("RIGHT", compacto, "RIGHT", -10, 0)
   GL.UnaLinea(compacto.destino)
 
-  compacto:SetScale(db.escala or 1)
-  compacto:SetScript("OnShow", RefrescarCompacto)
+  -- 9.7.9.8: fila con los iconos de la barra lateral debajo de la compacta; cada uno abre la ventana grande
+  -- en esa pestaña, con «Volver a compacta» para regresar tal como estabas.
+  compacto.iconos = CreateFrame("Frame", nil, compacto, PLANTILLA)
+  compacto.iconos:SetPoint("TOPLEFT", compacto, "BOTTOMLEFT", 0, 1)
+  compacto.iconos:SetHeight(28)
+  compacto.iconos:SetWidth(40)
+  GL.Caja(compacto.iconos, GL.COLOR.fondo, GL.COLOR.borde)
+  compacto.iconos.botones = {}
+
+  GL.EscalaVisibleR10(compacto, db.escala or 1)
+  compacto:SetScript("OnShow", function() GL.PintarIconosCompacta(); RefrescarCompacto() end)
   compacto:Hide()
+end
+
+-- los botones de la barra grande que salen en la fila (el de tamaño no: la compacta ya tiene los suyos)
+local function LateralesCompacta()
+  local l = {}
+  for _, b in ipairs(GL.botonesLaterales or {}) do
+    if b ~= GL.ui.botonCompacto and b.IsShown and b:IsShown() then table.insert(l, b) end
+  end
+  return l
+end
+
+function GL.AbrirDesdeCompacto(b)
+  if not b then return end
+  GL._desdeCompacto = true
+  if GL.PonerTamano then GL.PonerTamano("completo") else GL.SalirCompacto() end
+  local f = b.GetScript and b:GetScript("OnClick")
+  if f then pcall(f, b, "LeftButton") end
+  GL._desdeCompacto = nil
+  DB().volverCompacto = true
+  GL.ActualizarVolverCompacta()
+end
+
+function GL.VolverACompacta()
+  local db = DB()
+  db.volverCompacto = nil
+  local guia = db.modoGuia or "guia"
+  if db.modo ~= guia and GL.AbrirModo then pcall(GL.AbrirModo, guia) end
+  if GL.PonerTamano then GL.PonerTamano("compacto") else GL.EntrarCompacto() end
+  GL.ActualizarVolverCompacta()
+end
+
+-- Guía en la barra grande, abierta desde la compacta: vuelve a la compacta
+function GL.AntesLateral(b)
+  if GL._desdeCompacto or not DB().volverCompacto or not b or b.clave ~= "guia" then return false end
+  GL.VolverACompacta()
+  return true
+end
+
+function GL.ActualizarVolverCompacta()
+  local v = GL.ui and GL.ui.volverCompacta
+  if v then GL.Mostrar(v, DB().volverCompacto == true) end
+end
+
+function GL.PintarIconosCompacta()
+  local fila = compacto and compacto.iconos
+  if not fila then return end
+  local lista = LateralesCompacta()
+  for k, b in ipairs(lista) do
+    local i = fila.botones[k]
+    if not i then
+      i = CreateFrame("Button", nil, fila)
+      i:SetSize(20, 20)
+      i.tex = i:CreateTexture(nil, "ARTWORK")
+      i.tex:SetPoint("TOPLEFT", i, "TOPLEFT", 1, -1)
+      i.tex:SetPoint("BOTTOMRIGHT", i, "BOTTOMRIGHT", -1, 1)
+      local brillo = i:CreateTexture(nil, "HIGHLIGHT")
+      brillo:SetAllPoints()
+      brillo:SetColorTexture(1, 1, 1, 0.15)
+      i:SetScript("OnClick", function(self) GL.AbrirDesdeCompacto(self.lateral) end)
+      fila.botones[k] = i
+    end
+    i:ClearAllPoints()
+    i:SetPoint("LEFT", fila, "LEFT", 6 + (k - 1) * 24, 0)
+    i.lateral = b
+    local tx = b.icono and b.icono.GetTexture and b.icono:GetTexture()
+    if tx then
+      i.tex:SetTexture(tx)
+      if b.icono.GetTexCoord then
+        local c = { b.icono:GetTexCoord() }
+        if #c >= 4 then pcall(i.tex.SetTexCoord, i.tex, unpack(c)) end
+      end
+    elseif b.iconoRuta then
+      GL.PonerIcono(i.tex, b.iconoRuta)
+    end
+    local nombre = (b == GL.ui.botonOpciones) and L"Ajustes" or b.etiqueta or ""
+    i.nombre = nombre
+    GL.Ayuda(i, nombre, L"Abre la ventana grande en esta pestaña. Con «Volver a compacta» regresas tal como estabas.")
+    i:Show()
+  end
+  for k = #lista + 1, #fila.botones do fila.botones[k]:Hide() end
+  fila:SetWidth(12 + #lista * 24 - 4)
+  GL.Mostrar(fila, #lista > 0)
 end
 
 function GL.EntrarCompacto()
   local db = DB()
+  if db.franja and GL.PonerTamano then GL.PonerTamano("compacto"); return end
   db.compacto = true
+  db.franja = false
+  db.tamano = "compacto"
   db.ocultoCompacto = false
   if GL.frame then GL.frame:Hide() end
   compacto:Show()
@@ -248,12 +351,13 @@ function GL.EntrarCompacto()
   if controles.compacto then controles.compacto.Actualizar() end
 end
 
-function GL.SalirCompacto()
+function GL.SalirCompacto(sinMostrar)
   local db = DB()
   db.compacto = false
+  if not sinMostrar then db.tamano = "completo" end
   db.oculto = false
   compacto:Hide()
-  if GL.frame then GL.frame:Show() end
+  if GL.frame and not sinMostrar then GL.frame:Show() end
   if controles.compacto then controles.compacto.Actualizar() end
 end
 
@@ -275,6 +379,9 @@ end
 ------------------------------------------------------------------------
 -- Panel de opciones (dentro de la ventana, como una pestaña más)
 ------------------------------------------------------------------------
+local function NumeroControl(v)
+  return not (issecretvalue and issecretvalue(v)) and type(v) == "number" and v == v and math.abs(v) < math.huge
+end
 local function Redondear(v, paso)
   return math.floor(v / paso + 0.5) * paso
 end
@@ -312,15 +419,25 @@ local function CrearDeslizador(padre, etiqueta, minimo, maximo, paso, leer, escr
   cont.valor = GL.Texto(cont, "GameFontHighlightSmall", "RIGHT")
   cont.valor:SetPoint("LEFT", s, "RIGHT", 10, 0)
   local cargando = false
-  s:SetScript("OnValueChanged", function(self, v)
-    v = Redondear(v, paso)
+  local function Pintar(v)
     cont.valor:SetText(C.AMARILLO .. (formato and formato(v) or (math.floor(v * 100 + 0.5) .. "%")) .. C.FIN)
-    if not cargando then escribir(v) end
+  end
+  s:SetScript("OnValueChanged", function(self, v)
+    if cargando or not NumeroControl(v) then return end
+    v = math.max(minimo, math.min(maximo, Redondear(v, paso)))
+    escribir(v)
+    cont.Actualizar()
   end)
   cont.Actualizar = function()
+    if cargando then return end
+    local v = leer()
+    if not NumeroControl(v) then
+      cont.valor:SetText("—")
+      return
+    end
     cargando = true
-    s:SetValue(leer())
-    cont.valor:SetText(C.AMARILLO .. (formato and formato(leer()) or (math.floor(leer() * 100 + 0.5) .. "%")) .. C.FIN)
+    s:SetValue(math.max(minimo, math.min(maximo, v)))
+    Pintar(v) -- no reescribir precios antiguos que superen el rango del control
     cargando = false
   end
   cont.deslizador = s
@@ -380,10 +497,16 @@ end
 -- 7.5.4: copiar los ajustes de otro personaje de la cuenta (los guarda Cuenta.lua al conectar con cada uno)
 local function OtrosPersonajes()
   local r = {}
-  local yo = (UnitName and UnitName("player") or "") .. "-" .. ((GetRealmName and GetRealmName()) or "")
+  local yo = GL.ClavePersonajeCuenta and GL.ClavePersonajeCuenta()
   local lista = type(GuiaAventureroCuenta) == "table" and GuiaAventureroCuenta.personajes
   if type(lista) ~= "table" then lista = {} end
-  for k, p in pairs(lista) do if k ~= yo and type(p.ajustes) == "table" then table.insert(r, { k = k, p = p }) end end
+  if not yo then return r end
+  for k, p in pairs(lista) do
+    if type(k) == "string" and type(p) == "table" and type(p.ajustes) == "table"
+        and k ~= yo and not (GL.EsPersonajeActualCuenta and GL.EsPersonajeActualCuenta(k, p)) then
+      table.insert(r, { k = k, p = p })
+    end
+  end
   table.sort(r, function(a, b) return a.k < b.k end)
   return r
 end
@@ -395,20 +518,29 @@ local function CrearCopiar(padre)
   cont.texto = GL.Texto(cont, "GameFontHighlightSmall")
   cont.texto:SetPoint("TOPLEFT", cont, "TOPLEFT", 0, 0)
   cont.texto:SetText(L"Copiar ajustes de otro personaje")
-  cont.i = 1
   cont.quien = GL.CrearBoton(cont, "", function()
     local l = OtrosPersonajes()
-    if #l > 0 then cont.i = cont.i % #l + 1 end
+    local i = 0
+    for j, e in ipairs(l) do if e.k == cont.clave and e.p == cont.registro and e.p.guid == cont.guid then i = j; break end end
+    local e = #l > 0 and l[i % #l + 1] or nil
+    cont.clave, cont.registro, cont.guid = e and e.k, e and e.p, e and e.p.guid
     cont.Actualizar()
   end, nil, 22)
   cont.quien:SetPoint("TOPLEFT", cont, "TOPLEFT", 0, -16)
   cont.quien:SetPoint("TOPRIGHT", cont, "TOPRIGHT", -84, -16)
   GL.Ayuda(cont.quien, L"Personaje", L"Clic: pasa al siguiente personaje de la cuenta.")
   cont.copiar = GL.CrearBoton(cont, L"Copiar", function()
-    local e = OtrosPersonajes()[cont.i]
-    if not e then return end
-    for _, k in ipairs(GL.AJUSTES_COPIABLES or {}) do DB()[k] = e.p.ajustes[k] end
-    if GL.CambiarTema then GL.CambiarTema(DB().tema or "dorado") end
+    local e
+    for _, candidato in ipairs(OtrosPersonajes()) do
+      if candidato.k == cont.clave and candidato.p == cont.registro and candidato.p.guid == cont.guid then e = candidato; break end
+    end
+    if not e then cont.Actualizar(); return end
+    for _, k in ipairs(GL.AJUSTES_COPIABLES or {}) do
+      -- Los automatismos son individuales: no activar ni desactivar acciones al copiar el aspecto.
+      if k ~= "rangosBarras" and k ~= "rangosAuto" and k ~= "modoPesca" and k ~= "autoSeguimiento"
+          and GL.AjusteCopiableValidoR09(k, e.p.ajustes[k]) then DB()[k] = e.p.ajustes[k] end
+    end
+    if GL.CambiarTema and DB().tema then GL.CambiarTema(DB().tema) end
     Aplicar()
     if GL.AplicarTamTexto then GL.AplicarTamTexto() end
     if GL.AplicarGraficos then pcall(GL.AplicarGraficos) end   -- 8.8
@@ -421,9 +553,14 @@ local function CrearCopiar(padre)
   GL.Ayuda(cont.copiar, L"Copiar", L"Copia tema, tamaños, opacidad y casillas de Ajustes. No toca automatismos ni el progreso de la ruta.")
   cont.Actualizar = function()
     local l = OtrosPersonajes()
-    if cont.i > #l then cont.i = 1 end
-    local e = l[cont.i]
-    cont.quien.texto:SetText(e and ((e.p.n or e.k) .. " " .. GL.Icono("▾")) or L"Ningún otro personaje guardado")
+    local e
+    for _, candidato in ipairs(l) do
+      if candidato.k == cont.clave and candidato.p == cont.registro and candidato.p.guid == cont.guid then e = candidato; break end
+    end
+    e = e or l[1]
+    cont.clave, cont.registro, cont.guid = e and e.k, e and e.p, e and e.p.guid
+    cont.quien.texto:SetText(e and (e.k .. " " .. GL.Icono("▾")) or L"Ningún otro personaje guardado")
+    if cont.quien.SetEnabled then cont.quien:SetEnabled(e ~= nil) end
     GL.Mostrar(cont.copiar, e ~= nil)
   end
   return cont
@@ -809,7 +946,7 @@ local function CrearPanelOpciones()
   table.insert(lista, controles.tamTexto)
   -- 7.5.1: precios del ahorro (para toda la cuenta). 7.9.3: Equitación 100 o en Forever, con la primera montura (montura 0).
   local function Precio(k, def)
-    return function() local c = type(GuiaAventureroCuenta) == "table" and GuiaAventureroCuenta.precios; return (type(c) == "table" and tonumber(c[k])) or def end,
+    return function() local c = GL.PreciosAhorro and GL.PreciosAhorro(); return (type(c) == "table" and c[k]) or def end,
       function(v) if type(GuiaAventureroCuenta) ~= "table" then GuiaAventureroCuenta = {} end
         if type(GuiaAventureroCuenta.precios) ~= "table" then GuiaAventureroCuenta.precios = {} end; GuiaAventureroCuenta.precios[k] = v
         if GL.Refrescar then GL.Refrescar() end end
@@ -856,11 +993,13 @@ local function CrearPanelOpciones()
     { "rangosBarras", L"Rangos nuevos en las barras",
       L"Al aprender un rango nuevo de un hechizo que tienes en las barras, te pregunta si cambias los botones por el nuevo. /ga rangos lo busca cuando quieras.",
       function() return DB().rangosBarras ~= false end,
-      function(v) DB().rangosBarras = v end },
+      function(v) DB().rangosBarras = v; if not v then DB().rangosAuto = false end
+        if GL.ActualizarRangosBarras then GL.ActualizarRangosBarras(true) end end },
     { "rangosAuto", L"Poner los rangos nuevos sin preguntar",
       L"Cambia solo los botones de las barras al rango nuevo, sin el aviso (fuera de combate).",
-      function() return DB().rangosAuto == true end,
-      function(v) DB().rangosAuto = v; if v then DB().rangosBarras = true end end },
+      function() return DB().rangosBarras ~= false and DB().rangosAuto == true end,
+      function(v) DB().rangosAuto = v; if v then DB().rangosBarras = true end
+        if GL.ActualizarRangosBarras then GL.ActualizarRangosBarras(true) end end },
     { "guiaClara", L"Guía clara (Coger, Hacer, Entregar)",
       L"Cada misión del paso en una tarjeta con lo que hay que coger, hacer y entregar. Apagado: la caja del paso de antes, con Siguiente, Cerca de ti y Después.",
       function() return DB().guiaClara ~= false end,
@@ -878,10 +1017,12 @@ local function CrearPanelOpciones()
       function(v) if v then GL.EntrarCompacto() else GL.SalirCompacto() end end },
     { "discretoCombate", L"Modo discreto durante el combate", L"Oculta la ventana principal y la flecha mientras estás en combate. Al terminar, restaura solo lo que estaba visible. No modifica la ruta ni el progreso.",
       function() return DB().discretoCombate == true end,
-      function(v) DB().discretoCombate = v; if v and InCombatLockdown and InCombatLockdown() and GL.ModoDiscretoCombate then GL.ModoDiscretoCombate(true) end end },
+      function(v) DB().discretoCombate = v; if GL.ModoDiscretoCombate then
+        if not v then GL.ModoDiscretoCombate(false)
+        elseif InCombatLockdown and InCombatLockdown() then GL.ModoDiscretoCombate(true) end end end },
     { "comparador", L"Comparador de equipo en los tooltips", L"En las piezas que puedes equiparte: diferencia de estadísticas con lo que llevas en esa ranura y si es mejor o peor según lo que busca la guía para tu clase.",
       function() return DB().comparador ~= false end, function(v) DB().comparador = v end },
-    { "autoReparar", L"Reparar solo en el vendedor", L"Al abrir un vendedor que repara, arregla todo tu equipo con tu oro. Shift al abrirlo: no repara.",
+    { "autoReparar", L"Reparar solo en el vendedor", L"Al abrir un vendedor que repara, solicita reparar todo con tu oro si hay saldo suficiente, respetando la reserva si está activada. Mayús al abrirlo: no repara.",
       function() return DB().autoReparar ~= false end, function(v) DB().autoReparar = v end },
     { "avisos", L"Avisos de equipo, bolsas y comida", L"En la pestaña Guía: pieza a punto de romperse, pocos huecos en las bolsas (con qué tirar), objetos de misión que ya no usas y poca comida o agua.",
       function() return DB().avisos ~= false end, function(v) DB().avisos = v; if GL.Refrescar then GL.Refrescar() end end },
@@ -968,7 +1109,7 @@ local AUTOS = {
     { "autoRecetas", "Aprender las recetas de la guía", "En el instructor de profesión: el rango nuevo y las recetas que usa la guía." },
   } },
   { "Vendedor", {
-    { "autoVender", "Vender lo gris", "Al abrir un vendedor, vende los objetos grises y te dice cuánto has ganado. Mayús al abrirlo para no hacerlo." },
+    { "autoVender", "Vender lo gris", "Al abrir un vendedor, solicita la venta de basura gris confirmada y muestra su valor estimado. Conserva equipo, materiales y objetos de misión. Mayús al abrirlo para no hacerlo." },
   } },
   { "Talentos", {
     { "autoTalentos", "Poner los talentos de la guía al subir de nivel", "Sigue el plan de Personaje > Talentos. Nunca quita puntos." },
@@ -977,13 +1118,18 @@ local AUTOS = {
 
 local filasAuto, cuentaAuto, modoAuto = {}, nil, nil
 
-local function Encendido(k) return DB()[k] ~= false end
+local function Encendido(k)
+  -- La venta es opt-in: usar exactamente el mismo criterio que Mejoras.lua.
+  if k == "autoVender" then return DB()[k] == true end
+  return DB()[k] ~= false
+end
 
 local function PonerAuto(k, v)
   if k == "auto" then
     if Encendido("auto") ~= v then GL.AlternarAuto() end   -- avisa en el chat y sincroniza como /ga auto
   else
     DB()[k] = v
+    if GL.NotificarAutomatismo then GL.NotificarAutomatismo(k, v) end
   end
 end
 
@@ -1004,7 +1150,7 @@ local function RefrescarAutomatismos()
     local todo, nada = a and b and c, not a and not b and not c
     modoAuto.auto:SetActivo(todo); modoAuto.mano:SetActivo(nada)
     modoAuto.texto:SetText(todo and L"La guía avanza sola, mueve la flecha al llegar y pone tus talentos al subir de nivel."
-      or nada and L"Tú pulsas «Saltar paso», eliges adónde va la flecha y pones los talentos."
+      or nada and L"Tú pulsas «Siguiente», eliges adónde va la flecha y pones los talentos."
       or L"A tu medida: tienes unos encendidos y otros no. Cámbialos uno a uno aquí debajo.")
   end
 end
@@ -1042,7 +1188,7 @@ local function CrearPanelAutomatismos()
   end, nil, 20)
   apagar:SetWidth(96)
   apagar:SetPoint("TOPRIGHT", p, "TOPRIGHT", 0, -52)
-  GL.Ayuda(apagar, L"Apagar todos", L"Apaga todos los automatismos de este personaje. Luego enciendes los que quieras.")
+  GL.Ayuda(apagar, L"Apagar todos", L"Apaga los automatismos de esta lista. Los de Ajustes se configuran por separado.")
 
   local y = -80
   for _, grupo in ipairs(AUTOS) do
@@ -1083,14 +1229,16 @@ end
 
 function GL.AbrirAutomatismos()
   local db = DB()
-  if db.compacto then GL.SalirCompacto() end
+  if db.franja and GL.PonerTamano then GL.PonerTamano("completo")
+  elseif db.compacto then GL.SalirCompacto() end
   if GL.frame then GL.frame:Show(); db.oculto = false end
   GL.AbrirModo("automatismos")
 end
 
 function GL.AbrirOpciones()
   local db = DB()
-  if db.compacto then GL.SalirCompacto() end
+  if db.franja and GL.PonerTamano then GL.PonerTamano("completo")
+  elseif db.compacto then GL.SalirCompacto() end
   if GL.frame then GL.frame:Show(); db.oculto = false end
   GL.AbrirModo("opciones")
 end
@@ -1184,15 +1332,20 @@ local function CrearBotonMinimapa()
   boton:SetScript("OnDragStart", function(self)
     if DB().bloqueada then return end
     self:SetScript("OnUpdate", function()
+      if DB().bloqueada then self:SetScript("OnUpdate", nil); return end
       local mx, my = Minimap:GetCenter()
       local px, py = GetCursorPosition()
       local escala = Minimap:GetEffectiveScale()
+      if not NumeroControl(mx) or not NumeroControl(my) or not NumeroControl(px) or not NumeroControl(py)
+          or not NumeroControl(escala) or escala <= 0 then return end
       px, py = px / escala, py / escala
+      if not NumeroControl(px) or not NumeroControl(py) or (px == mx and py == my) then return end
       DB().anguloMinimapa = math.deg(math.atan2(py - my, px - mx)) % 360
       ColocarBoton()
     end)
   end)
   boton:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", nil) end)
+  boton:HookScript("OnHide", function(self) self:SetScript("OnUpdate", nil) end)
   boton:SetScript("OnEnter", function(self)
     if not GameTooltip then return end
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
@@ -1253,6 +1406,16 @@ table.insert(GL.alIniciar, function()
   CrearPanelAutomatismos()
   GL.ui.botonCompacto = BotonCabecera(ICONO_COMPACTO, -70, function() GL.EntrarCompacto() end,
     L"Modo compacto", L"Una ventana pequeña con el paso actual y el destino.")
+  -- 9.7.9.8: «‹ Volver a compacta», encima de la ventana grande, solo cuando la abriste desde la compacta
+  if GL.frame then
+    local v = GL.CrearBoton(GL.frame, L"‹ Volver a compacta", function() GL.VolverACompacta() end, nil, 20, "accion")
+    v:SetWidth(140)
+    v:SetPoint("BOTTOMRIGHT", GL.frame, "TOPRIGHT", 0, 2)
+    GL.Ayuda(v, L"Volver a compacta", L"Vuelve a la ventana compacta, con el paso y la flecha como estaban.")
+    GL.ui.volverCompacta = v
+    GL.ActualizarVolverCompacta()
+  end
+  if C_Timer and C_Timer.After then C_Timer.After(2, function() pcall(GL.PintarIconosCompacta) end) end   -- Oro, Buscar... se crean después
   GL.ui.botonOpciones = BotonCabecera(ICONO_OPCIONES, -100, function()
     if db.modo == "opciones" or db.modo == "automatismos" or db.modo == "novedades" then GL.AbrirModo("guia") else GL.AbrirModo("opciones") end
   end, L"Opciones", L"Tamaño, transparencia, misiones automáticas, mapa y más.")
@@ -1273,6 +1436,7 @@ end)
 table.insert(GL.alReiniciar, function()
   local db = DB()
   db.escala, db.opacidad, db.escalaFlecha, db.posCompacto, db.anguloMinimapa = nil, nil, nil, nil, nil
+  db.alphaVentana, db.alphaRaton = nil, nil
   db.tamTexto = nil
   if GL.AplicarTamTexto then GL.AplicarTamTexto() end
   if db.compacto then GL.SalirCompacto() end
