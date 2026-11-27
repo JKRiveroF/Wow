@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-27T08:10:38+01:00",
+  "actualizado": "2026-11-27T10:19:18+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -18,8 +18,8 @@
         188
       ],
       "efectivo": [
-        41331,
-        78976
+        206663,
+        394880
       ]
     },
     "3": {
@@ -78,7 +78,7 @@
         120
       ],
       "efectivo": [
-        12706342515211,
+        12706455013107,
         22211584586240
       ]
     }
@@ -130,7 +130,11 @@
         "pendientes_por_via": {
           "investigacion": 0,
           "cliente": 0
-        }
+        },
+        "funcional": [
+          3,
+          3
+        ]
       },
       "2": {
         "peso": 25,
@@ -139,8 +143,8 @@
           188
         ],
         "efectivo": [
-          206663,
-          394880
+          206741,
+          395040
         ],
         "criterios": [
           {
@@ -158,58 +162,58 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              14519,
-              19744
+              14525,
+              19752
             ],
             "familias": [
               {
                 "nombre": "existe",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
-                  "confirmada": 2444,
+                  "confirmada": 2445,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 6,
                   "cliente": 18
                 },
-                "comprobaciones_superadas": 2444,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_superadas": 2445,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
-                  "confirmadas": 2444
+                  "confirmadas": 2445
                 }
               },
               {
                 "nombre": "nombre_es",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
-                  "confirmada": 2277,
+                  "confirmada": 2278,
                   "parcial": 189,
                   "inferencia": 0,
                   "investigacion": 2,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 4743,
-                "comprobaciones_aplicables": 4936,
+                "comprobaciones_superadas": 4745,
+                "comprobaciones_aplicables": 4938,
                 "etapas": {
-                  "confirmadas": 2277,
-                  "contrastadas": 2466
+                  "confirmadas": 2278,
+                  "contrastadas": 2467
                 }
               },
               {
                 "nombre": "nombre_en",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
-                  "confirmada": 2444,
+                  "confirmada": 2445,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 24,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 4888,
-                "comprobaciones_aplicables": 4936,
+                "comprobaciones_superadas": 4890,
+                "comprobaciones_aplicables": 4938,
                 "etapas": {
-                  "confirmadas": 2444,
-                  "contrastadas": 2444
+                  "confirmadas": 2445,
+                  "contrastadas": 2445
                 }
               }
             ]
@@ -219,70 +223,70 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              1737,
-              6170
+              695,
+              2469
             ],
             "familias": [
               {
                 "nombre": "nivel_minimo",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
-                  "confirmada": 2444,
+                  "confirmada": 2445,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 24,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 2444,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_superadas": 2445,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
-                  "confirmadas": 2444
+                  "confirmadas": 2445
                 }
               },
               {
                 "nombre": "prerrequisitos",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 27,
                   "parcial": 0,
                   "inferencia": 567,
-                  "investigacion": 1874,
+                  "investigacion": 1875,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 27,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 27
                 }
               },
               {
                 "nombre": "prerrequisitos_alternativos",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 671,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 1797,
+                  "investigacion": 1798,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 671,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 671
                 }
               },
               {
                 "nombre": "seguimientos",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 332,
                   "parcial": 0,
-                  "inferencia": 732,
+                  "inferencia": 733,
                   "investigacion": 1404,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 332,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 332
                 }
@@ -295,149 +299,149 @@
             "aplicables": 47,
             "efectivo": [
               1889,
-              24680
+              24690
             ],
             "familias": [
               {
                 "nombre": "excluyentes",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 45,
                   "parcial": 0,
                   "inferencia": 1,
-                  "investigacion": 2422,
+                  "investigacion": 2423,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 45,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 45
                 }
               },
               {
                 "nombre": "repetible",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 26,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 2442,
+                  "investigacion": 2443,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 26,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 26
                 }
               },
               {
                 "nombre": "objetos",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 43,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 2425,
+                  "investigacion": 2426,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 43,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 43
                 }
               },
               {
                 "nombre": "desbloqueos",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 0,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 2468,
+                  "investigacion": 2469,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 0,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 0
                 }
               },
               {
                 "nombre": "grupo",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 130,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 2338,
+                  "investigacion": 2339,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 130,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 130
                 }
               },
               {
                 "nombre": "elite",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 111,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 2357,
+                  "investigacion": 2358,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 111,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 111
                 }
               },
               {
                 "nombre": "mision_activa",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 0,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 2468,
+                  "investigacion": 2469,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 0,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 0
                 }
               },
               {
                 "nombre": "desactivada_por",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 5,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 2463,
+                  "investigacion": 2464,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 5,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 5
                 }
               },
               {
                 "nombre": "objetos_objetivo",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 1529,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 939,
+                  "investigacion": 940,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 1529,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
                   "confirmadas": 1529
                 }
@@ -448,7 +452,11 @@
         "pendientes_por_via": {
           "investigacion": 47,
           "cliente": 0
-        }
+        },
+        "funcional": [
+          3,
+          3
+        ]
       },
       "3": {
         "peso": 20,
@@ -457,8 +465,8 @@
           141
         ],
         "efectivo": [
-          3542761,
-          7626976
+          590663,
+          1271584
         ],
         "criterios": [
           {
@@ -476,8 +484,8 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              3001307,
-              7626976
+              500405,
+              1271584
             ],
             "familias": [
               {
@@ -498,19 +506,19 @@
               },
               {
                 "nombre": "Coordenadas por misión y acción",
-                "unidades": 6034,
+                "unidades": 6036,
                 "estados": {
                   "confirmada": 84,
-                  "parcial": 3418,
+                  "parcial": 3420,
                   "inferencia": 0,
                   "investigacion": 2532,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 3586,
-                "comprobaciones_aplicables": 12068,
+                "comprobaciones_superadas": 3588,
+                "comprobaciones_aplicables": 12072,
                 "etapas": {
                   "confirmadas": 84,
-                  "contrastadas": 3502
+                  "contrastadas": 3504
                 }
               },
               {
@@ -595,7 +603,11 @@
         "pendientes_por_via": {
           "investigacion": 47,
           "cliente": 0
-        }
+        },
+        "funcional": [
+          1,
+          2
+        ]
       },
       "4": {
         "peso": 15,
@@ -604,8 +616,8 @@
           141
         ],
         "efectivo": [
-          3967,
-          7404
+          15875,
+          29628
         ],
         "criterios": [
           {
@@ -623,24 +635,24 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              307,
-              617
+              819,
+              1646
             ],
             "familias": [
               {
                 "nombre": "xp",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
-                  "confirmada": 2444,
+                  "confirmada": 2445,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 24,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 2444,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_superadas": 2445,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
-                  "confirmadas": 2444
+                  "confirmadas": 2445
                 }
               },
               {
@@ -682,8 +694,8 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              271,
-              2468
+              1085,
+              9876
             ],
             "familias": [
               {
@@ -720,18 +732,18 @@
               },
               {
                 "nombre": "Entregas con XP efectiva observada por ID",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
-                  "confirmada": 1084,
+                  "confirmada": 1085,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 1384
                 },
-                "comprobaciones_superadas": 1084,
-                "comprobaciones_aplicables": 2468,
+                "comprobaciones_superadas": 1085,
+                "comprobaciones_aplicables": 2469,
                 "etapas": {
-                  "confirmadas": 1084
+                  "confirmadas": 1085
                 }
               }
             ]
@@ -740,7 +752,11 @@
         "pendientes_por_via": {
           "investigacion": 94,
           "cliente": 47
-        }
+        },
+        "funcional": [
+          2,
+          3
+        ]
       },
       "5": {
         "peso": 15,
@@ -885,7 +901,11 @@
         "pendientes_por_via": {
           "investigacion": 0,
           "cliente": 69
-        }
+        },
+        "funcional": [
+          2,
+          3
+        ]
       },
       "6": {
         "peso": 10,
@@ -894,8 +914,8 @@
           141
         ],
         "efectivo": [
-          864419,
-          1164896
+          216193,
+          291342
         ],
         "criterios": [
           {
@@ -923,8 +943,8 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              263465,
-              1164896
+              21965,
+              97114
             ],
             "familias": [
               {
@@ -977,16 +997,16 @@
               },
               {
                 "nombre": "clases",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 91,
                   "parcial": 337,
                   "inferencia": 33,
-                  "investigacion": 2007,
+                  "investigacion": 2008,
                   "cliente": 0
                 },
                 "comprobaciones_superadas": 519,
-                "comprobaciones_aplicables": 4936,
+                "comprobaciones_aplicables": 4938,
                 "etapas": {
                   "confirmadas": 91,
                   "contrastadas": 428
@@ -994,36 +1014,36 @@
               },
               {
                 "nombre": "razas",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 484,
-                  "parcial": 878,
+                  "parcial": 879,
                   "inferencia": 8,
                   "investigacion": 1098,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 1846,
-                "comprobaciones_aplicables": 4936,
+                "comprobaciones_superadas": 1847,
+                "comprobaciones_aplicables": 4938,
                 "etapas": {
                   "confirmadas": 484,
-                  "contrastadas": 1362
+                  "contrastadas": 1363
                 }
               },
               {
                 "nombre": "facciones",
-                "unidades": 2468,
+                "unidades": 2469,
                 "estados": {
                   "confirmada": 509,
-                  "parcial": 863,
+                  "parcial": 864,
                   "inferencia": 8,
                   "investigacion": 1088,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 1881,
-                "comprobaciones_aplicables": 4936,
+                "comprobaciones_superadas": 1882,
+                "comprobaciones_aplicables": 4938,
                 "etapas": {
                   "confirmadas": 509,
-                  "contrastadas": 1372
+                  "contrastadas": 1373
                 }
               },
               {
@@ -1050,7 +1070,11 @@
         "pendientes_por_via": {
           "investigacion": 47,
           "cliente": 0
-        }
+        },
+        "funcional": [
+          2,
+          3
+        ]
       },
       "7": {
         "peso": 5,
@@ -1074,18 +1098,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 127,
+                "unidades": 136,
                 "estados": {
-                  "confirmada": 127,
+                  "confirmada": 136,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 127,
-                "comprobaciones_aplicables": 127,
+                "comprobaciones_superadas": 136,
+                "comprobaciones_aplicables": 136,
                 "etapas": {
-                  "confirmadas": 127
+                  "confirmadas": 136
                 }
               }
             ]
@@ -1158,7 +1182,11 @@
         "pendientes_por_via": {
           "investigacion": 0,
           "cliente": 0
-        }
+        },
+        "funcional": [
+          3,
+          6
+        ]
       }
     },
     "global": {
@@ -1167,13 +1195,17 @@
         120
       ],
       "efectivo": [
-        12706455013107,
-        22211584586240
+        423861015491,
+        740931651456
+      ],
+      "funcional": [
+        89,
+        120
       ]
     },
     "regresion": {
-      "ejecutadas": 127,
-      "superadas": 127,
+      "ejecutadas": 136,
+      "superadas": 136,
       "correcta": true
     },
     "casos_cliente": [
@@ -1205,7 +1237,162 @@
       "cliente": 116
     },
     "rutas": 47,
-    "misiones_activas": 2468
+    "misiones_activas": 2469,
+    "cierre_funcional": {
+      "bloques": {
+        "1": [
+          {
+            "id": "lua_y_toc",
+            "superada": true,
+            "evidencia": "Lua 5.1 y TOC"
+          },
+          {
+            "id": "integridad",
+            "superada": true,
+            "evidencia": "Manifiesto y comparación con el ZIP base"
+          },
+          {
+            "id": "rutas_niveles_motor_y_perfiles",
+            "superada": true,
+            "evidencia": "Carga y selección de 47 rutas y 56 perfiles con API simulada"
+          }
+        ],
+        "2": [
+          {
+            "id": "ids_disponibilidad_y_dependencias",
+            "superada": true,
+            "evidencia": "Reglas de misión y clasificación por impacto"
+          },
+          {
+            "id": "orden_e_instrucciones",
+            "superada": true,
+            "evidencia": "Secuencias corregidas y textos ES/EN"
+          },
+          {
+            "id": "omisiones_seguras",
+            "superada": true,
+            "evidencia": "Control de avance real del addon con API simulada"
+          }
+        ],
+        "3": [
+          {
+            "id": "mapas_y_coordenadas",
+            "superada": true,
+            "evidencia": "Validación local de mapas, destinos y contradicciones conocidas"
+          },
+          {
+            "id": "marcadores_y_flecha",
+            "superada": false,
+            "evidencia": "Cliente Forever · mapa_questie"
+          }
+        ],
+        "4": [
+          {
+            "id": "tramos_y_nivel",
+            "superada": true,
+            "evidencia": "Selección de tramo con el motor Lua y niveles mínimos conocidos"
+          },
+          {
+            "id": "sin_xp_y_opcionales",
+            "superada": true,
+            "evidencia": "Separación de canjes y opciones en las pruebas locales"
+          },
+          {
+            "id": "continuidad",
+            "superada": false,
+            "evidencia": "Cliente Forever · nivel_viaje"
+          }
+        ],
+        "5": [
+          {
+            "id": "viajes_conocidos",
+            "superada": true,
+            "evidencia": "Cartografía local y transportes incompatibles conocidos"
+          },
+          {
+            "id": "nodos_por_faccion",
+            "superada": true,
+            "evidencia": "Nodos y transporte desconocido en API simulada"
+          },
+          {
+            "id": "desplazamiento",
+            "superada": false,
+            "evidencia": "Cliente Forever · nivel_viaje"
+          }
+        ],
+        "6": [
+          {
+            "id": "matriz_y_filtros",
+            "superada": true,
+            "evidencia": "Selección y filtros de 56 combinaciones"
+          },
+          {
+            "id": "arranques",
+            "superada": true,
+            "evidencia": "Inicio, raza y traducción en pruebas locales"
+          },
+          {
+            "id": "desbloqueos_y_textos",
+            "superada": false,
+            "evidencia": "Cliente Forever · Alianza ES, Horda EN y desbloqueos de clase"
+          }
+        ],
+        "7": [
+          {
+            "id": "regresion",
+            "superada": true,
+            "evidencia": "Batería local obligatoria"
+          },
+          {
+            "id": "questie_y_guardados_locales",
+            "superada": true,
+            "evidencia": "Questie y migración con API simulada"
+          },
+          {
+            "id": "instalacion_y_cliente",
+            "superada": false,
+            "evidencia": "Suite representativa de Forever"
+          },
+          {
+            "id": "documentacion_e_incidencias",
+            "superada": true,
+            "evidencia": "Clasificación completa y registro de investigación generado"
+          },
+          {
+            "id": "zip",
+            "superada": false,
+            "evidencia": "ZIP contrastado con la instalación validada"
+          },
+          {
+            "id": "sincronizacion",
+            "superada": false,
+            "evidencia": "Rama de desarrollo y árbol del addon verificados"
+          }
+        ]
+      },
+      "incidencias": {
+        "P0": 0,
+        "P1": 0,
+        "P2": 313,
+        "P3": 94
+      },
+      "rutas_bloqueadas": [],
+      "cliente": {
+        "instalacion_migracion": "pendiente",
+        "alianza_inicio": "pendiente",
+        "horda_inicio": "pendiente",
+        "mapa_questie": "pendiente",
+        "nivel_viaje": "pendiente",
+        "desbloqueos_clase": "pendiente"
+      },
+      "paquete": {
+        "nombre": "GuiaAventurero-9.7.9-fase13-candidato.zip",
+        "archivos": 218,
+        "huella_addon": "f522296edce12fb88dbe712cb0bc721ecd6bea5c810e3e2ac50efdbc0a7f1bee",
+        "sha256": "d4ac177a20424c5ca53569d7f9b020cbb278ac5521b587b52187a5c43f1f6ddf"
+      },
+      "huella_addon": "f522296edce12fb88dbe712cb0bc721ecd6bea5c810e3e2ac50efdbc0a7f1bee"
+    }
   },
   "variacion": {
     "1": {
@@ -1216,7 +1403,8 @@
       "efectivo": [
         0,
         1
-      ]
+      ],
+      "funcional": null
     },
     "2": {
       "certificado": [
@@ -1224,9 +1412,10 @@
         1
       ],
       "efectivo": [
-        1,
-        49360
-      ]
+        -14159,
+        974958720
+      ],
+      "funcional": null
     },
     "3": {
       "certificado": [
@@ -1234,9 +1423,10 @@
         1
       ],
       "efectivo": [
-        0,
-        1
-      ]
+        17,
+        3035102
+      ],
+      "funcional": null
     },
     "4": {
       "certificado": [
@@ -1244,9 +1434,10 @@
         1
       ],
       "efectivo": [
-        0,
-        1
-      ]
+        88,
+        4570119
+      ],
+      "funcional": null
     },
     "5": {
       "certificado": [
@@ -1256,7 +1447,8 @@
       "efectivo": [
         0,
         1
-      ]
+      ],
+      "funcional": null
     },
     "6": {
       "certificado": [
@@ -1264,9 +1456,10 @@
         1
       ],
       "efectivo": [
-        0,
-        1
-      ]
+        115,
+        48747936
+      ],
+      "funcional": null
     },
     "7": {
       "certificado": [
@@ -1276,7 +1469,8 @@
       "efectivo": [
         0,
         1
-      ]
+      ],
+      "funcional": null
     },
     "global": {
       "certificado": [
@@ -1284,9 +1478,10 @@
         1
       ],
       "efectivo": [
-        1,
-        197440
-      ]
+        3632556071,
+        5918198321978880
+      ],
+      "funcional": null
     }
   }
 }

@@ -42,6 +42,22 @@ La evidencia **confirmada** supera todas las etapas de la unidad. Los títulos E
 
 El corte que incorpora perfiles de entrega y aprendizaje conserva la comparación con el último corte publicado. Su variación efectiva incluye la ampliación de la medición. El certificado mantiene sus unidades y sus criterios.
 
+### Progreso funcional
+
+Cada bloque mide `comprobaciones funcionales superadas ÷ comprobaciones aplicables × 100`. Todas las comprobaciones enumeradas cuentan una vez dentro de su bloque. El global usa los siete pesos de la tabla de certificación y fracciones exactas. La primera variación se mostrará cuando haya dos cortes funcionales. Una prueba local se acredita por el resultado de la comprobación correspondiente. Los casos de Forever se acreditan con evidencia real ligada a la huella del addon probado.
+
+| Bloque | Comprobaciones funcionales |
+| --- | --- |
+| Estructura | Lua 5.1 y TOC, integridad frente a la base, carga y niveles 1–60 de las 47 rutas y selección de las 56 combinaciones. |
+| Misiones | IDs, oferta y dependencias del recorrido principal, orden e instrucciones revisadas ES/EN, y omisión segura de misiones opcionales. |
+| Cartografía | Mapas y coordenadas válidos, contradicciones corregidas y prueba representativa en Forever de marcadores y flecha. |
+| Experiencia | Tramos y requisitos de nivel, misiones sin XP y opciones separadas, continuidad observada en Forever. Se mantiene el cálculo existente. |
+| Viajes | Cambios de zona y transportes conocidos, nodos y facción, y desplazamiento representativo en Forever. |
+| Clase, raza y facción | Selección y filtros, zonas y misiones iniciales, y muestra real de perfiles, textos ES/EN y desbloqueos esenciales. |
+| Regresión y preparación | Regresión completa, Questie y guardados en local, instalación y casos representativos en Forever, documentación y cero P0/P1, ZIP verificado y rama sincronizada. |
+
+El cierre funcional requiere el 100 %, cero P0/P1 y todos los criterios de regresión y entrega. Se pueden aplazar P2 y P3 con su evidencia, alcance y método de verificación. La clasificación funcional conserva los pendientes y coberturas de los dos indicadores de datos. [Registro de investigación](auditor_fase13/PENDIENTES_INVESTIGACION_FOREVER.md) · [Protocolo funcional](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
+
 ### Lectura automática del avance
 
 <!-- medicion-fase13:inicio -->
@@ -54,26 +70,40 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 
 `███████████░░░░░░░░░`
 
-| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,34 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp |
+**Progreso funcional global · 74,17 %**
 
-**Última actualización de la medición · 2026-11-27 08:10:38+01:00 (Madrid)**
+`██████████████░░░░░░`
+
+| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional anterior | Funcional actual | Variación funcional | Estado |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | — | 100 % | — | Completo |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,34 % | 52,33 % | 0 pp | — | 100 % | — | Completo |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | — | 50 % | — | Pendiente |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | — | 66,67 % | — | Pendiente |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | — | 66,67 % | — | Pendiente |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | — | 66,67 % | — | Pendiente |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | — | 50 % | — | Pendiente |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | — | 74,17 % | — | Pendiente |
+
+**Última actualización de la medición · 2026-11-27 10:19:18+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
+
+**Incidencias por impacto** · P0 0 · P1 0 · P2 313 · P3 94
+
+- **Rutas analizadas localmente** · 47/47
+- **Rutas con P0/P1** · 0
+- **Pruebas locales superadas** · 136/136
+- **Pruebas reales de Forever** · 0/6 superadas, 6 pendientes, 0 con fallo
+- **Incidencias aplazables** · 407
 
 <!-- medicion-fase13:fin -->
 
 El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](auditor_fase13/progreso_medicion.json). La ejecución oficial con `--actualizar-progreso` regenera esta tabla y la de `PROGRESO_FASE13.md` después de la regresión. Las ejecuciones parciales no reemplazan el corte compartido. [Comando y registro de validaciones](auditor_fase13/README.md#actualizar-la-medición-de-la-fase).
 
 ## Secuencia de trabajo
+
+Prioridad actual del cierre funcional. Confirmar la omisión de los 56 avisos de Kum’isha en el motor, revisar las seis ofertas y los ocho pares de aprendizaje, y resolver restricciones conocidas que bloqueen el avance. Verificar los siete destinos pendientes por su impacto. Completar la regresión y los seis casos reales del protocolo reducido. Las tareas de certificación exhaustiva siguen registradas para investigar por separado.
 
 - [x] Ejecutar y cerrar la auditoría estructural inicial con los archivos originales protegidos por el manifiesto.
 - [x] Ejecutar las comprobaciones locales de misiones, cartografía, experiencia, viajes y particularidades en las 47 rutas. Registrar los hallazgos y el alcance de la evidencia.
@@ -134,7 +164,8 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Contrastar los requisitos de profesión y objetivos de 1578, 1618 y 91751. Corregir las instrucciones ES/EN y separar las dos entregas de Herrería de la XP principal.
 - [x] Contrastar visitas reales a Hydraxis, Arantir y Belgrom. Sus cinco IDs pasan a comprobación en el cliente con condiciones y muestras documentadas. [Informes](auditor_fase13/FUENTES.md#ofertas-de-hydraxis-arantir-y-belgrom).
 - [ ] Buscar evidencia de iniciador, variante y requisitos para las seis ofertas restantes por investigación, con prioridad para 5201, 6848, 8319 y 9266, que carecen de fila en QuestV2.
-- [ ] Resolver las 14 rutas con 1085 sin entrega previa planificada de 1070. Revisar la secuencia y el tramo de Astranaar y Sierra Espolón antes de aplicar una corrección. [Condiciones de entrega](auditor_fase13/FUENTES.md#dos-condiciones-de-entrega).
+- [x] Completar la cadena opcional de 1085 en las 14 rutas afectadas. Incorporar la aceptación y entrega de 1070 en ES/EN y conservar las posiciones de 1085. [Condiciones de entrega](auditor_fase13/FUENTES.md#dos-condiciones-de-entrega).
+- [ ] Validar en Forever el avance de la guía al hacer u omitir la cadena opcional de la Sierra Espolón. [Protocolo](auditor_fase13/VALIDACION_FOREVER.md#cadena-de-la-sierra-espolón).
 - [ ] Verificar las cinco ofertas estacionales y los ocho casos vinculados a botín de banda cuando haya cliente y se cumplan las condiciones de contenido. Confirmar las cantidades heredadas de los siete canjes de Ahn'Qiraj.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
 - [x] Cotejar las etiquetas de los 195 IDs sin título español observado con la localización heredada. Guardar el resultado por ID y señalar 85712 y 93686 para contraste directo.

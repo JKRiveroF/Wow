@@ -10,24 +10,36 @@
 
 `███████████░░░░░░░░░`
 
-| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,34 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp |
+**Progreso funcional global · 74,17 %**
 
-**Última actualización de la medición · 2026-11-27 08:10:38+01:00 (Madrid)**
+`██████████████░░░░░░`
+
+| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional anterior | Funcional actual | Variación funcional | Estado |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | — | 100 % | — | Completo |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,34 % | 52,33 % | 0 pp | — | 100 % | — | Completo |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | — | 50 % | — | Pendiente |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | — | 66,67 % | — | Pendiente |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | — | 66,67 % | — | Pendiente |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | — | 66,67 % | — | Pendiente |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | — | 50 % | — | Pendiente |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | — | 74,17 % | — | Pendiente |
+
+**Última actualización de la medición · 2026-11-27 10:19:18+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
+**Incidencias por impacto** · P0 0 · P1 0 · P2 313 · P3 94
+
+- **Rutas analizadas localmente** · 47/47
+- **Rutas con P0/P1** · 0
+- **Pruebas locales superadas** · 136/136
+- **Pruebas reales de Forever** · 0/6 superadas, 6 pendientes, 0 con fallo
+- **Incidencias aplazables** · 407
+
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Resolver el acceso a 1085 en las 14 rutas afectadas y contrastar las seis ofertas abiertas a investigación con los registros por ID. Continuar con las restricciones de clase.
+**Tarea actual** · Preparar la comprobación representativa en Forever y revisar las instrucciones de Feralas y Un’Goro que aún usan marcadores aproximados.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -443,12 +455,18 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Las observaciones de GoldScout y Forever Scout acreditan cercanía para **8 destinos de 6 misiones** en **62 apariciones en rutas**. El contraste acumulado llega a **144 de 151 candidatos heredados**. Los **7 restantes** corresponden a dos lugares de obtención. El inventario conserva un origen de botín para **786 misiones activas**. [Fuentes y alcance](auditor_fase13/FUENTES.md#botín-registrado-por-jugadores).
 - Pasaron **31 pruebas específicas** y **126 de regresión completa**. Las 47 rutas conservan **0 errores y 56 avisos conocidos**. El progreso efectivo de cartografía llega al **46,45 %** y el efectivo global al **57,21 %**. El certificado global sigue en **40,83 %**.
 
-## Último bloque verificado · Ofertas y orden de entrega
+## Ofertas y orden de entrega · Corte verificado
 
 - Cinco IDs pasaron de investigación a validación en Forever. Hay informes de visitas sin oferta para 6804, 6805, 2358 y 3504. La prueba de 6821 queda condicionada a habilitar y entregar las dos primeras de Hydraxis. Cinco jugadores pudieron aceptar 3505 de Ag'tor sin 3504 en el registro ni en el historial de entregas. [Fuentes y alcance](auditor_fase13/FUENTES.md#ofertas-de-hydraxis-arantir-y-belgrom).
 - La comprobación de 1070 → 1085 detectó **17 avisos en 14 rutas**. Las variantes raciales de tres rutas duplican el aviso porque comparten la secuencia. Las 20 rutas con 1301 respetan el bloqueo por entrega de 1282. Pasaron **23 pruebas específicas** y **127 de regresión**. Las 47 rutas registran **0 errores y 73 avisos** en total. [Condiciones de entrega](auditor_fase13/FUENTES.md#dos-condiciones-de-entrega).
 
-## Comprobaciones que impiden cerrar los criterios
+## Último bloque verificado · Primera medición de cierre funcional
+
+- La cadena opcional 1070 → 1085 está disponible en las 14 rutas afectadas con texto ES/EN. Conserva el índice del paso y los dos destinos de 1085. La primera medición funcional usa los criterios del plan. [Condiciones y coordenadas](auditor_fase13/FUENTES.md#dos-condiciones-de-entrega) · [Criterios](PLAN_FASE13.md#progreso-funcional).
+- Pasaron 136 pruebas locales. El motor permite continuar al omitir la cadena de Sierra Espolón y ambos canjes de Kum’isha. Quedan 56 avisos de requisitos de esos canjes y 351 grupos de investigación o validación clasificados. Las 394 aceptaciones de los 24 IDs sin oferta acreditada se indican como opcionales o condicionadas. El cruce de prerrequisitos documentados carece de referencias a esos IDs en el recorrido principal. [Registro por prioridad](auditor_fase13/PENDIENTES_INVESTIGACION_FOREVER.md).
+- Los ocho pares de aprendizaje siguen pendientes en la matriz por misión y hechizo. Se mantienen en el registro de investigación y la muestra de desbloqueo esencial sigue siendo obligatoria en Forever. Los siete destinos heredados se reducen a dos puntos de comprobación. En Un’Goro la planta 164958 es el origen observado de 11315. [Pruebas de aprendizaje](auditor_fase13/VALIDACION_FOREVER.md#aprendizaje-de-habilidades-por-misión) · [Botín de Feralas y Un’Goro](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
+
+## Comprobaciones que impiden cerrar la certificación de datos
 
 | Bloque | Investigación pendiente | Validación en Forever |
 | --- | --- | --- |
@@ -461,62 +479,66 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 
 ## Siguientes tareas
 
-1. Resolver el acceso a 1085 y continuar el contraste de ofertas y condiciones explícitas de clase. Revisar nuevas observaciones de los siete destinos heredados agrupados en el protocolo. [Casos de botín](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
-2. Continuar por clase, raza y facción, cartografía, experiencia, viajes y regresión, en ese orden.
-3. Ejecutar las comprobaciones de cliente cuando haya acceso a Forever. [Escenarios de validación](auditor_fase13/VALIDACION_FOREVER.md).
+1. Revisar instrucciones de objetivos en Feralas y Un’Goro con fuentes de los objetos y las cantidades ya acreditadas. [Casos de botín](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
+2. Ejecutar los seis casos representativos con el ZIP candidato. Registrar persistencia, Questie, idiomas, transporte y desbloqueos esenciales. [Protocolo funcional](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
+3. Resolver cualquier P0/P1 de las pruebas reales y verificar el ZIP definitivo y la sincronización del cierre. Conservar la investigación pendiente para futuras versiones. [Registro por prioridad](auditor_fase13/PENDIENTES_INVESTIGACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `c212f5f`.
+La fase sigue abierta. El corte previo es `128a540`.
 
 ## Avance individual
 
-Las 47 rutas completaron seis bloques de análisis local y ocho de los 18 criterios por ruta. Cada ruta conserva evidencia de investigación pendiente. Cero rutas están verificadas por completo en Forever.
+La tabla usa los hallazgos de la ejecución actual por ruta. Las comprobaciones reales de Forever figuran por separado en el protocolo de cierre.
 
-| Ruta | Estado | Bloques locales | Criterios | Avisos | Investigación | Cliente |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| `gnomo_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `enano_chaman` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `enano_gnomo_guerrero` | Revisada localmente | 6/6 | 8/18 | 4 | 5 | 2 |
-| `enano_paladin` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `enano_gnomo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 4 | 5 | 2 |
-| `enano_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `enano_gnomo_picaro` | Revisada localmente | 6/6 | 8/18 | 4 | 5 | 2 |
-| `gnomo_brujo` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `humano_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `humano_paladin` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `humano_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `humano_brujo` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `humano_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `humano_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `humano_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `elfo_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `elfo_druida` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `elfo_guerrero` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `elfo_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `elfo_sacerdote` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `orco_trol_guerrero` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 3 |
-| `orco_trol_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 3 |
-| `orco_trol_picaro` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 3 |
-| `orco_trol_chaman` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 3 |
-| `orco_trol_brujo` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 3 |
-| `orco_trol_mago` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 3 |
-| `trol_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `tauren_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `tauren_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `tauren_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `tauren_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `nomuerto_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `nomuerto_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `nomuerto_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `nomuerto_sacerdote` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `nomuerto_brujo` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `nomuerto_paladin` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `skyborne_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `skyborne_cazador` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `skyborne_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `skyborne_chaman` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `skyborne_druida` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 3 |
-| `skyborne_a_guerrero` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `skyborne_a_cazador` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
-| `skyborne_a_picaro` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `skyborne_a_mago` | Revisada localmente | 6/6 | 8/18 | 1 | 5 | 2 |
-| `skyborne_a_druida` | Revisada localmente | 6/6 | 8/18 | 2 | 5 | 2 |
+<!-- rutas-fase13:inicio -->
+
+| Ruta | Estado | Errores | Avisos | Investigación | Cliente |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `gnomo_mago` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `enano_chaman` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `enano_gnomo_guerrero` | Revisada localmente | 0 | 2 | 5 | 2 |
+| `enano_paladin` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `enano_gnomo_sacerdote` | Revisada localmente | 0 | 2 | 5 | 2 |
+| `enano_cazador` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `enano_gnomo_picaro` | Revisada localmente | 0 | 2 | 5 | 2 |
+| `gnomo_brujo` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `humano_guerrero` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `humano_paladin` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `humano_picaro` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `humano_brujo` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `humano_mago` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `humano_sacerdote` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `humano_cazador` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `elfo_cazador` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `elfo_druida` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `elfo_guerrero` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `elfo_picaro` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `elfo_sacerdote` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `orco_trol_guerrero` | Revisada localmente | 0 | 2 | 5 | 3 |
+| `orco_trol_cazador` | Revisada localmente | 0 | 2 | 5 | 3 |
+| `orco_trol_picaro` | Revisada localmente | 0 | 2 | 5 | 3 |
+| `orco_trol_chaman` | Revisada localmente | 0 | 2 | 5 | 3 |
+| `orco_trol_brujo` | Revisada localmente | 0 | 2 | 5 | 3 |
+| `orco_trol_mago` | Revisada localmente | 0 | 2 | 5 | 3 |
+| `trol_sacerdote` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `tauren_guerrero` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `tauren_cazador` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `tauren_chaman` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `tauren_druida` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `nomuerto_guerrero` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `nomuerto_picaro` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `nomuerto_mago` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `nomuerto_sacerdote` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `nomuerto_brujo` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `nomuerto_paladin` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `skyborne_guerrero` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `skyborne_cazador` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `skyborne_picaro` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `skyborne_chaman` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `skyborne_druida` | Revisada localmente | 0 | 1 | 5 | 3 |
+| `skyborne_a_guerrero` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `skyborne_a_cazador` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `skyborne_a_picaro` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `skyborne_a_mago` | Revisada localmente | 0 | 1 | 5 | 2 |
+| `skyborne_a_druida` | Revisada localmente | 0 | 1 | 5 | 2 |
+
+<!-- rutas-fase13:fin -->

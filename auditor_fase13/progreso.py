@@ -392,7 +392,7 @@ def _global(blocks):
 
 
 def _comparison_snapshot(data):
-    return {**{key: {name: row[name] for name in ("certificado", "efectivo")}
+    return {**{key: {name: row[name] for name in ("certificado", "efectivo", "funcional") if name in row}
                for key, row in data["bloques"].items()}, "global": data["global"]}
 
 
@@ -407,7 +407,7 @@ def compare(current, previous=None):
                    for block, (_, weight) in BLOCKS.items()}
         baseline = _comparison_snapshot({"bloques": initial, "global": _global(initial)})
     changes = {key: {metric: (_pair(_ratio(pair) - _ratio(baseline[key][metric]))
-                              if baseline[key][metric] is not None else None)
+                              if baseline[key].get(metric) is not None else None)
                      for metric, pair in row.items()}
                for key, row in _comparison_snapshot(current).items()}
     return {"version": SCHEMA, "actualizado": _madrid_now(), "anterior": baseline,
@@ -433,14 +433,21 @@ def _delta(before, after):
 
 def render(data):
     actual, previous = data["actual"], data["anterior"]
+    functional = actual.get("cierre_funcional")
     lines = []
-    for field, label in (("certificado", "certificado"), ("efectivo", "efectivo")):
+    for field in ("certificado", "efectivo", "funcional"):
+        if field not in actual["global"]:
+            continue
         pair = actual["global"][field]
         bar = int(_ratio(pair) * 20)
-        lines.extend([f"**Progreso {label} global · {percentage(pair)}**", "",
+        lines.extend([f"**Progreso {field} global · {percentage(pair)}**", "",
                       "`" + "█" * bar + "░" * (20 - bar) + "`", ""])
-    lines.extend(["| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |",
-                  "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"])
+    header = "| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |"
+    divider = "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"
+    if functional:
+        header += " Funcional anterior | Funcional actual | Variación funcional | Estado |"
+        divider += " ---: | ---: | ---: | --- |"
+    lines.extend([header, divider])
     for index, (name, weight) in BLOCKS.items():
         key = str(index)
         row = actual["bloques"][key]
@@ -453,6 +460,17 @@ def render(data):
                   "están en `progreso_medicion.json`."])
     if not actual["regresion"]:
         lines.extend(["", "La regresión no se ejecutó en este informe de consulta."])
+    if functional:
+        counts = functional["incidencias"]
+        local = actual["regresion"]
+        client = Counter(functional["cliente"].values())
+        lines.extend(["", "**Incidencias por impacto** · " + " · ".join(f"{level} {count}" for level, count in counts.items()),
+                      "", f"- **Rutas analizadas localmente** · {actual['rutas']}/47",
+                      f"- **Rutas con P0/P1** · {len(functional['rutas_bloqueadas'])}",
+                      f"- **Pruebas locales superadas** · {local.get('superadas', 0)}/{local.get('ejecutadas', 0)}",
+                      f"- **Pruebas reales de Forever** · {client['superada']}/{sum(client.values())} superadas, "
+                      f"{client['pendiente']} pendientes, {client['fallo']} con fallo",
+                      f"- **Incidencias aplazables** · {counts['P2'] + counts['P3']}"])
     return "\n".join(lines)
 
 
@@ -460,6 +478,10 @@ def _table_row(name, weight, counts, before, current):
     cells = [name, f"{weight} %", counts]
     for field in ("certificado", "efectivo"):
         cells.extend((percentage(before[field]), percentage(current[field]), _delta(before[field], current[field])))
+    if "funcional" in current:
+        check = current["funcional"]
+        cells.extend((percentage(before.get("funcional")), percentage(check), _delta(before.get("funcional"), check),
+                      "Completo" if _ratio(check) == 1 else "Pendiente"))
     return "| " + " | ".join(cells) + " |"
 
 

@@ -10,6 +10,8 @@ import unittest
 from catalogo import import_quest_v2, load_catalog
 from arranques import audit_arranques
 from estructura import audit_structure
+from funcional import (addon_fingerprint, add_to_measurement, classify, documents_ready, load_client_evidence, measure_functional,
+                       package_entries, render_registry, verify_package, verify_remote)
 from inventario_misiones import inventory_missions
 from lua_routes import load_routes
 from progreso import compare, measure, render, update_section, validate_records
@@ -147,27 +149,40 @@ def write_reports(output, version, blocks, routes, findings, progress=None):
 class RegressionResult(unittest.TextTestResult):
     def __init__(self, *args):
         super().__init__(*args)
-        self.passed = 0
+        self.passed = []
 
     def addSuccess(self, test):
         super().addSuccess(test)
-        self.passed += 1
+        self.passed.append(test.id())
 
 
 def run_regression():
     suite = unittest.defaultTestLoader.discover(str(HERE))
     result = unittest.TextTestRunner(resultclass=RegressionResult).run(suite)
-    return {"ejecutadas": result.testsRun, "superadas": result.passed, "correcta": result.wasSuccessful()}
+    return ({"ejecutadas": result.testsRun, "superadas": len(result.passed), "correcta": result.wasSuccessful()},
+            {name.rsplit(".", 1)[-1] for name in result.passed})
 
 
 def write_progress(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
-def update_project_progress(history, data):
+def update_project_progress(history, data, classified, manifest):
     files = {HERE.parent / name: update_section((HERE.parent / name).read_text(encoding="utf-8"),
                                                "medicion-fase13", render(data))
              for name in ("PROGRESO_FASE13.md", "PLAN_FASE13.md")}
+    blocked = set(data["actual"]["cierre_funcional"]["rutas_bloqueadas"])
+    table = ["| Ruta | Estado | Errores | Avisos | Investigación | Cliente |", "| --- | --- | ---: | ---: | ---: | ---: |"]
+    for row in manifest:
+        results, pending = row["hallazgos"], row["pendientes_por_via"]
+        status = "P0/P1 pendiente" if row["id"] in blocked else "Revisada localmente"
+        table.append(f"| `{row['id']}` | {status} | {results.get('error', 0)} | {results.get('aviso', 0)} | "
+                     f"{pending.get('investigación', 0)} | {pending.get('cliente', 0)} |")
+    progress = HERE.parent / "PROGRESO_FASE13.md"
+    files[progress] = update_section(files[progress], "rutas-fase13", "\n".join(table))
+    registry = HERE / "PENDIENTES_INVESTIGACION_FOREVER.md"
+    files[registry] = update_section(registry.read_text(encoding="utf-8"), "incidencias-fase13",
+                                     render_registry(classified, manifest))
     for path, content in files.items():
         path.write_text(content, encoding="utf-8", newline="\n")
     write_progress(history, data)
@@ -189,6 +204,10 @@ def main():
                         help="Mide los siete bloques con las fuentes locales, ejecuta la regresión y actualiza los Markdown.")
     parser.add_argument("--validaciones", type=Path, default=HERE / "validaciones_progreso.json",
                         help="Registro JSON opcional de comprobaciones documentadas y de cliente.")
+    parser.add_argument("--cliente-funcional", type=Path, default=HERE / "validaciones_funcionales.json",
+                        help="Registro de pruebas reales del protocolo funcional.")
+    parser.add_argument("--empaquetar", action="store_true", help="Genera un ZIP candidato verificado junto al informe.")
+    parser.add_argument("--verificar-remoto", action="store_true", help="Contrasta la rama local con la referencia en GitHub.")
     args = parser.parse_args()
     addon, output = args.addon.resolve(), args.salida.resolve()
     if output.is_relative_to(addon) or (output / "rutas").resolve().is_relative_to(addon):
@@ -200,6 +219,8 @@ def main():
         parser.error("Para actualizar el progreso, ejecuta todos los bloques del addon del proyecto con las cuatro fuentes locales.")
     if args.regresion and not full_project:
         parser.error("La batería de regresión se ejecuta sobre los archivos del proyecto con el análisis completo.")
+    if (args.empaquetar or args.verificar_remoto) and not full_project:
+        parser.error("El paquete y la comprobación remota requieren el análisis completo del addon del proyecto.")
     regression = {}
     try:
         version = report_version(addon)
@@ -210,18 +231,40 @@ def main():
         inventory = inventory_missions(routes, catalog, quest_v2) if 2 in blocks else None
         progress = None
         if full_project:
+            tests = set()
             if args.regresion or args.actualizar_progreso:
-                regression = run_regression()
+                regression, tests = run_regression()
             history = HERE / "progreso_medicion.json"
             previous = json.loads(history.read_text(encoding="utf-8")) if history.is_file() else None
             metrics = measure(routes, findings, catalog, inventory, flights, clustering, regression,
                               HERE.parent, validate_records(args.validaciones))
+            entries = package_entries(addon)
+            fingerprint = addon_fingerprint(entries)
+            client = load_client_evidence(args.cliente_funcional, routes, fingerprint)
+            optional = "test_kumisha_and_stonetalon_can_be_omitted_in_the_real_route_engine" in tests
+            classified = classify(routes, findings, inventory, optional_test=optional)
+            for key, sample in client.items():
+                if sample["resultado"] == "fallo":
+                    classified.append({"bloque": 7, "codigo": f"cliente_{key}", "prioridad": "P1",
+                                       "estado_funcional": "defecto", "ruta": sample["ruta"], "resolucion": "cliente"})
+            if regression.get("correcta") is False:
+                classified.append({"bloque": 7, "codigo": "regresion_fallida", "prioridad": "P1",
+                                   "estado_funcional": "defecto"})
+            package = verify_package(output / f"GuiaAventurero-{version}-fase13-candidato.zip", entries, fingerprint,
+                                     create=args.empaquetar)
+            functional = measure_functional(routes, classified, tests, regression, client, package,
+                                            args.verificar_remoto and verify_remote(HERE.parent),
+                                            documentation=documents_ready(HERE.parent),
+                                            complete_sources=all((args.trazas_questie, args.datos_questie, args.datos_eg, args.questv2)))
+            functional["huella_addon"] = fingerprint
+            add_to_measurement(metrics, functional)
             progress = compare(metrics, previous)
-        write_reports(output, version, blocks, routes, findings, progress)
+        manifest = write_reports(output, version, blocks, routes, findings, progress)
         if progress is not None:
             write_progress(output / "progreso_medicion.json", progress)
+            write_progress(output / "incidencias_funcionales.json", classified)
             if args.actualizar_progreso:
-                update_project_progress(history, progress)
+                update_project_progress(history, progress, classified, manifest)
         if flights:
             (output / "vuelos_observados.json").write_text(
                 json.dumps(flights, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")

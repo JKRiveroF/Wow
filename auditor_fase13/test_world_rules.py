@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from lupa.lua51 import LuaRuntime
 
 from lua_routes import load_routes
-from world_rules import audit_world, valid_xp_sample
+from world_rules import XP_OPCIONAL, audit_world, valid_xp_sample
 
 
 HERE = Path(__file__).resolve().parent
@@ -113,6 +113,67 @@ class RouteHotfixTest(unittest.TestCase):
         """)
         cls.lua.execute((ADDON / "Idioma" / "enUS_Refuerzos97.lua").read_text(encoding="utf-8"), "GuiaAventurero", translations)
         cls.dictionary = cls.lua.globals().Diccionario
+
+    def test_kumisha_and_stonetalon_can_be_omitted_in_the_real_route_engine(self):
+        advance = self.lua.execute("""
+            local GuiaAventureroDB, RUTA, bloqueo
+            local GL, entregadas = {}, {}
+            local function NumSecciones() return #RUTA.secciones end
+            local function Refrescar() end
+            local function Marcado() return false end
+            local function ComprobacionesHechas() return nil end
+            local C_QuestLog = {
+              IsQuestFlaggedCompleted = function() return false end,
+              GetLogIndexForQuestID = function() return nil end,
+              IsComplete = function() return false end,
+            }
+            """ + engine_functions("MisionCompletada", "MisionEnDiario", "ObjetivosListos", "DestinoHecho",
+                                     "EstadoPaso", "Siguiente") + """
+            return function(step, nextStep)
+              GuiaAventureroDB = {seccion = 1, paso = 1, destino = 4}
+              RUTA = {secciones = {{pasos = {step, nextStep}}}}
+              local initial = EstadoPaso(step)
+              Siguiente()
+              return initial, GuiaAventureroDB.paso, GuiaAventureroDB.destino, bloqueo
+            end
+            """)
+        by_quest = {93685: 0, 93686: 0, 1085: 0}
+        for route in self.routes:
+            steps = [step for section in route["secciones"] for step in section["pasos"]]
+            for index, step in enumerate(steps):
+                active = {point.get("q") for point in step.get("wp", [])}
+                for quest in by_quest.keys() & active:
+                    with self.subTest(ruta=route["id"], mision=quest):
+                        self.assertRegex(step["t"], XP_OPCIONAL)
+                        self.assertGreater(len(steps), index + 1)
+                        steps_lua = self.lua.table_from(steps[index:index + 2], recursive=True)
+                        self.assertEqual(advance(steps_lua[1], steps_lua[2]), ("pendiente", 2, 1, False))
+                        by_quest[quest] += 1
+        self.assertEqual(by_quest, {93685: 47, 93686: 47, 1085: 14})
+
+    def test_engine_selects_a_valid_section_for_every_level_and_profile(self):
+        select = self.lua.execute("""
+            local RUTA
+            local function NumSecciones() return #RUTA.secciones end
+            """ + engine_functions("SeccionPorNivel") + """
+            return function(sections, level)
+              RUTA = {secciones = sections}
+              return SeccionPorNivel(level)
+            end
+            """)
+        count = 0
+        for route in self.routes:
+            sections = [{"min": row["min"], "max": row["max"]} for row in route["secciones"]]
+            data = self.lua.table_from(sections, recursive=True)
+            for level in range(1, 61):
+                expected = next((i for i, row in enumerate(sections, 1) if row["min"] <= level < row["max"]), len(sections))
+                selected = select(data, level)
+                self.assertEqual(selected, expected, (route["id"], level))
+                row = sections[selected - 1]
+                self.assertLessEqual(row["min"], level)
+                self.assertGreaterEqual(row["max"], level)
+            count += len(route["razas"])
+        self.assertEqual(count, 56)
 
     def test_screecher_spirits_has_a_and_t_without_obsolete_pin(self):
         self.assertEqual(len(self.routes), 47)

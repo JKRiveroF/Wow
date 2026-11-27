@@ -19,6 +19,35 @@ def marked_steps(source):
 
 
 class MissionTextFixesTest(unittest.TestCase):
+    def test_stonetalon_optional_chain_keeps_the_original_destinations_after_1070(self):
+        localized = load_mission_localization(ADDON)
+        self.assertEqual(localized["errores"], [])
+        self.assertEqual(localized["por_id"][1070], "On Guard in Stonetalon")
+        self.assertEqual(localized["por_id"][1085], "On Guard in Stonetalon")
+        marker = "-- REFUERZO_97 q=1085"
+        chains = 0
+        with ZipFile(ROOT / "GuiaAventurero-9.7.9.zip") as baseline:
+            for path in (ADDON / "Rutas").glob("*.lua"):
+                original = baseline.read(path.relative_to(ROOT).as_posix()).decode("utf-8")
+                previous = next((line for line in original.splitlines() if line.endswith(marker)), None)
+                source = path.read_text(encoding="utf-8")
+                steps = [line for line in source.splitlines() if line.endswith(marker)]
+                if previous is None:
+                    self.assertEqual(steps, [])
+                    continue
+                with self.subTest(ruta=path.name):
+                    line, = steps
+                    self.assertTrue(line.endswith(previous.split('wp = { ', 1)[1]))
+                    self.assertEqual(re.findall(r'q = (\d+), a = "([AT])"', line),
+                                     [("1070", "A"), ("1070", "T"), ("1085", "A"), ("1085", "T")])
+                    self.assertIn('m = 1440, z = "Vallefresno", x = 34.92, y = 49.76', line)
+                    self.assertIn('m = 1442, z = "Sierra Espolón", x = 59.87, y = 66.88', line)
+                    wording = line.split('t = "', 1)[1].split('", wp = ', 1)[0]
+                    self.assertIn("Si pasas por Astranaar", wording)
+                    self.assertIn("If you pass through Astranaar", localized["por_nombre"][wording])
+                    chains += 1
+        self.assertEqual(chains, 14)
+
     def test_priest_mission_titles_change_without_modifying_abilities_or_waypoints(self):
         cases = [
             ("EnanoGnomoSacerdote.lua", 5645, "Castigar", "Chastise",

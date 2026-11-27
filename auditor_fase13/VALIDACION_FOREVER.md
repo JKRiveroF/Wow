@@ -24,6 +24,21 @@ Registra la compilación e interfaz del cliente, idioma del cliente y de la guí
 
 Los resultados de las pruebas simuladas quedan en las pruebas del auditor. El estado de cada comprobación de esta tabla sigue pendiente de observación en el cliente.
 
+## Protocolo reducido de cierre funcional
+
+Prueba un solo corte del addon, identificado por `cierre_funcional.huella_addon` en `progreso_medicion.json`. Puedes usar personajes existentes de ambas facciones. Guarda una copia de `Interface/AddOns/GuiaAventurero` y de sus `SavedVariables` con el juego cerrado. Para la prueba de actualización, sustituye únicamente la carpeta del addon y abre el cliente con una copia válida de los datos previos. Anota con cada caso la compilación, idioma, ruta, facción, raza, clase, nivel y resultado. Una captura o una secuencia breve de acciones y resultados sirve como evidencia.
+
+| Caso | Perfil y pasos | Resultado que hay que observar |
+| --- | --- | --- |
+| `instalacion_migracion` | Instala el candidato primero con datos limpios. Repite sobre una copia de 9.7.9 con ruta, sección, paso, destino y preferencias ya guardados. Reinicia el cliente. | Arranque en ambos casos, conservación de posición y preferencias, persistencia de nuevos cambios y ausencia de errores Lua. |
+| `alianza_inicio` | En esES, usa una ruta Alianza entre niveles 1 y 15. Comprueba selección automática, tramo y una secuencia de aceptar, completar y entregar. | Ruta, nivel, instrucciones y avance correctos. Un perfil incompatible queda fuera de la secuencia. |
+| `horda_inicio` | En enUS, usa una ruta Horda entre niveles 1 y 15 con raza y clase diferentes a la muestra de Alianza. Repite la secuencia básica y revisa un texto específico de clase. | Ruta, idioma, filtro y avance correctos. |
+| `mapa_questie` | Prueba un destino de misión y una transición de mapa con Questie y después sin Questie. Abre la guía y el mapa y sigue un destino confirmado. | Marcador y flecha apuntan al mismo destino. Questie conserva sus propias misiones, y la guía actualiza sus marcas al cambiar de zona. |
+| `nivel_viaje` | Entre niveles 17 y 44, usa «Mi nivel» y verifica un vuelo disponible de tu facción. Prueba también un nodo aún no descubierto y omite un paso opcional sin oferta. Si usas una de las 14 rutas corregidas en la Sierra Espolón, prueba la cadena con 1070 y el avance al omitirla. | Tramo correcto, transición practicable, nodo desconocido sin falsa finalización y recorrido capaz de continuar. |
+| `desbloqueos_clase` | En un tramo de nivel 45 a 60, comprueba selección y progreso. Con ese personaje u otro que tenga acceso, verifica un desbloqueo esencial de clase, como forma, mascota, hechizo aprendido por misión o por instructor. Compara el libro antes y después cuando sea posible. | La guía conduce al aprendizaje o a una alternativa válida. El paso se puede continuar al cumplir la condición real y muestra instrucciones correctas. |
+
+Los seis casos son obligatorios para el indicador funcional. Las matrices de certificación siguientes conservan el trabajo de investigación y las comprobaciones detalladas por misión. [Formato de registro](README.md#registro-de-pruebas-funcionales).
+
 ## Nodos y conexiones de vuelo
 
 En esES, abre el mapa de vuelo con Shardi, Brakkar y Thalon. Registra el nombre y estado que devuelve el cliente. Comprueba que el paso que verifica Juncobrezo, Sangrevenenosa o Sombraprensa se completa tras guardar el nodo. Verifica el acceso a Gadgetzan y Theramore con Alianza y al Puesto del Veneno con Horda. Para una conexión con escalas, anota sentido, compilación, talento, precios y tiempo. [Nodos, nombres y observaciones](FUENTES.md#nodos-y-conexiones-de-vuelo).
@@ -66,9 +81,13 @@ Para 86 y 385, registra por separado los objetos obtenidos y la posición real d
 | Misiones | UiMapID y marcador de la guía | Comprobación compartida |
 | --- | --- | --- |
 | 2855–2859 | Feralas, 1444, 60,2 / 68,7 | Registrar si se obtiene 8153 de un Gordunni 5236, 5238 o 5239, o del nodo 142140 con el oficio pertinente. Anotar entidad, método, punto y cantidad. Un registro de obtención permite contrastar el origen en los cinco encargos de Peletería. |
-| 4148 y 5150 | Cráter de Un'Goro, 1449, 66 / 16,5 | Registrar si se obtiene 11315 en el punto de la guía y si aumenta el contador. Distinguir entre una criatura 6513 o 6516 y una planta 164958. Registrar cada misión activa por separado si cambia el avance. |
+| 4148 y 5150 | Cráter de Un'Goro, 1449, 66 / 16,5 | Buscar la planta 164958 y registrar la obtención de 11315 y el avance. Repetir con cada misión activa si cambia el avance. El origen observado es la planta. |
 
 Registra la compilación y el UiMapID que muestra el juego junto a la entidad, el objeto y las coordenadas. Si solo encuentras el objeto en otro lugar, anota el hallazgo con su posición. [Alcance de las observaciones archivadas](FUENTES.md#botín-registrado-por-jugadores).
+
+### Cadena de la Sierra Espolón
+
+Con un personaje de la Alianza desde nivel 17, acepta 1070 de la centinela Thenysil en Astranaar y entrégala a Kaela en la Sierra Espolón. Acepta 1085 de Kaela y entrégala a Gaxim. Registra los cuatro IDs y acciones en la guía y el cliente, y comprueba el avance al omitir el paso opcional en una ruta que no pasa por Astranaar. [Condiciones y posiciones](FUENTES.md#dos-condiciones-de-entrega).
 
 ## Matriz de oferta pendiente por misión
 

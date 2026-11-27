@@ -23,6 +23,14 @@ auditor_fase13/.venv/Scripts/python.exe -B auditor_fase13/auditar.py --trazas-qu
 
 El procedimiento reutiliza el inventario de misiones, posiciones, vuelos y agrupamientos de esa misma ejecución. El JSON versionado conserva las fracciones exactas, los numeradores y denominadores de las familias, los estados de evidencia y las diferencias con el último corte medido. [Fórmula y criterios](../PLAN_FASE13.md#criterios-de-medición).
 
+### Registro de pruebas funcionales
+
+`--actualizar-progreso` regenera el tercer indicador y `PENDIENTES_INVESTIGACION_FOREVER.md`. Añade `--empaquetar` para generar un ZIP candidato y verificar sus archivos, CRC y SHA-256. El ZIP se guarda en `--salida`. Añade `--verificar-remoto` tras sincronizar la rama para verificar el corte contra la referencia real de GitHub. [Protocolo reducido](VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
+
+Cuando haya una sesión real, guarda sus resultados en `validaciones_funcionales.json` o pásalos con `--cliente-funcional`. Usa una fila por caso con `caso`, `origen` igual a `cliente_forever`, `resultado` igual a `superada` o `fallo`, `ruta`, `faccion` (`Alliance` o `Horde`), `raza`, `clase`, `nivel`, `idioma` (`esES` o `enUS`), `compilacion`, `fecha` ISO, `evidencia` y `huella_addon`. La huella se copia del corte probado. El auditor valida que el perfil corresponda a la ruta y que la compilación y huella correspondan a la prueba registrada. Una prueba de otro corte se conserva en el archivo y queda fuera del resultado actual.
+
+### Registro de investigación y certificación
+
 Las comprobaciones realizadas en Forever se pueden añadir a `auditor_fase13/validaciones_progreso.json` o indicar con `--validaciones`. El archivo contiene una lista JSON. Usa el ID de ruta como `unidad` para los criterios de ruta, el título de la fila del protocolo para `7.caso_cliente`, la clave publicada en `ventanas_agrupamiento` para `5.ahorro` y el par `misión/hechizo` para `6.aprendizaje`, por ejemplo `7463/10140`. Las revisiones `7.paquete` y `7.sincronizacion` usan `final`. Cada resultado cita la sesión o fichero que documenta el alcance de la comprobación. Los resultados `fallo` y `pendiente` quedan abiertos. Registra como `verificado` cada comprobación completa según el plan, con la compilación en las pruebas de cliente. Para un par de aprendizaje, incluye evidencia de los perfiles de ruta que sigan pendientes. [Protocolo de Forever](VALIDACION_FOREVER.md).
 
 | Comprobación en Forever | Claves de registro |

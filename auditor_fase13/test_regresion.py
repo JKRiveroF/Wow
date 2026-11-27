@@ -147,6 +147,9 @@ def _route_without_reviewed_edits(source):
         if refuerzo and int(refuerzo[1]) in (2521, 2522, 93685, 93686):
             line = re.sub(r't = "[^"]+"', 't = "<cadena de Kum\'isha revisada>"', line, count=1)
             line = re.sub(r"(\bq\s*=\s*)9368([56])\b", lambda m: m[1] + ("2521" if m[2] == "5" else "2522"), line)
+        if refuerzo and int(refuerzo[1]) == 1085:
+            line = re.sub(r't = "[^"]+"', 't = "<cadena de Espolón revisada>"', line, count=1)
+            line = re.sub(r'\{ [^{}]+q = 1070, a = "[AT]" \}, ', "", line)
         if refuerzo and int(refuerzo[1]) in NO_XP_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
         if refuerzo and int(refuerzo[1]) in AUXILIARY_TEXT_QUESTS:
