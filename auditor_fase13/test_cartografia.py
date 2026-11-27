@@ -128,6 +128,22 @@ function C:LoadDynamic()
         self.assertNotIn("referencias_botin", result)
         self.assertEqual(_coordinate_result(result, "C", (1429, 41, 42)), "investigacion")
 
+    def test_loot_interaction_keeps_the_spell_on_the_mission_position(self):
+        item = {"objetos_objetivo": [90], "evidencia": {"objetos_objetivo": {
+            "estado": "forever", "fuente": "misión"}}}
+        point = {"m": 1438, "x": 44.41, "y": 60.56, "fuente": "posición"}
+        sample = {"tipo": "objeto", "id": 2742, "fuente": "saqueo", "registro_botin": "object:2742|spell:22810|group",
+                  "hechizo_botin": 22810, "metodo_botin": "interaccion_hechizo"}
+        catalog = {"misiones": {"100": item}, "botin_observado": {90: [sample]},
+                   "entidades_interaccion": {"botin_objeto": {2742: [point]}}}
+        with patch("contactos._lines", side_effect=lambda _, src: ["-- correcciones"] if src == ITEM_FIXES else []), \
+                patch("contactos._read", return_value=[]):
+            result = link_contacts(ADDON.parent, catalog)["misiones"]["100"]
+        reference, = result["referencias_botin"]["C"]
+        self.assertEqual((reference["hechizo_botin"], reference["registro_botin"]), (22810, sample["registro_botin"]))
+        self.assertEqual(_coordinate_result(result, "C", (1438, 44.6, 60.4)), "cerca_de_observacion")
+        self.assertEqual(_coordinate_result(result, "C", (1438, 55, 60.4)), "investigacion")
+
     def test_contextual_loot_is_scoped_to_the_quest_and_respects_item_corrections(self):
         item_evidence = {"objetos_objetivo": [90], "evidencia": {
             "objetos_objetivo": {"estado": "forever", "fuente": "objetivo de misión"}}}

@@ -170,7 +170,8 @@ def _loot_positions(item, origins, trace_points, eg_points):
         for sample in (*samples, *eg_points.get(f"botin_{kind}", {}).get(entity, ())):
             key = kind, entity, sample["m"], sample["x"], sample["y"]
             points[key] = {**sample, "tipo": kind, "id": entity, "item": item, "fuente_botin": loot["fuente"],
-                           **{field: loot[field] for field in ("registro_botin", "mision_botin", "metodo_botin") if field in loot}}
+                           **{field: loot[field] for field in ("registro_botin", "mision_botin", "hechizo_botin", "metodo_botin")
+                              if field in loot}}
     return list(points.values())
 
 

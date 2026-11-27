@@ -127,7 +127,8 @@ QUEST_SORT_SOURCE = f"https://wago.tools/db2/QuestSort/csv?build={NEW_BUILD}"
 RACE_BITS = dict(enumerate(("HUMAN", "ORC", "DWARF", "NIGHT_ELF", "UNDEAD", "TAUREN", "GNOME", "TROLL")))
 RACE_BITS.update({32: "SKYBORNE_ALLIANCE", 33: "SKYBORNE_HORDE"})
 PLAYABLE_PROFILES = frozenset(RACES.values())
-LOOT_ENTITY = re.compile(r"(npc|object):([1-9]\d*)(\|quest(?:\|group)?)?")
+LOOT_ENTITY = re.compile(r"(npc|object):([1-9]\d*)(?:\|spell:(?P<spell>[1-9]\d*))?"
+                         r"(?P<quest>\|quest)?(?P<group>\|group)?")
 LOOT_TYPES = {"npc": "pnj", "object": "objeto"}
 
 
@@ -333,13 +334,16 @@ def _import_creatures(targets, data, source):
             _index_target(targets, "monster", key, positions, source)
 
 
-def _positive_loot(row):
+def _positive_loot(row, *, require_unshared=False):
     windows = row.get("windows")
     if not row.get("sources") or type(windows) is not int or windows <= 0:
         return
     for item, result in row.get("items", {}).items():
         drops = result.get("drops")
         if item.isdecimal() and int(item) > 0 and type(drops) is int and 0 < drops <= windows:
+            shared = result.get("shared", 0)
+            if require_unshared and (type(shared) is not int or not 0 <= shared < drops):
+                continue
             yield int(item)
 
 
@@ -347,25 +351,35 @@ def _import_loot(items, quest_items, targets, data, source):
     for key, row in data["sources"].items():
         if not (match := LOOT_ENTITY.fullmatch(key)) or not row.get("sources"):
             continue
+        spell, quest_context, group = match.group("spell", "quest", "group")
+        if group and not (spell or quest_context):
+            continue
         kind, entity = LOOT_TYPES[match[1]], int(match[2])
         proof = {"tipo": kind, "id": entity, "fuente": source["fuente"]}
-        if match[3]:
+        if spell:
+            proof.update(registro_botin=key, hechizo_botin=int(spell), metodo_botin="interaccion_hechizo")
+        if quest_context:
             registered = []
             for quest, observed in row.get("quests", {}).items():
                 if quest.isdecimal() and int(quest) > 0:
-                    registered.extend((quest, item) for item in _positive_loot(observed))
+                    registered.extend((quest, item) for item in _positive_loot(observed, require_unshared=bool(spell)))
             if not registered:
                 continue
             for quest, item in registered:
                 scoped = quest_items.setdefault(quest, {}).setdefault(item, {})
                 previous = scoped.get((kind, entity))
-                if not previous or previous["registro_botin"].endswith("|group") or match[3] == "|quest":
+                if not previous or previous["registro_botin"].endswith("|group") or not group:
                     scoped[kind, entity] = {**proof, "registro_botin": key, "mision_botin": int(quest)}
         else:
             if type(row.get("windows")) is not int or row["windows"] <= 0:
                 continue
-            for item in _positive_loot(row):
-                items[item][kind, entity] = proof
+            positive = list(_positive_loot(row, require_unshared=bool(spell)))
+            if spell and not positive:
+                continue
+            for item in positive:
+                previous = items[item].get((kind, entity), {})
+                if not spell or not previous or "hechizo_botin" in previous:
+                    items[item][kind, entity] = proof
         if positions := _positions(row.get("positions", [])):
             _index_target(targets, f"botin_{kind}", entity, positions, source)
 

@@ -306,6 +306,12 @@ El campo `questItems` de las respuestas del servidor enumera los objetos de misi
 
 Las consultas y las posiciones archivadas aportan contraste parcial de cercanía para **45 destinos**. De los 58 candidatos heredados que quedaban, se avanzó en **41**. Los cruces incluyen los objetos 3014 de 20, 12367 de 977 y 11172 de 4084. Permanecen **17 candidatos heredados** pendientes de evidencia equivalente.
 
+## Botín de interacciones
+
+El 27 de noviembre se contrastaron las claves `npc:<id>|spell:<id>` y `object:<id>|spell:<id>` de las nueve instantáneas ya archivadas. El tipo y el ID identifican la entidad. El hechizo identifica la interacción, como abrir un cofre o recolectar en un nodo. Una muestra acredita el vínculo cuando al menos un hueco con el objeto se atribuye a esa entidad. Si hay contexto `|quest`, el objeto debe constar en la fila de esa misión. El inventario conserva la clave y el hechizo. La posición agregada de la entidad sigue acreditando cercanía; el punto exacto de obtención se valida por separado. [Esquema de botín](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/DATASETS.md#loot).
+
+En Teldrassil, el hechizo 22810 registra los objetos 3406 y 3408 en los cofres 2739 y 2742 para 483, y el 5167 en el objeto 4406 para 917. En 873, la posición adicional procede de otra interacción registrada para el mismo PNJ 3476. El vínculo con el objeto 5104 sigue procediendo del botín con la misión activa. La instantánea inicial 70532 se revisó para estos candidatos y carece de muestras útiles. [Botín 70790](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/data/wowf/1.60.1.70790/loot.json) · [Botín 70532](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/data/wowf/1.60.1.70532/loot.json).
+
 ## XP de entrega por perfil
 
 Las muestras de entrega válidas registran XP y un nivel entre 1 y 59. Se omiten las marcas de nivel máximo o XP desactivada. Un cero observado con XP habilitada sigue siendo un dato. Cada perfil se cruza con la raza y facción de la ruta y el intervalo inclusivo en el mínimo y exclusivo en el máximo. Se cuenta una entrega obligatoria por ID, aplicando las ramas raciales y alternativas de la ruta. Las observaciones históricas no acreditan el saldo del tramo ni la XP de combate. [Campos de entrega de Efficient Games](https://github.com/JIVESCORP/eg-link-output-wowf/blob/1339ce5600bbc2b12e8f1081e584f548f62fa57f/DATASETS.md#turn_ins).

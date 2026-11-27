@@ -62,6 +62,34 @@ class EGLinkTests(unittest.TestCase):
         self.assertEqual(quests["7"][100]["pnj", 11]["registro_botin"], "npc:11|quest")
         self.assertEqual(set(targets), {("botin_pnj", 11), ("botin_pnj", 12)})
 
+    def test_loot_interaction_identifies_the_source_of_unshared_slots(self):
+        observed, quests, targets = defaultdict(dict), {}, defaultdict(dict)
+        source = _source(NEW_BUILD, "loot")
+        point = {"uiMap": 1438, "mapX": 0.4441, "mapY": 0.6056}
+        positive = {"sources": 1, "windows": 2, "items": {"100": {"drops": 2, "shared": 1}}}
+        group_row = {**positive, "positions": [point],
+                     "items": {**positive["items"], "101": {"drops": 1, "shared": 1}}}
+        shared_row = {**group_row, "items": {"101": {"drops": 1, "shared": 1}}}
+        known = {**positive, "quests": {"7": positive, "8": shared_row}}
+        data = {"sources": {"object:7|spell:22810|group": group_row, "object:8|spell:22810": shared_row,
+                            "npc:8|spell:1804|quest|group": known, "object:9|spell:0": group_row,
+                            "item:10|spell:22810": group_row}}
+        _import_loot(observed, quests, targets, data, source)
+        self.assertEqual(observed, {100: {("objeto", 7): {"tipo": "objeto", "id": 7,
+                         "fuente": source["fuente"], "registro_botin": "object:7|spell:22810|group",
+                         "hechizo_botin": 22810, "metodo_botin": "interaccion_hechizo"}}})
+        self.assertEqual(set(targets), {("botin_objeto", 7)})
+        self.assertEqual(set(quests), {"7"})
+        self.assertEqual(quests["7"][100]["pnj", 8]["hechizo_botin"], 1804)
+
+    def test_spell_specific_loot_does_not_replace_a_general_drop(self):
+        observed = defaultdict(dict)
+        row = {"sources": 1, "windows": 1, "items": {"100": {"drops": 1}}}
+        earlier = _source("1.60.1.70959", "loot")
+        _import_loot(observed, {}, defaultdict(dict), {"sources": {"npc:7": row}}, earlier)
+        _import_loot(observed, {}, defaultdict(dict), {"sources": {"npc:7|spell:8613": row}}, _source(NEW_BUILD, "loot"))
+        self.assertEqual(observed[100]["pnj", 7], {"tipo": "pnj", "id": 7, "fuente": earlier["fuente"]})
+
     def test_objective_positions_require_matching_entity_type_and_positive_sample(self):
         build = "1.60.1.71139"
         presence = _source(build, "creatures")
