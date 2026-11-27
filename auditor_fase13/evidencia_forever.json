@@ -1,5 +1,48 @@
 {
+  "observaciones_oferta": [
+    {
+      "misiones": [6804, 6805], "pnj": 13278, "resultado": "no_ofrecida",
+      "perfil": {"raza": "Skyborne", "clase": "MAGE", "faccion": "Alliance", "nivel": 56},
+      "compilacion": "1.60.1.70959", "fecha_reporte": "2026-11-19", "fecha_consulta": "2026-11-27",
+      "fuente": "https://github.com/fitzforge/polestar/issues/3171"
+    },
+    {
+      "misiones": [6804, 6805], "pnj": 13278, "resultado": "no_ofrecida",
+      "perfil": {"raza": "Orc", "clase": "HUNTER", "faccion": "Horde", "nivel": 60},
+      "compilacion": "1.60.1.71037", "fecha_reporte": "2026-11-21", "fecha_consulta": "2026-11-27",
+      "fuente": "https://github.com/fitzforge/polestar/issues/3392"
+    },
+    {
+      "misiones": [2358], "pnj": 7009, "resultado": "no_ofrecida", "misiones_entregadas": [2282],
+      "perfil": {"raza": "Gnome", "clase": "ROGUE", "faccion": "Alliance", "nivel": 20},
+      "fecha_reporte": "2026-11-06", "fecha_consulta": "2026-11-27",
+      "fuente": "https://github.com/fitzforge/polestar/issues/948"
+    },
+    {
+      "misiones": [3504], "pnj": 4485, "resultado": "no_ofrecida",
+      "perfil": {"raza": "Troll", "clase": "WARLOCK", "faccion": "Horde", "nivel": 52},
+      "compilacion": "1.60.1.70938", "fecha_reporte": "2026-11-14", "fecha_consulta": "2026-11-27",
+      "fuente": "https://github.com/fitzforge/polestar/issues/2390"
+    },
+    {
+      "misiones": [3505], "pnj": 8576, "resultado": "ofrecida", "misiones_sin_aceptar_ni_entregar": [3504],
+      "faccion": "Horde", "razas_observadas": ["Troll", "Scourge", "Skyborne"], "niveles": [49, 52],
+      "ventanas": 7, "participantes": 5, "fecha_de_corte": "2026-11-15", "fecha_consulta": "2026-11-27",
+      "fuente": "https://github.com/fitzforge/polestar/blob/31e79057524d5c44ef9055e2fbd4a5b03575da29/forever-db/corrections/quests.json#L1864"
+    }
+  ],
   "misiones": {
+    "1085": {
+      "prerrequisitos": [1070],
+      "evidencia": {"prerrequisitos": {"estado": "forever", "metodo": "oferta_observada_tras_entrega",
+        "fuente": "https://github.com/fitzforge/polestar/issues/2667", "fecha_consulta": "2026-11-27"}}
+    },
+    "1301": {
+      "disponible_hasta_entrega": [1282],
+      "evidencia": {"disponible_hasta_entrega": {"estado": "forever", "metodo": "bloqueo_observado_tras_entrega",
+        "fuente": "https://github.com/fitzforge/polestar/issues/1643", "fecha_consulta": "2026-11-27",
+        "fuentes_adicionales": ["https://github.com/fitzforge/polestar/blob/31e79057524d5c44ef9055e2fbd4a5b03575da29/forever-db/corrections/quests.json#L1314"]}}
+    },
     "2972": {
       "nombres": {"es": "La justicia del castigo"},
       "evidencia": {"nombre_es": {"estado": "forever", "fuente": "https://github.com/Questie/QuestieDB/blob/498734b13f1ed25931566298f6ca119ad058c17f/l10n/Forever/traces/lookupQuests/esES.lua#L1687", "fecha_consulta": "2026-11-26"}}

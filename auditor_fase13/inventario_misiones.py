@@ -50,6 +50,10 @@ def inventory_missions(routes, catalog, quest_v2=None):
     candidates = catalog.get("candidatos_por_mision", {})
     inherited = catalog.get("titulos_es_heredados", {})
     class_contrasts = catalog.get("contraste_clases", {})
+    offer_observations = defaultdict(list)
+    for observation in catalog.get("observaciones_oferta", ()):
+        for quest in observation["misiones"]:
+            offer_observations[quest].append(observation)
     for quest in sorted(quest_ids):
         lookup = missions[quest]
         entry = _entry(catalog, quest)
@@ -71,6 +75,8 @@ def inventory_missions(routes, catalog, quest_v2=None):
         record = {"id": quest, "rutas": sorted(lookup["rutas"]), "acciones": dict(lookup["acciones"]),
                   "evidencia": fields, "pendientes_de_fuente": [field for field in FIELDS if field not in fields],
                   "posiciones": positions, "indicios": candidates.get(str(quest), [])}
+        if quest in offer_observations:
+            record["observaciones_oferta"] = offer_observations[quest]
         if "clases" not in fields and (contrast := class_contrasts.get(str(quest))):
             record["contraste_clase_heredada"] = contrast
         if "nombre_es" not in fields and (title := inherited.get(str(quest))):

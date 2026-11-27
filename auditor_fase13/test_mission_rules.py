@@ -2,6 +2,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
+from inventario_misiones import inventory_missions
 from mission_rules import (audit_missions, audit_profile_matrix, audit_specializations,
                            load_mission_localization)
 
@@ -31,6 +32,22 @@ def findings(result):
 
 
 class MissionRulesTest(unittest.TestCase):
+    def test_offer_observation_is_shared_by_id_without_proving_availability(self):
+        observation = {"misiones": [6804, 6805], "pnj": 13278, "resultado": "no_ofrecida",
+                       "compilacion": "1.60.1.71037", "fuente": "registro de visita"}
+        first = route(step(waypoint(6804, "A"), waypoint(6805, "A"), waypoint(6821, "A")))
+        second = {**first, "id": "segunda", "_archivo": "Segunda.lua"}
+        catalog = {"observaciones_oferta": [observation]}
+        inventory = inventory_missions([first, second], catalog)
+        missions = {row["id"]: row for row in inventory["misiones"]}
+        for quest in (6804, 6805):
+            self.assertEqual(missions[quest]["observaciones_oferta"], [observation])
+            self.assertEqual(missions[quest]["rutas"], ["gnomo_mago", "segunda"])
+            self.assertIn("existe", missions[quest]["pendientes_de_fuente"])
+            self.assertNotIn("existe", missions[quest]["evidencia"])
+        self.assertNotIn("observaciones_oferta", missions[6821])
+        self.assertNotIn("MISION_NO_EXISTE", findings(audit_missions(first, catalog)))
+
     def test_malformed_mission_and_mismatched_action(self):
         candidate = route(step(waypoint(True, "A"), waypoint(17, "A", n="Entregar: Nombre"),
                                waypoint(17, "T")))

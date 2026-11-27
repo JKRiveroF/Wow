@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-27T07:59:45+01:00",
+  "actualizado": "2026-11-27T08:10:38+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -28,8 +28,8 @@
         141
       ],
       "efectivo": [
-        10627019,
-        22880928
+        3542761,
+        7626976
       ]
     },
     "4": {
@@ -78,8 +78,8 @@
         120
       ],
       "efectivo": [
-        38118291331361,
-        66634753758720
+        12706342515211,
+        22211584586240
       ]
     }
   },
@@ -139,8 +139,8 @@
           188
         ],
         "efectivo": [
-          41331,
-          78976
+          206663,
+          394880
         ],
         "criterios": [
           {
@@ -169,8 +169,8 @@
                   "confirmada": 2444,
                   "parcial": 0,
                   "inferencia": 0,
-                  "investigacion": 11,
-                  "cliente": 13
+                  "investigacion": 6,
+                  "cliente": 18
                 },
                 "comprobaciones_superadas": 2444,
                 "comprobaciones_aplicables": 2468,
@@ -219,8 +219,8 @@
             "completos": 0,
             "aplicables": 47,
             "efectivo": [
-              3473,
-              12340
+              1737,
+              6170
             ],
             "familias": [
               {
@@ -243,16 +243,16 @@
                 "nombre": "prerrequisitos",
                 "unidades": 2468,
                 "estados": {
-                  "confirmada": 26,
+                  "confirmada": 27,
                   "parcial": 0,
                   "inferencia": 567,
-                  "investigacion": 1875,
+                  "investigacion": 1874,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 26,
+                "comprobaciones_superadas": 27,
                 "comprobaciones_aplicables": 2468,
                 "etapas": {
-                  "confirmadas": 26
+                  "confirmadas": 27
                 }
               },
               {
@@ -1074,18 +1074,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 126,
+                "unidades": 127,
                 "estados": {
-                  "confirmada": 126,
+                  "confirmada": 127,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 126,
-                "comprobaciones_aplicables": 126,
+                "comprobaciones_superadas": 127,
+                "comprobaciones_aplicables": 127,
                 "etapas": {
-                  "confirmadas": 126
+                  "confirmadas": 127
                 }
               }
             ]
@@ -1167,13 +1167,13 @@
         120
       ],
       "efectivo": [
-        12706342515211,
+        12706455013107,
         22211584586240
       ]
     },
     "regresion": {
-      "ejecutadas": 126,
-      "superadas": 126,
+      "ejecutadas": 127,
+      "superadas": 127,
       "correcta": true
     },
     "casos_cliente": [
@@ -1224,8 +1224,8 @@
         1
       ],
       "efectivo": [
-        0,
-        1
+        1,
+        49360
       ]
     },
     "3": {
@@ -1234,8 +1234,8 @@
         1
       ],
       "efectivo": [
-        1,
-        18102
+        0,
+        1
       ]
     },
     "4": {
@@ -1285,7 +1285,7 @@
       ],
       "efectivo": [
         1,
-        90510
+        197440
       ]
     }
   }

@@ -57,15 +57,15 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 | Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,44 % | 46,45 % | +0,01 pp |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,34 % | 0 pp |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp |
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp |
 | Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,2 % | 57,21 % | 0 pp |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp |
 
-**Última actualización de la medición · 2026-11-27 07:59:45+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 08:10:38+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -132,7 +132,9 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 - [x] Contrastar las cadenas de Forever que se relacionan con 1374 y 1375. Distinguir sus condiciones de las heredadas y registrar el salto 93044 → 93045 para validación con un mismo personaje.
 - [x] Auditar el estado de oferta según las misiones activas y entregadas. Verificar los cinco bloqueos temporales y la oferta de Disturbios elementales en las diez rutas Skyborne.
 - [x] Contrastar los requisitos de profesión y objetivos de 1578, 1618 y 91751. Corregir las instrucciones ES/EN y separar las dos entregas de Herrería de la XP principal.
-- [ ] Buscar evidencia de iniciador, variante y requisitos para las 11 ofertas investigables, con prioridad para 5201, 6848, 8319 y 9266, que carecen de fila en QuestV2. Usar las tablas y trazas ya archivadas.
+- [x] Contrastar visitas reales a Hydraxis, Arantir y Belgrom. Sus cinco IDs pasan a comprobación en el cliente con condiciones y muestras documentadas. [Informes](auditor_fase13/FUENTES.md#ofertas-de-hydraxis-arantir-y-belgrom).
+- [ ] Buscar evidencia de iniciador, variante y requisitos para las seis ofertas restantes por investigación, con prioridad para 5201, 6848, 8319 y 9266, que carecen de fila en QuestV2.
+- [ ] Resolver las 14 rutas con 1085 sin entrega previa planificada de 1070. Revisar la secuencia y el tramo de Astranaar y Sierra Espolón antes de aplicar una corrección. [Condiciones de entrega](auditor_fase13/FUENTES.md#dos-condiciones-de-entrega).
 - [ ] Verificar las cinco ofertas estacionales y los ocho casos vinculados a botín de banda cuando haya cliente y se cumplan las condiciones de contenido. Confirmar las cantidades heredadas de los siete canjes de Ahn'Qiraj.
 - [x] Resolver las discrepancias de títulos españoles detectadas y verificar sus claves inglesas.
 - [x] Cotejar las etiquetas de los 195 IDs sin título español observado con la localización heredada. Guardar el resultado por ID y señalar 85712 y 93686 para contraste directo.
