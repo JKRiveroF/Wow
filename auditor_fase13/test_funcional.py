@@ -41,6 +41,17 @@ class FunctionalTest(unittest.TestCase):
         row, = classify([], [], inventory)
         self.assertEqual((row["prioridad"], row["mision"], row["rutas"]), ("P1", 4, ["mi_ruta"]))
 
+    def test_a_mandatory_quest_requiring_an_unavailable_optional_quest_is_flagged(self):
+        stable = {"a": "A", "m": 1, "x": 10, "y": 10, "n": "Recoger: prueba"}
+        route = {"id": "ruta", "_archivo": "Ruta.lua", "secciones": [{"min": 1, "max": 60, "pasos": [
+            {"t": "Misión opcional: prueba", "wp": [{**stable, "q": 1}]},
+            {"t": "Sigue la cadena", "wp": [{**stable, "q": 2}]}]}]}
+        entries = {"misiones": [{"id": 1, "rutas": ["ruta"], "evidencia": {}},
+                   {"id": 2, "rutas": ["ruta"], "evidencia": {"existe": {"valor": True},
+                    "prerrequisitos_alternativos": {"valor": [1, 3]}, "prerrequisitos": {"valor": [1]}}}]}
+        row, = classify([route], [], entries)
+        self.assertEqual((row["prioridad"], row["mision"], row["requisitos"], row["rutas"]), ("P1", 2, [1], ["ruta"]))
+
     def test_client_evidence_requires_exact_product_and_representative_profile(self):
         route = {"id": "gnomo_mago", "_faccion": "Alliance", "clase": "MAGE", "razas": ["Gnome"]}
         sample = {"caso": "alianza_inicio", "origen": "cliente_forever", "resultado": "superada", "ruta": "gnomo_mago",

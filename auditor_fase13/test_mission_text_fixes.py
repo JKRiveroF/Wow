@@ -19,6 +19,41 @@ def marked_steps(source):
 
 
 class MissionTextFixesTest(unittest.TestCase):
+    def test_wild_leather_and_bloodpetal_instructions_keep_waypoints_and_quantities(self):
+        materials = {
+            2855: ("6 complementos", "1 atriplex", "6 Thick Armor Kits", "1 Wildvine"),
+            2856: ("2 corazas", "2 pares de guantes", "1 atriplex", "2 Turtle Scale Breastplates", "2 pairs of Turtle Scale Gloves"),
+            2857: ("2 túnicas Nochefugaz", "2 cintas Nochefugaz", "1 atriplex", "2 Nightscape Tunics", "2 Nightscape Headbands"),
+            2858: ("2 pantalones Nochefugaz", "2 pares de botas Nochefugaz", "2 atriplex", "2 Nightscape Pants", "2 Wildvines"),
+            2859: ("2 yelmos", "2 brazales", "2 atriplex", "2 Turtle Scale Helms", "2 Turtle Scale Bracers"),
+            4148: ("1 brote", "marcador del objetivo es orientativo", "1 Bloodpetal Sprout", "from a plant"),
+            5150: ("15 brotes", "Sin XP base", "15 Bloodpetal Sprouts", "No base XP"),
+        }
+        marker = re.compile(r"-- REFUERZO_97 q=(285[5-9]|4148|5150)$")
+        localized = load_mission_localization(ADDON)
+        self.assertEqual(localized["errores"], [])
+        counts = Counter()
+        with ZipFile(ROOT / "GuiaAventurero-9.7.9.zip") as baseline:
+            for path in (ADDON / "Rutas").glob("*.lua"):
+                original = baseline.read(path.relative_to(ROOT).as_posix()).decode("utf-8")
+                old_points = {int(match[1]): line.split('", wp = ', 1)[1]
+                              for line in original.splitlines() if (match := marker.search(line))}
+                for line in path.read_text(encoding="utf-8").splitlines():
+                    if not (match := marker.search(line)):
+                        continue
+                    quest = int(match[1])
+                    with self.subTest(ruta=path.name, mision=quest):
+                        text, points = line.split('t = "', 1)[1].split('", wp = ', 1)
+                        self.assertEqual(points, old_points[quest])
+                        translated = localized["por_nombre"][text]
+                        for item in materials[quest]:
+                            self.assertIn(item, text + "\n" + translated)
+                        if 2855 <= quest <= 2859:
+                            self.assertTrue(text.startswith("Misión opcional"))
+                            self.assertIn("Camp Mojache", translated)
+                        counts[quest] += 1
+        self.assertEqual(counts, dict.fromkeys(range(2855, 2860), 22) | {4148: 22, 5150: 47})
+
     def test_stonetalon_optional_chain_keeps_the_original_destinations_after_1070(self):
         localized = load_mission_localization(ADDON)
         self.assertEqual(localized["errores"], [])

@@ -7,6 +7,7 @@
 - Completados los nombres de Valle de Alterac y corregidos dos destinos de vuelo. Los pasos de vuelo reconocen los datos guardados en español o inglés.
 - Revisadas las descripciones de los efectos raciales de los Skyborne en ambos idiomas y actualizada la entrega de Camping 101: Herbalism en Shen'dar.
 - Completada la cadena opcional de la Sierra Espolón en 14 rutas. La guía indica cómo entregar 1070 antes de aceptar 1085.
+- Detalladas las piezas de Peletería que pide Jangdor en Feralas y la obtención de brotes de las plantas en Un’Goro.
 
 ## English
 
@@ -15,3 +16,4 @@
 - Filled in missing Alterac Valley labels and corrected two flight master locations. Flight steps recognize both Spanish and English saved data.
 - Reviewed descriptions of Skyborne racial abilities in both languages and updated the Camping 101: Herbalism turn-in in Shen'dar.
 - Completed the optional Stonetalon chain in 14 routes. The guide explains how to turn in 1070 before accepting 1085.
+- Listed the finished Leatherworking items Jangdor needs in Feralas and how to gather Bloodpetal Sprouts from plants in Un’Goro.

@@ -16,16 +16,16 @@
 
 | Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional anterior | Funcional actual | Variación funcional | Estado |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | — | 100 % | — | Completo |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,34 % | 52,33 % | 0 pp | — | 100 % | — | Completo |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | — | 50 % | — | Pendiente |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | — | 66,67 % | — | Pendiente |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | — | 66,67 % | — | Pendiente |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | — | 66,67 % | — | Pendiente |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | — | 50 % | — | Pendiente |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | — | 74,17 % | — | Pendiente |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | 50 % | 50 % | 0 pp | Pendiente |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | 50 % | 50 % | 0 pp | Pendiente |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | 74,17 % | 74,17 % | 0 pp | Pendiente |
 
-**Última actualización de la medición · 2026-11-27 10:19:18+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 10:28:04+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -33,13 +33,13 @@ El auditor registra **235 grupos de investigación** y **116 grupos de validaci�
 
 - **Rutas analizadas localmente** · 47/47
 - **Rutas con P0/P1** · 0
-- **Pruebas locales superadas** · 136/136
+- **Pruebas locales superadas** · 138/138
 - **Pruebas reales de Forever** · 0/6 superadas, 6 pendientes, 0 con fallo
 - **Incidencias aplazables** · 407
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Preparar la comprobación representativa en Forever y revisar las instrucciones de Feralas y Un’Goro que aún usan marcadores aproximados.
+**Tarea actual** · Ejecutar en Forever los seis casos del protocolo reducido con el candidato verificado. Las pruebas reales pendientes impiden cerrar la fase.
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -460,30 +460,34 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Cinco IDs pasaron de investigación a validación en Forever. Hay informes de visitas sin oferta para 6804, 6805, 2358 y 3504. La prueba de 6821 queda condicionada a habilitar y entregar las dos primeras de Hydraxis. Cinco jugadores pudieron aceptar 3505 de Ag'tor sin 3504 en el registro ni en el historial de entregas. [Fuentes y alcance](auditor_fase13/FUENTES.md#ofertas-de-hydraxis-arantir-y-belgrom).
 - La comprobación de 1070 → 1085 detectó **17 avisos en 14 rutas**. Las variantes raciales de tres rutas duplican el aviso porque comparten la secuencia. Las 20 rutas con 1301 respetan el bloqueo por entrega de 1282. Pasaron **23 pruebas específicas** y **127 de regresión**. Las 47 rutas registran **0 errores y 73 avisos** en total. [Condiciones de entrega](auditor_fase13/FUENTES.md#dos-condiciones-de-entrega).
 
-## Último bloque verificado · Primera medición de cierre funcional
+## Primera medición de cierre funcional · Corte verificado
 
 - La cadena opcional 1070 → 1085 está disponible en las 14 rutas afectadas con texto ES/EN. Conserva el índice del paso y los dos destinos de 1085. La primera medición funcional usa los criterios del plan. [Condiciones y coordenadas](auditor_fase13/FUENTES.md#dos-condiciones-de-entrega) · [Criterios](PLAN_FASE13.md#progreso-funcional).
 - Pasaron 136 pruebas locales. El motor permite continuar al omitir la cadena de Sierra Espolón y ambos canjes de Kum’isha. Quedan 56 avisos de requisitos de esos canjes y 351 grupos de investigación o validación clasificados. Las 394 aceptaciones de los 24 IDs sin oferta acreditada se indican como opcionales o condicionadas. El cruce de prerrequisitos documentados carece de referencias a esos IDs en el recorrido principal. [Registro por prioridad](auditor_fase13/PENDIENTES_INVESTIGACION_FOREVER.md).
 - Los ocho pares de aprendizaje siguen pendientes en la matriz por misión y hechizo. Se mantienen en el registro de investigación y la muestra de desbloqueo esencial sigue siendo obligatoria en Forever. Los siete destinos heredados se reducen a dos puntos de comprobación. En Un’Goro la planta 164958 es el origen observado de 11315. [Pruebas de aprendizaje](auditor_fase13/VALIDACION_FOREVER.md#aprendizaje-de-habilidades-por-misión) · [Botín de Feralas y Un’Goro](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
 
+## Último bloque verificado · Instrucciones de Feralas y Un’Goro
+
+- Las 22 rutas Horda indican las cantidades y piezas terminadas para los cinco encargos opcionales de Peletería. En Un’Goro, 4148 indica recoger un brote y 5150 conserva su canje de 15 sin XP base. Las instrucciones ES/EN describen los marcadores como aproximados donde corresponde. Se comprobaron **179 pasos** y sus destinos. [Cantidades y fuentes](auditor_fase13/FUENTES.md#instrucciones-de-materiales-en-feralas-y-ungoro).
+- Pasaron **138 pruebas locales**, incluidas las comprobaciones específicas de textos, destinos e integridad. Las 47 rutas registran **0 errores** y los **56 avisos opcionales** de Kum’isha. El candidato contiene los 218 archivos distribuibles y coincide con el contenido verificado del addon.
+
 ## Comprobaciones que impiden cerrar la certificación de datos
 
 | Bloque | Investigación pendiente | Validación en Forever |
 | --- | --- | --- |
-| Misiones y dependencias | Entre 2.468 IDs activos, 24 siguen sin oferta acreditada. Se mantienen seis en investigación y 18 en el protocolo del cliente. Faltan 191 títulos ES observados (189 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.136 seguimientos, 2.441 fichas de prerrequisitos acumulativos y 1.797 de requisitos alternativos o de una sola entrega. Falta resolver el acceso a 1085 en 14 rutas y completar los campos de condiciones especiales. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y cinco que requieren comprobar fase, perfil o entregas previas. |
-| Clase, raza y facción | 2.377 fichas sin condición de clase acreditada, 1.984 sin condición racial y 1.959 sin condición de facción. Hay contraste parcial para 337 de clase, 878 de raza y 863 de facción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. Ocho pares de misión y hechizo tienen prueba individual. |
-| Cartografía | 2.532 destinos de misión únicos sin una referencia específica o cercana. Otros 3.418 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos los interiores de 1486 y 6563 y los dos casos compartidos de botín de Feralas y Un'Goro. |
+| Misiones y dependencias | Entre 2.469 IDs activos, 24 siguen sin oferta acreditada. Se mantienen seis en investigación y 18 en el protocolo del cliente. Faltan 191 títulos ES observados (189 cotejados con la referencia heredada), 24 EN, 24 niveles mínimos, 2.137 seguimientos, 2.442 fichas de prerrequisitos acumulativos y 1.798 de requisitos alternativos o de una sola entrega. Quedan campos de condiciones especiales por contrastar. | Cinco ofertas estacionales, ocho vinculadas a botín de banda y cinco que requieren comprobar fase, perfil o entregas previas. |
+| Clase, raza y facción | 2.378 fichas sin condición de clase acreditada, 1.985 sin condición racial y 1.960 sin condición de facción. Hay contraste parcial para 337 de clase, 878 de raza y 863 de facción. | Acceso real, raciales, desbloqueos y selección con los perfiles documentados. Ocho pares de misión y hechizo tienen prueba individual. |
+| Cartografía | 2.532 destinos de misión únicos sin una referencia específica o cercana. Otros 3.420 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos los interiores de 1486 y 6563 y los dos casos compartidos de botín de Feralas y Un'Goro. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP de entrega pendiente de una muestra de progresión en 1.384 IDs, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Alternativas de transporte, requisitos de desbloqueo y escalas observadas que difieren por compilación. | Costes, acceso y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
 | Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
 
 ## Siguientes tareas
 
-1. Revisar instrucciones de objetivos en Feralas y Un’Goro con fuentes de los objetos y las cantidades ya acreditadas. [Casos de botín](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
-2. Ejecutar los seis casos representativos con el ZIP candidato. Registrar persistencia, Questie, idiomas, transporte y desbloqueos esenciales. [Protocolo funcional](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
-3. Resolver cualquier P0/P1 de las pruebas reales y verificar el ZIP definitivo y la sincronización del cierre. Conservar la investigación pendiente para futuras versiones. [Registro por prioridad](auditor_fase13/PENDIENTES_INVESTIGACION_FOREVER.md).
+1. Ejecutar los seis casos representativos con el ZIP candidato. Registrar persistencia, Questie, idiomas, transporte y desbloqueos esenciales. [Protocolo funcional](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
+2. Resolver los P0/P1 que puedan aparecer en esas pruebas y verificar el ZIP definitivo. Conservar la investigación pendiente para futuras versiones. [Registro por prioridad](auditor_fase13/PENDIENTES_INVESTIGACION_FOREVER.md).
 
-La fase sigue abierta. El corte previo es `128a540`.
+La fase sigue abierta. El corte previo es `52a07ad`.
 
 ## Avance individual
 

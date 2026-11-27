@@ -150,6 +150,8 @@ def _route_without_reviewed_edits(source):
         if refuerzo and int(refuerzo[1]) == 1085:
             line = re.sub(r't = "[^"]+"', 't = "<cadena de Espolón revisada>"', line, count=1)
             line = re.sub(r'\{ [^{}]+q = 1070, a = "[AT]" \}, ', "", line)
+        if refuerzo and int(refuerzo[1]) in (2855, 2856, 2857, 2858, 2859, 4148):
+            line = re.sub(r't = "[^"]+"', 't = "<objetivo y materiales revisados>"', line, count=1)
         if refuerzo and int(refuerzo[1]) in NO_XP_TEXT_QUESTS:
             line = re.sub(r't = "[^"]+"', 't = "<recompensa revisada>"', line, count=1)
         if refuerzo and int(refuerzo[1]) in AUXILIARY_TEXT_QUESTS:

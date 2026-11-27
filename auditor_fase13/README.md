@@ -27,6 +27,8 @@ El procedimiento reutiliza el inventario de misiones, posiciones, vuelos y agrup
 
 `--actualizar-progreso` regenera el tercer indicador y `PENDIENTES_INVESTIGACION_FOREVER.md`. Añade `--empaquetar` para generar un ZIP candidato y verificar sus archivos, CRC y SHA-256. El ZIP se guarda en `--salida`. Añade `--verificar-remoto` tras sincronizar la rama para verificar el corte contra la referencia real de GitHub. [Protocolo reducido](VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
 
+En otro ordenador puedes preparar las pruebas con el contenido de la carpeta distribuible de la rama de desarrollo. Desde un clon de `fase-13-auditoria-leveo` actualizado al corte indicado en el progreso, ejecuta `git archive --format=zip --output=GuiaAventurero-fase13-pruebas.zip HEAD GuiaAventurero`. Extrae la carpeta `GuiaAventurero` siguiendo el protocolo. La huella funcional se refiere a los archivos extraídos de la carpeta.
+
 Cuando haya una sesión real, guarda sus resultados en `validaciones_funcionales.json` o pásalos con `--cliente-funcional`. Usa una fila por caso con `caso`, `origen` igual a `cliente_forever`, `resultado` igual a `superada` o `fallo`, `ruta`, `faccion` (`Alliance` o `Horde`), `raza`, `clase`, `nivel`, `idioma` (`esES` o `enUS`), `compilacion`, `fecha` ISO, `evidencia` y `huella_addon`. La huella se copia del corte probado. El auditor valida que el perfil corresponda a la ruta y que la compilación y huella correspondan a la prueba registrada. Una prueba de otro corte se conserva en el archivo y queda fuera del resultado actual.
 
 ### Registro de investigación y certificación

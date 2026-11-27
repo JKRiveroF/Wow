@@ -76,16 +76,16 @@ El cierre funcional requiere el 100 %, cero P0/P1 y todos los criterios de regre
 
 | Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional anterior | Funcional actual | Variación funcional | Estado |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | — | 100 % | — | Completo |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,34 % | 52,33 % | 0 pp | — | 100 % | — | Completo |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | — | 50 % | — | Pendiente |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | — | 66,67 % | — | Pendiente |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | — | 66,67 % | — | Pendiente |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | — | 66,67 % | — | Pendiente |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | — | 50 % | — | Pendiente |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | — | 74,17 % | — | Pendiente |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | 50 % | 50 % | 0 pp | Pendiente |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | 50 % | 50 % | 0 pp | Pendiente |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | 74,17 % | 74,17 % | 0 pp | Pendiente |
 
-**Última actualización de la medición · 2026-11-27 10:19:18+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 10:28:04+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -93,7 +93,7 @@ El auditor registra **235 grupos de investigación** y **116 grupos de validaci�
 
 - **Rutas analizadas localmente** · 47/47
 - **Rutas con P0/P1** · 0
-- **Pruebas locales superadas** · 136/136
+- **Pruebas locales superadas** · 138/138
 - **Pruebas reales de Forever** · 0/6 superadas, 6 pendientes, 0 con fallo
 - **Incidencias aplazables** · 407
 
@@ -132,6 +132,7 @@ Prioridad actual del cierre funcional. Confirmar la omisión de los 56 avisos de
 - [x] Contrastar los candidatos heredados con el botín vinculado a la misión activa y las respuestas `questItems` del servidor. Se acreditó cercanía en 134 de los 151 destinos, incluidos los siete compartidos por las 47 rutas.
 - [x] Incorporar el botín de interacciones con entidad y hechizo identificados. Se acreditó cercanía en 8 destinos y el contraste acumulado cubre 136 de los 151 candidatos heredados.
 - [x] Cruzar las observaciones de GoldScout y Forever Scout con las posiciones archivadas. El contraste acumulado acredita cercanía en 144 de los 151 candidatos heredados.
+- [x] Precisar las instrucciones ES/EN de Peletería y de los brotes de Un’Goro usando cantidades y orígenes identificados. Los marcadores aproximados permanecen en la investigación. [Objetivos y fuentes](auditor_fase13/FUENTES.md#instrucciones-de-materiales-en-feralas-y-ungoro).
 - [ ] Resolver los siete destinos heredados que quedan, agrupados por los objetos 8153 en Feralas y 11315 en Un'Goro. Contrastar una observación de botín próxima al marcador o comprobar la obtención en Forever. Validar también el punto exacto donde las fuentes acreditan cercanía. [Protocolo](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
 - [ ] Verificar el punto exacto y el acceso a los destinos con contraste parcial. Para los puntos aún sin observación cercana, priorizar posiciones documentadas de iniciadores, receptores y objetivos compartidos.
 - [ ] Verificar en Forever los ocho pares de aprendizaje pendientes o parciales, con prioridad para el desbloqueo de 18960 y los efectos de recompensa de mago, paladín y chamán.

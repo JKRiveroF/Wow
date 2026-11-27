@@ -162,6 +162,24 @@ def classify(routes, findings, inventory, optional_test=False):
             classified.append({"bloque": 2, "codigo": "oferta_principal_sin_alternativa", "mision": quest,
                                "rutas": unsafe, "prioridad": "P1", "estado_funcional": "por comprobar",
                                "detalle": "Falta acreditar la oferta o una salida segura en la ruta principal."})
+    unknown_offers = {quest for quest, mission in missions.items()
+                      if mission.get("evidencia", {}).get("existe", {}).get("valor") is not True}
+    for quest, mission in missions.items():
+        required_routes = sorted({route for route, optional in acceptances[quest] if not optional})
+        if not required_routes:
+            continue
+        for field in ("prerrequisitos", "prerrequisitos_alternativos", "desbloqueos", "mision_activa", "disponible_desde"):
+            evidence = mission["evidencia"].get(field, {})
+            values = evidence.get("valor")
+            if not isinstance(values, list) or not all(type(value) is int for value in values):
+                continue
+            missing = unknown_offers.intersection(values)
+            if not missing or (field == "prerrequisitos_alternativos" and missing != set(values)):
+                continue
+            classified.append({"bloque": 2, "codigo": f"oferta_requerida_{field}", "mision": quest,
+                               "requisitos": sorted(missing), "rutas": required_routes, "prioridad": "P1",
+                               "estado_funcional": "por comprobar", "fuente": evidence.get("fuente"),
+                               "detalle": "Una misión principal depende de una oferta sin acreditar."})
     return classified
 
 

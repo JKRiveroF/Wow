@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-27T10:19:18+01:00",
+  "actualizado": "2026-11-27T10:28:04+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -10,6 +10,10 @@
       "efectivo": [
         1,
         1
+      ],
+      "funcional": [
+        3,
+        3
       ]
     },
     "2": {
@@ -18,8 +22,12 @@
         188
       ],
       "efectivo": [
-        206663,
-        394880
+        206741,
+        395040
+      ],
+      "funcional": [
+        3,
+        3
       ]
     },
     "3": {
@@ -28,8 +36,12 @@
         141
       ],
       "efectivo": [
-        3542761,
-        7626976
+        590663,
+        1271584
+      ],
+      "funcional": [
+        1,
+        2
       ]
     },
     "4": {
@@ -38,8 +50,12 @@
         141
       ],
       "efectivo": [
-        3967,
-        7404
+        15875,
+        29628
+      ],
+      "funcional": [
+        2,
+        3
       ]
     },
     "5": {
@@ -50,6 +66,10 @@
       "efectivo": [
         1,
         2
+      ],
+      "funcional": [
+        2,
+        3
       ]
     },
     "6": {
@@ -58,8 +78,12 @@
         141
       ],
       "efectivo": [
-        864419,
-        1164896
+        216193,
+        291342
+      ],
+      "funcional": [
+        2,
+        3
       ]
     },
     "7": {
@@ -70,6 +94,10 @@
       "efectivo": [
         3,
         8
+      ],
+      "funcional": [
+        3,
+        6
       ]
     },
     "global": {
@@ -78,8 +106,12 @@
         120
       ],
       "efectivo": [
-        12706455013107,
-        22211584586240
+        423861015491,
+        740931651456
+      ],
+      "funcional": [
+        89,
+        120
       ]
     }
   },
@@ -1098,18 +1130,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 136,
+                "unidades": 138,
                 "estados": {
-                  "confirmada": 136,
+                  "confirmada": 138,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 136,
-                "comprobaciones_aplicables": 136,
+                "comprobaciones_superadas": 138,
+                "comprobaciones_aplicables": 138,
                 "etapas": {
-                  "confirmadas": 136
+                  "confirmadas": 138
                 }
               }
             ]
@@ -1204,8 +1236,8 @@
       ]
     },
     "regresion": {
-      "ejecutadas": 136,
-      "superadas": 136,
+      "ejecutadas": 138,
+      "superadas": 138,
       "correcta": true
     },
     "casos_cliente": [
@@ -1388,10 +1420,10 @@
       "paquete": {
         "nombre": "GuiaAventurero-9.7.9-fase13-candidato.zip",
         "archivos": 218,
-        "huella_addon": "f522296edce12fb88dbe712cb0bc721ecd6bea5c810e3e2ac50efdbc0a7f1bee",
-        "sha256": "d4ac177a20424c5ca53569d7f9b020cbb278ac5521b587b52187a5c43f1f6ddf"
+        "huella_addon": "a655f6d428af8ef2a1fada84f9995c83aafabf61139a8c351ed6c715ffe1b11e",
+        "sha256": "7ed7ccdac59bd450b6e043cf6b915b8725413020582ea3c45dbfce4689e10df2"
       },
-      "huella_addon": "f522296edce12fb88dbe712cb0bc721ecd6bea5c810e3e2ac50efdbc0a7f1bee"
+      "huella_addon": "a655f6d428af8ef2a1fada84f9995c83aafabf61139a8c351ed6c715ffe1b11e"
     }
   },
   "variacion": {
@@ -1404,7 +1436,10 @@
         0,
         1
       ],
-      "funcional": null
+      "funcional": [
+        0,
+        1
+      ]
     },
     "2": {
       "certificado": [
@@ -1412,10 +1447,13 @@
         1
       ],
       "efectivo": [
-        -14159,
-        974958720
+        0,
+        1
       ],
-      "funcional": null
+      "funcional": [
+        0,
+        1
+      ]
     },
     "3": {
       "certificado": [
@@ -1423,10 +1461,13 @@
         1
       ],
       "efectivo": [
-        17,
-        3035102
+        0,
+        1
       ],
-      "funcional": null
+      "funcional": [
+        0,
+        1
+      ]
     },
     "4": {
       "certificado": [
@@ -1434,10 +1475,13 @@
         1
       ],
       "efectivo": [
-        88,
-        4570119
+        0,
+        1
       ],
-      "funcional": null
+      "funcional": [
+        0,
+        1
+      ]
     },
     "5": {
       "certificado": [
@@ -1448,7 +1492,10 @@
         0,
         1
       ],
-      "funcional": null
+      "funcional": [
+        0,
+        1
+      ]
     },
     "6": {
       "certificado": [
@@ -1456,10 +1503,13 @@
         1
       ],
       "efectivo": [
-        115,
-        48747936
+        0,
+        1
       ],
-      "funcional": null
+      "funcional": [
+        0,
+        1
+      ]
     },
     "7": {
       "certificado": [
@@ -1470,7 +1520,10 @@
         0,
         1
       ],
-      "funcional": null
+      "funcional": [
+        0,
+        1
+      ]
     },
     "global": {
       "certificado": [
@@ -1478,10 +1531,13 @@
         1
       ],
       "efectivo": [
-        3632556071,
-        5918198321978880
+        0,
+        1
       ],
-      "funcional": null
+      "funcional": [
+        0,
+        1
+      ]
     }
   }
 }

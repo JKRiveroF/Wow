@@ -39,6 +39,8 @@ Prueba un solo corte del addon, identificado por `cierre_funcional.huella_addon`
 
 Los seis casos son obligatorios para el indicador funcional. Las matrices de certificación siguientes conservan el trabajo de investigación y las comprobaciones detalladas por misión. [Formato de registro](README.md#registro-de-pruebas-funcionales).
 
+Si tienes un no-muerto paladín de nivel inicial, aprovecha la prueba Horda para comprobar cuándo aparece Luz Sagrada (635) durante 90902. Si pruebas un enano chamán en el tramo intermedio, anota cuándo aparece 5394 respecto de 94505. Para 18960, el libro de hechizos permite distinguir el instructor de las cuatro entregas de druida de la matriz. Conserva estas observaciones con el ID de misión y de hechizo.
+
 ## Nodos y conexiones de vuelo
 
 En esES, abre el mapa de vuelo con Shardi, Brakkar y Thalon. Registra el nombre y estado que devuelve el cliente. Comprueba que el paso que verifica Juncobrezo, Sangrevenenosa o Sombraprensa se completa tras guardar el nodo. Verifica el acceso a Gadgetzan y Theramore con Alianza y al Puesto del Veneno con Horda. Para una conexión con escalas, anota sentido, compilación, talento, precios y tiempo. [Nodos, nombres y observaciones](FUENTES.md#nodos-y-conexiones-de-vuelo).
