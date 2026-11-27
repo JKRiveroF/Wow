@@ -7,6 +7,12 @@
 - Actualiza `main` mediante el merge de la rama de versión, después de superar la regresión local y la validación en WoW Forever y de contar con autorización para integrar. Etiqueta el corte aprobado como `v<versión>` para conservar una referencia de respaldo al comenzar la siguiente versión.
 - Usa `JKRiveroF` en los commits. La publicación de Releases requiere autorización expresa.
 
+## ZIP descargable
+
+- `GuiaAventurero-ultima.zip` contiene el addon de su propia rama. La copia de `main` corresponde al respaldo o a la última versión aprobada. La rama de versión contiene su candidata más reciente.
+- Al cambiar el addon, prepara sus archivos con `git add -- GuiaAventurero`, ejecuta `python herramientas/paquete.py` y añade `GuiaAventurero-ultima.zip` al mismo commit. `python herramientas/paquete.py --check` compara el ZIP y el addon preparados en Git.
+- GitHub Actions verifica el ZIP antes de la integración y lo actualiza cuando detecta un desfase en `main` o en una rama `version-*`.
+
 ## Addon instalable
 
 - El TOC de `GuiaAventurero/` fija la versión y el orden de carga. Mantén las novedades en español e inglés y empaqueta únicamente la carpeta del addon.
