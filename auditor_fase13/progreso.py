@@ -392,7 +392,7 @@ def _global(blocks):
 
 
 def _comparison_snapshot(data):
-    return {**{key: {name: row[name] for name in ("certificado", "efectivo", "funcional") if name in row}
+    return {**{key: {name: row[name] for name in ("certificado", "efectivo", "funcional", "funcional_local") if name in row}
                for key, row in data["bloques"].items()}, "global": data["global"]}
 
 
@@ -435,17 +435,22 @@ def render(data):
     actual, previous = data["actual"], data["anterior"]
     functional = actual.get("cierre_funcional")
     lines = []
-    for field in ("certificado", "efectivo", "funcional"):
+    labels = {"certificado": "certificado global", "efectivo": "efectivo global",
+              "funcional_local": "funcional local", "funcional": "funcional global"}
+    for field, label in labels.items():
         if field not in actual["global"]:
             continue
         pair = actual["global"][field]
         bar = int(_ratio(pair) * 20)
-        lines.extend([f"**Progreso {field} global · {percentage(pair)}**", "",
+        lines.extend([f"**Progreso {label} · {percentage(pair)}**", "",
                       "`" + "█" * bar + "░" * (20 - bar) + "`", ""])
     header = "| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación |"
     divider = "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"
     if functional:
-        header += " Funcional anterior | Funcional actual | Variación funcional | Estado |"
+        if "funcional_local" in actual["global"]:
+            header += " Funcional local anterior | Funcional local actual | Variación local |"
+            divider += " ---: | ---: | ---: |"
+        header += " Funcional global anterior | Funcional global actual | Variación global | Estado global |"
         divider += " ---: | ---: | ---: | --- |"
     lines.extend([header, divider])
     for index, (name, weight) in BLOCKS.items():
@@ -476,12 +481,11 @@ def render(data):
 
 def _table_row(name, weight, counts, before, current):
     cells = [name, f"{weight} %", counts]
-    for field in ("certificado", "efectivo"):
-        cells.extend((percentage(before[field]), percentage(current[field]), _delta(before[field], current[field])))
+    for field in ("certificado", "efectivo", "funcional_local", "funcional"):
+        if field in current:
+            cells.extend((percentage(before.get(field)), percentage(current[field]), _delta(before.get(field), current[field])))
     if "funcional" in current:
-        check = current["funcional"]
-        cells.extend((percentage(before.get("funcional")), percentage(check), _delta(before.get("funcional"), check),
-                      "Completo" if _ratio(check) == 1 else "Pendiente"))
+        cells.append("Completo" if _ratio(current["funcional"]) == 1 else "Pendiente")
     return "| " + " | ".join(cells) + " |"
 
 

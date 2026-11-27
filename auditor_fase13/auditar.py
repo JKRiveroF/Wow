@@ -206,7 +206,8 @@ def main():
                         help="Registro JSON opcional de comprobaciones documentadas y de cliente.")
     parser.add_argument("--cliente-funcional", type=Path, default=HERE / "validaciones_funcionales.json",
                         help="Registro de pruebas reales del protocolo funcional.")
-    parser.add_argument("--empaquetar", action="store_true", help="Genera un ZIP candidato verificado junto al informe.")
+    parser.add_argument("--empaquetar", action="store_true", help="Genera y verifica el ZIP junto al informe.")
+    parser.add_argument("--integracion", action="store_true", help="Usa el nombre del paquete de integración de la fase 13.")
     parser.add_argument("--verificar-remoto", action="store_true", help="Contrasta la rama local con la referencia en GitHub.")
     args = parser.parse_args()
     addon, output = args.addon.resolve(), args.salida.resolve()
@@ -219,7 +220,7 @@ def main():
         parser.error("Para actualizar el progreso, ejecuta todos los bloques del addon del proyecto con las cuatro fuentes locales.")
     if args.regresion and not full_project:
         parser.error("La batería de regresión se ejecuta sobre los archivos del proyecto con el análisis completo.")
-    if (args.empaquetar or args.verificar_remoto) and not full_project:
+    if (args.empaquetar or args.integracion or args.verificar_remoto) and not full_project:
         parser.error("El paquete y la comprobación remota requieren el análisis completo del addon del proyecto.")
     regression = {}
     try:
@@ -250,7 +251,8 @@ def main():
             if regression.get("correcta") is False:
                 classified.append({"bloque": 7, "codigo": "regresion_fallida", "prioridad": "P1",
                                    "estado_funcional": "defecto"})
-            package = verify_package(output / f"GuiaAventurero-{version}-fase13-candidato.zip", entries, fingerprint,
+            package_kind = "integracion" if args.integracion else "candidato"
+            package = verify_package(output / f"GuiaAventurero-{version}-fase13-{package_kind}.zip", entries, fingerprint,
                                      create=args.empaquetar)
             functional = measure_functional(routes, classified, tests, regression, client, package,
                                             args.verificar_remoto and verify_remote(HERE.parent),

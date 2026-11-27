@@ -44,7 +44,10 @@ El corte que incorpora perfiles de entrega y aprendizaje conserva la comparació
 
 ### Progreso funcional
 
-Cada bloque mide `comprobaciones funcionales superadas ÷ comprobaciones aplicables × 100`. Todas las comprobaciones enumeradas cuentan una vez dentro de su bloque. El global usa los siete pesos de la tabla de certificación y fracciones exactas. La primera variación se mostrará cuando haya dos cortes funcionales. Una prueba local se acredita por el resultado de la comprobación correspondiente. Los casos de Forever se acreditan con evidencia real ligada a la huella del addon probado.
+Ambos indicadores miden `comprobaciones funcionales superadas ÷ comprobaciones aplicables × 100` por bloque. Cada comprobación cuenta una vez. Los totales ponderados usan los siete pesos originales y fracciones exactas. El primer corte funcional local se publica sin variación histórica.
+
+- **Funcional local** · Para marcadores y flecha, continuidad, desplazamiento, desbloqueos y textos, instalación y ZIP se exigen las pruebas específicas que lista el auditor. Para el ZIP también se verifica el archivo generado. Los demás criterios usan la medida común. Este indicador debe llegar al 100 % antes de integrar.
+- **Funcional global** · Conserva los criterios funcionales anteriores. Las pruebas de Forever cuentan con evidencia real ligada a la huella del addon que se haya ejecutado. La sesión se hará después de integrar la fase 13 con las mejoras de Claude y ChatGPT para validar la futura 9.8.0 estable.
 
 | Bloque | Comprobaciones funcionales |
 | --- | --- |
@@ -70,22 +73,26 @@ El cierre funcional requiere el 100 %, cero P0/P1 y todos los criterios de regre
 
 `███████████░░░░░░░░░`
 
+**Progreso funcional local · 100 %**
+
+`████████████████████`
+
 **Progreso funcional global · 75 %**
 
 `███████████████░░░░░`
 
-| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional anterior | Funcional actual | Variación funcional | Estado |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | 50 % | 50 % | 0 pp | Pendiente |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | 50 % | 66,67 % | +16,67 pp | Pendiente |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | 74,17 % | 75 % | +0,83 pp | Pendiente |
+| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional local anterior | Funcional local actual | Variación local | Funcional global anterior | Funcional global actual | Variación global | Estado global |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | — | 100 % | — | 100 % | 100 % | 0 pp | Completo |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp | — | 100 % | — | 100 % | 100 % | 0 pp | Completo |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | — | 100 % | — | 50 % | 50 % | 0 pp | Pendiente |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | — | 100 % | — | 75 % | 75 % | 0 pp | Pendiente |
 
-**Última actualización de la medición · 2026-11-27 10:31:46+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 10:43:51+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -93,7 +100,7 @@ El auditor registra **235 grupos de investigación** y **116 grupos de validaci�
 
 - **Rutas analizadas localmente** · 47/47
 - **Rutas con P0/P1** · 0
-- **Pruebas locales superadas** · 138/138
+- **Pruebas locales superadas** · 145/145
 - **Pruebas reales de Forever** · 0/6 superadas, 6 pendientes, 0 con fallo
 - **Incidencias aplazables** · 407
 
@@ -103,7 +110,7 @@ El auditor conserva las coberturas y los cortes en [`progreso_medicion.json`](au
 
 ## Secuencia de trabajo
 
-Prioridad actual del cierre funcional. Confirmar la omisión de los 56 avisos de Kum’isha en el motor, revisar las seis ofertas y los ocho pares de aprendizaje, y resolver restricciones conocidas que bloqueen el avance. Verificar los siete destinos pendientes por su impacto. Completar la regresión y los seis casos reales del protocolo reducido. Las tareas de certificación exhaustiva siguen registradas para investigar por separado.
+La certificación de datos conserva sus pendientes. Las incidencias P2 y P3 quedan registradas para revisiones posteriores. La secuencia de cierre es preparación local, integración autorizada y validación real del corte combinado. [Preparación e inventario de integración](auditor_fase13/INTEGRACION_FASE13.md).
 
 - [x] Ejecutar y cerrar la auditoría estructural inicial con los archivos originales protegidos por el manifiesto.
 - [x] Ejecutar las comprobaciones locales de misiones, cartografía, experiencia, viajes y particularidades en las 47 rutas. Registrar los hallazgos y el alcance de la evidencia.
@@ -174,6 +181,7 @@ Prioridad actual del cierre funcional. Confirmar la omisión de los 56 avisos de
 - [x] Contrastar y corregir los 32 refuerzos restantes con XP base cero. Distinguir pasos de cadena, de transporte, de clase y de Alterac.
 - [x] Incorporar las trazas esES de 2972, 4222 y 6609 y contrastarlas con las etiquetas de las rutas.
 - [ ] Revisar los requisitos de perfil y buscar evidencia para los títulos que siguen sin fuente.
-- [ ] Probar dentro de Forever los aspectos que dependen del cliente, incluidos Questie, datos guardados, traducciones y selección de ruta.
-- [ ] Actualizar las novedades ES/EN y preparar el ZIP definitivo con los archivos distribuibles, tras superar los criterios de cierre local.
-- [ ] Verificar la sincronización del cierre únicamente en la rama de desarrollo con `origin`. La fusión y las Releases quedan pendientes de autorización expresa.
+- [x] Completar la preparación funcional local de los siete bloques, verificar el ZIP de integración e inventariar los cambios frente a 9.7.9. [Paquete e inventario](auditor_fase13/INTEGRACION_FASE13.md).
+- [ ] Cuando se autorice la integración, revisar los archivos coincidentes, actualizar las novedades ES/EN y ejecutar la regresión del corte combinado de la 9.8.0.
+- [ ] Tras integrar la fase 13 con las demás mejoras, ejecutar en Forever los seis casos del protocolo reducido sobre la futura 9.8.0 estable. Anotar la huella del corte probado.
+- [ ] Verificar el paquete de la versión combinada tras la validación real. La fusión y las Releases requieren autorización expresa.

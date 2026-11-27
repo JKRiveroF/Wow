@@ -18,9 +18,34 @@ class FunctionalTest(unittest.TestCase):
         checks = {str(key): [{"superada": key != 7}] for key in BLOCKS}
         add_to_measurement(current, {"bloques": checks})
         comparison = compare(current, previous)
-        self.assertEqual(comparison["actual"]["global"], {**source["global"], "funcional": [19, 20]})
+        self.assertEqual(comparison["actual"]["global"], {**source["global"], "funcional": [19, 20], "funcional_local": [19, 20]})
         self.assertEqual(comparison["anterior"]["global"], source["global"])
-        self.assertEqual(comparison["variacion"]["global"], {"certificado": [0, 1], "efectivo": [0, 1], "funcional": None})
+        self.assertEqual(comparison["variacion"]["global"], {"certificado": [0, 1], "efectivo": [0, 1],
+                                                           "funcional": None, "funcional_local": None})
+
+    def test_local_and_global_weight_the_same_checks_with_separate_evidence(self):
+        metrics = {"bloques": {str(key): {"peso": weight} for key, (_, weight) in BLOCKS.items()}, "global": {}}
+        checks = {str(key): [{"superada": True}] for key in BLOCKS}
+        checks["3"].append({"superada": False, "superada_local": True})
+        add_to_measurement(metrics, {"bloques": checks})
+        self.assertEqual(metrics["bloques"]["3"]["funcional"], [1, 2])
+        self.assertEqual(metrics["bloques"]["3"]["funcional_local"], [2, 2])
+        self.assertEqual(metrics["global"], {"funcional": [9, 10], "funcional_local": [1, 1]})
+
+    def test_local_gates_require_named_passes_and_the_verified_package(self):
+        def measure(tests, package=None):
+            return measure_functional([], [], tests, {}, {}, package=package)
+
+        gates = [row for block in measure(set())["bloques"].values() for row in block if "pruebas_locales" in row]
+        self.assertEqual({row["id"] for row in gates}, {"marcadores_y_flecha", "continuidad", "desplazamiento",
+                                                        "desbloqueos_y_textos", "instalacion_y_cliente", "zip"})
+        self.assertTrue(all(not row["superada_local"] for row in gates))
+        tests = {name for row in gates for name in row["pruebas_locales"]}
+        with_package = measure(tests, package={"nombre": "verificado.zip"})
+        proven = {row["id"]: row for block in with_package["bloques"].values() for row in block if "superada_local" in row}
+        self.assertTrue(all(row["superada_local"] and not row["superada"] for row in proven.values()))
+        self.assertEqual(with_package["cliente"], dict.fromkeys(CLIENT_CASES, "pendiente"))
+        self.assertFalse(next(row for row in measure(tests)["bloques"]["7"] if row["id"] == "zip")["superada_local"])
 
     def test_kumisha_downgrade_requires_exact_mission_and_test(self):
         def waypoint(quest):

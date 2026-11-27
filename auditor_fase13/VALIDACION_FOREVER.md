@@ -26,7 +26,7 @@ Los resultados de las pruebas simuladas quedan en las pruebas del auditor. El es
 
 ## Protocolo reducido de cierre funcional
 
-Prueba un solo corte del addon, identificado por `cierre_funcional.huella_addon` en `progreso_medicion.json`. Puedes usar personajes existentes de ambas facciones. Guarda una copia de `Interface/AddOns/GuiaAventurero` y de sus `SavedVariables` con el juego cerrado. Para la prueba de actualización, sustituye únicamente la carpeta del addon y abre el cliente con una copia válida de los datos previos. Anota con cada caso la compilación, idioma, ruta, facción, raza, clase, nivel y resultado. Una captura o una secuencia breve de acciones y resultados sirve como evidencia.
+Ejecuta este protocolo cuando la fase 13 y las demás mejoras de Claude y ChatGPT estén integradas en el corte de la futura 9.8.0 estable. Registra los seis casos contra la misma huella del addon integrado, calculada por el auditor. Puedes usar personajes existentes de ambas facciones. Guarda una copia de `Interface/AddOns/GuiaAventurero` y de sus `SavedVariables` con el juego cerrado. Para la prueba de actualización, sustituye únicamente la carpeta del addon y abre el cliente con una copia válida de los datos previos. Anota con cada caso la compilación, idioma, ruta, facción, raza, clase, nivel y resultado. Una captura o una secuencia breve de acciones y resultados sirve como evidencia.
 
 | Caso | Perfil y pasos | Resultado que hay que observar |
 | --- | --- | --- |

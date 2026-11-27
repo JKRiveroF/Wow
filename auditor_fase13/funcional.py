@@ -204,8 +204,12 @@ def measure_functional(routes, classified, tests, regression, client, package=No
     def unblocked(block):
         return not any(row["bloque"] == block and row["prioridad"] in ("P0", "P1") for row in classified)
 
-    def proof(name, passed, source):
-        return {"id": name, "superada": bool(passed), "evidencia": source}
+    def proof(name, passed, source, *, local_tests=(), local_ready=True):
+        result = {"id": name, "superada": bool(passed), "evidencia": source}
+        if local_tests:
+            result["superada_local"] = bool(local_ready and all(test(name) for name in local_tests))
+            result["pruebas_locales"] = {name: test(name) for name in local_tests}
+        return result
 
     selection = len(routes) == 47 and len({(r["_faccion"], r["clase"], race)
                                          for r in routes for race in r.get("razas", ())}) == 56 and unblocked(1)
@@ -214,6 +218,7 @@ def measure_functional(routes, classified, tests, regression, client, package=No
     profiles = (len(profile_cases) == 3 and {r["faccion"] for r in profile_cases} == {"Alliance", "Horde"}
                 and len({r["raza"] for r in profile_cases}) >= 2 and len({r["clase"] for r in profile_cases}) >= 2
                 and {r["idioma"] for r in profile_cases} == {"esES", "enUS"})
+    installation = "test_candidate_installs_and_loads_clean_and_over_the_original"
     checks = {
         1: [proof("lua_y_toc", unblocked(1) and test("test_toc_version_guardados_y_recursos"), "Lua 5.1 y TOC"),
             proof("integridad", all(test(name) for name in ("test_manifiesto_y_zip_del_commit_base",
@@ -225,28 +230,43 @@ def measure_functional(routes, classified, tests, regression, client, package=No
                   and test("test_algaz_brutal_armor_and_mage_deliveries_follow_their_requirements"), "Secuencias corregidas y textos ES/EN"),
             proof("omisiones_seguras", optional, "Control de avance real del addon con API simulada")],
         3: [proof("mapas_y_coordenadas", complete_sources and selection and unblocked(3), "Validación local de mapas, destinos y contradicciones conocidas"),
-            proof("marcadores_y_flecha", case("mapa_questie"), "Cliente Forever · mapa_questie")],
+            proof("marcadores_y_flecha", case("mapa_questie"), "Cliente Forever · mapa_questie",
+                  local_tests=("test_marker_and_arrow_follow_the_destination_and_respect_questie",
+                               "test_seguimiento_no_quita_misiones_ajenas_al_cargar_questie"))],
         4: [proof("tramos_y_nivel", test("test_engine_selects_a_valid_section_for_every_level_and_profile") and unblocked(4),
                   "Selección de tramo con el motor Lua y niveles mínimos conocidos"),
             proof("sin_xp_y_opcionales", optional and test("test_refuerzos_sin_xp_have_matching_english_for_reviewed_steps"),
                   "Separación de canjes y opciones en las pruebas locales"),
-            proof("continuidad", case("nivel_viaje"), "Cliente Forever · nivel_viaje")],
+            proof("continuidad", case("nivel_viaje"), "Cliente Forever · nivel_viaje",
+                  local_tests=("test_level_event_and_same_session_step_progression",
+                               "test_screecher_spirits_remains_pending_in_actual_engine_until_turn_in"))],
         5: [proof("viajes_conocidos", complete_sources and selection and unblocked(5), "Cartografía local y transportes incompatibles conocidos"),
             proof("nodos_por_faccion", test("test_primary_flight_records_match_route_coordinates")
                   and test("test_pasos_desconocidos_o_incompletos_siguen_manuales"), "Nodos y transporte desconocido en API simulada"),
-            proof("desplazamiento", case("nivel_viaje"), "Cliente Forever · nivel_viaje")],
+            proof("desplazamiento", case("nivel_viaje"), "Cliente Forever · nivel_viaje",
+                  local_tests=("test_travel_waits_for_discovery_and_arrival_including_child_maps",
+                               "test_taxi_clasico_y_moderno_solo_guardan_estados_positivos",
+                               "test_cliente_ingles_reconoce_guardado_anterior_en_espanol",
+                               "test_cliente_y_guia_en_espanol_reconocen_claves_inglesas"))],
         6: [proof("matriz_y_filtros", selection and unblocked(6), "Selección y filtros de 56 combinaciones"),
             proof("arranques", test("test_all_non_skyborne_routes_match_observed_starters")
                   and test("test_racial_pickup_indices_and_english_translation"), "Inicio, raza y traducción en pruebas locales"),
-            proof("desbloqueos_y_textos", profiles, "Cliente Forever · Alianza ES, Horda EN y desbloqueos de clase")],
+            proof("desbloqueos_y_textos", profiles, "Cliente Forever · Alianza ES, Horda EN y desbloqueos de clase",
+                  local_tests=("test_spell_learned_event_advances_only_after_the_book_changes",
+                               "test_skyborne_aquatic_form_uses_faction_chain_and_requires_druid_level_16",
+                               "test_ten_skyborne_training_texts_translate_with_addon_engine",
+                               "test_hunter_skill_sources_match_the_two_quest_rewards"))],
         7: [proof("regresion", regression.get("correcta") and regression.get("ejecutadas", 0) > 0
                   and regression.get("ejecutadas") == regression.get("superadas"), "Batería local obligatoria"),
             proof("questie_y_guardados_locales", test("test_migracion_legacy_preserva_identidad_progreso_y_preferencias")
                   and test("test_eventos_de_mision_respetan_questie_y_el_estado_indeterminado"), "Questie y migración con API simulada"),
-            proof("instalacion_y_cliente", profiles and all(case(key) for key in CLIENT_CASES), "Suite representativa de Forever"),
+            proof("instalacion_y_cliente", profiles and all(case(key) for key in CLIENT_CASES), "Suite representativa de Forever",
+                  local_tests=(installation, "test_migracion_legacy_preserva_identidad_progreso_y_preferencias",
+                               "test_eventos_de_mision_respetan_questie_y_el_estado_indeterminado")),
             proof("documentacion_e_incidencias", documentation and all(unblocked(n) for n in range(1, 8)),
                   "Clasificación completa y registro de investigación generado"),
-            proof("zip", bool(package) and all(case(key) for key in CLIENT_CASES), "ZIP contrastado con la instalación validada"),
+            proof("zip", bool(package) and all(case(key) for key in CLIENT_CASES), "ZIP contrastado con la instalación validada",
+                  local_ready=bool(package), local_tests=(installation, "test_package_is_reproducible_and_rejects_a_stale_file")),
             proof("sincronizacion", git_verified, "Rama de desarrollo y árbol del addon verificados")],
     }
     counts = Counter(row["prioridad"] for row in classified)
@@ -263,8 +283,10 @@ def add_to_measurement(metrics, functional):
     for key, row in metrics["bloques"].items():
         checks = functional["bloques"][key]
         row["funcional"] = [sum(check["superada"] for check in checks), len(checks)]
-    value = sum(Fraction(*row["funcional"]) * row["peso"] for row in metrics["bloques"].values()) / 100
-    metrics["global"]["funcional"] = [value.numerator, value.denominator]
+        row["funcional_local"] = [sum(check.get("superada_local", check["superada"]) for check in checks), len(checks)]
+    for name in ("funcional", "funcional_local"):
+        value = sum(Fraction(*row[name]) * row["peso"] for row in metrics["bloques"].values()) / 100
+        metrics["global"][name] = [value.numerator, value.denominator]
 
 
 def render_registry(classified, routes):

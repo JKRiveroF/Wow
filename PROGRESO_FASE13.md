@@ -10,22 +10,26 @@
 
 `███████████░░░░░░░░░`
 
+**Progreso funcional local · 100 %**
+
+`████████████████████`
+
 **Progreso funcional global · 75 %**
 
 `███████████████░░░░░`
 
-| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional anterior | Funcional actual | Variación funcional | Estado |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | 50 % | 50 % | 0 pp | Pendiente |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | 50 % | 66,67 % | +16,67 pp | Pendiente |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | 74,17 % | 75 % | +0,83 pp | Pendiente |
+| Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional local anterior | Funcional local actual | Variación local | Funcional global anterior | Funcional global actual | Variación global | Estado global |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | — | 100 % | — | 100 % | 100 % | 0 pp | Completo |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp | — | 100 % | — | 100 % | 100 % | 0 pp | Completo |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | — | 100 % | — | 50 % | 50 % | 0 pp | Pendiente |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | — | 100 % | — | 75 % | 75 % | 0 pp | Pendiente |
 
-**Última actualización de la medición · 2026-11-27 10:31:46+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 10:43:51+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -33,13 +37,15 @@ El auditor registra **235 grupos de investigación** y **116 grupos de validaci�
 
 - **Rutas analizadas localmente** · 47/47
 - **Rutas con P0/P1** · 0
-- **Pruebas locales superadas** · 138/138
+- **Pruebas locales superadas** · 145/145
 - **Pruebas reales de Forever** · 0/6 superadas, 6 pendientes, 0 con fallo
 - **Incidencias aplazables** · 407
 
 <!-- medicion-fase13:fin -->
 
-**Tarea actual** · Ejecutar en Forever los seis casos del protocolo reducido con el candidato verificado. Las pruebas reales pendientes impiden cerrar la fase.
+**Fase 13 completada localmente y preparada para integración, pendiente de validación real.**
+
+**Tarea actual** · Preparación local cerrada. El siguiente hito es incorporar este corte junto con las mejoras de Claude y ChatGPT para la futura 9.8.0 estable. [ZIP e inventario de cambios](auditor_fase13/INTEGRACION_FASE13.md).
 
 ## Preparación completada · 25 de noviembre de 2026
 
@@ -466,10 +472,16 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 - Pasaron 136 pruebas locales. El motor permite continuar al omitir la cadena de Sierra Espolón y ambos canjes de Kum’isha. Quedan 56 avisos de requisitos de esos canjes y 351 grupos de investigación o validación clasificados. Las 394 aceptaciones de los 24 IDs sin oferta acreditada se indican como opcionales o condicionadas. El cruce de prerrequisitos documentados carece de referencias a esos IDs en el recorrido principal. [Registro por prioridad](auditor_fase13/PENDIENTES_INVESTIGACION_FOREVER.md).
 - Los ocho pares de aprendizaje siguen pendientes en la matriz por misión y hechizo. Se mantienen en el registro de investigación y la muestra de desbloqueo esencial sigue siendo obligatoria en Forever. Los siete destinos heredados se reducen a dos puntos de comprobación. En Un’Goro la planta 164958 es el origen observado de 11315. [Pruebas de aprendizaje](auditor_fase13/VALIDACION_FOREVER.md#aprendizaje-de-habilidades-por-misión) · [Botín de Feralas y Un’Goro](auditor_fase13/VALIDACION_FOREVER.md#botín-en-feralas-y-ungoro).
 
-## Último bloque verificado · Instrucciones de Feralas y Un’Goro
+## Bloque verificado · Instrucciones de Feralas y Un’Goro
 
 - Las 22 rutas Horda indican las cantidades y piezas terminadas para los cinco encargos opcionales de Peletería. En Un’Goro, 4148 indica recoger un brote y 5150 conserva su canje de 15 sin XP base. Las instrucciones ES/EN describen los marcadores como aproximados donde corresponde. Se comprobaron **179 pasos** y sus destinos. [Cantidades y fuentes](auditor_fase13/FUENTES.md#instrucciones-de-materiales-en-feralas-y-ungoro).
 - Pasaron **138 pruebas locales**, incluidas las comprobaciones específicas de textos, destinos e integridad. Las 47 rutas registran **0 errores** y los **56 avisos opcionales** de Kum’isha. El candidato contiene los 218 archivos distribuibles y coincide con el contenido verificado del addon.
+
+## Preparación funcional completada · 27 de noviembre de 2026
+
+- Pasaron **145 de 145 pruebas**. Las nuevas simulaciones verifican marcador y flecha con Questie, avance al subir de nivel, descubrimiento de vuelo y llegada a zona, y desbloqueo cuando cambia el libro de hechizos. La instalación aislada cargó las 47 rutas y 56 perfiles desde el ZIP, tanto en limpio como sobre 9.7.9.
+- El avance funcional local alcanza el **100 %** en los siete bloques. El funcional global queda en **75 %**, con **6 casos reales pendientes** para probar el corte combinado. Hay **0 P0/P1** y se conservan los pendientes P2/P3 de investigación y cliente. [Criterios de medición](PLAN_FASE13.md#progreso-funcional).
+- Verificado el ZIP de integración de **218 archivos**, junto con el inventario de **58 archivos modificados** respecto a 9.7.9. El ZIP original y su manifiesto se conservan. [Paquete, huellas e inventario](auditor_fase13/INTEGRACION_FASE13.md).
 
 ## Comprobaciones que impiden cerrar la certificación de datos
 
@@ -480,14 +492,12 @@ Pasaron 48 pruebas, incluida la compilación Lua, la comprobación de las cadena
 | Cartografía | 2.532 destinos de misión únicos sin una referencia específica o cercana. Otros 3.420 tienen una observación cercana. Los 47 UiMapID ya están contrastados. | Coordenadas y accesos que queden sin observación, incluidos los interiores de 1486 y 6563 y los dos casos compartidos de botín de Feralas y Un'Goro. |
 | Experiencia | 24 IDs activos sin XP base y estimación de combate pendiente en las 47 rutas. | XP de entrega pendiente de una muestra de progresión en 1.384 IDs, nivel inicial y bloqueos por tramo en las 47 rutas. |
 | Viajes | Alternativas de transporte, requisitos de desbloqueo y escalas observadas que difieren por compilación. | Costes, acceso y esperas en 47 rutas, incluidas las 22 con ventanas de agrupamiento. |
-| Regresión y preparación | Novedades, documentación y ZIP final tras cerrar la auditoría local. Falta verificar la sincronización del cierre. | Pruebas de juego, Questie, persistencia y textos ES/EN. |
+| Regresión y preparación | ZIP de integración verificado. El paquete de la 9.8.0 se preparará con el corte combinado. | Pruebas de juego, Questie, persistencia y textos ES/EN sobre el corte combinado. |
 
 ## Siguientes tareas
 
-1. Ejecutar los seis casos representativos con el ZIP candidato. Registrar persistencia, Questie, idiomas, transporte y desbloqueos esenciales. [Protocolo funcional](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
-2. Resolver los P0/P1 que puedan aparecer en esas pruebas y verificar el ZIP definitivo. Conservar la investigación pendiente para futuras versiones. [Registro por prioridad](auditor_fase13/PENDIENTES_INVESTIGACION_FOREVER.md).
-
-La fase sigue abierta. El corte previo es `52a07ad`.
+1. En la integración autorizada, incorporar este corte junto a las mejoras de Claude y ChatGPT, revisar las coincidencias de archivos y ejecutar la regresión del conjunto. [Inventario de integración](auditor_fase13/INTEGRACION_FASE13.md#archivos-modificados-respecto-a-979).
+2. Con el paquete combinado de la futura 9.8.0, ejecutar los seis casos en Forever y registrar sus resultados y su huella. Resolver los P0/P1 que aparezcan durante la validación. [Protocolo funcional](auditor_fase13/VALIDACION_FOREVER.md#protocolo-reducido-de-cierre-funcional).
 
 ## Avance individual
 

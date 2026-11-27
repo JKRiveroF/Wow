@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-27T10:31:46+01:00",
+  "actualizado": "2026-11-27T10:43:51+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -96,7 +96,7 @@
         8
       ],
       "funcional": [
-        3,
+        4,
         6
       ]
     },
@@ -110,8 +110,8 @@
         740931651456
       ],
       "funcional": [
-        89,
-        120
+        3,
+        4
       ]
     }
   },
@@ -164,6 +164,10 @@
           "cliente": 0
         },
         "funcional": [
+          3,
+          3
+        ],
+        "funcional_local": [
           3,
           3
         ]
@@ -488,6 +492,10 @@
         "funcional": [
           3,
           3
+        ],
+        "funcional_local": [
+          3,
+          3
         ]
       },
       "3": {
@@ -639,6 +647,10 @@
         "funcional": [
           1,
           2
+        ],
+        "funcional_local": [
+          2,
+          2
         ]
       },
       "4": {
@@ -788,6 +800,10 @@
         "funcional": [
           2,
           3
+        ],
+        "funcional_local": [
+          3,
+          3
         ]
       },
       "5": {
@@ -936,6 +952,10 @@
         },
         "funcional": [
           2,
+          3
+        ],
+        "funcional_local": [
+          3,
           3
         ]
       },
@@ -1106,6 +1126,10 @@
         "funcional": [
           2,
           3
+        ],
+        "funcional_local": [
+          3,
+          3
         ]
       },
       "7": {
@@ -1130,18 +1154,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 138,
+                "unidades": 145,
                 "estados": {
-                  "confirmada": 138,
+                  "confirmada": 145,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 138,
-                "comprobaciones_aplicables": 138,
+                "comprobaciones_superadas": 145,
+                "comprobaciones_aplicables": 145,
                 "etapas": {
-                  "confirmadas": 138
+                  "confirmadas": 145
                 }
               }
             ]
@@ -1218,6 +1242,10 @@
         "funcional": [
           4,
           6
+        ],
+        "funcional_local": [
+          6,
+          6
         ]
       }
     },
@@ -1233,11 +1261,15 @@
       "funcional": [
         3,
         4
+      ],
+      "funcional_local": [
+        1,
+        1
       ]
     },
     "regresion": {
-      "ejecutadas": 138,
-      "superadas": 138,
+      "ejecutadas": 145,
+      "superadas": 145,
       "correcta": true
     },
     "casos_cliente": [
@@ -1315,7 +1347,12 @@
           {
             "id": "marcadores_y_flecha",
             "superada": false,
-            "evidencia": "Cliente Forever · mapa_questie"
+            "evidencia": "Cliente Forever · mapa_questie",
+            "superada_local": true,
+            "pruebas_locales": {
+              "test_marker_and_arrow_follow_the_destination_and_respect_questie": true,
+              "test_seguimiento_no_quita_misiones_ajenas_al_cargar_questie": true
+            }
           }
         ],
         "4": [
@@ -1332,7 +1369,12 @@
           {
             "id": "continuidad",
             "superada": false,
-            "evidencia": "Cliente Forever · nivel_viaje"
+            "evidencia": "Cliente Forever · nivel_viaje",
+            "superada_local": true,
+            "pruebas_locales": {
+              "test_level_event_and_same_session_step_progression": true,
+              "test_screecher_spirits_remains_pending_in_actual_engine_until_turn_in": true
+            }
           }
         ],
         "5": [
@@ -1349,7 +1391,14 @@
           {
             "id": "desplazamiento",
             "superada": false,
-            "evidencia": "Cliente Forever · nivel_viaje"
+            "evidencia": "Cliente Forever · nivel_viaje",
+            "superada_local": true,
+            "pruebas_locales": {
+              "test_travel_waits_for_discovery_and_arrival_including_child_maps": true,
+              "test_taxi_clasico_y_moderno_solo_guardan_estados_positivos": true,
+              "test_cliente_ingles_reconoce_guardado_anterior_en_espanol": true,
+              "test_cliente_y_guia_en_espanol_reconocen_claves_inglesas": true
+            }
           }
         ],
         "6": [
@@ -1366,7 +1415,14 @@
           {
             "id": "desbloqueos_y_textos",
             "superada": false,
-            "evidencia": "Cliente Forever · Alianza ES, Horda EN y desbloqueos de clase"
+            "evidencia": "Cliente Forever · Alianza ES, Horda EN y desbloqueos de clase",
+            "superada_local": true,
+            "pruebas_locales": {
+              "test_spell_learned_event_advances_only_after_the_book_changes": true,
+              "test_skyborne_aquatic_form_uses_faction_chain_and_requires_druid_level_16": true,
+              "test_ten_skyborne_training_texts_translate_with_addon_engine": true,
+              "test_hunter_skill_sources_match_the_two_quest_rewards": true
+            }
           }
         ],
         "7": [
@@ -1383,7 +1439,13 @@
           {
             "id": "instalacion_y_cliente",
             "superada": false,
-            "evidencia": "Suite representativa de Forever"
+            "evidencia": "Suite representativa de Forever",
+            "superada_local": true,
+            "pruebas_locales": {
+              "test_candidate_installs_and_loads_clean_and_over_the_original": true,
+              "test_migracion_legacy_preserva_identidad_progreso_y_preferencias": true,
+              "test_eventos_de_mision_respetan_questie_y_el_estado_indeterminado": true
+            }
           },
           {
             "id": "documentacion_e_incidencias",
@@ -1393,7 +1455,12 @@
           {
             "id": "zip",
             "superada": false,
-            "evidencia": "ZIP contrastado con la instalación validada"
+            "evidencia": "ZIP contrastado con la instalación validada",
+            "superada_local": true,
+            "pruebas_locales": {
+              "test_candidate_installs_and_loads_clean_and_over_the_original": true,
+              "test_package_is_reproducible_and_rejects_a_stale_file": true
+            }
           },
           {
             "id": "sincronizacion",
@@ -1418,7 +1485,7 @@
         "desbloqueos_clase": "pendiente"
       },
       "paquete": {
-        "nombre": "GuiaAventurero-9.7.9-fase13-candidato.zip",
+        "nombre": "GuiaAventurero-9.7.9-fase13-integracion.zip",
         "archivos": 218,
         "huella_addon": "a655f6d428af8ef2a1fada84f9995c83aafabf61139a8c351ed6c715ffe1b11e",
         "sha256": "7ed7ccdac59bd450b6e043cf6b915b8725413020582ea3c45dbfce4689e10df2"
@@ -1439,7 +1506,8 @@
       "funcional": [
         0,
         1
-      ]
+      ],
+      "funcional_local": null
     },
     "2": {
       "certificado": [
@@ -1453,7 +1521,8 @@
       "funcional": [
         0,
         1
-      ]
+      ],
+      "funcional_local": null
     },
     "3": {
       "certificado": [
@@ -1467,7 +1536,8 @@
       "funcional": [
         0,
         1
-      ]
+      ],
+      "funcional_local": null
     },
     "4": {
       "certificado": [
@@ -1481,7 +1551,8 @@
       "funcional": [
         0,
         1
-      ]
+      ],
+      "funcional_local": null
     },
     "5": {
       "certificado": [
@@ -1495,7 +1566,8 @@
       "funcional": [
         0,
         1
-      ]
+      ],
+      "funcional_local": null
     },
     "6": {
       "certificado": [
@@ -1509,7 +1581,8 @@
       "funcional": [
         0,
         1
-      ]
+      ],
+      "funcional_local": null
     },
     "7": {
       "certificado": [
@@ -1521,9 +1594,10 @@
         1
       ],
       "funcional": [
-        1,
-        6
-      ]
+        0,
+        1
+      ],
+      "funcional_local": null
     },
     "global": {
       "certificado": [
@@ -1535,9 +1609,10 @@
         1
       ],
       "funcional": [
-        1,
-        120
-      ]
+        0,
+        1
+      ],
+      "funcional_local": null
     }
   }
 }
