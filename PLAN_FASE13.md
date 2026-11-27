@@ -70,9 +70,9 @@ El cierre funcional requiere el 100 %, cero P0/P1 y todos los criterios de regre
 
 `███████████░░░░░░░░░`
 
-**Progreso funcional global · 74,17 %**
+**Progreso funcional global · 75 %**
 
-`██████████████░░░░░░`
+`███████████████░░░░░`
 
 | Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional anterior | Funcional actual | Variación funcional | Estado |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
@@ -82,10 +82,10 @@ El cierre funcional requiere el 100 %, cero P0/P1 y todos los criterios de regre
 | Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
 | Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
 | Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | 50 % | 50 % | 0 pp | Pendiente |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | 74,17 % | 74,17 % | 0 pp | Pendiente |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | 50 % | 66,67 % | +16,67 pp | Pendiente |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | 74,17 % | 75 % | +0,83 pp | Pendiente |
 
-**Última actualización de la medición · 2026-11-27 10:28:04+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 10:31:46+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 

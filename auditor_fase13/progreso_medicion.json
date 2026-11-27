@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-27T10:28:04+01:00",
+  "actualizado": "2026-11-27T10:31:46+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -1216,7 +1216,7 @@
           "cliente": 0
         },
         "funcional": [
-          3,
+          4,
           6
         ]
       }
@@ -1231,8 +1231,8 @@
         740931651456
       ],
       "funcional": [
-        89,
-        120
+        3,
+        4
       ]
     },
     "regresion": {
@@ -1397,7 +1397,7 @@
           },
           {
             "id": "sincronizacion",
-            "superada": false,
+            "superada": true,
             "evidencia": "Rama de desarrollo y árbol del addon verificados"
           }
         ]
@@ -1521,8 +1521,8 @@
         1
       ],
       "funcional": [
-        0,
-        1
+        1,
+        6
       ]
     },
     "global": {
@@ -1535,8 +1535,8 @@
         1
       ],
       "funcional": [
-        0,
-        1
+        1,
+        120
       ]
     }
   }
