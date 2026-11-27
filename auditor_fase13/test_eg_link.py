@@ -4,13 +4,30 @@ from collections import defaultdict
 import unittest
 
 from eg_link import (NEW_BUILD, REVISION_71139, XP_BUILD, _base_xp, _import_access, _import_creatures, _import_loot, _import_npcs,
-                     _import_objectives, _import_scan, _import_turn_ins, _link_objective_positions,
-                     _quest_type, _quest_values, _race_fields, _source)
+                     _import_objectives, _import_quest_items, _import_scan, _import_turn_ins, _link_objective_positions,
+                     _quest_item_origins, _quest_type, _quest_values, _race_fields, _source)
 from inventario_misiones import _coordinate_result
 from vuelos_observados import link_flights
 
 
 class EGLinkTests(unittest.TestCase):
+    def test_entity_query_uses_the_latest_positive_reply_per_type_and_id(self):
+        entities = {}
+        early = _source("1.60.1.71037", "creature_details.enUS")
+        current = _source(NEW_BUILD, "creature_details.enUS")
+        objects = _source(NEW_BUILD, "object_details.enUS")
+        _import_quest_items(entities, "pnj", {"7": {"sources": 1, "questItems": [2, 3]}}, early)
+        _import_quest_items(entities, "pnj", {"7": {"sources": 1, "questItems": [3, 3, 0, True]},
+                                             "8": {"sources": 0, "questItems": [4]}}, current)
+        _import_quest_items(entities, "objeto", {"7": {"sources": 1, "questItems": [2]}}, objects)
+        result = _quest_item_origins(entities)
+        self.assertEqual(set(result), {2, 3})
+        self.assertEqual(result[2], [{"tipo": "objeto", "id": 7, "fuente": objects["fuente"],
+                                      "metodo_botin": "consulta_entidad"}])
+        self.assertEqual(result[3][0]["fuente"], current["fuente"])
+        _import_quest_items(entities, "pnj", {"7": {"sources": 1}}, current)
+        self.assertNotIn(3, _quest_item_origins(entities))
+
     def test_loot_keeps_exact_sources_and_preserves_unlocated_items(self):
         observed, targets = defaultdict(dict), defaultdict(dict)
         source = _source(NEW_BUILD, "loot")

@@ -112,7 +112,7 @@ function C:LoadDynamic()
             result, _ = _loot_sources(ADDON.parent, observed)
             result = result[90]
         self.assertEqual(set(result), {("objeto", 7), ("objeto", 9)})
-        self.assertIn("foreverItemFixes.lua", result["objeto", 9])
+        self.assertIn("foreverItemFixes.lua", result["objeto", 9]["fuente"])
         with patch("contactos._lines", side_effect=[traces.splitlines(), []]):
             self.assertEqual(_loot_sources(ADDON.parent), ({}, {}))
 
@@ -146,6 +146,23 @@ function C:LoadDynamic()
         self.assertEqual(result["100"]["origenes_botin"], {"90": [sample]})
         reference, = result["100"]["referencias_botin"]["C"]
         self.assertEqual((reference["fuente_botin"], reference["mision_botin"], reference["id"]), ("saqueo", 100, 9))
+
+    def test_queried_loot_keeps_its_source_and_yields_to_observed_loot(self):
+        item = {"objetos_objetivo": [90], "evidencia": {"objetos_objetivo": {
+            "estado": "forever", "fuente": "misión"}}}
+        point = {"m": 1429, "x": 35, "y": 40, "fuente": "posición"}
+        query = {"tipo": "objeto", "id": 7, "fuente": "consulta", "metodo_botin": "consulta_entidad"}
+        observed = {"tipo": "objeto", "id": 7, "fuente": "botín observado"}
+        catalog = {"misiones": {"100": item}, "botin_consultado": {90: [query]},
+                   "entidades_interaccion": {"objeto": {7: [point]}}}
+        with patch("contactos._lines", side_effect=lambda _, src: ["-- correcciones"] if src == ITEM_FIXES else []), \
+                patch("contactos._read", return_value=[]):
+            queried = link_contacts(ADDON.parent, catalog)["misiones"]["100"]
+            found = link_contacts(ADDON.parent, {**catalog, "botin_observado": {90: [observed]}})["misiones"]["100"]
+        self.assertEqual(queried["origenes_botin"], {"90": [query]})
+        self.assertEqual(queried["referencias_botin"]["C"][0]["metodo_botin"], "consulta_entidad")
+        self.assertEqual(found["origenes_botin"], {"90": [observed]})
+        self.assertEqual(_coordinate_result(queried, "C", (1429, 35, 40)), "cerca_de_observacion")
 
     def test_reprojected_points_provide_partial_evidence_for_the_documented_action(self):
         records = read_catalog(ADDON.parent / "auditor_fase13" / "cartografia_forever.json")["misiones"]

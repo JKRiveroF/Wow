@@ -55,7 +55,7 @@ Para 1486, registra el UiMapID y la posición al encontrar a Nalpak en las Cueva
 
 En los destinos con `referencias_interaccion`, registra por separado el ID de la entidad, la posición que muestra el mapa y el ID de la misión ofrecida o entregada. En los vínculos de catálogo que sigan sin oferta documentada, comprueba 977 con el PNJ 10305 y 3503 con el PNJ 8395 como casos compartidos por las rutas. Conserva la distinción entre la interacción de cada misión y la mera presencia de la entidad. [Fuentes de los vínculos](FUENTES.md#coordenadas-de-iniciadores-y-receptores).
 
-Para 92553, registra el botín de la criatura 251291 cerca de 39,9 / 54,3, el avance del contador del objeto 6889 con la misión activa y el origen del 5469 por separado. [Evidencia de partida](FUENTES.md#botín-y-posiciones-de-obtención).
+Para 92553, registra el botín de 6889 en la criatura 251291 cerca de 39,9 / 54,3 y comprueba por separado la obtención de 5469 en la criatura 251661 con la misión activa. Anota el punto y el avance de cada contador. Para 4289, registra la obtención de 11478 en la criatura 6514 y distingue su posición de las de 11479 y 11480. [Botín y posiciones observadas](FUENTES.md#botín-con-misión-activa).
 
 Para 2781, registra el botín de 8723 al derrotar a 7847 en Tanaris y la posición del encuentro. En 8466 y 8467, registra la obtención de 21377 con cada misión activa, el punto de botín y cualquier cambio tras la primera entrega. [Observaciones de origen y posición](FUENTES.md#botín-observado-en-efficient-games).
 

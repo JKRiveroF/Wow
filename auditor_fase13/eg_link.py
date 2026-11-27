@@ -31,6 +31,24 @@ HASHES = {
     ("71037", "flights"): "a1406e02cc1124769f7297cf6a0e96b91fc9dde61eac5af2c155349db63bc7e3",
 }
 EXTRA_HASHES = {
+    ("70790", "creature_details.enUS"): "b4a08094d881edb18f168bee8b71acc2e9d41165d590a1eefcb011a94a9e6762",
+    ("70790", "object_details.enUS"): "e42b3fabea8b6808c425dc34fb318612416bf696c3410920aa73a393b25eb56f",
+    ("70840", "creature_details.enUS"): "76371579fa90a2cc67a334c9367bdc243a97fdb852f5feef396f16a9a948c40f",
+    ("70840", "object_details.enUS"): "4cd9c671024e8a715dfc1ce7ae51ded8cfbaf9662349fcd2d5b098154a1c0323",
+    ("70862", "creature_details.enUS"): "a610bf0a92892394364ae2b7d8205bbe66281b00d35ca95438756db13354c83d",
+    ("70862", "object_details.enUS"): "1893042e0bb79b2b9de959fa4eaaa668010cf03c04e25d64d8795782850fbf1e",
+    ("70888", "creature_details.enUS"): "6ae97be6d3b0dec269c840ce10ff695fbdb04dd315b13599f1e99bb3231793dd",
+    ("70888", "object_details.enUS"): "639f8167e9b9bb3abe4596dcf536ca430cccc4ff9a775b82503d7a9298d6ab84",
+    ("70938", "creature_details.enUS"): "33d9c2f933e488a1ad212af8963a6ffcfc1a925982c4339b972cee3baa169bb3",
+    ("70938", "object_details.enUS"): "0028abb6a7b013a1edc3ffabbd91615f22ffcfc0cfe5445e77a5b1b1d8f7d355",
+    ("70959", "creature_details.enUS"): "51ae2bbfee92d672410332dceaec2ea11da0551a90cb72207f0fcb92e7b8c72d",
+    ("70959", "object_details.enUS"): "28b48e5c1d893eefe56ee31ccdf05d507574e1545f6be4b55f27307a03e292bb",
+    ("71037", "creature_details.enUS"): "b35ab413d51e3c08552cdae80457b40e5ea3d11be194a64753718b942cfe1df5",
+    ("71037", "object_details.enUS"): "168517cb6c75743cca7c020120f2d96da91bcc83aac406fece09297f78f9cb86",
+    ("71091", "creature_details.enUS"): "0b5b3e6da98da640b168276ea3831a7eaede191d0090ae7aa69761c8c34b2fcf",
+    ("71091", "object_details.enUS"): "43340248270dbd07d9d7ffe6bea8358a2bef4e55221ee9584bc907d0ac63e1e5",
+    ("71139", "creature_details.enUS"): "be29c63fb044ea31742b8090a2d27e399c7428744d206bca92805a312a727a80",
+    ("71139", "object_details.enUS"): "7a5c8970d808f889a5fd82e0daa33fd7ee5b13228b27c72d13b8630aee782f4f",
     ("70790", "loot"): "34e139f15333c0ac12fbdb0d65f2b297f764ccff70969d12c1823f1ed9be06fc",
     ("70840", "loot"): "74e369fea75bdaf976877015802280411566e73da000fb8108643b35cf0addd6",
     ("70862", "loot"): "4cc7fdbfe691b20b029d4417a5d6354637ac3890647b700f45046e5576cb6585",
@@ -134,7 +152,7 @@ def _read(directory, build_number, dataset):
     expected = ("wowf", build, dataset.split(".")[0], 1)
     if tuple(meta[k] for k in ("product", "clientBuild", "dataset", "schemaVersion")) != expected:
         raise ValueError(f"Metadatos inesperados en {path}.")
-    if dataset == "quests.enUS" and meta.get("locale") != "enUS":
+    if dataset.endswith(".enUS") and meta.get("locale") != "enUS":
         raise ValueError(f"Idioma inesperado en {path}.")
     return data, source
 
@@ -352,6 +370,21 @@ def _import_loot(items, quest_items, targets, data, source):
             _index_target(targets, f"botin_{kind}", entity, positions, source)
 
 
+def _import_quest_items(entities, kind, rows, source):
+    for entity, row in rows.items():
+        if row.get("sources") and entity.isdecimal() and int(entity) > 0:
+            items = {item for item in row.get("questItems") or () if type(item) is int and item > 0}
+            entities[kind, int(entity)] = items, source["fuente"]
+
+
+def _quest_item_origins(entities):
+    origins = defaultdict(list)
+    for (kind, entity), (items, source) in entities.items():
+        for item in sorted(items):
+            origins[item].append({"tipo": kind, "id": entity, "fuente": source, "metodo_botin": "consulta_entidad"})
+    return dict(origins)
+
+
 def _link_objective_positions(missions, quest_id, entry, targets):
     required = {(row.get("type", ""), row.get("objectId", 0)) for row in entry.get("objetivos_servidor", [])}
     points = [point for key in sorted(required & targets.keys()) for point in targets[key].values()]
@@ -438,6 +471,7 @@ def import_eg_link(directory):
     targets = defaultdict(dict)
     loot = defaultdict(dict)
     quest_loot = {}
+    queried_entities = {}
     xp_table, xp_source = _read_xp_table(directory)
     quest_info = _read_quest_info(directory)
     quest_sort = _read_optional_table(directory, "QuestSort", NEW_BUILD, QUEST_SORT_HASH, "SortName_lang")
@@ -463,6 +497,10 @@ def import_eg_link(directory):
             _import_creatures(targets, data, source)
         elif dataset == "loot":
             _import_loot(loot, quest_loot, targets, data, source)
+        elif dataset == "creature_details.enUS":
+            _import_quest_items(queried_entities, "pnj", data["creatures"], source)
+        elif dataset == "object_details.enUS":
+            _import_quest_items(queried_entities, "objeto", data["objects"], source)
         elif dataset == "objectives":
             _import_objectives(missions, data, source)
         elif dataset == "turn_ins":
@@ -495,6 +533,7 @@ def import_eg_link(directory):
             contacts[roles[kind]][entity] = list(points.values())
     flight_data = {**flights[-1], "instantaneas": flights, "tabla_nodos": load_taxi_nodes(directory)} if flights else {}
     return {"misiones": missions, "pnj": npcs, "vuelos_observados": flight_data, "entidades_interaccion": contacts,
+            "botin_consultado": _quest_item_origins(queried_entities),
             "botin_observado": {item: list(entities.values()) for item, entities in loot.items()},
             "botin_por_mision": {quest: {item: list(entities.values()) for item, entities in items.items()}
                                 for quest, items in quest_loot.items()}}

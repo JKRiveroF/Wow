@@ -126,9 +126,10 @@ def _apply_loot_rules(sources, reference, lines, scoped=None):
                 record.pop(entity, None)
         elif operation in ("", "add"):
             if not operation:
-                sources[int(item)] = record = {entity: link for entity, link in record.items() if entity[0] != kind}
+                sources[int(item)] = record = {entity: proof for entity, proof in record.items() if entity[0] != kind}
             link = f"{TRACE_BASE}{reference}#L{line}"
-            record.update(dict.fromkeys(sorted(entities), link))
+            record.update({(kind, entity): {"tipo": kind, "id": entity, "fuente": link}
+                           for kind, entity in sorted(entities)})
         if scoped and operation in ("", "remove"):
             for observed in scoped.get(int(item), ()):
                 if operation == "remove":
@@ -140,15 +141,16 @@ def _apply_loot_rules(sources, reference, lines, scoped=None):
                         del observed[entity]
 
 
-def _loot_sources(directory, observed=None, quest_observed=None):
+def _loot_sources(directory, observed=None, quest_observed=None, queried=None):
     traces = _lines(directory, ITEM_TRACES)
     fixes = _lines(directory, ITEM_FIXES)
     if not fixes:
         return {}, {}
     sources = defaultdict(dict)
     _apply_loot_rules(sources, ITEM_TRACES, traces)
-    for item, samples in (observed or {}).items():
-        sources[item].update({(sample["tipo"], sample["id"]): sample["fuente"] for sample in samples})
+    for evidence in (queried, observed):
+        for item, samples in (evidence or {}).items():
+            sources[item].update({(sample["tipo"], sample["id"]): sample for sample in samples})
     quests = {quest: {item: {(sample["tipo"], sample["id"]): sample for sample in samples}
                       for item, samples in items.items()} for quest, items in (quest_observed or {}).items()}
     by_item = defaultdict(list)
@@ -168,7 +170,7 @@ def _loot_positions(item, origins, trace_points, eg_points):
         for sample in (*samples, *eg_points.get(f"botin_{kind}", {}).get(entity, ())):
             key = kind, entity, sample["m"], sample["x"], sample["y"]
             points[key] = {**sample, "tipo": kind, "id": entity, "item": item, "fuente_botin": loot["fuente"],
-                           **{field: loot[field] for field in ("registro_botin", "mision_botin") if field in loot}}
+                           **{field: loot[field] for field in ("registro_botin", "mision_botin", "metodo_botin") if field in loot}}
     return list(points.values())
 
 
@@ -184,10 +186,9 @@ def link_contacts(directory, catalog):
     static = _static_contacts(_lines(directory, QUESTS), missions)
     _apply_corrections(_read(directory, FIXES), static, traced)
     eg_points = catalog.get("entidades_interaccion", {})
-    loot, quest_loot = _loot_sources(directory, catalog.get("botin_observado"), catalog.get("botin_por_mision"))
-    loot_origins = {item: {(kind, entity): {"tipo": kind, "id": entity, "fuente": link}
-                           for (kind, entity), link in sorted(entities.items())}
-                    for item, entities in loot.items() if entities}
+    loot, quest_loot = _loot_sources(directory, catalog.get("botin_observado"), catalog.get("botin_por_mision"),
+                                    catalog.get("botin_consultado"))
+    loot_origins = {item: dict(sorted(entities.items())) for item, entities in loot.items() if entities}
     loot_positions = {}
     matched = {}
     for quest, entry in missions.items():
