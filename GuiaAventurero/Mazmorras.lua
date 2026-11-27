@@ -241,7 +241,6 @@ local function CargarDatos()
         { n = L"El Sueño Esmeralda", q = 7506, d = L"la suelta un enemigo (objeto que empieza la misión)", nueva = true },
         { n = L"Compendio de Nostro", q = 7507, d = L"la suelta un enemigo (objeto que empieza la misión)", nueva = true },
         { n = L"Forjar Quel'Serrar", q = 7508, d = L"la suelta un enemigo (objeto que empieza la misión)", nueva = true },
-        { n = L"El tesoro de los Shen'dralar", q = 7877, d = L"Anciano Shen'dralar, dentro de la mazmorra", nueva = true },
         { n = L"Un viejo amigo de Anthion", q = 8948, d = L"Anthion Harmon, en Tierras de la Peste del Este", nueva = true },
         { n = L"La vendetta de Falrin", q = 8949, d = L"Falrin Tallarbol, dentro de la mazmorra", nueva = true },
         { n = L"El encantamiento del provocador", q = 8950, d = L"Falrin Tallarbol, dentro de la mazmorra", nueva = true },
@@ -451,7 +450,8 @@ local function MisionesHordaR11() return {
       { n = L"La sangre de dragón negro campeón", q = 6602, d = L"Rexxar, en Desolace" } },
     ["La Masacre"] = {
       { n = L"La Membrana de Lethtendris", q = 7489, d = L"Talo Pezuñahendida, en Feralas" },
-      { n = L"Leyendas élficas", q = 7481, d = L"Sabio Korolusk, en Feralas" } },
+      { n = L"Leyendas élficas", q = 7481, d = L"Sabio Korolusk, en Feralas" },
+      { n = L"El tesoro de los Shen'dralar", q = 7877, d = L"Anciano Shen'dralar, dentro de la mazmorra", nueva = true } },
     ["Scholomance"] = {
       { n = L"La fortuna de la familia Barov", q = 5341, d = L"Alexi Barov, en Claros de Tirisfal" },
       { n = L"La llave de Scholomance", q = 5511, d = L"Boticario Dithers, en el Baluarte. Referencia Classic: requiere la cadena de la llave y el escarabajo de Araj." } },
