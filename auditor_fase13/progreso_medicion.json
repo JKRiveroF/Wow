@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-11-27T10:43:51+01:00",
+  "actualizado": "2026-11-27T13:26:00+01:00",
   "anterior": {
     "1": {
       "certificado": [
@@ -12,6 +12,10 @@
         1
       ],
       "funcional": [
+        3,
+        3
+      ],
+      "funcional_local": [
         3,
         3
       ]
@@ -28,6 +32,10 @@
       "funcional": [
         3,
         3
+      ],
+      "funcional_local": [
+        3,
+        3
       ]
     },
     "3": {
@@ -41,6 +49,10 @@
       ],
       "funcional": [
         1,
+        2
+      ],
+      "funcional_local": [
+        2,
         2
       ]
     },
@@ -56,6 +68,10 @@
       "funcional": [
         2,
         3
+      ],
+      "funcional_local": [
+        3,
+        3
       ]
     },
     "5": {
@@ -69,6 +85,10 @@
       ],
       "funcional": [
         2,
+        3
+      ],
+      "funcional_local": [
+        3,
         3
       ]
     },
@@ -84,6 +104,10 @@
       "funcional": [
         2,
         3
+      ],
+      "funcional_local": [
+        3,
+        3
       ]
     },
     "7": {
@@ -97,6 +121,10 @@
       ],
       "funcional": [
         4,
+        6
+      ],
+      "funcional_local": [
+        6,
         6
       ]
     },
@@ -112,6 +140,10 @@
       "funcional": [
         3,
         4
+      ],
+      "funcional_local": [
+        1,
+        1
       ]
     }
   },
@@ -1154,18 +1186,18 @@
             "familias": [
               {
                 "nombre": "Pruebas locales",
-                "unidades": 145,
+                "unidades": 149,
                 "estados": {
-                  "confirmada": 145,
+                  "confirmada": 149,
                   "parcial": 0,
                   "inferencia": 0,
                   "investigacion": 0,
                   "cliente": 0
                 },
-                "comprobaciones_superadas": 145,
-                "comprobaciones_aplicables": 145,
+                "comprobaciones_superadas": 149,
+                "comprobaciones_aplicables": 149,
                 "etapas": {
-                  "confirmadas": 145
+                  "confirmadas": 149
                 }
               }
             ]
@@ -1268,8 +1300,8 @@
       ]
     },
     "regresion": {
-      "ejecutadas": 145,
-      "superadas": 145,
+      "ejecutadas": 149,
+      "superadas": 149,
       "correcta": true
     },
     "casos_cliente": [
@@ -1485,12 +1517,12 @@
         "desbloqueos_clase": "pendiente"
       },
       "paquete": {
-        "nombre": "GuiaAventurero-9.7.9-fase13-integracion.zip",
-        "archivos": 218,
-        "huella_addon": "a655f6d428af8ef2a1fada84f9995c83aafabf61139a8c351ed6c715ffe1b11e",
-        "sha256": "7ed7ccdac59bd450b6e043cf6b915b8725413020582ea3c45dbfce4689e10df2"
+        "nombre": "GuiaAventurero-9.8.0-fase13-integracion.zip",
+        "archivos": 221,
+        "huella_addon": "6d4230dbee4684952c34d2cec253c45873d8b16309d774d849cc7b89673db629",
+        "sha256": "15e7b038e77b4c1f93b73cb4daa11ac50f005bd04fa74ea713ba74439dddd33a"
       },
-      "huella_addon": "a655f6d428af8ef2a1fada84f9995c83aafabf61139a8c351ed6c715ffe1b11e"
+      "huella_addon": "6d4230dbee4684952c34d2cec253c45873d8b16309d774d849cc7b89673db629"
     }
   },
   "variacion": {
@@ -1507,7 +1539,10 @@
         0,
         1
       ],
-      "funcional_local": null
+      "funcional_local": [
+        0,
+        1
+      ]
     },
     "2": {
       "certificado": [
@@ -1522,7 +1557,10 @@
         0,
         1
       ],
-      "funcional_local": null
+      "funcional_local": [
+        0,
+        1
+      ]
     },
     "3": {
       "certificado": [
@@ -1537,7 +1575,10 @@
         0,
         1
       ],
-      "funcional_local": null
+      "funcional_local": [
+        0,
+        1
+      ]
     },
     "4": {
       "certificado": [
@@ -1552,7 +1593,10 @@
         0,
         1
       ],
-      "funcional_local": null
+      "funcional_local": [
+        0,
+        1
+      ]
     },
     "5": {
       "certificado": [
@@ -1567,7 +1611,10 @@
         0,
         1
       ],
-      "funcional_local": null
+      "funcional_local": [
+        0,
+        1
+      ]
     },
     "6": {
       "certificado": [
@@ -1582,7 +1629,10 @@
         0,
         1
       ],
-      "funcional_local": null
+      "funcional_local": [
+        0,
+        1
+      ]
     },
     "7": {
       "certificado": [
@@ -1597,7 +1647,10 @@
         0,
         1
       ],
-      "funcional_local": null
+      "funcional_local": [
+        0,
+        1
+      ]
     },
     "global": {
       "certificado": [
@@ -1612,7 +1665,10 @@
         0,
         1
       ],
-      "funcional_local": null
+      "funcional_local": [
+        0,
+        1
+      ]
     }
   }
 }

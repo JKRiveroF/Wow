@@ -20,16 +20,16 @@
 
 | Bloque | Peso | Criterios completos | Certificado anterior | Certificado actual | Variación | Efectivo anterior | Efectivo actual | Variación | Funcional local anterior | Funcional local actual | Variación local | Funcional global anterior | Funcional global actual | Variación global | Estado global |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | — | 100 % | — | 100 % | 100 % | 0 pp | Completo |
-| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp | — | 100 % | — | 100 % | 100 % | 0 pp | Completo |
-| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | — | 100 % | — | 50 % | 50 % | 0 pp | Pendiente |
-| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | — | 100 % | — | 66,67 % | 66,67 % | 0 pp | Pendiente |
-| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | — | 100 % | — | 75 % | 75 % | 0 pp | Pendiente |
+| Estructura | 10 % | 95/95 | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
+| Misiones | 25 % | 47/188 | 25 % | 25 % | 0 pp | 52,33 % | 52,33 % | 0 pp | 100 % | 100 % | 0 pp | 100 % | 100 % | 0 pp | Completo |
+| Cartografía | 20 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 46,45 % | 46,45 % | 0 pp | 100 % | 100 % | 0 pp | 50 % | 50 % | 0 pp | Pendiente |
+| Experiencia | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 53,58 % | 53,58 % | 0 pp | 100 % | 100 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Viajes | 15 % | 47/141 | 33,33 % | 33,33 % | 0 pp | 50 % | 50 % | 0 pp | 100 % | 100 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Clase, raza y facción | 10 % | 94/141 | 66,67 % | 66,67 % | 0 pp | 74,21 % | 74,21 % | 0 pp | 100 % | 100 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| Regresión y preparación | 5 % | 1/4 | 25 % | 25 % | 0 pp | 37,5 % | 37,5 % | 0 pp | 100 % | 100 % | 0 pp | 66,67 % | 66,67 % | 0 pp | Pendiente |
+| **Global ponderado** | 100 % |  | 40,83 % | 40,83 % | 0 pp | 57,21 % | 57,21 % | 0 pp | 100 % | 100 % | 0 pp | 75 % | 75 % | 0 pp | Pendiente |
 
-**Última actualización de la medición · 2026-11-27 10:43:51+01:00 (Madrid)**
+**Última actualización de la medición · 2026-11-27 13:26:00+01:00 (Madrid)**
 
 El auditor registra **235 grupos de investigación** y **116 grupos de validación en Forever**. Las coberturas por criterio están en `progreso_medicion.json`.
 
@@ -37,7 +37,7 @@ El auditor registra **235 grupos de investigación** y **116 grupos de validaci�
 
 - **Rutas analizadas localmente** · 47/47
 - **Rutas con P0/P1** · 0
-- **Pruebas locales superadas** · 145/145
+- **Pruebas locales superadas** · 149/149
 - **Pruebas reales de Forever** · 0/6 superadas, 6 pendientes, 0 con fallo
 - **Incidencias aplazables** · 407
 
